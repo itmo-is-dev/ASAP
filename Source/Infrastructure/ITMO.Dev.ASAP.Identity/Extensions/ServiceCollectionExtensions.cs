@@ -2,6 +2,7 @@ using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Identity.Entities;
 using ITMO.Dev.ASAP.Identity.Services;
 using ITMO.Dev.ASAP.Identity.Tools;
+using ITMO.Dev.ASAP.Identity.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,10 @@ public static class ServiceCollectionExtensions
             .AddEntityFrameworkStores<AsapIdentityContext>()
             .AddDefaultTokenProviders();
 
+        collection.AddScoped<CurrentUserProxy>();
+        collection.AddScoped<ICurrentUser>(x => x.GetRequiredService<CurrentUserProxy>());
+        collection.AddScoped<ICurrentUserManager>(x => x.GetRequiredService<CurrentUserProxy>());
+
         collection.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -47,6 +52,21 @@ public static class ServiceCollectionExtensions
                 ValidAudience = identityConfiguration.Audience,
                 ValidIssuer = identityConfiguration.Issuer,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identityConfiguration.Secret)),
+            };
+            options.Events = new JwtBearerEvents
+            {
+                OnTokenValidated = context =>
+                {
+                    if (context.Principal is null)
+                    {
+                        return Task.CompletedTask;
+                    }
+
+                    ICurrentUserManager userManager = context.HttpContext.RequestServices.GetRequiredService<ICurrentUserManager>();
+                    userManager.Authenticate(context.Principal);
+
+                    return Task.CompletedTask;
+                },
             };
         });
     }
