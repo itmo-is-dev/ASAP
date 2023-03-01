@@ -58,9 +58,7 @@ public static class ServiceCollectionExtensions
                 OnTokenValidated = context =>
                 {
                     if (context.Principal is null)
-                    {
                         return Task.CompletedTask;
-                    }
 
                     ICurrentUserManager userManager = context.HttpContext.RequestServices.GetRequiredService<ICurrentUserManager>();
                     userManager.Authenticate(context.Principal);

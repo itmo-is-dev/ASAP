@@ -17,21 +17,21 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
             .Select(x => x.Value)
             .ToArray();
 
-        Guid.TryParse(
-            principal.Claims
-                .Single(x => x.Type.Equals(ClaimTypes.NameIdentifier, StringComparison.OrdinalIgnoreCase))
-                .Value,
-            out Guid id);
+        string nameIdentifier = principal.Claims
+            .Single(x => x.Type.Equals(ClaimTypes.NameIdentifier, StringComparison.OrdinalIgnoreCase))
+            .Value;
 
-        if (roles.Any(x => x == AsapIdentityRole.AdminRoleName))
+        Guid.TryParse(nameIdentifier, out Guid id);
+
+        if (roles.Contains(AsapIdentityRole.AdminRoleName))
         {
             _user = new AdminUser(id);
         }
-        else if (roles.Any(x => x == AsapIdentityRole.ModeratorRoleName))
+        else if (roles.Contains(AsapIdentityRole.ModeratorRoleName))
         {
             _user = new ModeratorUser(id);
         }
-        else if (roles.Any(x => x == AsapIdentityRole.MentorRoleName))
+        else if (roles.Contains(AsapIdentityRole.MentorRoleName))
         {
             _user = new MentorUser(id);
         }
