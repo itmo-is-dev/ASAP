@@ -2,7 +2,7 @@
 
 namespace ITMO.Dev.ASAP.Application.Users;
 
-public class MentorUser : ICurrentUser
+internal class MentorUser : ICurrentUser
 {
     public MentorUser(Guid id)
     {

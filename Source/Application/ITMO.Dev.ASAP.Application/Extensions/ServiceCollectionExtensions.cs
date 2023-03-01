@@ -27,17 +27,16 @@ public static class ServiceCollectionExtensions
         collection.AddScoped<ISubmissionWorkflowService, SubmissionWorkflowService>();
 
         collection.AddQueryChains();
+        collection.AddCurrentUser();
 
         return collection;
     }
 
-    public static IServiceCollection AddCurentUser(this IServiceCollection collection)
+    private static void AddCurrentUser(this IServiceCollection collection)
     {
         collection.AddScoped<CurrentUserProxy>();
         collection.AddScoped<ICurrentUser>(x => x.GetRequiredService<CurrentUserProxy>());
         collection.AddScoped<ICurrentUserManager>(x => x.GetRequiredService<CurrentUserProxy>());
-
-        return collection;
     }
 
     private static void AddQueryChains(this IServiceCollection collection)

@@ -2,7 +2,7 @@
 
 namespace ITMO.Dev.ASAP.Application.Users;
 
-public class AdminUser : ICurrentUser
+internal class AdminUser : ICurrentUser
 {
     public AdminUser(Guid id)
     {

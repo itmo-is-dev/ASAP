@@ -2,7 +2,7 @@
 
 namespace ITMO.Dev.ASAP.Application.Users;
 
-public class ModeratorUser : ICurrentUser
+internal class ModeratorUser : ICurrentUser
 {
     public ModeratorUser(Guid id)
     {
