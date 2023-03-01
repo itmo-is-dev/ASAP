@@ -1,10 +1,10 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 
-namespace ITMO.Dev.ASAP.Identity.Users;
+namespace ITMO.Dev.ASAP.Application.Users;
 
-public class AnonymousUser : ICurrentUser
+public class MentorUser : ICurrentUser
 {
-    public AnonymousUser(Guid id)
+    public MentorUser(Guid id)
     {
         Id = id;
     }

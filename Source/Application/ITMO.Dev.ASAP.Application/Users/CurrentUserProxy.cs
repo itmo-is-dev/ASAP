@@ -1,12 +1,13 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Identity.Entities;
 using System.Security.Claims;
 
-namespace ITMO.Dev.ASAP.Identity.Users;
+namespace ITMO.Dev.ASAP.Application.Users;
 
 public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
 {
-    private ICurrentUser _user = new AnonymousUser(Guid.Empty);
+    private ICurrentUser _user = new AnonymousUser();
 
     public Guid Id => _user.Id;
 
@@ -21,7 +22,10 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
             .Single(x => x.Type.Equals(ClaimTypes.NameIdentifier, StringComparison.OrdinalIgnoreCase))
             .Value;
 
-        Guid.TryParse(nameIdentifier, out Guid id);
+        if (!Guid.TryParse(nameIdentifier, out Guid id))
+        {
+            throw new UnauthorizedException("Failed to parse user NameIdentifier to Guid");
+        }
 
         if (roles.Contains(AsapIdentityRole.AdminRoleName))
         {
@@ -37,7 +41,7 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
         }
         else
         {
-            _user = new AnonymousUser(id);
+            _user = new AnonymousUser();
         }
     }
 }

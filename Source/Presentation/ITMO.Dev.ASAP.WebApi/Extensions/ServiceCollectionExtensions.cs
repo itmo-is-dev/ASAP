@@ -42,6 +42,7 @@ internal static class ServiceCollectionExtensions
         serviceCollection
             .AddSwagger()
             .AddApplicationConfiguration()
+            .AddCurentUser()
             .AddHandlers()
             .AddGithubPresentation()
             .AddDatabaseContext(o => o

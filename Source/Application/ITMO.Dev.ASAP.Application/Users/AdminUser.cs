@@ -1,6 +1,6 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 
-namespace ITMO.Dev.ASAP.Identity.Users;
+namespace ITMO.Dev.ASAP.Application.Users;
 
 public class AdminUser : ICurrentUser
 {
