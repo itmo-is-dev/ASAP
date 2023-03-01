@@ -48,6 +48,19 @@ public static class ServiceCollectionExtensions
                 ValidIssuer = identityConfiguration.Issuer,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identityConfiguration.Secret)),
             };
+            options.Events = new JwtBearerEvents
+            {
+                OnTokenValidated = context =>
+                {
+                    if (context.Principal is null)
+                        return Task.CompletedTask;
+
+                    ICurrentUserManager userManager = context.HttpContext.RequestServices.GetRequiredService<ICurrentUserManager>();
+                    userManager.Authenticate(context.Principal);
+
+                    return Task.CompletedTask;
+                },
+            };
         });
     }
 }

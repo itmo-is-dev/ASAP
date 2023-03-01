@@ -9,7 +9,6 @@ using ITMO.Dev.ASAP.Identity.Extensions;
 using ITMO.Dev.ASAP.Integration.Github.Extensions;
 using ITMO.Dev.ASAP.Presentation.GitHub.Extensions;
 using ITMO.Dev.ASAP.WebApi.Configuration;
-using ITMO.Dev.ASAP.WebApi.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ConfigurationBuilder = FluentSerialization.ConfigurationBuilder;
@@ -30,7 +29,7 @@ internal static class ServiceCollectionExtensions
             serviceCollection.TryAddSingleton(webApiConfiguration.TestEnvironmentConfiguration);
 
         serviceCollection
-            .AddControllers(x => x.Filters.Add<AuthenticationFilter>())
+            .AddControllers()
             .AddNewtonsoftJson(x =>
             {
                 ConfigurationBuilder
