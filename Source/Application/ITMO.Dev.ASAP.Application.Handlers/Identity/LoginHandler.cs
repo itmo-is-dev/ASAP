@@ -38,6 +38,7 @@ internal class LoginHandler : IRequestHandler<Query, Response>
         IEnumerable<Claim> claims = roles
             .Select(userRole => new Claim(ClaimTypes.Role, userRole))
             .Append(new Claim(ClaimTypes.Name, user.UserName))
+            .Append(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()))
             .Append(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
         JwtSecurityToken token = GetToken(claims);
