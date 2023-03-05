@@ -29,9 +29,9 @@ public class IdentityController : ControllerBase
         return Ok(loginResponse);
     }
 
-    [HttpPost("users/{username}/promote")]
+    [HttpPost("users/{username}/promote-to-admin")]
     [Authorize(Roles = AsapIdentityRole.AdminRoleName)]
-    public async Task<IActionResult> PromoteAsync(string username)
+    public async Task<IActionResult> PromoteToAdminAsync(string username)
     {
         var command = new PromoteToAdmin.Command(username);
         await _mediator.Send(command);
@@ -51,5 +51,15 @@ public class IdentityController : ControllerBase
 
         var credentials = new LoginResponse(loginResponse.Token, loginResponse.Expires, loginResponse.Roles);
         return Ok(credentials);
+    }
+
+    [HttpPut("user/{id:guid}/create")]
+    [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
+    public async Task<IActionResult> CreateUserAccountAsync(Guid id, [FromBody] CreateUserAccountRequest request)
+    {
+        var command = new CreateUserAccount.Command(id, request.Username, request.Password);
+        await _mediator.Send(command);
+
+        return Ok();
     }
 }
