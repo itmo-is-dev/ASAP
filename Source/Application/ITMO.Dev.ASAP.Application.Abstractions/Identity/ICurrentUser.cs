@@ -3,4 +3,6 @@
 public interface ICurrentUser
 {
     Guid Id { get; }
+
+    UserRoleType Role { get; }
 }

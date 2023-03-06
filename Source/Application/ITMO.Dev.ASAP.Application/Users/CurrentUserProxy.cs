@@ -11,6 +11,8 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
 
     public Guid Id => _user.Id;
 
+    public UserRoleType Role => _user.Role;
+
     public void Authenticate(ClaimsPrincipal principal)
     {
         string[] roles = principal.Claims

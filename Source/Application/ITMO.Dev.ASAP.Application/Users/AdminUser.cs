@@ -10,4 +10,6 @@ internal class AdminUser : ICurrentUser
     }
 
     public Guid Id { get; }
+
+    public UserRoleType Role => UserRoleType.Admin;
 }

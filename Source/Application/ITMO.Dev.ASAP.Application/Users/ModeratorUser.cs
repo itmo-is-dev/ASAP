@@ -10,4 +10,6 @@ internal class ModeratorUser : ICurrentUser
     }
 
     public Guid Id { get; }
+
+    public UserRoleType Role => UserRoleType.Moderator;
 }
