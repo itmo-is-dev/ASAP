@@ -1,5 +1,6 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Common.Exceptions;
+using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Identity.Entities;
 using System.Security.Claims;
 
@@ -11,7 +12,15 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
 
     public Guid Id => _user.Id;
 
-    public UserRoleType Role => _user.Role;
+    public IQueryable<SubjectCourse> FilterAvailableSubjectCourses(IQueryable<SubjectCourse> subjectCourses)
+    {
+        return _user.FilterAvailableSubjectCourses(subjectCourses);
+    }
+
+    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
+    {
+        return _user.FilterAvailableSubjects(subjects);
+    }
 
     public void Authenticate(ClaimsPrincipal principal)
     {

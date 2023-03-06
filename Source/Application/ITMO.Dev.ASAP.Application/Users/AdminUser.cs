@@ -1,4 +1,5 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Core.Study;
 
 namespace ITMO.Dev.ASAP.Application.Users;
 
@@ -11,5 +12,13 @@ internal class AdminUser : ICurrentUser
 
     public Guid Id { get; }
 
-    public UserRoleType Role => UserRoleType.Admin;
+    public IQueryable<SubjectCourse> FilterAvailableSubjectCourses(IQueryable<SubjectCourse> subjectCourses)
+    {
+        return subjectCourses;
+    }
+
+    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
+    {
+        return subjects;
+    }
 }

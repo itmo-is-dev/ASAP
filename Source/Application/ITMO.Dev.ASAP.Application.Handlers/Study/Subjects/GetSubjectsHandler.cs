@@ -1,4 +1,5 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
@@ -22,22 +23,12 @@ internal class GetSubjectsHandler : IRequestHandler<Query, Response>
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        if (_currentUser.Role is UserRoleType.Anonymous)
-            throw new Exception("Anonymous user cannot access information about the subjects");
-
-        List<Subject> subjects = await _context
-            .Subjects
+        List<Subject> subjects = await _currentUser
+            .FilterAvailableSubjects(_context.Subjects)
             .ToListAsync(cancellationToken);
 
-        if (_currentUser.Role is UserRoleType.Mentor)
-        {
-            subjects = subjects
-                .Where(s => s.Courses.SelectMany(c => c.Mentors).Any(m => m.UserId == _currentUser.Id))
-                .ToList();
-
-            if (subjects.Count is 0)
-                throw new Exception("Mentor has not any subject");
-        }
+        if (subjects.Count is 0)
+            throw UserHasNotAccessException.EmptyAvailableList(_currentUser.Id);
 
         SubjectDto[] dto = subjects.Select(x => x.ToDto()).ToArray();
 
