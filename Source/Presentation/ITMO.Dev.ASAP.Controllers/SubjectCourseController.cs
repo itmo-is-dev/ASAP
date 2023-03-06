@@ -44,6 +44,8 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = $"{AsapIdentityRole.MentorRoleName}, {AsapIdentityRole.AdminRoleName}, " +
+                       $"{AsapIdentityRole.ModeratorRoleName}")]
     public async Task<ActionResult<IReadOnlyCollection<SubjectCourseDto>>> Get()
     {
         var query = new GetSubjectCourses.Query();

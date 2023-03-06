@@ -33,6 +33,8 @@ public class SubjectController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = $"{AsapIdentityRole.MentorRoleName}, {AsapIdentityRole.AdminRoleName}, " +
+                       $"{AsapIdentityRole.ModeratorRoleName}")]
     public async Task<ActionResult<IReadOnlyCollection<SubjectDto>>> Get()
     {
         var query = new GetSubjects.Query();

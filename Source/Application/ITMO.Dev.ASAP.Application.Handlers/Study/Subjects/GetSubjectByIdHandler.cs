@@ -18,8 +18,7 @@ internal class GetSubjectByIdHandler : IRequestHandler<Query, Response>
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        Subject subject = await _context
-            .Subjects
+        Subject subject = await _context.Subjects
             .GetByIdAsync(request.Id, cancellationToken);
 
         return new Response(subject.ToDto());
