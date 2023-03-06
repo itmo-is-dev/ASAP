@@ -15,7 +15,7 @@ internal class AnonymousUser : ICurrentUser
         return new List<SubjectCourse>().AsQueryable();
     }
 
-    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjectCourses)
+    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
     {
         return new List<Subject>().AsQueryable();
     }
