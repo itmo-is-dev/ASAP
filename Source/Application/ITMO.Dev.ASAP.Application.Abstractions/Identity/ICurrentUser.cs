@@ -3,4 +3,6 @@
 public interface ICurrentUser
 {
     Guid Id { get; }
+
+    bool CanUpdateAllDeadlines { get; }
 }

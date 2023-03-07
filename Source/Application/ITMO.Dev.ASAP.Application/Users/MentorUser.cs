@@ -10,4 +10,6 @@ internal class MentorUser : ICurrentUser
     }
 
     public Guid Id { get; }
+
+    public bool CanUpdateAllDeadlines => false;
 }

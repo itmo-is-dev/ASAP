@@ -11,6 +11,8 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
 
     public Guid Id => _user.Id;
 
+    public bool CanUpdateAllDeadlines => _user.CanUpdateAllDeadlines;
+
     public void Authenticate(ClaimsPrincipal principal)
     {
         string[] roles = principal.Claims
