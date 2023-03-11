@@ -29,11 +29,11 @@ public class IdentityController : ControllerBase
         return Ok(loginResponse);
     }
 
-    [HttpPost("users/{username}/promote-to-admin")]
-    [Authorize(Roles = AsapIdentityRole.AdminRoleName)]
-    public async Task<IActionResult> PromoteToAdminAsync(string username)
+    [HttpPost("users/{username}/change-role-to/{role}")]
+    [Authorize]
+    public async Task<IActionResult> ChangeUserRoleAsync(string username, string role)
     {
-        var command = new PromoteToAdmin.Command(username);
+        var command = new ChangeUserRole.Command(username, role);
         await _mediator.Send(command);
 
         return Ok();

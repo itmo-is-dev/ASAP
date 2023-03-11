@@ -3,4 +3,6 @@
 public interface ICurrentUser
 {
     Guid Id { get; }
+
+    bool CanChangeRole(string? currentRoleName, string? newRoleName);
 }

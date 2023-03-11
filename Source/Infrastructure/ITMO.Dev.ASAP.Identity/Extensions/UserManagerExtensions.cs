@@ -16,4 +16,14 @@ public static class UserManagerExtensions
         if (!result.Succeeded)
             throw new RegistrationFailedException(string.Join(' ', result.Errors.Select(x => x.Description)));
     }
+
+    public static async Task<AsapIdentityUser> GetByNameAsync(this UserManager<AsapIdentityUser> userManager, string userName)
+    {
+        AsapIdentityUser? user = await userManager.FindByNameAsync(userName);
+
+        if (user is null)
+            throw new EntityNotFoundException($"User with username '{userName}' does not exist");
+
+        return user;
+    }
 }
