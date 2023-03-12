@@ -5,6 +5,7 @@ using ITMO.Dev.ASAP.Core.Specifications.GroupAssignments;
 using ITMO.Dev.ASAP.Core.Specifications.Submissions;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
+using ITMO.Dev.ASAP.Core.SubmissionAssociations;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.Tools;
 using ITMO.Dev.ASAP.Core.UserAssociations;
@@ -82,22 +83,31 @@ public class GithubSubmissionFactory : ISubmissionFactory
             .SingleAsync(cancellationToken);
 
         var studentAssignmentSubmissionsSpec = new GetStudentAssignmentSubmissions(
-            student.UserId, assignmentId);
+            student.UserId,
+            assignmentId);
 
         int count = await _context.Submissions
             .WithSpecification(studentAssignmentSubmissionsSpec)
             .CountAsync(cancellationToken);
 
-        return new GithubSubmission(
+        var submission = new Submission(
             Guid.NewGuid(),
             count + 1,
             student,
             groupAssignment,
             Calendar.CurrentDateTime,
-            _payload,
+            _payload);
+
+        var githubAssociation = new GithubSubmissionAssociation(
+            Guid.NewGuid(),
+            submission,
             _organizationName,
             _repositoryName,
             _pullRequestNumber);
+
+        submission.AddAssociation(githubAssociation);
+
+        return submission;
     }
 
     private async Task<Student> FindStudentByRepositoryName(

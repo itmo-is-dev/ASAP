@@ -27,7 +27,7 @@ public class TestBase : IDisposable
 
         collection.AddEntityGenerators(x =>
         {
-            x.ConfigureEntityGenerator<GithubSubmission>(xx => xx.Count = 1000);
+            x.ConfigureEntityGenerator<Submission>(xx => xx.Count = 1000);
             x.ConfigureEntityGenerator<SubjectCourse>(xx => xx.Count = 1);
             x.ConfigureEntityGenerator<GithubSubjectCourseAssociation>(xx => xx.Count = 1);
 
