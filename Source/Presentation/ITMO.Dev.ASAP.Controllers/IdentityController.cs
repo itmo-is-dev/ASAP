@@ -29,11 +29,11 @@ public class IdentityController : ControllerBase
         return Ok(loginResponse);
     }
 
-    [HttpPost("users/{username}/change-role-to/{role}")]
-    [Authorize]
-    public async Task<IActionResult> ChangeUserRoleAsync(string username, string role)
+    [HttpPost("users/{username}/role")]
+    [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
+    public async Task<IActionResult> ChangeUserRoleAsync(string username, [FromBody] ChangeUserRoleRequest request)
     {
-        var command = new ChangeUserRole.Command(username, role);
+        var command = new ChangeUserRole.Command(username, request.RoleName);
         await _mediator.Send(command);
 
         return Ok();

@@ -13,7 +13,7 @@ public static class UserManagerExtensions
     {
         IdentityResult result = await userManager.CreateAsync(user, password);
 
-        if (!result.Succeeded)
+        if (result.Succeeded is false)
             throw new RegistrationFailedException(string.Join(' ', result.Errors.Select(x => x.Description)));
     }
 

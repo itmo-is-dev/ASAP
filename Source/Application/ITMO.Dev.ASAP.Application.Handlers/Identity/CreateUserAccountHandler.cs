@@ -33,14 +33,14 @@ internal class CreateUserAccountHandler : IRequestHandler<Command>
         if (!await _context.Users.AnyAsync(x => x.Id.Equals(request.UserId), cancellationToken))
             throw new RegistrationFailedException($"User with id {request.UserId} already exists");
 
-        var user = new AsapIdentityUser() { Id = request.UserId, UserName = request.Username, SecurityStamp = Guid.NewGuid().ToString() };
-        await _userManager.CreateOrElseThrowAsync(user, request.Password);
-
-        if (await _context.Mentors.AnyAsync(x => x.UserId.Equals(request.UserId), cancellationToken))
+        var user = new AsapIdentityUser()
         {
-            await _roleManager.CreateRoleIfNotExistsAsync(AsapIdentityRole.AdminRoleName);
-            await _userManager.AddToRoleAsync(user, AsapIdentityRole.MentorRoleName);
-        }
+            Id = request.UserId,
+            UserName = request.Username,
+            SecurityStamp = Guid.NewGuid().ToString(),
+        };
+
+        await _userManager.CreateOrElseThrowAsync(user, request.Password);
 
         return Unit.Value;
     }
