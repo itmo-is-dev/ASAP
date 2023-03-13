@@ -1,11 +1,11 @@
 using ITMO.Dev.ASAP.Application.Dto.Tables;
-using ITMO.Dev.ASAP.Rpc.Abstractions;
-using ITMO.Dev.ASAP.Rpc.Hubs;
+using ITMO.Dev.ASAP.Presentation.Rpc.Abstractions;
+using ITMO.Dev.ASAP.Presentation.Rpc.Hubs;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Notifications.SubmissionsQueueUpdated;
 
-namespace ITMO.Dev.ASAP.Rpc.Handlers;
+namespace ITMO.Dev.ASAP.Presentation.Rpc.Handlers;
 
 internal class QueueUpdateNotificationHandler : INotificationHandler<Notification>
 {

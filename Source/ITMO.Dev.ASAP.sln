@@ -83,7 +83,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Commands", "P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Presentation.GitHub", "Presentation\ITMO.Dev.ASAP.Presentation.GitHub\ITMO.Dev.ASAP.Presentation.GitHub.csproj", "{BF75E2BC-16BD-4520-BD16-F4270F7158D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Rpc", "Presentation\ITMO.Dev.ASAP.Rpc\ITMO.Dev.ASAP.Rpc.csproj", "{912497E4-EA9F-4BF4-8587-038E021F62DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Presentation.Rpc", "Presentation\ITMO.Dev.ASAP.Presentation.Rpc\ITMO.Dev.ASAP.Presentation.Rpc.csproj", "{912497E4-EA9F-4BF4-8587-038E021F62DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

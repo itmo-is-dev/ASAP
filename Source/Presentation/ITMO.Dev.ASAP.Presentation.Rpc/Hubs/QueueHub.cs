@@ -1,7 +1,7 @@
-using ITMO.Dev.ASAP.Rpc.Abstractions;
+using ITMO.Dev.ASAP.Presentation.Rpc.Abstractions;
 using Microsoft.AspNetCore.SignalR;
 
-namespace ITMO.Dev.ASAP.Rpc.Hubs;
+namespace ITMO.Dev.ASAP.Presentation.Rpc.Hubs;
 
 public class QueueHub : Hub<IQueueHub>
 {
