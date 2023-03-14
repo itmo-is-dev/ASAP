@@ -29,7 +29,7 @@ public class IdentityController : ControllerBase
         return Ok(loginResponse);
     }
 
-    [HttpPost("users/{username}/role")]
+    [HttpPut("users/{username}/role")]
     [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
     public async Task<IActionResult> ChangeUserRoleAsync(string username, [FromBody] ChangeUserRoleRequest request)
     {
@@ -53,7 +53,7 @@ public class IdentityController : ControllerBase
         return Ok(credentials);
     }
 
-    [HttpPut("user/{id:guid}/create")]
+    [HttpPost("user/{id:guid}/create")]
     [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
     public async Task<IActionResult> CreateUserAccountAsync(Guid id, [FromBody] CreateUserAccountRequest request)
     {

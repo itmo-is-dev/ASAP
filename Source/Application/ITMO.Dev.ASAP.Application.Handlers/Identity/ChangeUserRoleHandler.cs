@@ -11,7 +11,6 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 internal class ChangeUserRoleHandler : IRequestHandler<Command>
 {
     private readonly ICurrentUser _currentUser;
-    private readonly RoleManager<AsapIdentityRole> _roleManager;
     private readonly UserManager<AsapIdentityUser> _userManager;
 
     public ChangeUserRoleHandler(
@@ -21,7 +20,6 @@ internal class ChangeUserRoleHandler : IRequestHandler<Command>
     {
         _currentUser = currentUser;
         _userManager = userManager;
-        _roleManager = roleManager;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
