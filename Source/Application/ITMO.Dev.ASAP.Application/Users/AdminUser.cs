@@ -12,13 +12,13 @@ internal class AdminUser : ICurrentUser
 
     public Guid Id { get; }
 
-    public IQueryable<SubjectCourse> FilterAvailableSubjectCourses(IQueryable<SubjectCourse> subjectCourses)
+    public bool HasAccessToSubject(Subject subject)
     {
-        return subjectCourses;
+        return true;
     }
 
-    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
+    public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
     {
-        return subjects;
+        return true;
     }
 }

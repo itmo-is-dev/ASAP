@@ -44,6 +44,8 @@ public class SubjectController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = $"{AsapIdentityRole.MentorRoleName}, {AsapIdentityRole.AdminRoleName}, " +
+                       $"{AsapIdentityRole.ModeratorRoleName}")]
     public async Task<ActionResult<SubjectDto>> GetById(Guid id)
     {
         var query = new GetSubjectById.Query(id);
@@ -62,6 +64,8 @@ public class SubjectController : ControllerBase
     }
 
     [HttpGet("{id:guid}/courses")]
+    [Authorize(Roles = $"{AsapIdentityRole.MentorRoleName}, {AsapIdentityRole.AdminRoleName}, " +
+                       $"{AsapIdentityRole.ModeratorRoleName}")]
     public async Task<ActionResult<IReadOnlyCollection<SubjectCourseDto>>> GetSubjectCourses(Guid id)
     {
         var request = new GetSubjectCoursesBySubjectId.Query(id);

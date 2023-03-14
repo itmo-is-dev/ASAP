@@ -12,15 +12,18 @@ internal class MentorUser : ICurrentUser
 
     public Guid Id { get; }
 
-    public IQueryable<SubjectCourse> FilterAvailableSubjectCourses(IQueryable<SubjectCourse> subjectCourses)
+    public IQueryable<SubjectCourse> FilterAvailableSubjectCourses(Subject subject)
     {
-        return subjectCourses
-            .Where(s => s.Mentors.Any(m => m.UserId == Id));
+        return subject.Courses.Where(s => s.Mentors.Any(m => m.UserId == Id)).AsQueryable();
     }
 
-    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
+    public bool HasAccessToSubject(Subject subject)
     {
-        return subjects
-            .Where(s => s.Courses.SelectMany(c => c.Mentors).Any(m => m.UserId == Id));
+        return subject.Courses.Any(HasAccessToSubjectCourse);
+    }
+
+    public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
+    {
+        return subjectCourse.Mentors.Any(m => m.UserId == Id);
     }
 }

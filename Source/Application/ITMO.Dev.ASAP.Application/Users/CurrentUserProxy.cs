@@ -12,14 +12,14 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
 
     public Guid Id => _user.Id;
 
-    public IQueryable<SubjectCourse> FilterAvailableSubjectCourses(IQueryable<SubjectCourse> subjectCourses)
+    public bool HasAccessToSubject(Subject subject)
     {
-        return _user.FilterAvailableSubjectCourses(subjectCourses);
+        return _user.HasAccessToSubject(subject);
     }
 
-    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
+    public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
     {
-        return _user.FilterAvailableSubjects(subjects);
+        return _user.HasAccessToSubjectCourse(subjectCourse);
     }
 
     public void Authenticate(ClaimsPrincipal principal)

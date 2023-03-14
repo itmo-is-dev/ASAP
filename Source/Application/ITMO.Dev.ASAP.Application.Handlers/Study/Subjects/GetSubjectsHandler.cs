@@ -1,5 +1,4 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
@@ -23,14 +22,14 @@ internal class GetSubjectsHandler : IRequestHandler<Query, Response>
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        List<Subject> subjects = await _currentUser
-            .FilterAvailableSubjects(_context.Subjects)
+        List<Subject> subjects = await _context
+            .Subjects
+            .Where(s => _currentUser.HasAccessToSubject(s))
             .ToListAsync(cancellationToken);
 
-        if (subjects.Count is 0)
-            throw UserHasNotAccessException.EmptyAvailableList(_currentUser.Id);
-
-        SubjectDto[] dto = subjects.Select(x => x.ToDto()).ToArray();
+        SubjectDto[] dto = subjects
+            .Select(x => x.ToDto())
+            .ToArray();
 
         return new Response(dto);
     }

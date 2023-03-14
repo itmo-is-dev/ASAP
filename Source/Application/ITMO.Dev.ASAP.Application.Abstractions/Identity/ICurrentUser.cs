@@ -6,7 +6,7 @@ public interface ICurrentUser
 {
     Guid Id { get; }
 
-    IQueryable<SubjectCourse> FilterAvailableSubjectCourses(IQueryable<SubjectCourse> subjectCourses);
+    bool HasAccessToSubject(Subject subject);
 
-    IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects);
+    bool HasAccessToSubjectCourse(SubjectCourse subjectCourse);
 }

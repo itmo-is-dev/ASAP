@@ -12,13 +12,18 @@ internal class ModeratorUser : ICurrentUser
 
     public Guid Id { get; }
 
-    public IQueryable<SubjectCourse> FilterAvailableSubjectCourses(IQueryable<SubjectCourse> subjectCourses)
+    public IQueryable<SubjectCourse> FilterAvailableSubjectCourses(Subject subject)
     {
-        return subjectCourses;
+        return subject.Courses.AsQueryable();
     }
 
-    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
+    public bool HasAccessToSubject(Subject subject)
     {
-        return subjects;
+        return true;
+    }
+
+    public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
+    {
+        return true;
     }
 }
