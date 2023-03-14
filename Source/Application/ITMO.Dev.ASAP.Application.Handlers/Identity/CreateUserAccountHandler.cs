@@ -12,7 +12,6 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 internal class CreateUserAccountHandler : IRequestHandler<Command>
 {
     private readonly IDatabaseContext _context;
-    private readonly RoleManager<AsapIdentityRole> _roleManager;
     private readonly UserManager<AsapIdentityUser> _userManager;
 
     public CreateUserAccountHandler(
@@ -21,7 +20,6 @@ internal class CreateUserAccountHandler : IRequestHandler<Command>
         UserManager<AsapIdentityUser> userManager)
     {
         _context = context;
-        _roleManager = roleManager;
         _userManager = userManager;
     }
 
