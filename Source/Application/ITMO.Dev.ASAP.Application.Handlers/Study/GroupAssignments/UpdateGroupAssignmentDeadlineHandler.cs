@@ -37,14 +37,13 @@ internal class UpdateGroupAssignmentDeadlineHandler : IRequestHandler<Command, R
         if (groupAssignment is null)
             throw new EntityNotFoundException("GroupAssignment not found");
 
-        if (!_currentUser.CanUpdateAllDeadlines)
+        if (_currentUser.CanUpdateAllDeadlines is false)
         {
-            Mentor? mentor = await _context
-                .Mentors
+            Mentor? mentor = await _context.Mentors
                 .Where(mentor => mentor.UserId.Equals(_currentUser.Id))
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (mentor is null || !mentor.Course.Equals(groupAssignment.Assignment.SubjectCourse))
+            if (mentor?.Course.Equals(groupAssignment.Assignment.SubjectCourse) is not true)
                 throw new AccessDenied();
         }
 
