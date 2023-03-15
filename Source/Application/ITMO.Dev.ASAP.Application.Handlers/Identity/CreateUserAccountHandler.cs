@@ -4,7 +4,7 @@ using ITMO.Dev.ASAP.Identity.Entities;
 using ITMO.Dev.ASAP.Identity.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.CreateUserAccount;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
@@ -25,10 +25,10 @@ internal class CreateUserAccountHandler : IRequestHandler<Command>
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        if (!await _userManager.Users.AnyAsync(x => x.UserName.Equals(request.Username), cancellationToken))
+        if (!_userManager.Users.Any(x => x.UserName.Equals(request.Username)))
             throw new RegistrationFailedException($"User with username '{request.Username}' already exists");
 
-        if (!await _context.Users.AnyAsync(x => x.Id.Equals(request.UserId), cancellationToken))
+        if (!_context.Users.Any(x => x.Id.Equals(request.UserId)))
             throw new RegistrationFailedException($"User with id {request.UserId} already exists");
 
         var user = new AsapIdentityUser()

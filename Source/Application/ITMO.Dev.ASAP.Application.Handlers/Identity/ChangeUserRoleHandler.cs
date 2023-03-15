@@ -25,7 +25,8 @@ internal class ChangeUserRoleHandler : IRequestHandler<Command>
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
         AsapIdentityUser user = await _userManager.GetByNameAsync(request.Username);
-        string userRoleName = (await _userManager.GetRolesAsync(user)).Single();
+        IList<string> userRoles = await _userManager.GetRolesAsync(user);
+        string userRoleName = userRoles.Single();
 
         if (_currentUser.CanChangeRole(userRoleName, request.UserRole) is false)
             throw new RoleChangingException($"Unable to change role of {user.UserName}");
