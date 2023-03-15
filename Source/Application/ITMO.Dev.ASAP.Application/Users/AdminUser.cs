@@ -11,7 +11,7 @@ internal class AdminUser : ICurrentUser
 
     public Guid Id { get; }
 
-    public bool CanChangeRole(string? currentRoleName, string? newRoleName)
+    public bool CanChangeRole(string currentRoleName, string newRoleName)
     {
         return true;
     }

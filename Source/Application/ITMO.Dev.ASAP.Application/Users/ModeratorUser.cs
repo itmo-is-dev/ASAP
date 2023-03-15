@@ -7,7 +7,6 @@ internal class ModeratorUser : ICurrentUser
 {
     private static readonly HashSet<string?> AvailableRolesToChange = new()
     {
-        null,
         AsapIdentityRole.MentorRoleName,
     };
 
