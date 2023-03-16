@@ -11,5 +11,5 @@ internal class ModeratorUser : ICurrentUser
 
     public Guid Id { get; }
 
-    public bool CanUpdateAllDeadlines => false;
+    public bool CanUpdateAllDeadlines => true;
 }

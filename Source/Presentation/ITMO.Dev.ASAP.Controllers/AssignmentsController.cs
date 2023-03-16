@@ -70,7 +70,7 @@ public class AssignmentsController : ControllerBase
 
     [HttpPut("{assignmentId:guid}/groups/{groupId:guid}")]
 
-    [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName},{AsapIdentityRole.MentorRoleName}")]
+    [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName},{AsapIdentityRole.MentorRoleName},{AsapIdentityRole.ModeratorRoleName}")]
     public async Task<ActionResult<GroupAssignmentDto>> UpdateById(
         Guid assignmentId,
         Guid groupId,
