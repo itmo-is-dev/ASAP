@@ -26,11 +26,11 @@ internal class IdentityClient : IIdentityClient
         return await _handler.SendAsync<LoginResponse>(message, cancellationToken);
     }
 
-    public async Task ChangeUserRoleAsync(string username, ChangeUserRoleRequest request, CancellationToken cancellationToken = default)
+    public async Task ChangeUserRoleAsync(string username, string roleName, CancellationToken cancellationToken = default)
     {
         using var message = new HttpRequestMessage(HttpMethod.Put, $"api/identity/users/{username}/role")
         {
-            Content = request.ToContent(_serializerSettings),
+            Content = roleName.ToContent(_serializerSettings),
         };
 
         await _handler.SendAsync(message, cancellationToken);
