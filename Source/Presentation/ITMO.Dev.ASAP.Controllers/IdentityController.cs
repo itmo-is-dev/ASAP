@@ -31,9 +31,9 @@ public class IdentityController : ControllerBase
 
     [HttpPut("users/{username}/role")]
     [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
-    public async Task<IActionResult> ChangeUserRoleAsync(string username, [FromBody] ChangeUserRoleRequest request)
+    public async Task<IActionResult> ChangeUserRoleAsync(string username, [FromQuery] string roleName)
     {
-        var command = new ChangeUserRole.Command(username, request.RoleName);
+        var command = new ChangeUserRole.Command(username, roleName);
         await _mediator.Send(command);
 
         return Ok();
