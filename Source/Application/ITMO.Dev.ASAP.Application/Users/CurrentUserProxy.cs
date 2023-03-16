@@ -13,6 +13,16 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
 
     public bool CanUpdateAllDeadlines => _user.CanUpdateAllDeadlines;
 
+    public bool CanCreateUserWithRole(string roleName)
+    {
+        return _user.CanCreateUserWithRole(roleName);
+    }
+
+    public bool CanChangeUserRole(string currentRoleName, string newRoleName)
+    {
+        return _user.CanChangeUserRole(currentRoleName, newRoleName);
+    }
+
     public void Authenticate(ClaimsPrincipal principal)
     {
         string[] roles = principal.Claims

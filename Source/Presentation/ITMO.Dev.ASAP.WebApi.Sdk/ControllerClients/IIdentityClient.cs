@@ -6,7 +6,9 @@ public interface IIdentityClient
 {
     Task<LoginResponse> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default);
 
-    Task PromoteAsync(string username, CancellationToken cancellationToken = default);
+    Task ChangeUserRoleAsync(string username, string roleName, CancellationToken cancellationToken = default);
 
     Task<LoginResponse> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken = default);
+
+    Task CreateUserAccountAsync(Guid id, CreateUserAccountRequest request, CancellationToken cancellationToken = default);
 }

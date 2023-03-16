@@ -12,4 +12,14 @@ internal class MentorUser : ICurrentUser
     public Guid Id { get; }
 
     public bool CanUpdateAllDeadlines => false;
+
+    public bool CanCreateUserWithRole(string roleName)
+    {
+        return false;
+    }
+
+    public bool CanChangeUserRole(string currentRoleName, string newRoleName)
+    {
+        return false;
+    }
 }
