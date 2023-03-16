@@ -57,7 +57,7 @@ public class IdentityController : ControllerBase
     [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
     public async Task<IActionResult> CreateUserAccountAsync(Guid id, [FromBody] CreateUserAccountRequest request)
     {
-        var command = new CreateUserAccount.Command(id, request.Username, request.Password);
+        var command = new CreateUserAccount.Command(id, request.Username, request.Password, request.RoleName);
         await _mediator.Send(command);
 
         return Ok();

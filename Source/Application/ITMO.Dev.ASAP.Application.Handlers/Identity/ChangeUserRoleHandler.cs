@@ -15,8 +15,7 @@ internal class ChangeUserRoleHandler : IRequestHandler<Command>
 
     public ChangeUserRoleHandler(
         ICurrentUser currentUser,
-        UserManager<AsapIdentityUser> userManager,
-        RoleManager<AsapIdentityRole> roleManager)
+        UserManager<AsapIdentityUser> userManager)
     {
         _currentUser = currentUser;
         _userManager = userManager;
@@ -28,8 +27,8 @@ internal class ChangeUserRoleHandler : IRequestHandler<Command>
         IList<string> userRoles = await _userManager.GetRolesAsync(user);
         string userRoleName = userRoles.Single();
 
-        if (_currentUser.CanChangeRole(userRoleName, request.UserRole) is false)
-            throw new RoleChangingException($"Unable to change role of {user.UserName}");
+        if (_currentUser.CanChangeUserRole(userRoleName, request.UserRole) is false)
+            throw new AsapIdentityException($"Unable to change role of {user.UserName}");
 
         await _userManager.RemoveFromRolesAsync(user, new[] { userRoleName });
         await _userManager.AddToRoleAsync(user, request.UserRole);

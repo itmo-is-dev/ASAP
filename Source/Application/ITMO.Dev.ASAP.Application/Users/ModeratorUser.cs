@@ -17,7 +17,12 @@ internal class ModeratorUser : ICurrentUser
 
     public Guid Id { get; }
 
-    public bool CanChangeRole(string currentRoleName, string newRoleName)
+    public bool CanCreateUserWithRole(string roleName)
+    {
+        return AvailableRolesToChange.Contains(roleName);
+    }
+
+    public bool CanChangeUserRole(string currentRoleName, string newRoleName)
     {
         return AvailableRolesToChange.Contains(currentRoleName)
                && AvailableRolesToChange.Contains(newRoleName);

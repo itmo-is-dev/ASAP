@@ -11,9 +11,14 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
 
     public Guid Id => _user.Id;
 
-    public bool CanChangeRole(string currentRoleName, string newRoleName)
+    public bool CanCreateUserWithRole(string roleName)
     {
-        return _user.CanChangeRole(currentRoleName, newRoleName);
+        return _user.CanCreateUserWithRole(roleName);
+    }
+
+    public bool CanChangeUserRole(string currentRoleName, string newRoleName)
+    {
+        return _user.CanChangeUserRole(currentRoleName, newRoleName);
     }
 
     public void Authenticate(ClaimsPrincipal principal)

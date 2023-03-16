@@ -8,7 +8,12 @@ internal class AnonymousUser : ICurrentUser
 #pragma warning disable CA1065
     public Guid Id => throw new UnauthorizedException("Tried to access anonymous user Id");
 
-    public bool CanChangeRole(string currentRoleName, string newRoleName)
+    public bool CanCreateUserWithRole(string roleName)
+    {
+        throw new UnauthorizedException("Tried to access anonymous user Id");
+    }
+
+    public bool CanChangeUserRole(string currentRoleName, string newRoleName)
     {
         throw new UnauthorizedException("Tried to access anonymous user Id");
     }

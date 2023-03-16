@@ -4,5 +4,7 @@ public interface ICurrentUser
 {
     Guid Id { get; }
 
-    bool CanChangeRole(string currentRoleName, string newRoleName);
+    bool CanCreateUserWithRole(string roleName);
+
+    bool CanChangeUserRole(string currentRoleName, string newRoleName);
 }
