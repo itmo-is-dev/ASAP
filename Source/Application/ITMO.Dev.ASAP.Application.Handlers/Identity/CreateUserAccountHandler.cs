@@ -25,10 +25,10 @@ internal class CreateUserAccountHandler : IRequestHandler<Command>
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        if (!_userManager.Users.Any(x => x.UserName.Equals(request.Username)))
+        if (_userManager.Users.Any(x => x.UserName.Equals(request.Username)) is false)
             throw new RegistrationFailedException($"User with username '{request.Username}' already exists");
 
-        if (!_context.Users.Any(x => x.Id.Equals(request.UserId)))
+        if (_context.Users.Any(x => x.Id.Equals(request.UserId)) is false)
             throw new RegistrationFailedException($"User with id {request.UserId} already exists");
 
         var user = new AsapIdentityUser()
