@@ -29,11 +29,11 @@ public class IdentityController : ControllerBase
         return Ok(loginResponse);
     }
 
-    [HttpPost("users/{username}/promote")]
-    [Authorize(Roles = AsapIdentityRole.AdminRoleName)]
-    public async Task<IActionResult> PromoteAsync(string username)
+    [HttpPut("users/{username}/role")]
+    [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
+    public async Task<IActionResult> ChangeUserRoleAsync(string username, [FromQuery] string roleName)
     {
-        var command = new PromoteToAdmin.Command(username);
+        var command = new ChangeUserRole.Command(username, roleName);
         await _mediator.Send(command);
 
         return Ok();
@@ -51,5 +51,15 @@ public class IdentityController : ControllerBase
 
         var credentials = new LoginResponse(loginResponse.Token, loginResponse.Expires, loginResponse.Roles);
         return Ok(credentials);
+    }
+
+    [HttpPost("user/{id:guid}/create")]
+    [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
+    public async Task<IActionResult> CreateUserAccountAsync(Guid id, [FromBody] CreateUserAccountRequest request)
+    {
+        var command = new CreateUserAccount.Command(id, request.Username, request.Password, request.RoleName);
+        await _mediator.Send(command);
+
+        return Ok();
     }
 }
