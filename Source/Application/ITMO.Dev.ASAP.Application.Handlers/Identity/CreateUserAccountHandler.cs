@@ -34,7 +34,7 @@ internal class CreateUserAccountHandler : IRequestHandler<Command>
         if (_context.Users.Any(x => x.Id.Equals(request.UserId)) is false)
             throw EntityNotFoundException.For<User>(request.UserId);
 
-        if (_currentUser.CanCreateUserWithRole(request.RoleName))
+        if (_currentUser.CanCreateUserWithRole(request.RoleName) is false)
             throw new AsapIdentityException($"User {_currentUser.Id} can't create user with role {request.RoleName}");
 
         var user = new AsapIdentityUser()
