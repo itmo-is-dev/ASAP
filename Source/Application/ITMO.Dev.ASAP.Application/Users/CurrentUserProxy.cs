@@ -11,6 +11,8 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
 
     public Guid Id => _user.Id;
 
+    public bool CanUpdateAllDeadlines => _user.CanUpdateAllDeadlines;
+
     public bool CanCreateUserWithRole(string roleName)
     {
         return _user.CanCreateUserWithRole(roleName);

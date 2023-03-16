@@ -17,6 +17,8 @@ internal class ModeratorUser : ICurrentUser
 
     public Guid Id { get; }
 
+    public bool CanUpdateAllDeadlines => true;
+
     public bool CanCreateUserWithRole(string roleName)
     {
         return AvailableRolesToChange.Contains(roleName);

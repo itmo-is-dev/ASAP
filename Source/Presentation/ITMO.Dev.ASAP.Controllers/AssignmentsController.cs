@@ -69,6 +69,8 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpPut("{assignmentId:guid}/groups/{groupId:guid}")]
+
+    [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName},{AsapIdentityRole.MentorRoleName},{AsapIdentityRole.ModeratorRoleName}")]
     public async Task<ActionResult<GroupAssignmentDto>> UpdateById(
         Guid assignmentId,
         Guid groupId,
@@ -76,7 +78,6 @@ public class AssignmentsController : ControllerBase
     {
         var deadline = DateOnly.FromDateTime(request.Deadline);
         var command = new UpdateGroupAssignmentDeadline.Command(groupId, assignmentId, deadline);
-
         UpdateGroupAssignmentDeadline.Response response = await _mediator.Send(command);
 
         return Ok(response.GroupAssignment);
