@@ -5,6 +5,7 @@ using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.Subjects.Queries.GetSubjectById;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Study.Subjects;
@@ -23,6 +24,7 @@ internal class GetSubjectByIdHandler : IRequestHandler<Query, Response>
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
         Subject subject = await _context.Subjects
+            .Include(x => x.Courses)
             .GetByIdAsync(request.Id, cancellationToken);
 
         if (_currentUser.HasAccessToSubject(subject) is false)
