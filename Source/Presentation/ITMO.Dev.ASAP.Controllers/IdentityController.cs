@@ -52,4 +52,24 @@ public class IdentityController : ControllerBase
         var credentials = new LoginResponse(loginResponse.Token, loginResponse.Expires, loginResponse.Roles);
         return Ok(credentials);
     }
+
+    [HttpPost("update-username")]
+    [Authorize(Roles = AsapIdentityRole.AdminRoleName)]
+    public async Task<ActionResult> UpdateUsernameAsync([FromBody] UpdateUsernameRequest request)
+    {
+        var updateCommand = new UpdateUsername.Command(request.Username);
+        await _mediator.Send(updateCommand);
+
+        return Ok();
+    }
+
+    [HttpPost("register")]
+    [Authorize(Roles = AsapIdentityRole.AdminRoleName)]
+    public async Task<ActionResult> UpdatePasswordAsync([FromBody] UpdatePasswordRequest request)
+    {
+        var updateCommand = new UpdatePassword.Command(request.CurrentPassword, request.NewPassword);
+        await _mediator.Send(updateCommand);
+
+        return Ok();
+    }
 }

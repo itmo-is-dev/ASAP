@@ -9,4 +9,6 @@ public interface IIdentityClient
     Task PromoteAsync(string username, CancellationToken cancellationToken = default);
 
     Task<LoginResponse> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken = default);
+    Task UpdatePasswordAsync(UpdatePasswordRequest request, CancellationToken cancellationToken = default);
+    Task UpdateUsernameAsync(UpdateUsernameRequest request, CancellationToken cancellationToken = default);
 }
