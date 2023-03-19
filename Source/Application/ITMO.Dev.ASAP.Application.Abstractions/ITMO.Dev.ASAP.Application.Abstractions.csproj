@@ -9,12 +9,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MediatR"/>
+        <PackageReference Include="MediatR" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Domain\ITMO.Dev.ASAP.Core\ITMO.Dev.ASAP.Core.csproj"/>
-        <ProjectReference Include="..\ITMO.Dev.ASAP.Application.Dto\ITMO.Dev.ASAP.Application.Dto.csproj"/>
+        <ProjectReference Include="..\..\Domain\ITMO.Dev.ASAP.Core\ITMO.Dev.ASAP.Core.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.Application.Dto\ITMO.Dev.ASAP.Application.Dto.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Submissions\Models" />
     </ItemGroup>
 
 </Project>

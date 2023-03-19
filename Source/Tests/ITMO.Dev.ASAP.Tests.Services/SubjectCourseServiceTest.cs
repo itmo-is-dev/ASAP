@@ -4,7 +4,10 @@ using ITMO.Dev.ASAP.Application.Abstractions.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Services;
 using ITMO.Dev.ASAP.Core.Study;
+using ITMO.Dev.ASAP.Github.Application.Dto.Users;
+using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using Xunit;
 
 namespace ITMO.Dev.ASAP.Tests.Services;
@@ -15,7 +18,13 @@ public class SubjectCourseServiceTest : TestBase
 
     public SubjectCourseServiceTest()
     {
-        _service = new SubjectCourseService(Context, new UserFullNameFormatter());
+        var githubUserService = new Mock<IGithubUserService>();
+
+        githubUserService
+            .Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Guid id, CancellationToken _) => new GithubUserDto(id, id.ToString()));
+
+        _service = new SubjectCourseService(Context, new UserFullNameFormatter(), githubUserService.Object);
     }
 
     [Fact]

@@ -1,7 +1,6 @@
 using Bogus;
 using ITMO.Dev.ASAP.Core.Models;
 using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubmissionAssociations;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.Tools;
 using ITMO.Dev.ASAP.Core.Users;
@@ -52,15 +51,6 @@ public class SubmissionGenerator : EntityGeneratorBase<Submission>
             groupAssignment,
             Calendar.FromLocal(_faker.Date.Future()),
             _faker.Internet.Url());
-
-        var githubAssociation = new GithubSubmissionAssociation(
-            _faker.Random.Guid(),
-            submission,
-            _faker.Company.CompanyName(),
-            _faker.Commerce.ProductName(),
-            _faker.Random.Long(0, 100));
-
-        submission.AddAssociation(githubAssociation);
 
         groupAssignment.AddSubmission(submission);
 

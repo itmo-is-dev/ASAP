@@ -21,8 +21,8 @@ public static class SubmissionMapping
             submission.State.Kind.AsDto());
     }
 
-    public static QueueSubmissionDto ToQueueDto(this Submission submission)
+    public static QueueSubmissionDto ToQueueDto(this Submission submission, string? studentGithubUsername)
     {
-        return new QueueSubmissionDto(submission.Student.ToDto(), submission.ToDto());
+        return new QueueSubmissionDto(submission.Student.ToDto(studentGithubUsername), submission.ToDto());
     }
 }

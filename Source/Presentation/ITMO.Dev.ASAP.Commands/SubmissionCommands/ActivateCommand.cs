@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace ITMO.Dev.ASAP.Commands.SubmissionCommands;
 
 [Verb("/activate")]
-public class ActivateCommand : ISubmissionCommand<SubmissionContext, SubmissionDto>
+public class ActivateCommand : ISubmissionCommand
 {
     public async Task<SubmissionDto> ExecuteAsync(
         SubmissionContext context,

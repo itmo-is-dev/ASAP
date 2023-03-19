@@ -8,6 +8,8 @@ using ITMO.Dev.ASAP.Application.Extensions;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Github.Application.Dto.Users;
+using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,11 +19,16 @@ public class SubjectCourseService : ISubjectCourseService
 {
     private readonly IDatabaseContext _context;
     private readonly IUserFullNameFormatter _userFullNameFormatter;
+    private readonly IGithubUserService _githubUserService;
 
-    public SubjectCourseService(IDatabaseContext context, IUserFullNameFormatter userFullNameFormatter)
+    public SubjectCourseService(
+        IDatabaseContext context,
+        IUserFullNameFormatter userFullNameFormatter,
+        IGithubUserService githubUserService)
     {
         _context = context;
         _userFullNameFormatter = userFullNameFormatter;
+        _githubUserService = githubUserService;
     }
 
     public async Task<SubjectCoursePointsDto> CalculatePointsAsync(
@@ -45,20 +52,24 @@ public class SubjectCourseService : ISubjectCourseService
             .SelectMany(x => x.GroupAssignments)
             .SelectMany(ga => ga.Group.Students.Select(s => new StudentAssignment(s, ga)));
 
-        StudentPointsDto[] studentPoints = studentAssignmentPoints
+        List<StudentPointsDto> studentPoints = await studentAssignmentPoints
             .GroupBy(x => x.Student)
-            .Select(MapToStudentPoints)
+            .ToAsyncEnumerable()
+            .SelectAwait(async x => await MapToStudentPoints(x, cancellationToken))
             .OrderBy(x => x.Student.GroupName)
             .ThenBy(x => _userFullNameFormatter.GetFullName(x.Student.User))
-            .ToArray();
+            .ToListAsync(cancellationToken);
 
         AssignmentDto[] assignmentsDto = assignments.Select(x => x.ToDto()).ToArray();
         return new SubjectCoursePointsDto(assignmentsDto, studentPoints);
     }
 
-    private StudentPointsDto MapToStudentPoints(IGrouping<Student, StudentAssignment> grouping)
+    private async Task<StudentPointsDto> MapToStudentPoints(
+        IGrouping<Student, StudentAssignment> grouping,
+        CancellationToken cancellationToken)
     {
-        StudentDto studentDto = grouping.Key.ToDto();
+        GithubUserDto? githubUser = await _githubUserService.FindByIdAsync(grouping.Key.UserId, cancellationToken);
+        StudentDto studentDto = grouping.Key.ToDto(githubUser?.Username);
 
         AssignmentPointsDto[] pointsDto = grouping
             .Select(x => x.Points)

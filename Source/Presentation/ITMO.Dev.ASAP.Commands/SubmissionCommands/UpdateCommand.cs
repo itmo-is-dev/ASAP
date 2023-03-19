@@ -1,16 +1,11 @@
 using CommandLine;
-using ITMO.Dev.ASAP.Application.Contracts.Study.Submissions.Commands;
-using ITMO.Dev.ASAP.Application.Contracts.Study.Submissions.Queries;
-using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Commands.CommandVisitors;
-using ITMO.Dev.ASAP.Commands.Contexts;
 using ITMO.Dev.ASAP.Common.Tools;
-using Microsoft.Extensions.Logging;
 
 namespace ITMO.Dev.ASAP.Commands.SubmissionCommands;
 
 [Verb("/update")]
-public class UpdateCommand : ISubmissionCommand<UpdateContext, SubmissionRateDto>
+public class UpdateCommand : ISubmissionCommand
 {
     public UpdateCommand(int? submissionCode, double? ratingPercent, double? extraPoints, string? dateStr)
     {
@@ -32,70 +27,22 @@ public class UpdateCommand : ISubmissionCommand<UpdateContext, SubmissionRateDto
     [Option('d', "date", Group = "update", Required = false)]
     public string? DateStr { get; }
 
-    public async Task<SubmissionRateDto> ExecuteAsync(
-        UpdateContext context,
-        ILogger logger,
-        CancellationToken cancellationToken)
-    {
-        logger.LogInformation(
-            "Handle /update command from {IssuerId} with arguments: {Args}",
-            context.IssuerId,
-            ToLogLine());
-
-        SubmissionDto submission = SubmissionCode is null
-            ? await context.GetDefaultSubmissionAsync(cancellationToken)
-            : await GetSubmissionByCodeAsync(context, SubmissionCode.Value, cancellationToken);
-
-        SubmissionRateDto? rateDto = null;
-
-        if (RatingPercent is not null || ExtraPoints is not null)
-        {
-            var command = new UpdateSubmissionPoints.Command(
-                context.IssuerId, submission.Id, RatingPercent, ExtraPoints);
-
-            UpdateSubmissionPoints.Response response = await context.Mediator.Send(command, cancellationToken);
-
-            rateDto = response.Submission;
-        }
-
-        if (DateStr is not null)
-        {
-            var command = new UpdateSubmissionDate.Command(context.IssuerId, submission.Id, GetDate());
-            UpdateSubmissionDate.Response response = await context.Mediator.Send(command, cancellationToken);
-
-            rateDto = response.Submission;
-        }
-
-        return rateDto ?? throw new InvalidOperationException("No update command was executed");
-    }
-
     public Task AcceptAsync(ISubmissionCommandVisitor visitor)
     {
         return visitor.VisitAsync(this);
     }
 
-    public DateOnly GetDate()
+    public DateOnly? GetDate()
     {
-        return RuCultureDate.Parse(DateStr);
+        return string.IsNullOrEmpty(DateStr) ? null : RuCultureDate.Parse(DateStr);
     }
 
-    public string ToLogLine()
+    public override string ToString()
     {
         return $" {{ SubmissionCode : {SubmissionCode}," +
                $" RatingPercent: {RatingPercent}" +
                $" ExtraPoints: {ExtraPoints}" +
                $" DateStr: {DateStr}" +
                " }";
-    }
-
-    private async Task<SubmissionDto> GetSubmissionByCodeAsync(
-        UpdateContext context,
-        int code,
-        CancellationToken cancellationToken)
-    {
-        var query = new GetSubmissionByCode.Query(context.Student.Id, context.Assignment.Id, code);
-        GetSubmissionByCode.Response response = await context.Mediator.Send(query, cancellationToken);
-
-        return response.Submission;
     }
 }

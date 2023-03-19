@@ -9,8 +9,7 @@ public class UserAssociationConfiguration : IEntityTypeConfiguration<UserAssocia
     public void Configure(EntityTypeBuilder<UserAssociation> builder)
     {
         builder.HasDiscriminator<string>("Discriminator")
-            .HasValue<IsuUserAssociation>(nameof(IsuUserAssociation))
-            .HasValue<GithubUserAssociation>(nameof(GithubUserAssociation));
+            .HasValue<IsuUserAssociation>(nameof(IsuUserAssociation));
 
         builder.HasIndex("UserId", "Discriminator").IsUnique();
     }

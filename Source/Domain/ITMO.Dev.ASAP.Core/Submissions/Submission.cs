@@ -1,7 +1,6 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Core.DeadlinePolicies;
 using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubmissionAssociations;
 using ITMO.Dev.ASAP.Core.Submissions.States;
 using ITMO.Dev.ASAP.Core.Tools;
 using ITMO.Dev.ASAP.Core.Users;
@@ -12,8 +11,6 @@ namespace ITMO.Dev.ASAP.Core.Submissions;
 
 public partial class Submission : IEntity<Guid>
 {
-    private readonly HashSet<SubmissionAssociation> _associations;
-
     public Submission(
         Guid id,
         int code,
@@ -32,7 +29,6 @@ public partial class Submission : IEntity<Guid>
         Rating = default;
         ExtraPoints = default;
 
-        _associations = new HashSet<SubmissionAssociation>();
         State = new ActiveSubmissionState();
     }
 
@@ -49,8 +45,6 @@ public partial class Submission : IEntity<Guid>
     public virtual Student Student { get; protected init; }
 
     public virtual GroupAssignment GroupAssignment { get; protected init; }
-
-    public virtual IReadOnlyCollection<SubmissionAssociation> Associations => _associations;
 
     public Points? Points => Rating is null ? default : GroupAssignment.Assignment.MaxPoints * Rating;
 
@@ -149,14 +143,6 @@ public partial class Submission : IEntity<Guid>
     public void MarkAsReviewed()
     {
         State = State.MoveToReviewed();
-    }
-
-    public void AddAssociation(SubmissionAssociation association)
-    {
-        ArgumentNullException.ThrowIfNull(association);
-
-        if (!_associations.Add(association))
-            throw new DomainInvalidOperationException($"Submission {this} already has association {association}");
     }
 
     private Points? GetEffectivePoints()

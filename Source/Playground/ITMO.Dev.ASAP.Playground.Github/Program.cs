@@ -1,8 +1,8 @@
-using ITMO.Dev.ASAP.Application.GithubWorkflow.Abstractions.Models;
-using ITMO.Dev.ASAP.Integration.Github.Extensions;
-using ITMO.Dev.ASAP.Integration.Github.Helpers;
+using ITMO.Dev.ASAP.Github.Octokit.Extensions;
+using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Extensions;
 using ITMO.Dev.ASAP.Playground.Github.Extensions;
 using ITMO.Dev.ASAP.Playground.Github.TestEnv;
+using ITMO.Dev.ASAP.WebApi.Configuration;
 using Serilog;
 
 namespace ITMO.Dev.ASAP.Playground.Github;
@@ -18,25 +18,18 @@ internal static class Program
 
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-        CacheConfiguration cacheConfiguration =
-            builder.Configuration.GetSection(nameof(CacheConfiguration)).Get<CacheConfiguration>();
-
-        GithubIntegrationConfiguration githubIntegrationConfiguration = builder.Configuration
-            .GetSection(nameof(GithubIntegrationConfiguration))
-            .Get<GithubIntegrationConfiguration>();
-
         TestEnvironmentConfiguration testEnvironmentConfiguration = builder.Configuration
             .GetSection(nameof(TestEnvironmentConfiguration))
             .Get<TestEnvironmentConfiguration>();
 
         builder.Services
             .AddPlaygroundDependencies()
-            .AddGithubServices(cacheConfiguration, githubIntegrationConfiguration)
+            .AddGithubServices(builder.Configuration)
             .AddGithubPlaygroundDatabase(testEnvironmentConfiguration);
 
         WebApplication app = builder.Build();
 
-        app.UseGithubIntegration(githubIntegrationConfiguration);
+        app.UseGithubIntegration();
         await app.Services.UseTestEnv(testEnvironmentConfiguration);
 
         await app.RunAsync();

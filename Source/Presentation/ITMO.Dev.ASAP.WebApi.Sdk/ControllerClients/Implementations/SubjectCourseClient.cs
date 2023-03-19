@@ -93,14 +93,6 @@ internal class SubjectCourseClient : ISubjectCourseClient
         return await _handler.SendAsync<SubjectCourseDto>(message, cancellationToken);
     }
 
-    public async Task<SubjectCourseDto> RemoveGithubAssociationAsync(
-        Guid id,
-        CancellationToken cancellationToken = default)
-    {
-        using var message = new HttpRequestMessage(HttpMethod.Delete, $"api/SubjectCourse/{id}/association/github");
-        return await _handler.SendAsync<SubjectCourseDto>(message, cancellationToken);
-    }
-
     public async Task AddFractionDeadlinePolicyAsync(
         Guid id,
         AddFractionPolicyRequest request,

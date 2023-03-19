@@ -1,13 +1,10 @@
-using ITMO.Dev.ASAP.Integration.Github.Extensions;
-using ITMO.Dev.ASAP.Integration.Github.Helpers;
+using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Extensions;
 
 namespace ITMO.Dev.ASAP.WebApi.Extensions;
 
 internal static class StartupExtensions
 {
-    internal static WebApplication Configure(
-        this WebApplication app,
-        GithubIntegrationConfiguration githubIntegrationConfiguration)
+    internal static WebApplication Configure(this WebApplication app)
     {
         app.UseRequestLogging();
 
@@ -32,7 +29,7 @@ internal static class StartupExtensions
         app.MapFallbackToFile("index.html");
 
         app.MapControllers();
-        app.UseGithubIntegration(githubIntegrationConfiguration);
+        app.UseGithubIntegration();
 
         return app;
     }

@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ITMO.Dev.ASAP.Application.Abstractions\ITMO.Dev.ASAP.Application.Abstractions.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.Application.Dto\ITMO.Dev.ASAP.Application.Dto.csproj" />
     </ItemGroup>
 
@@ -19,7 +18,7 @@
         <InternalsVisibleTo Include="ITMO.Dev.ASAP.Controllers" />
         <InternalsVisibleTo Include="ITMO.Dev.ASAP.Commands" />
         <InternalsVisibleTo Include="ITMO.Dev.ASAP.Application" />
-        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Presentation.GitHub" />
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Presentation.Services" />
         <InternalsVisibleTo Include="ITMO.Dev.ASAP.WebApi" />
         <InternalsVisibleTo Include="ITMO.Dev.ASAP.Application.Handlers" />
         <InternalsVisibleTo Include="ITMO.Dev.ASAP.Tests.Handlers" />

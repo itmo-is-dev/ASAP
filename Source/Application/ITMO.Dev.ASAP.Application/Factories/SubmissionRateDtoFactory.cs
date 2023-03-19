@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Application.Dto.Study;
+using ITMO.Dev.ASAP.Application.Dto.Submissions;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.ValueObject;
 
@@ -17,6 +17,7 @@ public static class SubmissionRateDtoFactory
             rating = submission.Rating * 100;
 
         var dto = new SubmissionRateDto(
+            submission.Id,
             submission.Code,
             submission.State.Kind.ToString(),
             submission.SubmissionDate.Value,
