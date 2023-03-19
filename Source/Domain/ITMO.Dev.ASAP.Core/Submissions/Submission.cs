@@ -10,11 +10,11 @@ using RichEntity.Annotations;
 
 namespace ITMO.Dev.ASAP.Core.Submissions;
 
-public abstract partial class Submission : IEntity<Guid>
+public partial class Submission : IEntity<Guid>
 {
     private readonly HashSet<SubmissionAssociation> _associations;
 
-    protected Submission(
+    public Submission(
         Guid id,
         int code,
         Student student,
@@ -151,7 +151,7 @@ public abstract partial class Submission : IEntity<Guid>
         State = State.MoveToReviewed();
     }
 
-    protected void AddAssociation(SubmissionAssociation association)
+    public void AddAssociation(SubmissionAssociation association)
     {
         ArgumentNullException.ThrowIfNull(association);
 

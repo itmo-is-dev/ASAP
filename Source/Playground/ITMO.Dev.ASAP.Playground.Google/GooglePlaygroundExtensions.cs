@@ -15,7 +15,7 @@ public static class GooglePlaygroundExtensions
     {
         return serviceCollection
             .AddEntityGenerators(o => o
-                .ConfigureEntityGenerator<GithubSubmission>(s => s.Count = 5000)
+                .ConfigureEntityGenerator<Submission>(s => s.Count = 5000)
                 .ConfigureEntityGenerator<User>(s => s.Count = 500)
                 .ConfigureEntityGenerator<Student>(s => s.Count = 400)
                 .ConfigureEntityGenerator<StudentGroup>(s => s.Count = 20)

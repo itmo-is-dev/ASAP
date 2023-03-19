@@ -10,4 +10,16 @@ internal class AdminUser : ICurrentUser
     }
 
     public Guid Id { get; }
+
+    public bool CanUpdateAllDeadlines => true;
+
+    public bool CanCreateUserWithRole(string roleName)
+    {
+        return true;
+    }
+
+    public bool CanChangeUserRole(string currentRoleName, string newRoleName)
+    {
+        return true;
+    }
 }

@@ -1,6 +1,7 @@
 using Bogus;
 using ITMO.Dev.ASAP.Core.Models;
 using ITMO.Dev.ASAP.Core.Study;
+using ITMO.Dev.ASAP.Core.SubmissionAssociations;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.Tools;
 using ITMO.Dev.ASAP.Core.Users;
@@ -10,7 +11,7 @@ using ITMO.Dev.ASAP.Seeding.Options;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators.Submissions;
 
-public class GithubSubmissionGenerator : EntityGeneratorBase<GithubSubmission>
+public class SubmissionGenerator : EntityGeneratorBase<Submission>
 {
     private const double MaxExtraPoints = 15;
     private const float ExtraPointsPresenceProbability = 0.1f;
@@ -18,8 +19,8 @@ public class GithubSubmissionGenerator : EntityGeneratorBase<GithubSubmission>
 
     private readonly Faker _faker;
 
-    public GithubSubmissionGenerator(
-        EntityGeneratorOptions<GithubSubmission> options,
+    public SubmissionGenerator(
+        EntityGeneratorOptions<Submission> options,
         Faker faker,
         IEntityGenerator<Assignment> assignmentGenerator)
         : base(options)
@@ -28,7 +29,7 @@ public class GithubSubmissionGenerator : EntityGeneratorBase<GithubSubmission>
         _assignmentGenerator = assignmentGenerator;
     }
 
-    protected override GithubSubmission Generate(int index)
+    protected override Submission Generate(int index)
     {
         IEnumerable<Assignment> assignments = _assignmentGenerator.GeneratedEntities
             .Where(x => x.GroupAssignments.SelectMany(xx => xx.Group.Students).Any());
@@ -44,16 +45,22 @@ public class GithubSubmissionGenerator : EntityGeneratorBase<GithubSubmission>
 
         int submissionCount = groupAssignment.Submissions.Count(x => x.Student.Equals(student));
 
-        var submission = new GithubSubmission(
+        var submission = new Submission(
             _faker.Random.Guid(),
             submissionCount + 1,
             student,
             groupAssignment,
             Calendar.FromLocal(_faker.Date.Future()),
-            _faker.Internet.Url(),
+            _faker.Internet.Url());
+
+        var githubAssociation = new GithubSubmissionAssociation(
+            _faker.Random.Guid(),
+            submission,
             _faker.Company.CompanyName(),
             _faker.Commerce.ProductName(),
             _faker.Random.Long(0, 100));
+
+        submission.AddAssociation(githubAssociation);
 
         groupAssignment.AddSubmission(submission);
 

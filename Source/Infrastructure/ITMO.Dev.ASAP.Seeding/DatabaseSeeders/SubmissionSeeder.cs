@@ -4,11 +4,11 @@ using ITMO.Dev.ASAP.Seeding.EntityGenerators;
 
 namespace ITMO.Dev.ASAP.Seeding.DatabaseSeeders;
 
-public class GithubSubmissionSeeder : IDatabaseSeeder
+public class SubmissionSeeder : IDatabaseSeeder
 {
-    private readonly IEntityGenerator<GithubSubmission> _generator;
+    private readonly IEntityGenerator<Submission> _generator;
 
-    public GithubSubmissionSeeder(IEntityGenerator<GithubSubmission> generator)
+    public SubmissionSeeder(IEntityGenerator<Submission> generator)
     {
         _generator = generator;
     }
