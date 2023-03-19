@@ -1,10 +1,11 @@
 using ITMO.Dev.ASAP.Application.Contracts.Students.Notifications;
 using ITMO.Dev.ASAP.Application.Dto.Users;
+using ITMO.Dev.ASAP.Application.Handlers.Extensions;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
-using ITMO.Dev.ASAP.Mapping.Mappings;
+using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using static ITMO.Dev.ASAP.Application.Contracts.Students.Commands.TransferStudent;
@@ -15,11 +16,13 @@ internal class TransferStudentHandler : IRequestHandler<Command, Response>
 {
     private readonly IDatabaseContext _context;
     private readonly IPublisher _publisher;
+    private readonly IGithubUserService _githubUserService;
 
-    public TransferStudentHandler(IDatabaseContext context, IPublisher publisher)
+    public TransferStudentHandler(IDatabaseContext context, IPublisher publisher, IGithubUserService githubUserService)
     {
         _context = context;
         _publisher = publisher;
+        _githubUserService = githubUserService;
     }
 
     public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
@@ -38,7 +41,7 @@ internal class TransferStudentHandler : IRequestHandler<Command, Response>
         _context.StudentGroups.Update(group);
         await _context.SaveChangesAsync(cancellationToken);
 
-        StudentDto dto = student.ToDto();
+        StudentDto dto = await _githubUserService.MapToStudentDtoAsync(student, default);
 
         var notification = new StudentTransferred.Notification(dto.User.Id, request.GroupId, oldGroupId);
         await _publisher.PublishAsync(notification, cancellationToken);

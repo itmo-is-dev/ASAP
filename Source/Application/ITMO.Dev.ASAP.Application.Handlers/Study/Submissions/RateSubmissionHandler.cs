@@ -1,8 +1,8 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Submissions.Notifications;
-using ITMO.Dev.ASAP.Application.Dto.Study;
-using ITMO.Dev.ASAP.Application.Extensions;
+using ITMO.Dev.ASAP.Application.Dto.Submissions;
 using ITMO.Dev.ASAP.Application.Factories;
+using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.ValueObject;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;

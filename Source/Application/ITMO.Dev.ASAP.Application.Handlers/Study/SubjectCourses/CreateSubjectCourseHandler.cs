@@ -1,5 +1,4 @@
 using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.Core.SubmissionStateWorkflows;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
@@ -28,15 +27,6 @@ internal class CreateSubjectCourseHandler : IRequestHandler<Command, Response>
             subject,
             request.Title,
             workflowType);
-
-        IEnumerable<SubjectCourseAssociation> associations = request.Associations
-            .Select(x => x.ToEntity(subjectCourse));
-
-        foreach (SubjectCourseAssociation association in associations)
-        {
-            subjectCourse.AddAssociation(association);
-            _context.SubjectCourseAssociations.Add(association);
-        }
 
         _context.SubjectCourses.Add(subjectCourse);
         await _context.SaveChangesAsync(cancellationToken);

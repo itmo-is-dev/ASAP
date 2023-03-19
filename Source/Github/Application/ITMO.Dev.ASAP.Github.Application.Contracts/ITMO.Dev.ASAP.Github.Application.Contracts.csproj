@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MediatR.Contracts" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Presentation\ITMO.Dev.ASAP.Commands\ITMO.Dev.ASAP.Commands.csproj" />
+      <ProjectReference Include="..\ITMO.Dev.ASAP.Github.Application.Dto\ITMO.Dev.ASAP.Github.Application.Dto.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Github.Application.Handlers" />
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Github.Application" />
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Github.Presentation.Controllers" />
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Github.Presentation.Webhooks" />
+    </ItemGroup>
+
+</Project>

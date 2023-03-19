@@ -1,4 +1,3 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Submissions.Models;
 using ITMO.Dev.ASAP.Application.Dto.Submissions;
 
 namespace ITMO.Dev.ASAP.Application.Abstractions.Submissions;

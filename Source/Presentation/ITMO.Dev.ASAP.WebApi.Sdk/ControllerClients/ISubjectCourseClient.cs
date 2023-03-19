@@ -33,10 +33,6 @@ public interface ISubjectCourseClient
         AddSubjectCourseGithubAssociationRequest request,
         CancellationToken cancellationToken = default);
 
-    Task<SubjectCourseDto> RemoveGithubAssociationAsync(
-        Guid id,
-        CancellationToken cancellationToken = default);
-
     Task AddFractionDeadlinePolicyAsync(
         Guid id,
         AddFractionPolicyRequest request,

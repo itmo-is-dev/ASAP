@@ -1,12 +1,10 @@
 using CommandLine;
 using ITMO.Dev.ASAP.Commands.CommandVisitors;
-using ITMO.Dev.ASAP.Commands.Contexts;
-using Microsoft.Extensions.Logging;
 
 namespace ITMO.Dev.ASAP.Commands.SubmissionCommands;
 
 [Verb("/help")]
-public class HelpCommand : ISubmissionCommand<BaseContext, string>
+public class HelpCommand : ISubmissionCommand
 {
     public const string HelpString = @"
 Команды:
@@ -30,14 +28,6 @@ public class HelpCommand : ISubmissionCommand<BaseContext, string>
 
 - Создание или переоткрытие PR - создаёт сабмишен
 - Добавление нового комита в PR - обновляет дату сабмишена на текущую";
-
-    private static readonly Task<string> CachedTask = Task.FromResult<string>(HelpString);
-
-    public Task<string> ExecuteAsync(BaseContext context, ILogger logger, CancellationToken cancellationToken)
-    {
-        logger.LogDebug("Handle /help command from {IssuerId}", context.IssuerId);
-        return CachedTask;
-    }
 
     public Task AcceptAsync(ISubmissionCommandVisitor visitor)
     {

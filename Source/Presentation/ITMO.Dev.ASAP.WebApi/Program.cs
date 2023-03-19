@@ -16,15 +16,17 @@ internal class Program
         builder.AddDeveloperEnvironment();
 
         var webApiConfiguration = new WebApiConfiguration(builder.Configuration);
-        IConfigurationSection identityConfigurationSection =
-            builder.Configuration.GetSection("Identity").GetSection("IdentityConfiguration");
+
+        IConfigurationSection identityConfigurationSection = builder.Configuration
+            .GetSection("Identity:IdentityConfiguration");
 
         builder.Services.ConfigureServiceCollection(
+            builder.Configuration,
             webApiConfiguration,
             identityConfigurationSection,
-            builder.Environment.IsDevelopment());
+            builder.Environment.IsDevelopment() || builder.Environment.IsStaging());
 
-        WebApplication app = builder.Build().Configure(webApiConfiguration.GithubIntegrationConfiguration);
+        WebApplication app = builder.Build().Configure();
 
         using (IServiceScope scope = app.Services.CreateScope())
         {

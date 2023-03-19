@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MediatR" />
+      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Presentation\ITMO.Dev.ASAP.Presentation.Contracts\ITMO.Dev.ASAP.Presentation.Contracts.csproj" />
+      <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.Github.Octokit\ITMO.Dev.ASAP.Github.Octokit.csproj" />
+      <ProjectReference Include="..\..\ITMO.Dev.ASAP.Github.Common\ITMO.Dev.ASAP.Github.Common.csproj" />
+      <ProjectReference Include="..\Abstractions\ITMO.Dev.ASAP.Github.Application.DataAccess\ITMO.Dev.ASAP.Github.Application.DataAccess.csproj" />
+      <ProjectReference Include="..\ITMO.Dev.ASAP.Github.Application.Contracts\ITMO.Dev.ASAP.Github.Application.Contracts.csproj" />
+      <ProjectReference Include="..\ITMO.Dev.ASAP.Github.Application.Specifications\ITMO.Dev.ASAP.Github.Application.Specifications.csproj" />
+    </ItemGroup>
+
+</Project>

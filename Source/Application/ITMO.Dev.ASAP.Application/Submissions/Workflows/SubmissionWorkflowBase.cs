@@ -1,8 +1,6 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
 using ITMO.Dev.ASAP.Application.Abstractions.Submissions;
-using ITMO.Dev.ASAP.Application.Abstractions.Submissions.Models;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Submissions.Notifications;
-using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.Submissions;
 using ITMO.Dev.ASAP.Application.Factories;
 using ITMO.Dev.ASAP.Common.Exceptions;

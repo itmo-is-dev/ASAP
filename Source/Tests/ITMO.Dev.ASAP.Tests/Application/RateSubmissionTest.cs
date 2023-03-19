@@ -13,7 +13,7 @@ public class RateSubmissionTest : TestBase
     [Fact]
     public async Task UpdateSubmission_Should_NoThrow()
     {
-        Submission first = await Context.GetGithubSubmissionAsync(new ActiveSubmissionState());
+        Submission first = await Context.GetSubmissionAsync(new ActiveSubmissionState());
 
         first.Rate(new Fraction(0.5), Points.None);
         first.State.Kind.Should().Be(SubmissionStateKind.Completed);

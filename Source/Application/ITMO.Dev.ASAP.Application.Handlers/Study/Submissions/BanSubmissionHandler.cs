@@ -1,10 +1,10 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Submissions.Notifications;
 using ITMO.Dev.ASAP.Application.Dto.Study;
-using ITMO.Dev.ASAP.Application.Extensions;
+using ITMO.Dev.ASAP.Application.Specifications;
+using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.Submissions.Commands.BanSubmission;
@@ -29,15 +29,16 @@ internal class BanSubmissionHandler : IRequestHandler<Command, Response>
 
     public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
     {
+        Submission submission = await _context.Submissions
+            .GetSubmissionForCodeOrLatestAsync(request.UserId, request.AssignmentId, request.Code, cancellationToken);
+
+        if (submission is null)
+            throw new EntityNotFoundException("Could not find submission");
+
         await _permissionValidator.EnsureSubmissionMentorAsync(
             request.IssuerId,
-            request.SubmissionId,
+            submission.Id,
             cancellationToken);
-
-        Submission submission = await _context.Submissions
-            .IncludeSubjectCourse()
-            .IncludeStudentGroup()
-            .GetByIdAsync(request.SubmissionId, cancellationToken);
 
         submission.Ban();
 
