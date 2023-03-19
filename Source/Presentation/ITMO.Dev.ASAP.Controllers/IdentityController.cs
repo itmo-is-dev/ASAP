@@ -54,7 +54,7 @@ public class IdentityController : ControllerBase
     }
 
     [HttpPost("update-username")]
-    [Authorize(Roles = AsapIdentityRole.AdminRoleName)]
+    [Authorize]
     public async Task<ActionResult> UpdateUsernameAsync([FromBody] UpdateUsernameRequest request)
     {
         var updateCommand = new UpdateUsername.Command(request.Username);
@@ -63,8 +63,8 @@ public class IdentityController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("register")]
-    [Authorize(Roles = AsapIdentityRole.AdminRoleName)]
+    [HttpPost("update-password")]
+    [Authorize]
     public async Task<ActionResult> UpdatePasswordAsync([FromBody] UpdatePasswordRequest request)
     {
         var updateCommand = new UpdatePassword.Command(request.CurrentPassword, request.NewPassword);
