@@ -9,7 +9,9 @@
     <ItemGroup>
         <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.Identity\ITMO.Dev.ASAP.Identity.csproj" />
         <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.Mapping\ITMO.Dev.ASAP.Mapping.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.Application.Common\ITMO.Dev.ASAP.Application.Common.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.Application.Contracts\ITMO.Dev.ASAP.Application.Contracts.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.Application.Common\ITMO.Dev.ASAP.Application.Common.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.Application\ITMO.Dev.ASAP.Application.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.DataAccess.Abstractions\ITMO.Dev.ASAP.DataAccess.Abstractions.csproj" />
     </ItemGroup>
