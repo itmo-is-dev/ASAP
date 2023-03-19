@@ -1,3 +1,4 @@
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Identity;
 
 namespace ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients;

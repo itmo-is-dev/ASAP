@@ -1,3 +1,4 @@
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Identity;
 using ITMO.Dev.ASAP.WebApi.Sdk.Extensions;
 using ITMO.Dev.ASAP.WebApi.Sdk.Tools;
