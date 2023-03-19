@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Queries;
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Identity.Entities;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Identity;
 using MediatR;
@@ -71,5 +72,15 @@ public class IdentityController : ControllerBase
         await _mediator.Send(updateCommand);
 
         return Ok();
+    }
+
+    [NonAction]
+    [HttpGet("get-password-options")]
+    public async Task<PasswordOptionsDto> GetPasswordOptionsAsync()
+    {
+        var query = new GetPasswordOptions.Query();
+        GetPasswordOptions.Response response = await _mediator.Send(query, HttpContext.RequestAborted);
+
+        return response.PasswordOptions;
     }
 }

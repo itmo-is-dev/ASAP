@@ -1,3 +1,4 @@
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Identity;
 using ITMO.Dev.ASAP.WebApi.Sdk.Extensions;
 using ITMO.Dev.ASAP.WebApi.Sdk.Tools;
@@ -53,6 +54,12 @@ internal class IdentityClient : IIdentityClient
         };
 
         await _handler.SendAsync(message, cancellationToken);
+    }
+
+    public async Task<PasswordOptionsDto> GetPasswordOptionsAsync(CancellationToken cancellationToken = default)
+    {
+        using var message = new HttpRequestMessage(HttpMethod.Get, "api/identity/get-password-options");
+        return await _handler.SendAsync<PasswordOptionsDto>(message, cancellationToken);
     }
 
     public async Task UpdatePasswordAsync(UpdatePasswordRequest request, CancellationToken cancellationToken = default)

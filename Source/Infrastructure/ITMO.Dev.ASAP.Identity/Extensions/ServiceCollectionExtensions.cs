@@ -22,12 +22,23 @@ public static class ServiceCollectionExtensions
         IdentityConfiguration? identityConfiguration = identityConfigurationSection
             .Get<IdentityConfiguration>();
 
+        IdentityConfigurationPassword? identityConfigurationPassword = identityConfigurationSection
+            .Get<IdentityConfigurationPassword>();
+
         collection.AddScoped<IAuthorizationService, AuthorizationService>();
 
         collection.AddSingleton(identityConfiguration);
         collection.AddDbContext<AsapIdentityContext>(dbContextAction);
 
-        collection.AddIdentity<AsapIdentityUser, AsapIdentityRole>()
+        collection.AddIdentity<AsapIdentityUser, AsapIdentityRole>(options =>
+            {
+                options.Password.RequireDigit = identityConfigurationPassword.RequireDigit;
+                options.Password.RequiredLength = identityConfigurationPassword.RequiredLength;
+                options.Password.RequiredUniqueChars = identityConfigurationPassword.RequiredUniqueChars;
+                options.Password.RequireLowercase = identityConfigurationPassword.RequireLowercase;
+                options.Password.RequireNonAlphanumeric = identityConfigurationPassword.RequireNonAlphanumeric;
+                options.Password.RequireUppercase = identityConfigurationPassword.RequireUppercase;
+            })
             .AddEntityFrameworkStores<AsapIdentityContext>()
             .AddDefaultTokenProviders();
 
