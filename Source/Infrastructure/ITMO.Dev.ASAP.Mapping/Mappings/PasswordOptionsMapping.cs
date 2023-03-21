@@ -1,22 +1,18 @@
 ﻿using ITMO.Dev.ASAP.Application.Dto.Identity;
-using ITMO.Dev.ASAP.Identity.Tools;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 
 public static class PasswordOptionsMapping
 {
-    public static PasswordOptionsDto ToPasswordOptionsDto(this IConfigurationSection identityConfigurationSection)
+    public static PasswordOptionsDto ToDto(this IdentityOptions options)
     {
-        IdentityConfigurationPassword? identityConfigurationPassword = identityConfigurationSection
-            .Get<IdentityConfigurationPassword>();
-
         return new PasswordOptionsDto(
-            identityConfigurationPassword.RequireDigit,
-            identityConfigurationPassword.RequireLowercase,
-            identityConfigurationPassword.RequireNonAlphanumeric,
-            identityConfigurationPassword.RequireUppercase,
-            identityConfigurationPassword.RequiredLength,
-            identityConfigurationPassword.RequiredUniqueChars);
+            options.Password.RequireDigit,
+            options.Password.RequireLowercase,
+            options.Password.RequireNonAlphanumeric,
+            options.Password.RequireUppercase,
+            options.Password.RequiredLength,
+            options.Password.RequiredUniqueChars);
     }
 }

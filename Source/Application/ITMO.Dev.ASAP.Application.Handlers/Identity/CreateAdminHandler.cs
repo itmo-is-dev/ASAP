@@ -2,15 +2,15 @@ using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Identity.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.Register;
+using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.CreateAdmin;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 
-internal class RegisterHandler : IRequestHandler<Command>
+internal class CreateAdminHandler : IRequestHandler<Command>
 {
     private readonly UserManager<AsapIdentityUser> _userManager;
 
-    public RegisterHandler(UserManager<AsapIdentityUser> userManager)
+    public CreateAdminHandler(UserManager<AsapIdentityUser> userManager)
     {
         _userManager = userManager;
     }
@@ -26,8 +26,10 @@ internal class RegisterHandler : IRequestHandler<Command>
 
         IdentityResult? result = await _userManager.CreateAsync(user, request.Password);
 
-        if (!result.Succeeded)
+        if (result.Succeeded is false)
             throw new RegistrationFailedException(string.Join(' ', result.Errors.Select(r => r.Description)));
+
+        await _userManager.AddToRoleAsync(user, AsapIdentityRole.AdminRoleName);
 
         return Unit.Value;
     }

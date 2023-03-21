@@ -22,7 +22,7 @@ internal class UpdateUsernameHandler : IRequestHandler<Command>
     {
         AsapIdentityUser? existingUser = await _userManager.FindByIdAsync(_currentUser.Id.ToString());
 
-        if (existingUser.UserName == request.Username)
+        if (existingUser.UserName.Equals(request.Username, StringComparison.Ordinal))
             throw new UpdateUsernameFailedException("the old username is the same as the new one");
 
         existingUser.UserName = request.Username;

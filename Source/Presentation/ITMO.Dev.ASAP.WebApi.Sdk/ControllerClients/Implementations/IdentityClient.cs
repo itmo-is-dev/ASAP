@@ -37,16 +37,6 @@ internal class IdentityClient : IIdentityClient
         await _handler.SendAsync(message, cancellationToken);
     }
 
-    public async Task<LoginResponse> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken = default)
-    {
-        using var message = new HttpRequestMessage(HttpMethod.Post, "api/identity/register")
-        {
-            Content = request.ToContent(_serializerSettings),
-        };
-
-        return await _handler.SendAsync<LoginResponse>(message, cancellationToken);
-    }
-
     public async Task CreateUserAccountAsync(Guid id, CreateUserAccountRequest request, CancellationToken cancellationToken = default)
     {
         using var message = new HttpRequestMessage(HttpMethod.Post, $"api/identity/user/{id}/create")

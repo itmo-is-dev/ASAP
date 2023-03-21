@@ -40,20 +40,6 @@ public class IdentityController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("register")]
-    [Authorize(Roles = AsapIdentityRole.AdminRoleName)]
-    public async Task<ActionResult<LoginResponse>> RegisterAsync([FromBody] RegisterUserRequest request)
-    {
-        var registerCommand = new Register.Command(request.Username, request.Password);
-        await _mediator.Send(registerCommand);
-
-        var loginCommand = new Login.Query(request.Username, request.Password);
-        Login.Response loginResponse = await _mediator.Send(loginCommand, HttpContext.RequestAborted);
-
-        var credentials = new LoginResponse(loginResponse.Token, loginResponse.Expires, loginResponse.Roles);
-        return Ok(credentials);
-    }
-
     [HttpPost("user/{id:guid}/create")]
     [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
     public async Task<IActionResult> CreateUserAccountAsync(Guid id, [FromBody] CreateUserAccountRequest request)
@@ -64,7 +50,7 @@ public class IdentityController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("update-username")]
+    [HttpPut("username")]
     [Authorize]
     public async Task<ActionResult> UpdateUsernameAsync([FromBody] UpdateUsernameRequest request)
     {
@@ -74,7 +60,7 @@ public class IdentityController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("update-password")]
+    [HttpPut("password")]
     [Authorize]
     public async Task<ActionResult> UpdatePasswordAsync([FromBody] UpdatePasswordRequest request)
     {
@@ -84,8 +70,7 @@ public class IdentityController : ControllerBase
         return Ok();
     }
 
-    [NonAction]
-    [HttpGet("get-password-options")]
+    [HttpGet("password/options")]
     public async Task<PasswordOptionsDto> GetPasswordOptionsAsync()
     {
         var query = new GetPasswordOptions.Query();
