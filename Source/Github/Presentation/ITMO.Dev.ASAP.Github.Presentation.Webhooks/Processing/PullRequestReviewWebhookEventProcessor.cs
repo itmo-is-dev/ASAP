@@ -18,18 +18,18 @@ public class PullRequestReviewWebhookEventProcessor
     private readonly ILogger<PullRequestReviewWebhookEventProcessor> _logger;
     private readonly IMediator _mediator;
     private readonly ISubmissionCommandParser _commandParser;
-    private readonly INotifierFactory _notifierFactory;
+    private readonly IPullRequestEventNotifier _notifier;
 
     public PullRequestReviewWebhookEventProcessor(
         ILogger<PullRequestReviewWebhookEventProcessor> logger,
         IMediator mediator,
         ISubmissionCommandParser commandParser,
-        INotifierFactory notifierFactory)
+        IPullRequestEventNotifier notifier)
     {
         _logger = logger;
         _mediator = mediator;
         _commandParser = commandParser;
-        _notifierFactory = notifierFactory;
+        _notifier = notifier;
     }
 
     public async Task ProcessAsync(
@@ -47,8 +47,6 @@ public class PullRequestReviewWebhookEventProcessor
             reviewEvent.GetType().Name,
             action);
 
-        IPullRequestEventNotifier notifier = _notifierFactory.ForPullRequest(pullRequest);
-
         try
         {
             string? reviewBody = reviewEvent.Review.Body;
@@ -65,7 +63,7 @@ public class PullRequestReviewWebhookEventProcessor
                     break;
 
                 case PullRequestReviewActionValue.Submitted when reviewState is "commented":
-                    await ProcessCommentedAsync(pullRequest, reviewBody, logger, notifier, reviewEvent.Review.Id);
+                    await ProcessCommentedAsync(pullRequest, reviewBody, logger, _notifier, reviewEvent.Review.Id);
                     break;
 
                 case PullRequestReviewActionValue.Edited:
@@ -83,7 +81,7 @@ public class PullRequestReviewWebhookEventProcessor
             string message = $"Failed to handle {action}";
             logger.LogError(e, "{MethodName}:{Message}", processorName, message);
 
-            await notifier.SendExceptionMessageSafe(e);
+            await _notifier.SendExceptionMessageSafe(e);
         }
     }
 

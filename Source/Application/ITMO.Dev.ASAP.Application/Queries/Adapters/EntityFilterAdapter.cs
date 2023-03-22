@@ -6,9 +6,9 @@ namespace ITMO.Dev.ASAP.Application.Queries.Adapters;
 
 public class EntityFilterAdapter<TEntity, TParameter> : IEntityFilter<TEntity, TParameter>
 {
-    private readonly IChain<EntityFilterRequest<TEntity, TParameter>, IReadOnlyCollection<TEntity>> _chain;
+    private readonly IChain<EntityFilterRequest<TEntity, TParameter>, IEnumerable<TEntity>> _chain;
 
-    public EntityFilterAdapter(IChain<EntityFilterRequest<TEntity, TParameter>, IReadOnlyCollection<TEntity>> chain)
+    public EntityFilterAdapter(IChain<EntityFilterRequest<TEntity, TParameter>, IEnumerable<TEntity>> chain)
     {
         _chain = chain;
     }

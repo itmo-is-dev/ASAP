@@ -28,5 +28,5 @@ internal class WebApiConfiguration
 
     public DbNamesConfiguration DbNamesConfiguration { get; }
 
-    public TestEnvironmentConfiguration TestEnvironmentConfiguration { get; }
+    public TestEnvironmentConfiguration? TestEnvironmentConfiguration { get; }
 }

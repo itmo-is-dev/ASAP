@@ -17,18 +17,18 @@ internal class PullRequestClosedHandler : IRequestHandler<Command>
     private readonly IDatabaseContext _context;
     private readonly IAsapSubmissionWorkflowService _asapSubmissionWorkflowService;
     private readonly IAsapPermissionService _asapPermissionService;
-    private readonly INotifierFactory _notifierFactory;
+    private readonly IPullRequestEventNotifier _notifier;
 
     public PullRequestClosedHandler(
         IDatabaseContext context,
         IAsapSubmissionWorkflowService asapSubmissionWorkflowService,
         IAsapPermissionService asapPermissionService,
-        INotifierFactory notifierFactory)
+        IPullRequestEventNotifier notifier)
     {
         _context = context;
         _asapSubmissionWorkflowService = asapSubmissionWorkflowService;
         _asapPermissionService = asapPermissionService;
-        _notifierFactory = notifierFactory;
+        _notifier = notifier;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
@@ -63,8 +63,7 @@ internal class PullRequestClosedHandler : IRequestHandler<Command>
                 cancellationToken),
         };
 
-        IPullRequestEventNotifier notifier = _notifierFactory.ForPullRequest(request.PullRequest);
-        await notifier.SendCommentToPullRequest(result.Message);
+        await _notifier.SendCommentToPullRequest(result.Message);
 
         return Unit.Value;
     }

@@ -4,5 +4,5 @@ public interface ISubmissionWorkflowService
 {
     Task<ISubmissionWorkflow> GetSubmissionWorkflowAsync(Guid submissionId, CancellationToken cancellationToken);
 
-    Task<ISubmissionWorkflow> GetSubjectCourseWorkflowAsync(Guid subjectCourseId, CancellationToken cancellationToken);
+    Task<ISubmissionWorkflow> GetAssignmentWorkflowAsync(Guid assignmentId, CancellationToken cancellationToken);
 }

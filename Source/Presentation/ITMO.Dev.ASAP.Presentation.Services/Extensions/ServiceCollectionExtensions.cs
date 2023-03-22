@@ -6,10 +6,13 @@ namespace ITMO.Dev.ASAP.Presentation.Services.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddAsapPresentationContracts(this IServiceCollection collection)
+    public static IServiceCollection AddAsapPresentationServices(this IServiceCollection collection)
     {
         collection.AddScoped<IAsapSubjectCourseService, AsapSubjectCourseService>();
+        collection.AddScoped<IAsapSubmissionService, AsapSubmissionService>();
         collection.AddScoped<IAsapUserService, AsapUserService>();
+        collection.AddScoped<IAsapPermissionService, AsapPermissionService>();
+        collection.AddScoped<IAsapSubmissionWorkflowService, AsapSubmissionWorkflowService>();
 
         return collection;
     }

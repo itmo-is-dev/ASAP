@@ -13,16 +13,16 @@ public class PullRequestWebhookEventProcessor
 {
     private readonly ILogger<PullRequestWebhookEventProcessor> _logger;
     private readonly IMediator _mediator;
-    private readonly INotifierFactory _notifierFactory;
+    private readonly IPullRequestEventNotifier _notifier;
 
     public PullRequestWebhookEventProcessor(
         ILogger<PullRequestWebhookEventProcessor> logger,
         IMediator mediator,
-        INotifierFactory notifierFactory)
+        IPullRequestEventNotifier notifier)
     {
         _logger = logger;
         _mediator = mediator;
-        _notifierFactory = notifierFactory;
+        _notifier = notifier;
     }
 
     public async Task ProcessAsync(PullRequestDto pullRequest, PullRequestEvent pullRequestEvent, string action)
@@ -80,8 +80,7 @@ public class PullRequestWebhookEventProcessor
             string message = $"Failed to handle {action}";
             logger.LogError(e, "{MethodName}: {Message}", processorName, message);
 
-            IPullRequestEventNotifier notifier = _notifierFactory.ForPullRequest(pullRequest);
-            await notifier.SendExceptionMessageSafe(e);
+            await _notifier.SendExceptionMessageSafe(e);
         }
     }
 }

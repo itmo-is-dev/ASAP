@@ -4,10 +4,17 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Application\Abstractions\ITMO.Dev.ASAP.Github.Application.DataAccess\ITMO.Dev.ASAP.Github.Application.DataAccess.csproj" />
+        <ProjectReference Include="..\..\Application\Abstractions\ITMO.Dev.ASAP.Github.Application.DataAccess\ITMO.Dev.ASAP.Github.Application.DataAccess.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     </ItemGroup>
 
 </Project>

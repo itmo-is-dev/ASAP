@@ -91,6 +91,6 @@ public static class ServiceCollectionExtensions
         return services
             .AddScoped<IGithubUserService, GithubUserService>()
             .AddScoped<IGithubOrganizationService, GithubOrganizationService>()
-            .AddScoped<IGithubUserService, GithubUserService>();
+            .AddScoped<IGithubRepositoryService, GithubRepositoryService>();
     }
 }

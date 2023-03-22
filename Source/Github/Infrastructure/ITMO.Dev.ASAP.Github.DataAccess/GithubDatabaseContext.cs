@@ -7,8 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITMO.Dev.ASAP.Github.DataAccess;
 
-public class DatabaseContext : DbContext, IDatabaseContext
+public class GithubDatabaseContext : DbContext, IDatabaseContext
 {
+    public GithubDatabaseContext(DbContextOptions<GithubDatabaseContext> options) : base(options) { }
+
     public DbSet<GithubUser> Users => Set<GithubUser>();
 
     public DbSet<GithubSubmission> Submissions => Set<GithubSubmission>();

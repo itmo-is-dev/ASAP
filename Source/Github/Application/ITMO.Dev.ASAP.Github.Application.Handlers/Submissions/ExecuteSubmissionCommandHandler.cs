@@ -12,39 +12,35 @@ namespace ITMO.Dev.ASAP.Github.Application.Handlers.Submissions;
 
 internal class ExecuteSubmissionCommandHandler : IRequestHandler<Command>
 {
-    private readonly INotifierFactory _notifierFactory;
     private readonly IAsapSubmissionService _asapSubmissionService;
     private readonly IDatabaseContext _context;
     private readonly ILogger<ExecuteSubmissionCommandHandler> _logger;
+    private readonly IPullRequestCommentEventNotifier _notifier;
 
     public ExecuteSubmissionCommandHandler(
-        INotifierFactory notifierFactory,
         IAsapSubmissionService asapSubmissionService,
         IDatabaseContext context,
-        ILogger<ExecuteSubmissionCommandHandler> logger)
+        ILogger<ExecuteSubmissionCommandHandler> logger,
+        IPullRequestCommentEventNotifier notifier)
     {
-        _notifierFactory = notifierFactory;
         _asapSubmissionService = asapSubmissionService;
         _context = context;
         _logger = logger;
+        _notifier = notifier;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        IPullRequestCommentEventNotifier notifier = _notifierFactory.ForPullRequestComment(
-            request.PullRequest,
-            request.CommentId);
-
         var visitor = new PullRequestContextCommandVisitor(
             _asapSubmissionService,
             _context,
             request.PullRequest,
-            notifier);
+            _notifier);
 
         try
         {
             await request.SubmissionCommand.AcceptAsync(visitor);
-            await notifier.ReactToUserComment(true);
+            await _notifier.ReactToUserComment(true);
         }
         catch (DomainException e)
         {
@@ -54,8 +50,8 @@ internal class ExecuteSubmissionCommandHandler : IRequestHandler<Command>
 
             _logger.LogError(e, "{Title}: {Message}", title, message);
 
-            await notifier.SendCommentToPullRequest(message);
-            await notifier.ReactToUserComment(false);
+            await _notifier.SendCommentToPullRequest(message);
+            await _notifier.ReactToUserComment(false);
         }
         catch (Exception e)
         {
@@ -63,8 +59,8 @@ internal class ExecuteSubmissionCommandHandler : IRequestHandler<Command>
 
             _logger.LogError(e, "{Message}", message);
 
-            await notifier.SendCommentToPullRequest(message);
-            await notifier.ReactToUserComment(false);
+            await _notifier.SendCommentToPullRequest(message);
+            await _notifier.ReactToUserComment(false);
         }
 
         return Unit.Value;
