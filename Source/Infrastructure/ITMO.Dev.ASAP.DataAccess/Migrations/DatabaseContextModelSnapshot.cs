@@ -192,29 +192,6 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("SubjectCourseAssociation");
                 });
 
-            modelBuilder.Entity("ITMO.Dev.ASAP.Core.SubmissionAssociations.SubmissionAssociation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SubmissionId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubmissionId", "Discriminator")
-                        .IsUnique();
-
-                    b.ToTable("SubmissionAssociations");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("SubmissionAssociation");
-                });
-
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Submissions.Submission", b =>
                 {
                     b.Property<Guid>("Id")
@@ -364,28 +341,6 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("FractionDeadlinePolicy");
                 });
 
-            modelBuilder.Entity("ITMO.Dev.ASAP.Core.SubjectCourseAssociations.GithubSubjectCourseAssociation", b =>
-                {
-                    b.HasBaseType("ITMO.Dev.ASAP.Core.SubjectCourseAssociations.SubjectCourseAssociation");
-
-                    b.Property<string>("GithubOrganizationName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("MentorTeamName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TemplateRepositoryName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasIndex("GithubOrganizationName")
-                        .IsUnique();
-
-                    b.HasDiscriminator().HasValue("GithubSubjectCourseAssociation");
-                });
-
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.SubjectCourseAssociations.GoogleTableSubjectCourseAssociation", b =>
                 {
                     b.HasBaseType("ITMO.Dev.ASAP.Core.SubjectCourseAssociations.SubjectCourseAssociation");
@@ -395,38 +350,6 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                         .HasColumnType("text");
 
                     b.HasDiscriminator().HasValue("GoogleTableSubjectCourseAssociation");
-                });
-
-            modelBuilder.Entity("ITMO.Dev.ASAP.Core.SubmissionAssociations.GithubSubmissionAssociation", b =>
-                {
-                    b.HasBaseType("ITMO.Dev.ASAP.Core.SubmissionAssociations.SubmissionAssociation");
-
-                    b.Property<string>("Organization")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("PrNumber")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Repository")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasDiscriminator().HasValue("GithubSubmissionAssociation");
-                });
-
-            modelBuilder.Entity("ITMO.Dev.ASAP.Core.UserAssociations.GithubUserAssociation", b =>
-                {
-                    b.HasBaseType("ITMO.Dev.ASAP.Core.UserAssociations.UserAssociation");
-
-                    b.Property<string>("GithubUsername")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasIndex("GithubUsername")
-                        .IsUnique();
-
-                    b.HasDiscriminator().HasValue("GithubUserAssociation");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.UserAssociations.IsuUserAssociation", b =>
@@ -518,17 +441,6 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("SubjectCourse");
-                });
-
-            modelBuilder.Entity("ITMO.Dev.ASAP.Core.SubmissionAssociations.SubmissionAssociation", b =>
-                {
-                    b.HasOne("ITMO.Dev.ASAP.Core.Submissions.Submission", "Submission")
-                        .WithMany("Associations")
-                        .HasForeignKey("SubmissionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Submission");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Submissions.Submission", b =>
@@ -628,11 +540,6 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                     b.Navigation("Groups");
 
                     b.Navigation("Mentors");
-                });
-
-            modelBuilder.Entity("ITMO.Dev.ASAP.Core.Submissions.Submission", b =>
-                {
-                    b.Navigation("Associations");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Users.User", b =>

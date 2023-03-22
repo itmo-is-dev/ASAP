@@ -18,6 +18,7 @@ public interface IAsapSubmissionWorkflowService
         Guid issuerId,
         Guid userId,
         Guid assignmentId,
+        string payload,
         CancellationToken cancellationToken);
 
     Task<SubmissionActionMessageDto> SubmissionAcceptedAsync(

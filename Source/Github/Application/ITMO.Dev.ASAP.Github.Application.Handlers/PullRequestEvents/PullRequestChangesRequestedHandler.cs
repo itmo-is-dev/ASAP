@@ -14,16 +14,16 @@ internal class PullRequestChangesRequestedHandler : IRequestHandler<Command>
 {
     private readonly IAsapSubmissionWorkflowService _asapSubmissionWorkflowService;
     private readonly IDatabaseContext _context;
-    private readonly INotifierFactory _notifierFactory;
+    private readonly IPullRequestEventNotifier _notifier;
 
     public PullRequestChangesRequestedHandler(
         IAsapSubmissionWorkflowService asapSubmissionWorkflowService,
         IDatabaseContext context,
-        INotifierFactory notifierFactory)
+        IPullRequestEventNotifier notifier)
     {
         _asapSubmissionWorkflowService = asapSubmissionWorkflowService;
         _context = context;
-        _notifierFactory = notifierFactory;
+        _notifier = notifier;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
@@ -39,8 +39,7 @@ internal class PullRequestChangesRequestedHandler : IRequestHandler<Command>
             submission.Id,
             cancellationToken);
 
-        IPullRequestEventNotifier notifier = _notifierFactory.ForPullRequest(request.PullRequest);
-        await notifier.SendCommentToPullRequest(result.Message);
+        await _notifier.SendCommentToPullRequest(result.Message);
 
         return Unit.Value;
     }

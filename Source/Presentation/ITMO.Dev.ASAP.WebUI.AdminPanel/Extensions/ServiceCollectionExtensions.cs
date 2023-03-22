@@ -18,7 +18,6 @@ public static class ServiceCollectionExtensions
     public static void AddAdminPanel(this IServiceCollection collection, IWebAssemblyHostEnvironment environment)
     {
         collection.AddBlazoredLocalStorage();
-        collection.AddBlazorise();
 
         collection.AddDtoConfiguration();
         collection.AddSingleton(new EnvironmentConfiguration(environment.IsDevelopment()));

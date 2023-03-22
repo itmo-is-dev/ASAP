@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.DataAccess.Extensions;
 using ITMO.Dev.ASAP.DeveloperEnvironment;
+using ITMO.Dev.ASAP.Github.DataAccess.Extensions;
 using ITMO.Dev.ASAP.WebApi.Configuration;
 using ITMO.Dev.ASAP.WebApi.Extensions;
 using ITMO.Dev.ASAP.WebApi.Helpers;
@@ -30,8 +31,10 @@ internal class Program
 
         using (IServiceScope scope = app.Services.CreateScope())
         {
-            await SeedingHelper.SeedAdmins(scope.ServiceProvider, app.Configuration);
+            await scope.ServiceProvider.UseGithubDatabaseContext();
             await scope.ServiceProvider.UseDatabaseContext();
+
+            await SeedingHelper.SeedAdmins(scope.ServiceProvider, app.Configuration);
         }
 
         await app.RunAsync();

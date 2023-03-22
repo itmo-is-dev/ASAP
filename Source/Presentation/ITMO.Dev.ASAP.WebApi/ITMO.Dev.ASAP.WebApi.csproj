@@ -28,12 +28,16 @@
     <ItemGroup>
         <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Google\ITMO.Dev.ASAP.Application.Google.csproj" />
         <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Handlers\ITMO.Dev.ASAP.Application.Handlers.csproj" />
+        <ProjectReference Include="..\..\Github\Application\ITMO.Dev.ASAP.Github.Application.Handlers\ITMO.Dev.ASAP.Github.Application.Handlers.csproj" />
+        <ProjectReference Include="..\..\Github\Infrastructure\ITMO.Dev.ASAP.Github.DataAccess\ITMO.Dev.ASAP.Github.DataAccess.csproj" />
         <ProjectReference Include="..\..\Github\Infrastructure\ITMO.Dev.ASAP.Github.Octokit\ITMO.Dev.ASAP.Github.Octokit.csproj" />
+        <ProjectReference Include="..\..\Github\Presentation\ITMO.Dev.ASAP.Github.Presentation.Services\ITMO.Dev.ASAP.Github.Presentation.Services.csproj" />
         <ProjectReference Include="..\..\Github\Presentation\ITMO.Dev.ASAP.Github.Presentation.Webhooks\ITMO.Dev.ASAP.Github.Presentation.Webhooks.csproj" />
         <ProjectReference Include="..\..\Infrastructure\Integration\ITMO.Dev.ASAP.Integration.Google\ITMO.Dev.ASAP.Integration.Google.csproj" />
         <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.DataAccess\ITMO.Dev.ASAP.DataAccess.csproj" />
         <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.Mapping\ITMO.Dev.ASAP.Mapping.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.Controllers\ITMO.Dev.ASAP.Controllers.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.Presentation.Services\ITMO.Dev.ASAP.Presentation.Services.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.WebUI.AdminPanel\ITMO.Dev.ASAP.WebUI.AdminPanel.csproj" />
     </ItemGroup>
 

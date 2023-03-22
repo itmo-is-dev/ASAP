@@ -4,9 +4,13 @@ using ITMO.Dev.ASAP.Application.Extensions;
 using ITMO.Dev.ASAP.Application.Handlers.Extensions;
 using ITMO.Dev.ASAP.Controllers;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
+using ITMO.Dev.ASAP.Github.Application.Handlers.Extensions;
+using ITMO.Dev.ASAP.Github.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Github.Octokit.Extensions;
+using ITMO.Dev.ASAP.Github.Presentation.Services.Extensions;
 using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Extensions;
 using ITMO.Dev.ASAP.Identity.Extensions;
+using ITMO.Dev.ASAP.Presentation.Services.Extensions;
 using ITMO.Dev.ASAP.WebApi.Configuration;
 using Microsoft.EntityFrameworkCore;
 using ConfigurationBuilder = FluentSerialization.ConfigurationBuilder;
@@ -35,9 +39,19 @@ internal static class ServiceCollectionExtensions
         serviceCollection
             .AddSwagger()
             .AddApplicationConfiguration()
+            .AddAsapPresentationServices()
             .AddHandlers()
-            .AddGithubPresentation()
             .AddDatabaseContext(o => o
+                .UseNpgsql(webApiConfiguration.PostgresConfiguration.ToConnectionString(webApiConfiguration
+                    .DbNamesConfiguration.ApplicationDbName))
+                .UseLazyLoadingProxies());
+
+        serviceCollection
+            .AddGithubPresentation()
+            .AddGithubPresentationServices()
+            .AddGithubServices(configuration)
+            .AddGithubApplicationHandlers()
+            .AddGithubDatabaseContext(o => o
                 .UseNpgsql(webApiConfiguration.PostgresConfiguration.ToConnectionString(webApiConfiguration
                     .DbNamesConfiguration.ApplicationDbName))
                 .UseLazyLoadingProxies());
@@ -49,8 +63,7 @@ internal static class ServiceCollectionExtensions
                     .IdentityDbName)));
 
         serviceCollection
-            .AddGoogleIntegrationServices(webApiConfiguration)
-            .AddGithubServices(configuration);
+            .AddGoogleIntegrationServices(webApiConfiguration);
 
         if (isDevelopmentEnvironment && webApiConfiguration.TestEnvironmentConfiguration is not null)
             serviceCollection.AddEntityGeneratorsAndSeeding(webApiConfiguration.TestEnvironmentConfiguration);

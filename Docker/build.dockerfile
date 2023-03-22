@@ -1,5 +1,5 @@
 # https://hub.docker.com/_/microsoft-dotnet
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /source
 
 # copy everything and restore
@@ -10,7 +10,7 @@ RUN dotnet restore ./Presentation/ITMO.Dev.ASAP.WebApi
 RUN dotnet publish -c release -o /app --no-restore Presentation/ITMO.Dev.ASAP.WebApi
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
 COPY --from=build /app ./
 ENV ASPNETCORE_URLS=http://0.0.0.0:5069 \

@@ -13,21 +13,21 @@ namespace ITMO.Dev.ASAP.Github.Presentation.Webhooks.Processing;
 
 public class IssueCommentWebhookProcessor
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<IssueCommentWebhookProcessor> _logger;
     private readonly IMediator _mediator;
     private readonly ISubmissionCommandParser _commandParser;
-    private readonly INotifierFactory _notifierFactory;
+    private readonly IPullRequestEventNotifier _notifier;
 
     public IssueCommentWebhookProcessor(
-        ILogger logger,
+        ILogger<IssueCommentWebhookProcessor> logger,
         IMediator mediator,
         ISubmissionCommandParser commandParser,
-        INotifierFactory notifierFactory)
+        IPullRequestEventNotifier notifier)
     {
         _logger = logger;
         _mediator = mediator;
         _commandParser = commandParser;
-        _notifierFactory = notifierFactory;
+        _notifier = notifier;
     }
 
     public async Task ProcessAsync(
@@ -63,12 +63,10 @@ public class IssueCommentWebhookProcessor
         }
         catch (Exception e)
         {
-            IPullRequestEventNotifier notifier = _notifierFactory.ForPullRequest(pullRequest);
-
             string message = $"Failed to handle {action}";
             logger.LogError(e, "{MethodName}: {Message}", processorName, message);
 
-            await notifier.SendExceptionMessageSafe(e);
+            await _notifier.SendExceptionMessageSafe(e);
         }
     }
 

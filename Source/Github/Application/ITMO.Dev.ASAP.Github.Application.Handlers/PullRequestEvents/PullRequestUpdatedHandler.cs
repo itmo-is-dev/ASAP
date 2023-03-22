@@ -17,16 +17,16 @@ internal class PullRequestUpdatedHandler : IRequestHandler<Command>
 {
     private readonly IDatabaseContext _context;
     private readonly IAsapSubmissionWorkflowService _submissionWorkflowService;
-    private readonly INotifierFactory _notifierFactory;
+    private readonly IPullRequestEventNotifier _notifier;
 
     public PullRequestUpdatedHandler(
         IDatabaseContext context,
         IAsapSubmissionWorkflowService submissionWorkflowService,
-        INotifierFactory notifierFactory)
+        IPullRequestEventNotifier notifier)
     {
         _context = context;
         _submissionWorkflowService = submissionWorkflowService;
-        _notifierFactory = notifierFactory;
+        _notifier = notifier;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
@@ -44,9 +44,8 @@ internal class PullRequestUpdatedHandler : IRequestHandler<Command>
             issuer.Id,
             user.Id,
             assignment.Id,
+            request.PullRequest.Payload,
             cancellationToken);
-
-        IPullRequestEventNotifier notifier = _notifierFactory.ForPullRequest(request.PullRequest);
 
         if (result.IsCreated)
         {
@@ -63,11 +62,11 @@ internal class PullRequestUpdatedHandler : IRequestHandler<Command>
             await _context.SaveChangesAsync(default);
 
             string message = UserCommandProcessingMessage.SubmissionCreated(result.Submission.ToDisplayString());
-            await notifier.SendCommentToPullRequest(message);
+            await _notifier.SendCommentToPullRequest(message);
         }
         else
         {
-            await notifier.NotifySubmissionUpdate(result.Submission);
+            await _notifier.NotifySubmissionUpdate(result.Submission);
         }
 
         return Unit.Value;

@@ -1,6 +1,7 @@
 using ITMO.Dev.ASAP.Github.Application.Dto.PullRequests;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Client;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Extensions;
+using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Notifiers;
 using Microsoft.Extensions.Logging;
 using Octokit;
 using Octokit.Webhooks;
@@ -17,6 +18,7 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
 {
     private readonly IOrganizationGithubClientProvider _clientProvider;
     private readonly ILogger<AsapWebhookEventProcessor> _logger;
+    private readonly EventNotifierProxy _notifierProxy;
 
     private readonly PullRequestWebhookEventProcessor _pullRequestWebhookEventProcessor;
     private readonly PullRequestReviewWebhookEventProcessor _pullRequestReviewWebhookEventProcessor;
@@ -27,13 +29,15 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
         IOrganizationGithubClientProvider clientProvider,
         PullRequestWebhookEventProcessor pullRequestWebhookEventProcessor,
         PullRequestReviewWebhookEventProcessor pullRequestReviewWebhookEventProcessor,
-        IssueCommentWebhookProcessor issueCommentWebhookProcessor)
+        IssueCommentWebhookProcessor issueCommentWebhookProcessor,
+        EventNotifierProxy notifierProxy)
     {
         _logger = logger;
         _clientProvider = clientProvider;
         _pullRequestWebhookEventProcessor = pullRequestWebhookEventProcessor;
         _pullRequestReviewWebhookEventProcessor = pullRequestReviewWebhookEventProcessor;
         _issueCommentWebhookProcessor = issueCommentWebhookProcessor;
+        _notifierProxy = notifierProxy;
     }
 
     protected override async Task ProcessPullRequestWebhookAsync(
@@ -43,6 +47,8 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
     {
         PullRequestDto pullRequest = CreateDescriptor(pullRequestEvent);
         ILogger repositoryLogger = _logger.ToPullRequestLogger(pullRequest);
+
+        _notifierProxy.FromPullRequestEvent(pullRequestEvent, pullRequest);
 
         const string methodName = nameof(ProcessPullRequestWebhookAsync);
 
@@ -66,6 +72,8 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
         PullRequestDto pullRequest = CreateDescriptor(pullRequestReviewEvent);
         ILogger repositoryLogger = _logger.ToPullRequestLogger(pullRequest);
 
+        _notifierProxy.FromPullRequestReviewEvent(pullRequestReviewEvent, pullRequest);
+
         const string methodName = nameof(ProcessPullRequestReviewWebhookAsync);
 
         if (IsSenderBotOrNull(pullRequestReviewEvent))
@@ -88,6 +96,8 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
         PullRequestDto pullRequest = await GetPullRequestDescriptor(issueCommentEvent);
         ILogger repositoryLogger = _logger.ToPullRequestLogger(pullRequest);
 
+        _notifierProxy.FromIssueCommentEvent(issueCommentEvent, pullRequest);
+
         const string methodName = nameof(ProcessIssueCommentWebhookAsync);
 
         if (IsSenderBotOrNull(issueCommentEvent))
@@ -108,14 +118,25 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
         await _issueCommentWebhookProcessor.ProcessAsync(pullRequest, issueCommentEvent, action);
     }
 
-    private bool IsPullRequestCommand(IssueCommentEvent issueCommentEvent)
+    private static bool IsPullRequestCommand(IssueCommentEvent issueCommentEvent)
     {
         return issueCommentEvent.Issue.PullRequest.Url is not null;
     }
 
-    private bool IsSenderBotOrNull(WebhookEvent webhookEvent)
+    private static bool IsSenderBotOrNull(WebhookEvent webhookEvent)
     {
         return webhookEvent.Sender is null || webhookEvent.Sender.Type == UserType.Bot;
+    }
+
+    private static PullRequestDto CreateDescriptor(PullRequestReviewEvent pullRequestReviewEvent)
+    {
+        return new PullRequestDto(
+            pullRequestReviewEvent.Sender!.Login,
+            pullRequestReviewEvent.Review.HtmlUrl,
+            pullRequestReviewEvent.Organization!.Login,
+            pullRequestReviewEvent.Repository!.Name,
+            pullRequestReviewEvent.PullRequest.Head.Ref,
+            pullRequestReviewEvent.PullRequest.Number);
     }
 
     private PullRequestDto CreateDescriptor(PullRequestEvent @event)
@@ -136,17 +157,6 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
             prNum);
 
         return pullRequestDescriptor;
-    }
-
-    private PullRequestDto CreateDescriptor(PullRequestReviewEvent pullRequestReviewEvent)
-    {
-        return new PullRequestDto(
-            pullRequestReviewEvent.Sender!.Login,
-            pullRequestReviewEvent.Review.HtmlUrl,
-            pullRequestReviewEvent.Organization!.Login,
-            pullRequestReviewEvent.Repository!.Name,
-            pullRequestReviewEvent.PullRequest.Head.Ref,
-            pullRequestReviewEvent.PullRequest.Number);
     }
 
     private async Task<PullRequestDto> GetPullRequestDescriptor(IssueCommentEvent issueCommentEvent)

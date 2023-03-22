@@ -39,6 +39,6 @@ public interface ISubmissionWorkflow
         Guid issuerId,
         Guid userId,
         Guid assignmentId,
-        ISubmissionFactory submissionFactory,
+        string payload,
         CancellationToken cancellationToken);
 }

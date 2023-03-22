@@ -23,4 +23,14 @@ public class GithubSubjectCourseService : IGithubSubjectCourseService
 
         return response.SubjectCourse;
     }
+
+    public async Task<IReadOnlyCollection<GithubSubjectCourseDto>> FindByIdsAsync(
+        IEnumerable<Guid> subjectCourseIds,
+        CancellationToken cancellationToken)
+    {
+        var query = new FindSubjectCoursesByIds.Query(subjectCourseIds);
+        FindSubjectCoursesByIds.Response response = await _mediator.Send(query, cancellationToken);
+
+        return response.SubjectCourses;
+    }
 }
