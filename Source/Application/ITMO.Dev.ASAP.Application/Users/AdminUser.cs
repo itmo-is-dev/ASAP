@@ -18,6 +18,10 @@ internal class AdminUser : ICurrentUser
     }
 
     public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
+
+    public bool CanUpdateAllDeadlines => true;
+
+    public bool CanCreateUserWithRole(string roleName)
     {
         return true;
     }
@@ -25,5 +29,10 @@ internal class AdminUser : ICurrentUser
     public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
     {
         return subjects;
+    }
+
+    public bool CanChangeUserRole(string currentRoleName, string newRoleName)
+    {
+        return true;
     }
 }

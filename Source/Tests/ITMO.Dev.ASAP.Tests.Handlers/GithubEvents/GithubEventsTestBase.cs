@@ -16,6 +16,6 @@ public class GithubEventsTestBase : TestBase
 
     protected override void ConfigureSeeding(EntityGenerationOptions options)
     {
-        options.ConfigureEntityGenerator<GithubSubmission>(x => x.Count = 50);
+        options.ConfigureEntityGenerator<Submission>(x => x.Count = 50);
     }
 }

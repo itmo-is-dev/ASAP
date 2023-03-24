@@ -26,4 +26,16 @@ internal class MentorUser : ICurrentUser
     {
         return subjects.Where(s => HasAccessToSubject(s)).AsQueryable();
     }
+
+    public bool CanUpdateAllDeadlines => false;
+
+    public bool CanCreateUserWithRole(string roleName)
+    {
+        return false;
+    }
+
+    public bool CanChangeUserRole(string currentRoleName, string newRoleName)
+    {
+        return false;
+    }
 }
