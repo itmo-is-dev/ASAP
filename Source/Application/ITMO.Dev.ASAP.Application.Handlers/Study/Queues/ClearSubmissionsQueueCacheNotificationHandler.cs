@@ -4,7 +4,8 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Study.Queues;
 
-internal class ClearSubmissionsQueueCacheNotificationHandler : INotificationHandler<SubjectCourseGroupQueueUpdatedNotification>
+internal class ClearSubmissionsQueueCacheNotificationHandler
+    : INotificationHandler<SubjectCourseGroupQueueUpdatedNotification>
 {
     private readonly IMemoryCache _cache;
 
