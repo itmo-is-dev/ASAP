@@ -1,4 +1,6 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Google.Notifications;
+using ITMO.Dev.ASAP.Application.Abstractions.Queue;
+using ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Notifications;
 using ITMO.Dev.ASAP.Application.Google.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,17 +18,25 @@ public class GoogleTableUpdateWorker : BackgroundService
     private readonly Stopwatch _stopwatch;
 
     private readonly TableUpdateQueue _tableUpdateQueue;
+    private readonly IQueueUpdateService _queueUpdateService;
+
+    private readonly IMediator _mediator;
 
     public GoogleTableUpdateWorker(
-        TableUpdateQueue tableUpdateQueue,
+        ILogger<GoogleTableUpdateWorker> logger,
         IServiceScopeFactory serviceProvider,
-        ILogger<GoogleTableUpdateWorker> logger)
+        TableUpdateQueue tableUpdateQueue,
+        IQueueUpdateService queueUpdateService,
+        IMediator mediator)
     {
-        _tableUpdateQueue = tableUpdateQueue;
-        _serviceProvider = serviceProvider;
         _logger = logger;
-
+        _serviceProvider = serviceProvider;
         _stopwatch = new Stopwatch();
+
+        _tableUpdateQueue = tableUpdateQueue;
+        _queueUpdateService = queueUpdateService;
+
+        _mediator = mediator;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -82,7 +92,14 @@ public class GoogleTableUpdateWorker : BackgroundService
 
         foreach ((Guid courseId, Guid groupId) in queues)
         {
+            Dto.Tables.SubmissionsQueueDto submmissionsQueue = await _queueUpdateService
+                .GetSubmmissionsQueue(courseId, groupId, cancellationToken);
+
+            var queueUpdatedNotification = new SubmissionsQueueUpdated.Notification(submmissionsQueue);
+            await _mediator.Send(queueUpdatedNotification, cancellationToken);
+
             var notification = new SubjectCourseGroupQueueUpdatedNotification(courseId, groupId);
+            await _mediator.Send(notification, cancellationToken);
             await publisher.Publish(notification, cancellationToken);
         }
 

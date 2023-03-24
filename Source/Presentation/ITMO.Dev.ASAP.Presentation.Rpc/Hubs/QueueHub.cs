@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace ITMO.Dev.ASAP.Presentation.Rpc.Hubs;
 
-public class QueueHub : Hub<IQueueHub>
+public class QueueHub : Hub<IQueueHubClient>
 {
     public QueueHub()
     {

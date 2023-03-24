@@ -9,9 +9,9 @@ namespace ITMO.Dev.ASAP.Presentation.Rpc.Handlers;
 
 internal class QueueUpdateNotificationHandler : INotificationHandler<Notification>
 {
-    private readonly IHubContext<QueueHub, IQueueHub> _hubContext;
+    private readonly IHubContext<QueueHub, IQueueHubClient> _hubContext;
 
-    public QueueUpdateNotificationHandler(IHubContext<QueueHub, IQueueHub> hubContext)
+    public QueueUpdateNotificationHandler(IHubContext<QueueHub, IQueueHubClient> hubContext)
     {
         _hubContext = hubContext;
     }
