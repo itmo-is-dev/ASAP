@@ -24,6 +24,7 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="ITMO.Dev.ASAP.Tests" />
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Tests.Handlers" />
     </ItemGroup>
 
 </Project>

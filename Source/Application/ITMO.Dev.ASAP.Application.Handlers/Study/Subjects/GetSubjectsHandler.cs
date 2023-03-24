@@ -22,9 +22,8 @@ internal class GetSubjectsHandler : IRequestHandler<Query, Response>
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        List<Subject> subjects = await _context
-            .Subjects
-            .Where(s => _currentUser.HasAccessToSubject(s))
+        List<Subject> subjects = await _currentUser
+            .FilterAvailableSubjects(_context.Subjects)
             .ToListAsync(cancellationToken);
 
         SubjectDto[] dto = subjects

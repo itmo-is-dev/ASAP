@@ -9,4 +9,6 @@ public interface ICurrentUser
     bool HasAccessToSubject(Subject subject);
 
     bool HasAccessToSubjectCourse(SubjectCourse subjectCourse);
+
+    IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects);
 }

@@ -11,17 +11,17 @@ internal class AnonymousUser : ICurrentUser
     public Guid Id => throw new UnauthorizedException("Tried to access anonymous user Id");
 #pragma warning restore CA1065
 
-    public IQueryable<SubjectCourse> FilterAvailableSubjectCourses(Subject subject)
-    {
-        throw UserHasNotAccessException.AnonymousUserHasNotAccess();
-    }
-
     public bool HasAccessToSubject(Subject subject)
     {
         throw UserHasNotAccessException.AnonymousUserHasNotAccess();
     }
 
     public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
+    {
+        throw UserHasNotAccessException.AnonymousUserHasNotAccess();
+    }
+
+    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
     {
         throw UserHasNotAccessException.AnonymousUserHasNotAccess();
     }

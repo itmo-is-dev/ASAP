@@ -21,4 +21,9 @@ internal class AdminUser : ICurrentUser
     {
         return true;
     }
+
+    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
+    {
+        return subjects;
+    }
 }

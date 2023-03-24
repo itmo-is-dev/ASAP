@@ -22,6 +22,11 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
         return _user.HasAccessToSubjectCourse(subjectCourse);
     }
 
+    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
+    {
+        return _user.FilterAvailableSubjects(subjects);
+    }
+
     public void Authenticate(ClaimsPrincipal principal)
     {
         string[] roles = principal.Claims
