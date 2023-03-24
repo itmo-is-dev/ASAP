@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
 
-namespace ITMO.Dev.ASAP.Github.Presentation.Controllers.Models;
+namespace ITMO.Dev.ASAP.WebApi.Abstractions.Models.Github;
 
 public record CreateGithubSubjectCourseRequest(
     Guid SubjectId,

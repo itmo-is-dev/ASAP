@@ -55,20 +55,14 @@ internal class StudentClient : IStudentClient
         return await _handler.SendAsync<StudentDto>(message, cancellationToken);
     }
 
-    public async Task AddGithubAssociationAsync(
+    public async Task UpdateGithubUsername(
         Guid id,
         string githubUsername,
         CancellationToken cancellationToken = default)
     {
-        string uri = $"api/Student/{id}/association/github?githubUsername={githubUsername}";
-        using var message = new HttpRequestMessage(HttpMethod.Post, uri);
+        string uri = $"api/User/{id}/github/username?value={githubUsername}";
+        using var message = new HttpRequestMessage(HttpMethod.Put, uri);
 
-        await _handler.SendAsync(message, cancellationToken);
-    }
-
-    public async Task RemoveGithubAssociationAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        using var message = new HttpRequestMessage(HttpMethod.Delete, $"api/Student/{id}/association/github");
         await _handler.SendAsync(message, cancellationToken);
     }
 

@@ -81,7 +81,7 @@ foreach (StudentInfo studentInfo in data)
         StudentDto student = await studentClient.CreateAsync(createStudentRequest);
 
         await userClient.UpdateUniversityIdAsync(student.User.Id, studentInfo.IsuNumber);
-        await studentClient.AddGithubAssociationAsync(student.User.Id, studentInfo.GithubUsername);
+        await studentClient.UpdateGithubUsername(student.User.Id, studentInfo.GithubUsername);
     }
     else
     {
