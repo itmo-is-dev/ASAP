@@ -18,6 +18,9 @@ internal class AdminUser : ICurrentUser
     }
 
     public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
+    {
+        return true;
+    }
 
     public bool CanUpdateAllDeadlines => true;
 
