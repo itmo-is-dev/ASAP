@@ -15,7 +15,7 @@ public class UserController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPut("{id:guid}/username")]
+    [HttpPut("{userId:guid}/github/username")]
     public async Task<ActionResult<GithubUserDto>> UpdateGithubUsername(
         Guid userId,
         string value,

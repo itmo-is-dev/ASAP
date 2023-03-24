@@ -17,9 +17,7 @@ public interface IStudentClient
         TransferStudentRequest request,
         CancellationToken cancellationToken = default);
 
-    Task AddGithubAssociationAsync(Guid id, string githubUsername, CancellationToken cancellationToken = default);
-
-    Task RemoveGithubAssociationAsync(Guid id, CancellationToken cancellationToken = default);
+    Task UpdateGithubUsername(Guid id, string githubUsername, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyCollection<StudentDto>> QueryAsync(
         QueryConfiguration<StudentQueryParameter> configuration,

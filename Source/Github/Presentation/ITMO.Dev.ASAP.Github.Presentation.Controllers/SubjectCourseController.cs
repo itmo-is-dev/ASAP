@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Github.Application.Contracts.SubjectCourses.Commands;
 using ITMO.Dev.ASAP.Github.Application.Dto.SubjectCourses;
-using ITMO.Dev.ASAP.Github.Presentation.Controllers.Models;
+using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Github;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.SubjectCourses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

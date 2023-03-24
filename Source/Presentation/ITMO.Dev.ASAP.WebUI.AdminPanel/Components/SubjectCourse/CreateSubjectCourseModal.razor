@@ -3,6 +3,8 @@
 @using ITMO.Dev.ASAP.WebApi.Abstractions.Models.SubjectCourses
 @using ITMO.Dev.ASAP.Application.Dto.Study
 @using ITMO.Dev.ASAP.Application.Dto.SubjectCourseAssociations
+@using ITMO.Dev.ASAP.Github.Application.Dto.SubjectCourses
+@using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Github
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.SafeExecution
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Extensions
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Components.Fields
@@ -28,19 +30,22 @@
 
                 <Field>
                     <FieldLabel>Workflow type</FieldLabel>
+
                     <WorkflowTypeSelector Selected="@_workflowType"
                                           OnValueChanged="x => _workflowType = x"/>
                 </Field>
 
                 <Field>
                     <FieldLabel>GitHub</FieldLabel>
+
                     <TextEdit Text="@_github"
                               Placeholder="Organization Name"
                               TextChanged="x => _github = x"/>
                 </Field>
 
-                <Field Display="@(ShowGithubFields ? Display.Block : Display.None)">
+                <Field>
                     <FieldLabel>Template repository</FieldLabel>
+
                     <TextEdit Text="@_templateRepository"
                               TextChanged="x => _templateRepository = x"/>
                 </Field>
@@ -48,7 +53,6 @@
                 <TextField @ref="_mentorTeam"
                            Label="Mentor team name"
                            Placeholder="Mentor team name"
-                           IsDisplayed="@ShowGithubFields"
                            OnStateChanged="StateHasChanged"/>
 
                 <Div Flex="Flex.Row.JustifyContent.Center">
@@ -73,8 +77,6 @@
 
     private Modal? _modal;
 
-    private bool ShowGithubFields => string.IsNullOrEmpty(_github) is false;
-
     private bool ButtonEnabled =>
         string.IsNullOrEmpty(_courseName) is false &&
         _workflowType is not null &&
@@ -93,20 +95,23 @@
     {
         if (SubjectId is null ||
             string.IsNullOrEmpty(_courseName) ||
-            _workflowType is null)
+            _workflowType is null ||
+            string.IsNullOrEmpty(_github) ||
+            string.IsNullOrEmpty(_templateRepository) ||
+            string.IsNullOrEmpty(_mentorTeam?.Value))
             return;
 
-        await using ISafeExecutionBuilder<SubjectCourseDto> builder = SafeExecutor.Execute(async () =>
+        await using ISafeExecutionBuilder<GithubSubjectCourseDto> builder = SafeExecutor.Execute(async () =>
         {
-            SubjectCourseAssociationDto[] associations = CreateAssociations().ToArray();
-
-            var createRequest = new CreateSubjectCourseRequest(
+            var createRequest = new CreateGithubSubjectCourseRequest(
                 SubjectId.Value,
                 _courseName,
                 _workflowType.Value,
-                associations);
+                _github,
+                _templateRepository,
+                _mentorTeam.Value);
 
-            var course = await SubjectCourseClient.CreateAsync(createRequest);
+            var course = await SubjectCourseClient.CreateForGithubAsync(createRequest);
 
             await (_modal?.Hide() ?? Task.CompletedTask);
 
@@ -115,16 +120,6 @@
 
         builder.Title = "Failed to create subject course";
         builder.OnSuccessAsync(OnSuccess.InvokeAsync);
-    }
-
-    private IEnumerable<SubjectCourseAssociationDto> CreateAssociations()
-    {
-        if (string.IsNullOrEmpty(_github) is false &&
-            string.IsNullOrEmpty(_templateRepository) is false &&
-            _mentorTeam?.Value is not null)
-        {
-            yield return new GithubSubjectCourseAssociationDto(_github, _templateRepository, _mentorTeam.Value);
-        }
     }
 
 }
