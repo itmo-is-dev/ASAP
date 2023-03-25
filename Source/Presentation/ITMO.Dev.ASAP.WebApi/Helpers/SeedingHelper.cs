@@ -19,7 +19,7 @@ internal static class SeedingHelper
         {
             try
             {
-                var registerCommand = new Register.Command(admin.Username, admin.Password);
+                var registerCommand = new CreateAdmin.Command(admin.Username, admin.Password);
                 await mediatr.Send(registerCommand);
 
                 var promoteCommand = new ChangeUserRole.Command(admin.Username, AsapIdentityRole.AdminRoleName);
