@@ -32,6 +32,7 @@ public class GetSubjectTest : TestBase
 
         var handler = new GetSubjectsHandler(Context, anonymousUser);
         var query = new GetSubjects.Query();
+
         await Assert.ThrowsAsync<UserHasNotAccessException>(
             () => handler.Handle(query, CancellationToken.None));
     }

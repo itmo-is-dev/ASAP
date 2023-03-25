@@ -29,14 +29,11 @@ internal class GetSubjectCoursesBySubjectIdHandler : IRequestHandler<Query, Resp
             .GetByIdAsync(request.SubjectId, cancellationToken);
 
         if (_currentUser.HasAccessToSubject(subject) is false)
-            throw new AccessViolationException();
+            throw UserHasNotAccessException.AccessViolation(_currentUser.Id);
 
         var availableSubjectCourses = subject.Courses
             .Where(_currentUser.HasAccessToSubjectCourse)
             .ToList();
-
-        if (availableSubjectCourses.Count is 0)
-            throw UserHasNotAccessException.EmptyAvailableList(_currentUser.Id);
 
         SubjectCourseDto[] dto = availableSubjectCourses
             .Select(x => x.ToDto())
