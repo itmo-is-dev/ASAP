@@ -1,5 +1,7 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Common.Exceptions;
+using ITMO.Dev.ASAP.Core.Study;
 
 namespace ITMO.Dev.ASAP.Application.Users;
 
@@ -20,4 +22,19 @@ internal class AnonymousUser : ICurrentUser
         throw new UnauthorizedException("Tried to access anonymous user Id");
     }
 #pragma warning restore CA1065
+
+    public bool HasAccessToSubject(Subject subject)
+    {
+        throw UserHasNotAccessException.AnonymousUserHasNotAccess();
+    }
+
+    public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
+    {
+        throw UserHasNotAccessException.AnonymousUserHasNotAccess();
+    }
+
+    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
+    {
+        throw UserHasNotAccessException.AnonymousUserHasNotAccess();
+    }
 }

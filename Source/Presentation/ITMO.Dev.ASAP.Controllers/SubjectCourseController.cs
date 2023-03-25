@@ -43,16 +43,9 @@ public class SubjectCourseController : ControllerBase
         return Ok(response.SubjectCourse);
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IReadOnlyCollection<SubjectCourseDto>>> Get()
-    {
-        var query = new GetSubjectCourses.Query();
-        GetSubjectCourses.Response response = await _mediator.Send(query, CancellationToken);
-
-        return Ok(response.Subjects);
-    }
-
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = $"{AsapIdentityRole.MentorRoleName}, {AsapIdentityRole.AdminRoleName}, " +
+                       $"{AsapIdentityRole.ModeratorRoleName}")]
     public async Task<ActionResult<SubjectCourseDto>> GetById(Guid id)
     {
         var query = new GetSubjectCourseById.Query(id);

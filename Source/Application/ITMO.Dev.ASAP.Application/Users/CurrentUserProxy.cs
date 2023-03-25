@@ -1,5 +1,6 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Common.Exceptions;
+using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Identity.Entities;
 using System.Security.Claims;
 
@@ -10,6 +11,21 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
     private ICurrentUser _user = new AnonymousUser();
 
     public Guid Id => _user.Id;
+
+    public bool HasAccessToSubject(Subject subject)
+    {
+        return _user.HasAccessToSubject(subject);
+    }
+
+    public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
+    {
+        return _user.HasAccessToSubjectCourse(subjectCourse);
+    }
+
+    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
+    {
+        return _user.FilterAvailableSubjects(subjects);
+    }
 
     public bool CanUpdateAllDeadlines => _user.CanUpdateAllDeadlines;
 

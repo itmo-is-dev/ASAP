@@ -9,14 +9,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentAssertions"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
-        <PackageReference Include="Serilog.Extensions.Logging"/>
-        <PackageReference Include="Serilog.Sinks.Console"/>
-        <PackageReference Include="Serilog.Sinks.XUnit"/>
-        <PackageReference Include="xunit"/>
+        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="Serilog.Extensions.Logging" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="Serilog.Sinks.XUnit" />
+        <PackageReference Include="xunit" />
         <PackageReference Include="xunit.runner.visualstudio">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -28,13 +28,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.GithubWorkflow\ITMO.Dev.ASAP.Application.GithubWorkflow.csproj"/>
-        <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Handlers\ITMO.Dev.ASAP.Application.Handlers.csproj"/>
-        <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Google\ITMO.Dev.ASAP.Application.Google.csproj"/>
-        <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.DataAccess\ITMO.Dev.ASAP.DataAccess.csproj"/>
-        <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.Mapping\ITMO.Dev.ASAP.Mapping.csproj"/>
-        <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.Seeding\ITMO.Dev.ASAP.Seeding.csproj"/>
-        <ProjectReference Include="..\ITMO.Dev.ASAP.Tests\ITMO.Dev.ASAP.Tests.csproj"/>
+        <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.GithubWorkflow\ITMO.Dev.ASAP.Application.GithubWorkflow.csproj" />
+        <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Handlers\ITMO.Dev.ASAP.Application.Handlers.csproj" />
+        <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Google\ITMO.Dev.ASAP.Application.Google.csproj" />
+        <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.DataAccess\ITMO.Dev.ASAP.DataAccess.csproj" />
+        <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.Mapping\ITMO.Dev.ASAP.Mapping.csproj" />
+        <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.Seeding\ITMO.Dev.ASAP.Seeding.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.Tests\ITMO.Dev.ASAP.Tests.csproj" />
     </ItemGroup>
 
 </Project>
