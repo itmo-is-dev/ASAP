@@ -59,7 +59,7 @@ internal class IdentityClient : IIdentityClient
 
     public async Task<PasswordOptionsDto> GetPasswordOptionsAsync(CancellationToken cancellationToken = default)
     {
-        using var message = new HttpRequestMessage(HttpMethod.Get, "api/identity/get-password-options");
+        using var message = new HttpRequestMessage(HttpMethod.Get, "api/identity/password/options");
         return await _handler.SendAsync<PasswordOptionsDto>(message, cancellationToken);
     }
 
