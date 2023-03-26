@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
             .Get<IdentityConfiguration>();
 
         IConfigurationSection identityOptionsSection = identityConfigurationSection.GetSection("Options");
+        collection.Configure<IdentityOptions>(identityOptionsSection);
 
         collection.AddScoped<IAuthorizationService, AuthorizationService>();
 
@@ -32,8 +33,6 @@ public static class ServiceCollectionExtensions
         collection.AddIdentity<AsapIdentityUser, AsapIdentityRole>()
             .AddEntityFrameworkStores<AsapIdentityContext>()
             .AddDefaultTokenProviders();
-
-        collection.Configure<IdentityOptions>(identityOptionsSection);
 
         collection.AddAuthentication(options =>
         {
