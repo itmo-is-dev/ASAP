@@ -29,7 +29,7 @@ internal class UpdateUsernameHandler : IRequestHandler<Command>
 
         IdentityResult? result = await _userManager.UpdateAsync(existingUser);
 
-        if (!result.Succeeded)
+        if (result.Succeeded is false)
             throw new UpdateUsernameFailedException(string.Join(' ', result.Errors.Select(r => r.Description)));
 
         return Unit.Value;

@@ -5,7 +5,7 @@ namespace ITMO.Dev.ASAP.Application.Contracts.Identity.Queries;
 
 internal static class GetPasswordOptions
 {
-    public record Query() : IRequest<Response>;
+    public record Query : IRequest<Response>;
 
     public record Response(PasswordOptionsDto PasswordOptions);
 }

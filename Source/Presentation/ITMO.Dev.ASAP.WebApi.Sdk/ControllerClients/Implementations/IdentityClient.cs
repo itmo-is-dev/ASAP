@@ -49,7 +49,7 @@ internal class IdentityClient : IIdentityClient
 
     public async Task UpdateUsernameAsync(UpdateUsernameRequest request, CancellationToken cancellationToken = default)
     {
-        using var message = new HttpRequestMessage(HttpMethod.Post, "api/identity/update-username")
+        using var message = new HttpRequestMessage(HttpMethod.Post, "api/identity/update/username")
         {
             Content = request.ToContent(_serializerSettings),
         };
@@ -65,7 +65,7 @@ internal class IdentityClient : IIdentityClient
 
     public async Task UpdatePasswordAsync(UpdatePasswordRequest request, CancellationToken cancellationToken = default)
     {
-        using var message = new HttpRequestMessage(HttpMethod.Post, "api/identity/update-password")
+        using var message = new HttpRequestMessage(HttpMethod.Post, "api/identity/update/password")
         {
             Content = request.ToContent(_serializerSettings),
         };
