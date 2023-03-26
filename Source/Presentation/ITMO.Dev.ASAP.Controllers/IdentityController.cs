@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Queries;
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Identity.Entities;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Identity;
 using MediatR;
@@ -39,20 +40,6 @@ public class IdentityController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("register")]
-    [Authorize(Roles = AsapIdentityRole.AdminRoleName)]
-    public async Task<ActionResult<LoginResponse>> RegisterAsync([FromBody] RegisterUserRequest request)
-    {
-        var registerCommand = new Register.Command(request.Username, request.Password);
-        await _mediator.Send(registerCommand);
-
-        var loginCommand = new Login.Query(request.Username, request.Password);
-        Login.Response loginResponse = await _mediator.Send(loginCommand, HttpContext.RequestAborted);
-
-        var credentials = new LoginResponse(loginResponse.Token, loginResponse.Expires, loginResponse.Roles);
-        return Ok(credentials);
-    }
-
     [HttpPost("user/{id:guid}/create")]
     [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
     public async Task<IActionResult> CreateUserAccountAsync(Guid id, [FromBody] CreateUserAccountRequest request)
@@ -61,5 +48,34 @@ public class IdentityController : ControllerBase
         await _mediator.Send(command);
 
         return Ok();
+    }
+
+    [HttpPut("username")]
+    [Authorize]
+    public async Task<ActionResult> UpdateUsernameAsync([FromBody] UpdateUsernameRequest request)
+    {
+        var updateCommand = new UpdateUsername.Command(request.Username);
+        await _mediator.Send(updateCommand);
+
+        return Ok();
+    }
+
+    [HttpPut("password")]
+    [Authorize]
+    public async Task<ActionResult> UpdatePasswordAsync([FromBody] UpdatePasswordRequest request)
+    {
+        var updateCommand = new UpdatePassword.Command(request.CurrentPassword, request.NewPassword);
+        await _mediator.Send(updateCommand);
+
+        return Ok();
+    }
+
+    [HttpGet("password/options")]
+    public async Task<PasswordOptionsDto> GetPasswordOptionsAsync()
+    {
+        var query = new GetPasswordOptions.Query();
+        GetPasswordOptions.Response response = await _mediator.Send(query, HttpContext.RequestAborted);
+
+        return response.PasswordOptions;
     }
 }

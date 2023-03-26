@@ -1,3 +1,4 @@
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Identity;
 using ITMO.Dev.ASAP.WebApi.Sdk.Extensions;
 using ITMO.Dev.ASAP.WebApi.Sdk.Tools;
@@ -36,19 +37,35 @@ internal class IdentityClient : IIdentityClient
         await _handler.SendAsync(message, cancellationToken);
     }
 
-    public async Task<LoginResponse> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken = default)
+    public async Task CreateUserAccountAsync(Guid id, CreateUserAccountRequest request, CancellationToken cancellationToken = default)
     {
-        using var message = new HttpRequestMessage(HttpMethod.Post, "api/identity/register")
+        using var message = new HttpRequestMessage(HttpMethod.Post, $"api/identity/user/{id}/create")
         {
             Content = request.ToContent(_serializerSettings),
         };
 
-        return await _handler.SendAsync<LoginResponse>(message, cancellationToken);
+        await _handler.SendAsync(message, cancellationToken);
     }
 
-    public async Task CreateUserAccountAsync(Guid id, CreateUserAccountRequest request, CancellationToken cancellationToken = default)
+    public async Task UpdateUsernameAsync(UpdateUsernameRequest request, CancellationToken cancellationToken = default)
     {
-        using var message = new HttpRequestMessage(HttpMethod.Post, $"api/identity/user/{id}/create")
+        using var message = new HttpRequestMessage(HttpMethod.Put, "api/identity/username")
+        {
+            Content = request.ToContent(_serializerSettings),
+        };
+
+        await _handler.SendAsync(message, cancellationToken);
+    }
+
+    public async Task<PasswordOptionsDto> GetPasswordOptionsAsync(CancellationToken cancellationToken = default)
+    {
+        using var message = new HttpRequestMessage(HttpMethod.Get, "api/identity/password/options");
+        return await _handler.SendAsync<PasswordOptionsDto>(message, cancellationToken);
+    }
+
+    public async Task UpdatePasswordAsync(UpdatePasswordRequest request, CancellationToken cancellationToken = default)
+    {
+        using var message = new HttpRequestMessage(HttpMethod.Put, "api/identity/password")
         {
             Content = request.ToContent(_serializerSettings),
         };
