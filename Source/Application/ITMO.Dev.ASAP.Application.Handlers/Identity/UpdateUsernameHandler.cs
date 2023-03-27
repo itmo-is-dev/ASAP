@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.UpdateUsername;
 
-namespace ITMO.Dev.ASAP.Application.Handlers.Users;
+namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 
 internal class UpdateUsernameHandler : IRequestHandler<Command>
 {

@@ -2,18 +2,20 @@ namespace ITMO.Dev.ASAP.WebUI.AdminPanel.Tools;
 
 public static class EqualityComparerFactory
 {
-    public static IEqualityComparer<T> Create<T>(Func<T, T, bool> comparer)
+    public static IEqualityComparer<T> Create<T>(Func<T, T, bool> comparer, Func<T, int>? hashFactory = null)
     {
-        return new GenericEqualityComparer<T>(comparer);
+        return new GenericEqualityComparer<T>(comparer, hashFactory);
     }
 
     private class GenericEqualityComparer<T> : IEqualityComparer<T>
     {
         private readonly Func<T, T, bool> _comparer;
+        private readonly Func<T, int>? _hashFactory;
 
-        public GenericEqualityComparer(Func<T, T, bool> comparer)
+        public GenericEqualityComparer(Func<T, T, bool> comparer, Func<T, int>? hashFactory)
         {
             _comparer = comparer;
+            _hashFactory = hashFactory;
         }
 
         public bool Equals(T? x, T? y)
@@ -27,8 +29,6 @@ public static class EqualityComparerFactory
         }
 
         public int GetHashCode(T obj)
-        {
-            return obj?.GetHashCode() ?? 0;
-        }
+            => _hashFactory?.Invoke(obj) ?? obj?.GetHashCode() ?? 0;
     }
 }

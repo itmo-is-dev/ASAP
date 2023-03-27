@@ -3,7 +3,7 @@ using MediatR;
 
 namespace ITMO.Dev.ASAP.Application.Contracts.Students.Commands;
 
-public static class TransferStudent
+internal static class TransferStudent
 {
     public record Command(Guid StudentId, Guid GroupId) : IRequest<Response>;
 

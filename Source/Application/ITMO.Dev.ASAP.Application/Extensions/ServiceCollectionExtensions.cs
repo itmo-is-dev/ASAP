@@ -43,11 +43,13 @@ public static class ServiceCollectionExtensions
     {
         collection.AddEntityQuery<Student, StudentQueryParameter>();
         collection.AddEntityQuery<StudentGroup, GroupQueryParameter>();
+        collection.AddEntityQuery<User, UserQueryParameter>();
 
         collection
             .AddFluentChaining(x => x.ChainLifetime = ServiceLifetime.Singleton)
             .AddQueryChain<Student, StudentQueryParameter>()
-            .AddQueryChain<StudentGroup, GroupQueryParameter>();
+            .AddQueryChain<StudentGroup, GroupQueryParameter>()
+            .AddQueryChain<User, UserQueryParameter>();
     }
 
     private static IChainConfigurator AddQueryChain<TValue, TParameter>(this IChainConfigurator configurator)

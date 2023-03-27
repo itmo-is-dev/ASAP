@@ -7,7 +7,7 @@
 <QueryComponent TParameter="@GroupQueryParameter"
                 TValue="@StudyGroupDto"
                 QueryExecutor="QueryAsync">
-    <Table Context="groups">
+    <ContentTable Context="groups">
 
         <Div>
             @foreach (var group in groups.OrderBy(x => x.Name))
@@ -15,7 +15,7 @@
                 <StudyGroupInfoComponent Group="group"/>
             }
         </Div>
-    </Table>
+    </ContentTable>
 </QueryComponent>
 
 

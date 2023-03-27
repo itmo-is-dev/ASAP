@@ -85,6 +85,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Presentation.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Application.Common", "Application\ITMO.Dev.ASAP.Application.Common\ITMO.Dev.ASAP.Application.Common.csproj", "{62D756C0-3953-4DB8-A934-87CCAE4A56BC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{6E86854D-B1A4-451F-B57F-29DE51237681}"
+	ProjectSection(SolutionItems) = preProject
+		..\Docker\docker-compose.yml = ..\Docker\docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

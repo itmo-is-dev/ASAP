@@ -1,0 +1,34 @@
+<Div Flex="Flex.JustifyContent.Center" Padding="Padding.Is2.FromTop.Is2.FromBottom">
+    <Pagination Margin="Margin.Is0">
+        @for (var i = 0; i < PageCount; i++)
+        {
+            var index = i;
+
+            <PaginationItem Active="@(index == CurrentPage)">
+                <PaginationLink Page="@index.ToString()" Clicked="SelectPageAsync">
+                    @(index + 1)
+                </PaginationLink>
+            </PaginationItem>
+        }
+    </Pagination>
+</Div>
+
+@code {
+    [Parameter]
+    public int? CurrentPage { get; set; }
+    
+    [Parameter]
+    public int PageCount { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnPageChanged { get; set; }
+
+    private async Task SelectPageAsync(string arg)
+    {
+        if (int.TryParse(arg, out var value) is false)
+            return;
+
+        await OnPageChanged.InvokeAsync(value);
+    }
+
+}

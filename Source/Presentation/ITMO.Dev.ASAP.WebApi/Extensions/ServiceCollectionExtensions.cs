@@ -21,6 +21,7 @@ internal static class ServiceCollectionExtensions
 {
     internal static IServiceCollection ConfigureServiceCollection(
         this IServiceCollection serviceCollection,
+        IConfiguration configuration,
         WebApiConfiguration webApiConfiguration,
         IConfigurationSection identityConfigurationSection,
         bool isDevelopmentEnvironment)
@@ -42,7 +43,7 @@ internal static class ServiceCollectionExtensions
         serviceCollection
             .AddSwagger()
             .AddApplicationConfiguration()
-            .AddHandlers()
+            .AddHandlers(configuration)
             .AddGithubPresentation()
             .AddDatabaseContext(o => o
                 .UseNpgsql(webApiConfiguration.PostgresConfiguration.ToConnectionString(webApiConfiguration
