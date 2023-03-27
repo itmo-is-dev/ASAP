@@ -1,0 +1,141 @@
+@using ITMO.Dev.ASAP.Application.Dto.Users
+@using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Identity
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Components.Fields
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Extensions
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Identity
+@inject ISafeExecutor SafeExecutor
+@inject IIdentityClient IdentityClient
+@inject IIdentityManager IdentityManager
+
+<Modal @ref="_modal">
+    <ModalContent>
+        <ModalHeader>
+            <ModalTitle>Create account for @(User?.FullName())</ModalTitle>
+            <CloseButton Clicked="OnCloseButtonClicked"/>
+        </ModalHeader>
+        <ModalBody>
+            <TextField @ref="_usernameField"
+                       Label="Username"
+                       OnStateChanged="StateHasChanged"/>
+
+            <TextField @ref="_passwordField"
+                       Label="Password"
+                       Role="@TextRole.Password"
+                       OnStateChanged="StateHasChanged"/>
+
+            <TextField @ref="_confirmPasswordField"
+                       Label="Confirm password"
+                       Role="@TextRole.Password"
+                       OnStateChanged="StateHasChanged"/>
+
+            @if (PasswordsIdentical is false)
+            {
+                <Div TextColor="TextColor.Danger">
+                    Passwords are not identical
+                </Div>
+            }
+
+            <Select @bind-SelectedValue="_roleName">
+                @foreach (var role in _roleNames)
+                {
+                    <SelectItem Value="@role">
+                        @role
+                    </SelectItem>
+                }
+            </Select>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary"
+                    Disabled="@(CanSend is false)"
+                    Clicked="CreateUser">
+                Create
+            </Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+
+@code {
+
+    private IReadOnlyCollection<string> _roleNames = Array.Empty<string>();
+
+    private Modal? _modal;
+    private TextField? _usernameField;
+    private TextField? _passwordField;
+    private TextField? _confirmPasswordField;
+    private string? _roleName;
+
+    private bool CanSend => _usernameField?.HasValue is true
+                            && string.IsNullOrEmpty(_roleName) is false
+                            && PasswordsIdentical;
+
+    private bool PasswordsIdentical => _passwordField?.Value?.Equals(_confirmPasswordField?.Value) is true;
+
+    [Parameter]
+    public UserDto? User { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (IdentityManager.HasRoles("admin"))
+        {
+            _roleNames = new[]
+            {
+                "Admin",
+                "Moderator",
+                "Mentor",
+            };
+        }
+
+        if (IdentityManager.HasRoles("moderator"))
+        {
+            _roleNames = new[]
+            {
+                "Mentor",
+            };
+        }
+
+        _roleName = _roleNames.FirstOrDefault();
+    }
+
+    public async Task OpenAsync(UserDto user)
+    {
+        User = user;
+        await (_modal?.Show() ?? Task.CompletedTask);
+    }
+
+    private void OnCloseButtonClicked()
+    {
+        _usernameField?.Clear();
+        _passwordField?.Clear();
+        _confirmPasswordField?.Clear();
+    }
+
+    private async Task CreateUser()
+    {
+        if (User is null ||
+            _modal is null ||
+            _usernameField?.Value is null ||
+            _passwordField?.Value is null ||
+            _confirmPasswordField?.Value is null ||
+            string.IsNullOrEmpty(_roleName))
+        {
+            return;
+        }
+
+        await using var builder = SafeExecutor.Execute(async () =>
+        {
+            var request = new CreateUserAccountRequest(_usernameField.Value, _passwordField.Value, _roleName);
+            await IdentityClient.CreateUserAccountAsync(User.Id, request);
+        });
+
+        builder.Title = "Failed to create user account";
+
+        builder.OnSuccessAsync(() =>
+        {
+            OnCloseButtonClicked();
+            return _modal?.Hide() ?? Task.CompletedTask;
+        });
+    }
+
+}

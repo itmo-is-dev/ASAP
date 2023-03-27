@@ -2,9 +2,11 @@ using ITMO.Dev.ASAP.Application.Contracts.Students.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Identity;
+using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Controllers.Extensions;
 using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,5 +50,18 @@ public class UserController : ControllerBase
     {
         await _mediator.Send(new UpdateUserName.Command(userId, firstName, middleName, lastName));
         return Ok();
+    }
+
+    [ProducesResponseType(200)]
+    [HttpPost("identity-info")]
+    public async Task<ActionResult<GetUserIdentityInfosResponse>> GetUserIdentityInfosAsync(
+        [FromBody] QueryConfiguration<UserQueryParameter> queryConfiguration,
+        int? page,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetUserIdentityInfos.Query(queryConfiguration, page ?? 0);
+        GetUserIdentityInfos.Response response = await _mediator.Send(query, cancellationToken);
+
+        return Ok(new GetUserIdentityInfosResponse(response.Users, response.PageCount));
     }
 }

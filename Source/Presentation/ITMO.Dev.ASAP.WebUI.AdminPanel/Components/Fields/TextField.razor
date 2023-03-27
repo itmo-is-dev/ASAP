@@ -2,7 +2,8 @@
     <FieldLabel>@Label</FieldLabel>
     <TextEdit Text="@Value"
               Placeholder="@Placeholder"
-              TextChanged="@ValueChanged"/>
+              TextChanged="@ValueChanged"
+              Role="@Role"/>
 </Field>
 
 @code {
@@ -19,6 +20,16 @@
 
     [Parameter]
     public bool IsDisplayed { get; set; } = true;
+
+    [Parameter]
+    public TextRole Role { get; set; } = TextRole.Text;
+
+    public bool HasValue => Value is not null;
+
+    public void Clear()
+    {
+        Value = null;
+    }
 
     private async Task ValueChanged(string value)
     {

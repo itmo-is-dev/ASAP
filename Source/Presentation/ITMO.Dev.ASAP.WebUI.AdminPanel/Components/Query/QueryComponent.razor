@@ -59,7 +59,7 @@
 
 @if (_values is not null)
 {
-    @Table?.Invoke(_values)
+    @ContentTable?.Invoke(_values)
 }
 
 @code
@@ -73,7 +73,7 @@
     private CancellationTokenSource _cts = new CancellationTokenSource();
 
     [Parameter]
-    public RenderFragment<IReadOnlyCollection<TValue>>? Table { get; set; }
+    public RenderFragment<IReadOnlyCollection<TValue>>? ContentTable { get; set; }
 
     [Parameter]
     public EventCallback<IReadOnlyCollection<TValue>> OnValuesUpdates { get; set; }

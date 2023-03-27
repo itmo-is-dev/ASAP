@@ -10,4 +10,6 @@ public interface IIdentityManager : IIdentityProvider
     ValueTask RemoveIdentityAsync(CancellationToken cancellationToken);
 
     ValueTask<bool> HasIdentityAsync(CancellationToken cancellationToken);
+
+    bool HasRoles(params string[] roles);
 }

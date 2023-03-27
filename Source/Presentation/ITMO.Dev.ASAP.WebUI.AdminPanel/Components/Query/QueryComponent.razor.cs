@@ -56,7 +56,7 @@ public partial class QueryComponent<TParameter, TValue> : IDisposable where TPar
         StateHasChanged();
     }
 
-    public Task<IReadOnlyCollection<TValue>> ExecuteQueryAsync()
+    private Task<IReadOnlyCollection<TValue>> ExecuteQueryAsync()
     {
         if (QueryExecutor is null)
             return Task.FromResult<IReadOnlyCollection<TValue>>(Array.Empty<TValue>());

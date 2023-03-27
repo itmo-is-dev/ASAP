@@ -36,6 +36,13 @@
                 <BarItem>
                     <BarLink @ref="_groupsLink" To="@GroupsPath">Groups</BarLink>
                 </BarItem>
+                
+                @if (_hasUsersViewAccess)
+                {
+                    <BarItem>
+                        <BarLink @ref="_usersLink" To="@UsersPath">Users</BarLink>
+                    </BarItem>
+                }
             }
         </BarStart>
 
@@ -56,17 +63,22 @@
         private const string SubjectsPath = "adminpanel/subjects";
         private const string StudentsPath = "adminpanel/students";
         private const string GroupsPath = "adminpanel/groups";
+        private const string UsersPath = "adminpanel/users";
 
     private bool _hasIdentity;
+    private bool _hasUsersViewAccess;
 
     private BarLink? _globalLink;
     private BarLink? _subjectsLink;
     private BarLink? _studentsLink;
     private BarLink? _groupsLink;
+    private BarLink? _usersLink;
 
     protected override async Task OnInitializedAsync()
     {
         _hasIdentity = await IdentityManager.HasIdentityAsync(default);
+        _hasUsersViewAccess = IdentityManager.HasRoles("admin", "moderator");
+
         NavigationManager.LocationChanged += HandleLocationChanged;
     }
 
@@ -82,6 +94,7 @@
             SubjectsPath => _subjectsLink,
             StudentsPath => _studentsLink,
             GroupsPath => _groupsLink,
+            UsersPath => _usersLink,
             _ => null,
             };
 
