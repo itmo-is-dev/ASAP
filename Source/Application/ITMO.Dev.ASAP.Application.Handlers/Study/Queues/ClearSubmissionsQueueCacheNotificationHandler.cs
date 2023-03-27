@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 namespace ITMO.Dev.ASAP.Application.Handlers.Study.Queues;
 
 internal class ClearSubmissionsQueueCacheNotificationHandler
-    : INotificationHandler<SubjectCourseGroupQueueUpdatedNotification>
+    : INotificationHandler<SubjectCourseGroupQueueUpdateNotification>
 {
     private readonly IMemoryCache _cache;
 
@@ -14,7 +14,7 @@ internal class ClearSubmissionsQueueCacheNotificationHandler
         _cache = cache;
     }
 
-    public Task Handle(SubjectCourseGroupQueueUpdatedNotification notification, CancellationToken cancellationToken)
+    public Task Handle(SubjectCourseGroupQueueUpdateNotification notification, CancellationToken cancellationToken)
     {
         string cacheKey = string.Concat(notification.SubjectCourseId, notification.GroupId);
         _cache.Remove(cacheKey);

@@ -1,12 +1,10 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Google.Notifications;
-using ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Notifications;
 using ITMO.Dev.ASAP.Application.Google.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using static ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Queries.GetSubmmissionsQueue;
 
 namespace ITMO.Dev.ASAP.Application.Google.Workers;
 
@@ -19,21 +17,16 @@ public class GoogleTableUpdateWorker : BackgroundService
 
     private readonly TableUpdateQueue _tableUpdateQueue;
 
-    private readonly IMediator _mediator;
-
     public GoogleTableUpdateWorker(
         ILogger<GoogleTableUpdateWorker> logger,
         IServiceScopeFactory serviceProvider,
-        TableUpdateQueue tableUpdateQueue,
-        IMediator mediator)
+        TableUpdateQueue tableUpdateQueue)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
         _stopwatch = new Stopwatch();
 
         _tableUpdateQueue = tableUpdateQueue;
-
-        _mediator = mediator;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -89,15 +82,8 @@ public class GoogleTableUpdateWorker : BackgroundService
 
         foreach ((Guid courseId, Guid groupId) in queues)
         {
-            var notification = new SubjectCourseGroupQueueUpdatedNotification(courseId, groupId);
+            var notification = new SubjectCourseGroupQueueUpdateNotification(courseId, groupId);
             await publisher.Publish(notification, cancellationToken);
-            await _mediator.Send(notification, cancellationToken);
-
-            var getSubmissionsQuery = new Query(courseId, groupId);
-            Response response = await _mediator.Send(getSubmissionsQuery, cancellationToken);
-
-            var queueUpdatedNotification = new SubmissionsQueueUpdated.Notification(response.SubmissionsQueue);
-            await _mediator.Send(queueUpdatedNotification, cancellationToken);
         }
 
         return queues.Any();

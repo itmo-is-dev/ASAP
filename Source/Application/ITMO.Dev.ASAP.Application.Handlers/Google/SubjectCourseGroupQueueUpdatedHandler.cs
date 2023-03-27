@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Google;
 
-internal class SubjectCourseGroupQueueUpdatedHandler : INotificationHandler<SubjectCourseGroupQueueUpdatedNotification>
+internal class SubjectCourseGroupQueueUpdatedHandler : INotificationHandler<SubjectCourseGroupQueueUpdateNotification>
 {
     private readonly IDatabaseContext _context;
     private readonly ILogger<SubjectCourseGroupQueueUpdatedHandler> _logger;
@@ -38,7 +38,7 @@ internal class SubjectCourseGroupQueueUpdatedHandler : INotificationHandler<Subj
     }
 
     public async Task Handle(
-        SubjectCourseGroupQueueUpdatedNotification notification,
+        SubjectCourseGroupQueueUpdateNotification notification,
         CancellationToken cancellationToken)
     {
         try
@@ -56,7 +56,7 @@ internal class SubjectCourseGroupQueueUpdatedHandler : INotificationHandler<Subj
     }
 
     private async Task ExecuteAsync(
-        SubjectCourseGroupQueueUpdatedNotification notification,
+        SubjectCourseGroupQueueUpdateNotification notification,
         CancellationToken cancellationToken)
     {
         StudentGroup group = await _context.StudentGroups.GetByIdAsync(notification.GroupId, cancellationToken);

@@ -20,6 +20,7 @@ internal class GetSubmmissionsQueueHandler : IRequestHandler<Query, Response>
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
         string cacheKey = string.Concat(request.SubjectCourseId, request.GroupId);
+
         if (_cache.TryGetValue(cacheKey, out SubmissionsQueueDto submissionsQueue))
         {
             return new Response(submissionsQueue);
@@ -30,9 +31,7 @@ internal class GetSubmmissionsQueueHandler : IRequestHandler<Query, Response>
             request.SubjectCourseId,
             cancellationToken);
 
-        var cacheEntryOptions = new MemoryCacheEntryOptions();
-
-        _cache.Set(cacheKey, submissionsQueue, cacheEntryOptions);
+        _cache.Set(cacheKey, submissionsQueue);
 
         return new Response(submissionsQueue);
     }

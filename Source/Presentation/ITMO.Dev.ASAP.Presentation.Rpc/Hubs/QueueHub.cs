@@ -8,4 +8,19 @@ public class QueueHub : Hub<IQueueHubClient>
     public QueueHub()
     {
     }
+
+    public Task AddGroup(Guid courseId, Guid groupId)
+    {
+        return Groups.AddToGroupAsync(Context.ConnectionId, CombineIdentifiers(courseId, groupId));
+    }
+
+    public Task RemoveGroup(Guid courseId, Guid groupId)
+    {
+        return Groups.RemoveFromGroupAsync(Context.ConnectionId, CombineIdentifiers(courseId, groupId));
+    }
+
+    private static string CombineIdentifiers(Guid courseId, Guid groupId)
+    {
+        return string.Concat(courseId, groupId);
+    }
 }
