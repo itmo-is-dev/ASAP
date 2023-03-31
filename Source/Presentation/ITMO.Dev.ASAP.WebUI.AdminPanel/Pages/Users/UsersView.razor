@@ -7,6 +7,10 @@
 @inject IUserClient UserClient
 @attribute [Authorize(Roles = "Admin, Moderator")]
 
+<Heading Size="HeadingSize.Is2">
+    Users
+</Heading>
+
 <QueryComponent @ref="_usersQueryComponent"
                 TParameter="UserQueryParameter"
                 TValue="UserIdentityInfoDto"
