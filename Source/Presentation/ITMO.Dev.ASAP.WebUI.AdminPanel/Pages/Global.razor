@@ -1,5 +1,6 @@
 @page "/adminpanel/global"
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Components.Global
+@attribute [Authorize(Roles = "Admin, Moderator")]
 
 <Div Display="Display.Flex" Flex="Flex.Column.AlignContent.Start">
 

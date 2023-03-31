@@ -1,9 +1,9 @@
-@using ITMO.Dev.ASAP.WebUI.AdminPanel.Identity
-@inject IdentityStateProvider StateProvider
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Navigation
+@inject INavigationService NavigationService
 
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly"
-            OnNavigateAsync="@StateProvider.Update">
+            OnNavigateAsync="@NavigationService.OnNavigateAsync">
 
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">

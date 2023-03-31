@@ -1,12 +1,12 @@
 @using ITMO.Dev.ASAP.Application.Dto.Users
 @using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Identity
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Authorization
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Components.Fields
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Extensions
-@using ITMO.Dev.ASAP.WebUI.AdminPanel.Identity
 @inject ISafeExecutor SafeExecutor
 @inject IIdentityClient IdentityClient
-@inject IIdentityManager IdentityManager
+@inject ICurrentUser CurrentUser
 
 <Modal @ref="_modal">
     <ModalContent>
@@ -77,7 +77,7 @@
 
     protected override void OnInitialized()
     {
-        if (IdentityManager.HasRoles("admin"))
+        if (CurrentUser.IsAdministrator)
         {
             _roleNames = new[]
             {
@@ -87,7 +87,7 @@
             };
         }
 
-        if (IdentityManager.HasRoles("moderator"))
+        if (CurrentUser.IsModerator)
         {
             _roleNames = new[]
             {

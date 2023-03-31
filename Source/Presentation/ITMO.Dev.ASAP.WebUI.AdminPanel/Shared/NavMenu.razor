@@ -1,9 +1,10 @@
-@inject IIdentityManager IdentityManager
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Extensions
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Authorization
+@implements IDisposable
 @inject ISafeExecutor Executor
 @inject NavigationManager NavigationManager
-@using ITMO.Dev.ASAP.WebUI.AdminPanel.Identity
-@using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling
-@implements IDisposable
+@inject ICurrentUser CurrentUser
 
 <Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
@@ -19,40 +20,43 @@
 
     <BarMenu>
         <BarStart>
-            @if (_hasIdentity)
+            @if (CurrentUser.HasModeratorAccess())
             {
                 <BarItem>
                     <BarLink @ref="_globalLink" To="@GlobalPath">Global</BarLink>
                 </BarItem>
+            }
 
-                <BarItem>
-                    <BarLink @ref="_subjectsLink" To="@SubjectsPath">Subjects</BarLink>
-                </BarItem>
+            <BarItem>
+                <BarLink @ref="_subjectsLink" To="@SubjectsPath">Subjects</BarLink>
+            </BarItem>
 
+            @if (CurrentUser.HasModeratorAccess())
+            {
                 <BarItem>
                     <BarLink @ref="_studentsLink" To="@StudentsPath">Students</BarLink>
                 </BarItem>
+            }
 
+            @if (CurrentUser.HasModeratorAccess())
+            {
                 <BarItem>
                     <BarLink @ref="_groupsLink" To="@GroupsPath">Groups</BarLink>
                 </BarItem>
-                
-                @if (_hasUsersViewAccess)
-                {
-                    <BarItem>
-                        <BarLink @ref="_usersLink" To="@UsersPath">Users</BarLink>
-                    </BarItem>
-                }
+            }
+
+            @if (CurrentUser.HasModeratorAccess())
+            {
+                <BarItem>
+                    <BarLink @ref="_usersLink" To="@UsersPath">Users</BarLink>
+                </BarItem>
             }
         </BarStart>
 
         <BarEnd>
-            @if (_hasIdentity)
-            {
-                <BarItem>
-                    <BarLink To="logout">Logout</BarLink>
-                </BarItem>
-            }
+            <BarItem>
+                <BarLink To="logout">Logout</BarLink>
+            </BarItem>
         </BarEnd>
     </BarMenu>
 </Bar>
@@ -65,24 +69,22 @@
         private const string GroupsPath = "adminpanel/groups";
         private const string UsersPath = "adminpanel/users";
 
-    private bool _hasIdentity;
-    private bool _hasUsersViewAccess;
-
     private BarLink? _globalLink;
     private BarLink? _subjectsLink;
     private BarLink? _studentsLink;
     private BarLink? _groupsLink;
     private BarLink? _usersLink;
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        _hasIdentity = await IdentityManager.HasIdentityAsync(default);
-        _hasUsersViewAccess = IdentityManager.HasRoles("admin", "moderator");
-
         NavigationManager.LocationChanged += HandleLocationChanged;
+        return Task.CompletedTask;
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= HandleLocationChanged;
+    }
 
     private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
     {
@@ -104,10 +106,7 @@
 
     private void Activate(BaseComponent component)
     {
-#pragma warning disable BL0005
-    // Component parameter 'Class' should not be set outside of its component.
         component.Class = $"active {component.Class}";
-#pragma warning restore BL0005
     }
 
 }

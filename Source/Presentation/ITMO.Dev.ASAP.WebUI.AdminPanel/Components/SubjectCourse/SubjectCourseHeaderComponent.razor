@@ -12,27 +12,30 @@
     </BarBrand>
 
     <BarMenu>
-        <BarEnd>
-            <BarItem Margin="Margin.Is2">
-                <ForceSyncGoogle SubjectCourseId="SubjectCourse?.Id"/>
-            </BarItem>
-
-            @{
-                var organizationName = GithubOrganizationName;
-            }
-
-            @if (organizationName is not null)
-            {
+        @if (HasManagingAccess)
+        {
+            <BarEnd>
                 <BarItem Margin="Margin.Is2">
-                    <ForceSyncGitHubMentors OrganizationName="@organizationName"/>
+                    <ForceSyncGoogle SubjectCourseId="SubjectCourse?.Id"/>
                 </BarItem>
 
-                <BarItem Margin="Margin.Is2">
-                    <ForceSyncGithubOrganization SubjectCourse="SubjectCourse"/>
-                </BarItem>
-            }
+                @{
+                    var organizationName = GithubOrganizationName;
+                }
 
-        </BarEnd>
+                @if (organizationName is not null)
+                {
+                    <BarItem Margin="Margin.Is2">
+                        <ForceSyncGitHubMentors OrganizationName="@organizationName"/>
+                    </BarItem>
+
+                    <BarItem Margin="Margin.Is2">
+                        <ForceSyncGithubOrganization SubjectCourse="SubjectCourse"/>
+                    </BarItem>
+                }
+
+            </BarEnd>
+        }
     </BarMenu>
 </Bar>
 
@@ -46,5 +49,8 @@
 
     [Parameter]
     public SubjectCourseDto? SubjectCourse { get; set; }
+
+    [Parameter]
+    public bool HasManagingAccess { get; set; }
 
 }

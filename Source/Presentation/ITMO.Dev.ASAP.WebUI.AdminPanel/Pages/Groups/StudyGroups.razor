@@ -1,8 +1,6 @@
 @page "/adminpanel/groups"
-@using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Components.Groups
-@inject IStudyGroupClient StudyGroupClient
-@inject ISafeExecutor SafeExecutor
+@attribute [Authorize(Roles = "Admin, Moderator")]
 
 <Heading Size="HeadingSize.Is2">
     Groups
