@@ -19,7 +19,9 @@
             Mentors team name
         </Div>
 
-        <TextEdit @bind-Text="_mentorTeamName" Style="min-width: 100px; width: 20%"/>
+        <TextEdit @bind-Text="_mentorTeamName"
+                  Style="min-width: 100px; width: 20%"
+                  Disabled="@(HasManagingAccess is false)"/>
 
         <CreateButton Disabled="@(MentorTeamUpdateButtonEnabled is false)"
                       Clicked="UpdateMentorsTeamClicked">
@@ -40,7 +42,7 @@
     private bool MentorTeamUpdateButtonEnabled =>
         SubjectCourse is not null &&
         Association is not null &&
-        _mentorTeamName?.Equals(Association?.MentorTeamName) is false && 
+        _mentorTeamName?.Equals(Association?.MentorTeamName) is false &&
         string.IsNullOrEmpty(_mentorTeamName) is false;
 
     private string UpdateActionName => $"update subject course mentors team name to '{_mentorTeamName}'";
@@ -50,6 +52,9 @@
 
     [Parameter]
     public GithubSubjectCourseAssociationDto? Association { get; set; }
+
+    [Parameter]
+    public bool HasManagingAccess { get; set; }
 
     protected override void OnParametersSet()
     {

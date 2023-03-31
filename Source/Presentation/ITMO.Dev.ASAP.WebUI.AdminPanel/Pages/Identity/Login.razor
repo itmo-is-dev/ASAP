@@ -1,10 +1,11 @@
 @page "/adminpanel/identity/login"
-@using ITMO.Dev.ASAP.WebUI.AdminPanel.Identity
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Authorization
 @layout EmptyLayout
-@inject IdentityStateProvider StateProvider
+@inject IPrincipalService PrincipalService
 @inject NavigationManager NavigationManager
 @inject ISafeExecutor SafeExecutor
+@inject ICurrentUser CurrentUser
 @attribute [AllowAnonymous]
 
 <Div Flex="Flex.Column.JustifyContent.Center.AlignItems.Center" Height="Height.Is100">
@@ -35,18 +36,24 @@
     private string? _username;
     private string? _password;
 
+    protected override void OnParametersSet()
+    {
+        if (CurrentUser.IsAuthenticated)
+            NavigationManager.NavigateTo("/");
+    }
+
     private async Task OnLoginButtonClickedAsync()
     {
         if (_username is null || _password is null)
             return;
 
-        await using var builder = SafeExecutor.Execute(() => StateProvider.LoginAsync(_username, _password, default));
+        await using var builder = SafeExecutor.Execute(() => PrincipalService.LoginAsync(_username, _password, default));
 
         builder.Title = "Login failed";
 
         builder.OnSuccessAsync(() =>
         {
-            NavigationManager.NavigateTo("/", true);
+            NavigationManager.NavigateTo("/");
             return Task.CompletedTask;
         });
     }

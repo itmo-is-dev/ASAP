@@ -1,5 +1,6 @@
 @page "/adminpanel/students"
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Components.Students
+@attribute [Authorize(Roles = "Admin, Moderator")]
 
 <StudentQueryComponent/>
 

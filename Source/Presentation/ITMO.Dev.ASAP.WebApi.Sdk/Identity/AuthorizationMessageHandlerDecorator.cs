@@ -1,13 +1,12 @@
-using ITMO.Dev.ASAP.WebApi.Sdk.Models;
 using System.Net.Http.Headers;
 
 namespace ITMO.Dev.ASAP.WebApi.Sdk.Identity;
 
 public class AuthorizationMessageHandlerDecorator : DelegatingHandler
 {
-    private readonly IIdentityProvider _identityProvider;
+    private readonly ITokenProvider _identityProvider;
 
-    public AuthorizationMessageHandlerDecorator(IIdentityProvider identityProvider)
+    public AuthorizationMessageHandlerDecorator(ITokenProvider identityProvider)
     {
         _identityProvider = identityProvider;
     }
@@ -18,10 +17,10 @@ public class AuthorizationMessageHandlerDecorator : DelegatingHandler
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        UserIdentity? identity = await _identityProvider.FindIdentityAsync(cancellationToken);
+        string? identity = await _identityProvider.FindIdentityAsync(cancellationToken);
 
         if (identity is not null)
-            request.Headers.Authorization = AuthenticationHeaderValue.Parse($"Bearer {identity.Token}");
+            request.Headers.Authorization = AuthenticationHeaderValue.Parse($"Bearer {identity}");
 
         return await base.SendAsync(request, cancellationToken);
     }

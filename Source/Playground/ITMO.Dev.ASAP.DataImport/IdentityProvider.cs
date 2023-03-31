@@ -1,12 +1,11 @@
 using ITMO.Dev.ASAP.WebApi.Sdk.Identity;
-using ITMO.Dev.ASAP.WebApi.Sdk.Models;
 
 namespace ITMO.Dev.ASAP.DataImport;
 
-public class IdentityProvider : IIdentityProvider
+public class IdentityProvider : ITokenProvider
 {
-    public UserIdentity? UserIdentity { get; set; }
+    public string? UserIdentity { get; set; }
 
-    public ValueTask<UserIdentity?> FindIdentityAsync(CancellationToken cancellationToken = default)
+    public ValueTask<string?> FindIdentityAsync(CancellationToken cancellationToken = default)
         => ValueTask.FromResult(UserIdentity);
 }

@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.WebApi.Sdk.Exceptions;
+using ITMO.Dev.ASAP.WebUI.AdminPanel.Authorization;
 using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling;
-using ITMO.Dev.ASAP.WebUI.AdminPanel.Identity;
 using ITMO.Dev.ASAP.WebUI.AdminPanel.Tools;
 using Microsoft.AspNetCore.Components;
 
@@ -11,22 +11,22 @@ public class SafeExecutionBuilder : ISafeExecutionBuilder
     private readonly Func<Task> _action;
     private readonly List<IExceptionHandler> _errorHandlers;
     private readonly IExceptionSink _exceptionSink;
-    private readonly IIdentityManager _identityManager;
     private readonly NavigationManager _navigationManager;
     private readonly List<Func<Task>> _successHandlers;
     private readonly EnvironmentConfiguration _configuration;
+    private readonly IPrincipalService _principalService;
 
     public SafeExecutionBuilder(
         Func<Task> action,
         IExceptionSink exceptionSink,
-        IIdentityManager identityManager,
         NavigationManager navigationManager,
-        EnvironmentConfiguration configuration)
+        EnvironmentConfiguration configuration,
+        IPrincipalService principalService)
     {
         _exceptionSink = exceptionSink;
-        _identityManager = identityManager;
         _navigationManager = navigationManager;
         _configuration = configuration;
+        _principalService = principalService;
         _action = action;
 
         _successHandlers = new List<Func<Task>>();
@@ -72,7 +72,7 @@ public class SafeExecutionBuilder : ISafeExecutionBuilder
 
             if (e is UnauthorizedException)
             {
-                await _identityManager.RemoveIdentityAsync(default);
+                await _principalService.LogoutAsync(default);
                 _navigationManager.NavigateTo("/");
 
                 return;
@@ -97,22 +97,22 @@ public class SafeExecutionBuilder<T> : ISafeExecutionBuilder<T>
     private readonly Func<Task<T>> _action;
     private readonly List<IExceptionHandler> _errorHandlers;
     private readonly IExceptionSink _exceptionSink;
-    private readonly IIdentityManager _identityManager;
     private readonly NavigationManager _navigationManager;
     private readonly List<Func<T, Task>> _successHandlers;
     private readonly EnvironmentConfiguration _configuration;
+    private readonly IPrincipalService _principalService;
 
     public SafeExecutionBuilder(
         Func<Task<T>> action,
         IExceptionSink exceptionSink,
-        IIdentityManager identityManager,
         NavigationManager navigationManager,
-        EnvironmentConfiguration configuration)
+        EnvironmentConfiguration configuration,
+        IPrincipalService principalService)
     {
         _exceptionSink = exceptionSink;
-        _identityManager = identityManager;
         _navigationManager = navigationManager;
         _configuration = configuration;
+        _principalService = principalService;
         _action = action;
 
         _successHandlers = new List<Func<T, Task>>();
@@ -163,7 +163,7 @@ public class SafeExecutionBuilder<T> : ISafeExecutionBuilder<T>
 
             if (e is UnauthorizedException)
             {
-                await _identityManager.RemoveIdentityAsync(default);
+                await _principalService.LogoutAsync(default);
                 _navigationManager.NavigateTo("/");
 
                 return;

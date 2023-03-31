@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
                 .AddHttpClient<TClient, TImplementation>(client => client.BaseAddress = baseAddress)
                 .AddHttpMessageHandler(provider =>
                 {
-                    IIdentityProvider identityProvider = provider.GetRequiredService<IIdentityProvider>();
+                    ITokenProvider identityProvider = provider.GetRequiredService<ITokenProvider>();
                     return new AuthorizationMessageHandlerDecorator(identityProvider);
                 });
         }

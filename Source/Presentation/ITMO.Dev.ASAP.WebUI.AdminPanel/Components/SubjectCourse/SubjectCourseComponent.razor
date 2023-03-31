@@ -4,13 +4,17 @@
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Components.SubjectCourseGroups
 @using ITMO.Dev.ASAP.Application.Dto.SubjectCourses
 @using ITMO.Dev.ASAP.Application.Dto.Study
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Authorization
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Extensions
 @inject ISubjectCourseClient Client
 @inject ISafeExecutor SafeExecutor
+@inject ICurrentUser CurrentUser
 
 <Card Margin="Margin.Is2">
     <CardBody>
         <CardTitle>
-            <SubjectCourseHeaderComponent SubjectCourse="SubjectCourse"/>
+            <SubjectCourseHeaderComponent SubjectCourse="SubjectCourse"
+                                          HasManagingAccess="@CurrentUser.HasMentorAccess()"/>
         </CardTitle>
 
         @if (SubjectCourse is not null)
