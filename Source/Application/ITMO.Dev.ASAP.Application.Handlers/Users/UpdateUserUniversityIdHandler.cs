@@ -3,6 +3,7 @@ using ITMO.Dev.ASAP.Core.UserAssociations;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
+using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Users.Commands.UpdateUserUniversityId;
 
@@ -10,18 +11,18 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Users;
 
 internal class UpdateUserUniversityIdHandler : IRequestHandler<Command>
 {
-    private readonly IAuthorizationService _authorizationService;
+    private readonly IIdentitySetvice _identitySetvice;
     private readonly IDatabaseContext _context;
 
-    public UpdateUserUniversityIdHandler(IDatabaseContext context, IAuthorizationService authorizationService)
+    public UpdateUserUniversityIdHandler(IDatabaseContext context, IIdentitySetvice identitySetvice)
     {
         _context = context;
-        _authorizationService = authorizationService;
+        _identitySetvice = identitySetvice;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        await _authorizationService.AuthorizeAdminAsync(request.CallerUsername, cancellationToken);
+        await _identitySetvice.AuthorizeAdminAsync(request.CallerUsername, cancellationToken);
 
         User user = await _context.Users.GetByIdAsync(request.UserId, cancellationToken);
         IsuUserAssociation? association = user.FindAssociation<IsuUserAssociation>();

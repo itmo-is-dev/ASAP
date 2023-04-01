@@ -1,7 +1,7 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
 using System.Security.Claims;
 
 namespace ITMO.Dev.ASAP.Application.Users;

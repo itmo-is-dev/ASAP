@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
 using ITMO.Dev.ASAP.DeveloperEnvironment;
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
 using ITMO.Dev.ASAP.Identity.Extensions;
 using ITMO.Dev.ASAP.WebApi.Configuration;
 using ITMO.Dev.ASAP.WebApi.Extensions;

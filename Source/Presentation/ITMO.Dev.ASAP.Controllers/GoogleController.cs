@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Google;
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

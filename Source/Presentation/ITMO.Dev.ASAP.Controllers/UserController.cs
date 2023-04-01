@@ -5,7 +5,7 @@ using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Controllers.Extensions;
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

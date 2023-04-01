@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using ITMO.Dev.ASAP.Identity.Services;
 using ITMO.Dev.ASAP.Identity.Tools;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -25,7 +26,7 @@ public static class ServiceCollectionExtensions
         IConfigurationSection identityOptionsSection = identityConfigurationSection.GetSection("Options");
         collection.Configure<IdentityOptions>(identityOptionsSection);
 
-        collection.AddScoped<IAuthorizationService, AuthorizationService>();
+        collection.AddScoped<IIdentitySetvice, IdentitySetvice>();
 
         collection.AddSingleton(identityConfiguration);
         collection.AddDbContext<AsapIdentityContext>(dbContextAction);

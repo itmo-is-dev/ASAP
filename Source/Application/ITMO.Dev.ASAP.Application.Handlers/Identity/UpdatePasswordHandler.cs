@@ -1,39 +1,36 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Application.Common.Exceptions;
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Services;
+using ITMO.Dev.ASAP.Identity.Exceptions;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.UpdatePassword;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 
 internal class UpdatePasswordHandler
 {
-    private readonly UserManager<AsapIdentityUser> _userManager;
     private readonly ICurrentUser _currentUser;
+    private readonly IIdentitySetvice _identitySetvice;
 
-    public UpdatePasswordHandler(UserManager<AsapIdentityUser> userManager, ICurrentUser currentUser)
+    public UpdatePasswordHandler(ICurrentUser currentUser, IIdentitySetvice identitySetvice)
     {
-        _userManager = userManager;
         _currentUser = currentUser;
+        _identitySetvice = identitySetvice;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        AsapIdentityUser? existingUser = await _userManager.FindByIdAsync(_currentUser.Id.ToString());
+        AsapIdentityUser user = await _identitySetvice.GetUserByIdAsync(_currentUser.Id, cancellationToken);
 
-        if (await _userManager.CheckPasswordAsync(existingUser, request.CurrentPassword) is false)
-            throw new UpdatePasswordFailedException("invalid password");
+        bool passwordCorrect = await _identitySetvice.CheckUserPasswordAsync(user, request.CurrentPassword, cancellationToken);
+
+        if (passwordCorrect is false)
+            throw new UpdatePasswordFailedException("Invalid password");
 
         if (request.NewPassword.Equals(request.CurrentPassword, StringComparison.Ordinal))
-            throw new UpdatePasswordFailedException("the old password is the same as the new one");
+            throw new UpdatePasswordFailedException("The old password is the same as the new one");
 
-        await _userManager.AddPasswordAsync(existingUser, request.NewPassword);
-
-        IdentityResult? result = await _userManager.UpdateAsync(existingUser);
-
-        if (result.Succeeded is false)
-            throw new UpdatePasswordFailedException(string.Join(' ', result.Errors.Select(r => r.Description)));
+        await _identitySetvice.UpdateUserPasswordAsync(user, request.NewPassword, cancellationToken);
 
         return Unit.Value;
     }

@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.Contracts.Users.Commands;
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;

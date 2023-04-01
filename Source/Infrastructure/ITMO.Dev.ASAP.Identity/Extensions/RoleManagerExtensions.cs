@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace ITMO.Dev.ASAP.Identity.Extensions;

@@ -1,10 +1,9 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using ITMO.Dev.ASAP.Identity.Tools;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -14,30 +13,29 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 
 internal class LoginHandler : IRequestHandler<Query, Response>
 {
+    private readonly IIdentitySetvice _identitySetvice;
     private readonly IdentityConfiguration _configuration;
-    private readonly UserManager<AsapIdentityUser> _userManager;
 
-    public LoginHandler(UserManager<AsapIdentityUser> userManager, IdentityConfiguration configuration)
+    public LoginHandler(IIdentitySetvice identitySetvice, IdentityConfiguration configuration)
     {
-        _userManager = userManager;
+        _identitySetvice = identitySetvice;
         _configuration = configuration;
     }
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        AsapIdentityUser? user = await _userManager.FindByNameAsync(request.Username);
+        AsapIdentityUser user = await _identitySetvice.GetUserByNameAsync(request.Username, cancellationToken);
 
-        if (user is null)
+        bool passwordCorrect = await _identitySetvice.CheckUserPasswordAsync(user, request.Password, cancellationToken);
+
+        if (passwordCorrect is false)
             throw new UnauthorizedException("You are not authorized");
 
-        if (!await _userManager.CheckPasswordAsync(user, request.Password))
-            throw new UnauthorizedException("You are not authorized");
+        string userRole = await _identitySetvice.GetUserRoleAsync(user, cancellationToken);
 
-        IList<string> roles = await _userManager.GetRolesAsync(user);
-
-        IEnumerable<Claim> claims = roles
-            .Select(userRole => new Claim(ClaimTypes.Role, userRole))
-            .Append(new Claim(ClaimTypes.Name, user.UserName))
+        IEnumerable<Claim> claims = new List<Claim>()
+            .Append(new Claim(ClaimTypes.Role, userRole))
+            .Append(new Claim(ClaimTypes.Name, user.UserName ?? string.Empty))
             .Append(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()))
             .Append(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
@@ -47,7 +45,7 @@ internal class LoginHandler : IRequestHandler<Query, Response>
         return new Response(
             tokenString,
             token.ValidTo,
-            new ReadOnlyCollection<string>(roles));
+            new List<string> { userRole });
     }
 
     private JwtSecurityToken GetToken(IEnumerable<Claim> authClaims)

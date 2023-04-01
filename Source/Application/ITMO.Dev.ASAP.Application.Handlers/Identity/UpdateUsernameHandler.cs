@@ -1,36 +1,31 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.UpdateUsername;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 
 internal class UpdateUsernameHandler : IRequestHandler<Command>
 {
-    private readonly UserManager<AsapIdentityUser> _userManager;
     private readonly ICurrentUser _currentUser;
+    private readonly IIdentitySetvice _identitySetvice;
 
-    public UpdateUsernameHandler(UserManager<AsapIdentityUser> userManager, ICurrentUser currentUser)
+    public UpdateUsernameHandler(ICurrentUser currentUser, IIdentitySetvice identitySetvice)
     {
-        _userManager = userManager;
         _currentUser = currentUser;
+        _identitySetvice = identitySetvice;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        AsapIdentityUser? existingUser = await _userManager.FindByIdAsync(_currentUser.Id.ToString());
+        AsapIdentityUser user = await _identitySetvice.GetUserByIdAsync(_currentUser.Id, cancellationToken);
 
-        if (existingUser.UserName.Equals(request.Username, StringComparison.Ordinal))
+        if (user.UserName?.Equals(request.Username, StringComparison.Ordinal) is true)
             throw new UpdateUsernameFailedException("the old username is the same as the new one");
 
-        existingUser.UserName = request.Username;
-
-        IdentityResult? result = await _userManager.UpdateAsync(existingUser);
-
-        if (result.Succeeded is false)
-            throw new UpdateUsernameFailedException(string.Join(' ', result.Errors.Select(r => r.Description)));
+        await _identitySetvice.UpdateUserNameAsync(user, request.Username, cancellationToken);
 
         return Unit.Value;
     }

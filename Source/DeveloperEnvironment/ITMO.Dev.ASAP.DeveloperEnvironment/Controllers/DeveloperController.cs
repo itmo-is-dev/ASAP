@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.DeveloperEnvironment.Requests;
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Commands;
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models;
 using MediatR;
 
