@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Common.Exceptions;
+using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
 using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using MediatR;
@@ -24,7 +24,7 @@ internal class ChangeUserRoleHandler : IRequestHandler<Command>
         string userRoleName = await _identitySetvice.GetUserRoleAsync(user, cancellationToken);
 
         if (_currentUser.CanChangeUserRole(userRoleName, request.UserRole) is false)
-            throw new AsapIdentityException($"Unable to change role of {user.UserName}");
+            throw new AccessDeniedException($"Unable to change role of {user.UserName}");
 
         await _identitySetvice.UpdateUserRoleAsync(user, request.UserRole, cancellationToken);
 

@@ -1,13 +1,8 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using ITMO.Dev.ASAP.Identity.Exceptions;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System.Collections.ObjectModel;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace ITMO.Dev.ASAP.Identity.Services;
 

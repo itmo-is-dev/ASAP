@@ -6,11 +6,13 @@ using ITMO.Dev.ASAP.Core.UserAssociations;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Context;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
+using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using ITMO.Dev.ASAP.Seeding.Extensions;
 using ITMO.Dev.ASAP.Seeding.Options;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace ITMO.Dev.ASAP.Tests;
 
@@ -41,6 +43,9 @@ public class TestBase : IDisposable
         collection.AddDatabaseSeeders();
         collection.AddMediatR(typeof(TestBase));
 
+        IdentityServiceMock = new Mock<IIdentitySetvice>();
+        collection.AddScoped(_ => IdentityServiceMock.Object);
+
         // TODO: Do not call virtual methods in constructor
 #pragma warning disable CA2214
 
@@ -59,6 +64,8 @@ public class TestBase : IDisposable
     protected DatabaseContext Context { get; }
 
     protected IServiceProvider Provider { get; }
+
+    protected Mock<IIdentitySetvice> IdentityServiceMock { get; }
 
     public void Dispose()
     {

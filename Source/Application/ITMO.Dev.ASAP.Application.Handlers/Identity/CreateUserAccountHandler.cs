@@ -1,4 +1,5 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
@@ -30,7 +31,7 @@ internal class CreateUserAccountHandler : IRequestHandler<Command>
             throw EntityNotFoundException.For<User>(request.UserId);
 
         if (_currentUser.CanCreateUserWithRole(request.RoleName) is false)
-            throw new AsapIdentityException($"User {_currentUser.Id} can't create user with role {request.RoleName}");
+            throw new AccessDeniedException($"User {_currentUser.Id} can't create user with role {request.RoleName}");
 
         await _identitySetvice.CreateUserAsync(
             request.UserId,

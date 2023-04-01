@@ -44,7 +44,7 @@ internal class UpdateGroupAssignmentDeadlineHandler : IRequestHandler<Command, R
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (mentor?.Course.Equals(groupAssignment.Assignment.SubjectCourse) is not true)
-                throw new AccessDenied();
+                throw new AccessDeniedException();
         }
 
         groupAssignment.Deadline = request.NewDeadline;
