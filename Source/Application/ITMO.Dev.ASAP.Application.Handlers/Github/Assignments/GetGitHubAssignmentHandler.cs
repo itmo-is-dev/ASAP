@@ -46,7 +46,7 @@ internal class GetGitHubAssignmentHandler : IRequestHandler<Query, Response>
         if (subjectCourse is null)
             throw new EntityNotFoundException("SubjectCourse not found");
 
-        string message = subjectCourse.Assignments.OrderBy(x => x.Order).ToSingleString();
+        string message = subjectCourse.Assignments.OrderBy(x => x.Order).Select(x => x.ToShortString()).ToSingleString();
         throw EntityNotFoundException.AssignmentWasNotFound(request.BranchName, subjectCourse.Title, message);
     }
 }
