@@ -92,9 +92,4 @@ public partial class Assignment : IEntity<Guid>
     {
         return $"Id: {Id}, Title: {ShortName}";
     }
-
-    public string ToShortString()
-    {
-        return ShortName;
-    }
 }
