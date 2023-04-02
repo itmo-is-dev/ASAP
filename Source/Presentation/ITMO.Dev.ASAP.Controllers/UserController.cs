@@ -25,6 +25,25 @@ public class UserController : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpGet]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(204)]
+    public async Task<ActionResult<UserDto?>> FindUser(int? universityId, CancellationToken cancellationToken)
+    {
+        UserDto? user;
+
+        if (universityId is not null)
+        {
+            user = await FindUserByUniversityIdAsync(universityId.Value, cancellationToken);
+        }
+        else
+        {
+            user = await FindCurrentUserAsync(cancellationToken);
+        }
+
+        return user is not null ? Ok(user) : NoContent();
+    }
+
     [HttpPost("{userId:guid}/universityId/update")]
     public async Task<IActionResult> UpdateUniversityId(Guid userId, int universityId)
     {
@@ -33,16 +52,6 @@ public class UserController : ControllerBase
         await _mediator.Send(command);
 
         return Ok();
-    }
-
-    [HttpGet]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(204)]
-    public async Task<ActionResult<UserDto?>> FindUserByUniversityId(int universityId)
-    {
-        var command = new FindUserByUniversityId.Query(universityId);
-        FindUserByUniversityId.Response user = await _mediator.Send(command);
-        return Ok(user.User);
     }
 
     [HttpPost("{userId:guid}/change-name")]
@@ -63,5 +72,21 @@ public class UserController : ControllerBase
         GetUserIdentityInfos.Response response = await _mediator.Send(query, cancellationToken);
 
         return Ok(new GetUserIdentityInfosResponse(response.Users, response.PageCount));
+    }
+
+    private async Task<UserDto?> FindCurrentUserAsync(CancellationToken cancellationToken)
+    {
+        var query = new FindCurrentUser.Query();
+        FindCurrentUser.Response response = await _mediator.Send(query, cancellationToken);
+
+        return response.User;
+    }
+
+    private async Task<UserDto?> FindUserByUniversityIdAsync(int universityId, CancellationToken cancellationToken)
+    {
+        var command = new FindUserByUniversityId.Query(universityId);
+        FindUserByUniversityId.Response user = await _mediator.Send(command, cancellationToken);
+
+        return user.User;
     }
 }

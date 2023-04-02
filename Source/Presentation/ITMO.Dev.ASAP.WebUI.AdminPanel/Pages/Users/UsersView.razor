@@ -5,6 +5,7 @@
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Components.Query
 @using ITMO.Dev.ASAP.Application.Dto.Querying
 @inject IUserClient UserClient
+@layout PaddedLayout
 @attribute [Authorize(Roles = "Admin, Moderator")]
 
 <Heading Size="HeadingSize.Is2">

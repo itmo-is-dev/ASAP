@@ -2,21 +2,17 @@
 @inherits LayoutComponentBase
 
 <Layout>
-    <LayoutHeader>
+    <LayoutHeader Style="z-index: 2">
         <NavMenu/>
     </LayoutHeader>
 
     <LayoutContent Height="Height.Is100" Width="Width.Is100">
-        <Div Padding="Padding.Is4" Height="Height.Is100" Width="Width.Is100">
 
+        <CascadingValue Value="@this">
             @Body
+        </CascadingValue>
 
-        </Div>
     </LayoutContent>
 
     <ExceptionDisplay/>
 </Layout>
-
-@code{
-
-}

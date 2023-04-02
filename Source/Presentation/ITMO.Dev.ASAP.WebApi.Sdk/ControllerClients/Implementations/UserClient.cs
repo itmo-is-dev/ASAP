@@ -18,6 +18,12 @@ internal class UserClient : IUserClient
         _handler = new ClientRequestHandler(client, serializerSettings);
     }
 
+    public async Task<UserDto?> FindCurrentUserAsync(CancellationToken cancellationToken)
+    {
+        using var message = new HttpRequestMessage(HttpMethod.Get, "api/User");
+        return await _handler.SendAsync<UserDto?>(message, cancellationToken);
+    }
+
     public async Task UpdateUniversityIdAsync(
         Guid userId,
         int universityId,

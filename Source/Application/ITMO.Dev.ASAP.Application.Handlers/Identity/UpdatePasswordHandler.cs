@@ -7,34 +7,34 @@ using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.UpdatePasswor
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 
-internal class UpdatePasswordHandler
+internal class UpdatePasswordHandler : IRequestHandler<Command, Response>
 {
     private readonly UserManager<AsapIdentityUser> _userManager;
     private readonly ICurrentUser _currentUser;
+    private readonly IAuthorizationService _authorizationService;
 
-    public UpdatePasswordHandler(UserManager<AsapIdentityUser> userManager, ICurrentUser currentUser)
+    public UpdatePasswordHandler(
+        UserManager<AsapIdentityUser> userManager,
+        ICurrentUser currentUser,
+        IAuthorizationService authorizationService)
     {
         _userManager = userManager;
         _currentUser = currentUser;
+        _authorizationService = authorizationService;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
     {
         AsapIdentityUser? existingUser = await _userManager.FindByIdAsync(_currentUser.Id.ToString());
 
-        if (await _userManager.CheckPasswordAsync(existingUser, request.CurrentPassword) is false)
-            throw new UpdatePasswordFailedException("invalid password");
-
-        if (request.NewPassword.Equals(request.CurrentPassword, StringComparison.Ordinal))
-            throw new UpdatePasswordFailedException("the old password is the same as the new one");
-
-        await _userManager.AddPasswordAsync(existingUser, request.NewPassword);
-
-        IdentityResult? result = await _userManager.UpdateAsync(existingUser);
+        IdentityResult? result = await _userManager
+            .ChangePasswordAsync(existingUser, request.CurrentPassword, request.NewPassword);
 
         if (result.Succeeded is false)
             throw new UpdatePasswordFailedException(string.Join(' ', result.Errors.Select(r => r.Description)));
 
-        return Unit.Value;
+        string token = await _authorizationService.GetUserTokenAsync(existingUser.UserName, cancellationToken);
+
+        return new Response(token);
     }
 }

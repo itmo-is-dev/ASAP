@@ -1,10 +1,13 @@
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Extensions
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Authorization
+@using ITMO.Dev.ASAP.Application.Dto.Users
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.SafeExecution
 @implements IDisposable
-@inject ISafeExecutor Executor
+@inject ISafeExecutor SafeExecutor
 @inject NavigationManager NavigationManager
 @inject ICurrentUser CurrentUser
+@inject IPrincipalService PrincipalService
 
 <Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
@@ -53,9 +56,28 @@
             }
         </BarStart>
 
-        <BarEnd>
-            <BarItem>
-                <BarLink To="logout">Logout</BarLink>
+        <BarEnd Width="Width.Is100">
+            <BarItem Width="Width.Is100" Flex="Flex.JustifyContent.End" Class="account-tools__bar-item">
+                <BarDropdown>
+                    <BarDropdownToggle TextWeight="TextWeight.Bold">
+                        @_name
+                    </BarDropdownToggle>
+                    <BarDropdownMenu Style="left: auto" Class="account-tools__bar-menu">
+                        <BarDropdownItem Class="account-tools__dropdown-item">
+                            <BarLink To="adminpanel/account"
+                                     Padding="Padding.Is0">
+                                Settings
+                            </BarLink>
+                        </BarDropdownItem>
+                        <BarDropdownDivider Margin="Margin.Is0"/>
+                        <BarDropdownItem Class="account-tools__dropdown-item">
+                            <Button Clicked="LogoutAsync"
+                                    Padding="Padding.Is0">
+                                Log out
+                            </Button>
+                        </BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
             </BarItem>
         </BarEnd>
     </BarMenu>
@@ -75,15 +97,27 @@
     private BarLink? _groupsLink;
     private BarLink? _usersLink;
 
+    private string? _name;
+    private IDisposable? _nameSubscription;
+
     protected override Task OnInitializedAsync()
     {
         NavigationManager.LocationChanged += HandleLocationChanged;
+        _name = CurrentUser.Name;
+
+        _nameSubscription = CurrentUser.OnNameChanged.Subscribe(x =>
+        {
+            _name = x;
+            StateHasChanged();
+        });
+
         return Task.CompletedTask;
     }
 
     public void Dispose()
     {
         NavigationManager.LocationChanged -= HandleLocationChanged;
+        _nameSubscription?.Dispose();
     }
 
     private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
@@ -107,6 +141,13 @@
     private void Activate(BaseComponent component)
     {
         component.Class = $"active {component.Class}";
+    }
+
+    private async Task LogoutAsync()
+    {
+        await using var builder = SafeExecutor.Execute(() => PrincipalService.LogoutAsync(default));
+        builder.Title = "Failed to log out";
+        builder.OnSuccess(() => NavigationManager.NavigateTo("/"));
     }
 
 }

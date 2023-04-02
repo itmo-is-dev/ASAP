@@ -6,5 +6,5 @@ internal static class Login
 {
     public record Query(string Username, string Password) : IRequest<Response>;
 
-    public record Response(string Token, DateTime Expires, IReadOnlyCollection<string> Roles);
+    public record Response(string Token);
 }

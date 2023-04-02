@@ -26,7 +26,7 @@ public class IdentityController : ControllerBase
         var query = new Login.Query(request.Username, request.Password);
         Login.Response response = await _mediator.Send(query, HttpContext.RequestAborted);
 
-        var loginResponse = new LoginResponse(response.Token, response.Expires, response.Roles);
+        var loginResponse = new LoginResponse(response.Token);
         return Ok(loginResponse);
     }
 
@@ -52,22 +52,22 @@ public class IdentityController : ControllerBase
 
     [HttpPut("username")]
     [Authorize]
-    public async Task<ActionResult> UpdateUsernameAsync([FromBody] UpdateUsernameRequest request)
+    public async Task<ActionResult<UpdateUsernameResponse>> UpdateUsernameAsync([FromBody] UpdateUsernameRequest request)
     {
         var updateCommand = new UpdateUsername.Command(request.Username);
-        await _mediator.Send(updateCommand);
+        UpdateUsername.Response response = await _mediator.Send(updateCommand);
 
-        return Ok();
+        return Ok(new UpdateUsernameResponse(response.Token));
     }
 
     [HttpPut("password")]
     [Authorize]
-    public async Task<ActionResult> UpdatePasswordAsync([FromBody] UpdatePasswordRequest request)
+    public async Task<ActionResult<UpdatePasswordResponse>> UpdatePasswordAsync([FromBody] UpdatePasswordRequest request)
     {
         var updateCommand = new UpdatePassword.Command(request.CurrentPassword, request.NewPassword);
-        await _mediator.Send(updateCommand);
+        UpdatePassword.Response response = await _mediator.Send(updateCommand);
 
-        return Ok();
+        return Ok(new UpdatePasswordResponse(response.Token));
     }
 
     [HttpGet("password/options")]

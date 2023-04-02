@@ -7,18 +7,23 @@ using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.UpdateUsernam
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 
-internal class UpdateUsernameHandler : IRequestHandler<Command>
+internal class UpdateUsernameHandler : IRequestHandler<Command, Response>
 {
     private readonly UserManager<AsapIdentityUser> _userManager;
     private readonly ICurrentUser _currentUser;
+    private readonly IAuthorizationService _authorizationService;
 
-    public UpdateUsernameHandler(UserManager<AsapIdentityUser> userManager, ICurrentUser currentUser)
+    public UpdateUsernameHandler(
+        UserManager<AsapIdentityUser> userManager,
+        ICurrentUser currentUser,
+        IAuthorizationService authorizationService)
     {
         _userManager = userManager;
         _currentUser = currentUser;
+        _authorizationService = authorizationService;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
     {
         AsapIdentityUser? existingUser = await _userManager.FindByIdAsync(_currentUser.Id.ToString());
 
@@ -32,6 +37,8 @@ internal class UpdateUsernameHandler : IRequestHandler<Command>
         if (result.Succeeded is false)
             throw new UpdateUsernameFailedException(string.Join(' ', result.Errors.Select(r => r.Description)));
 
-        return Unit.Value;
+        string token = await _authorizationService.GetUserTokenAsync(request.Username, cancellationToken);
+
+        return new Response(token);
     }
 }
