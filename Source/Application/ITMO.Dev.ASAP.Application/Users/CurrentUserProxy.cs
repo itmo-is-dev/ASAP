@@ -1,7 +1,7 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using System.Security.Claims;
 
 namespace ITMO.Dev.ASAP.Application.Users;
@@ -55,15 +55,15 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
             throw new UnauthorizedException("Failed to parse user NameIdentifier to Guid");
         }
 
-        if (roles.Contains(AsapIdentityRole.AdminRoleName))
+        if (roles.Contains(AsapIdentityRoleNames.AdminRoleName))
         {
             _user = new AdminUser(id);
         }
-        else if (roles.Contains(AsapIdentityRole.ModeratorRoleName))
+        else if (roles.Contains(AsapIdentityRoleNames.ModeratorRoleName))
         {
             _user = new ModeratorUser(id);
         }
-        else if (roles.Contains(AsapIdentityRole.MentorRoleName))
+        else if (roles.Contains(AsapIdentityRoleNames.MentorRoleName))
         {
             _user = new MentorUser(id);
         }

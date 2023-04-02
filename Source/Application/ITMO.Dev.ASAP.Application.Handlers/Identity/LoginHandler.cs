@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using ITMO.Dev.ASAP.Identity.Tools;
 using MediatR;
@@ -13,29 +13,29 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 
 internal class LoginHandler : IRequestHandler<Query, Response>
 {
-    private readonly IIdentitySetvice _identitySetvice;
+    private readonly IAuthorizationService _authorizationService;
     private readonly IdentityConfiguration _configuration;
 
-    public LoginHandler(IIdentitySetvice identitySetvice, IdentityConfiguration configuration)
+    public LoginHandler(IAuthorizationService authorizationService, IdentityConfiguration configuration)
     {
-        _identitySetvice = identitySetvice;
+        _authorizationService = authorizationService;
         _configuration = configuration;
     }
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        AsapIdentityUser user = await _identitySetvice.GetUserByNameAsync(request.Username, cancellationToken);
+        AsapIdentityUserDto user = await _authorizationService.GetUserByNameAsync(request.Username, cancellationToken);
 
-        bool passwordCorrect = await _identitySetvice.CheckUserPasswordAsync(user, request.Password, cancellationToken);
+        bool passwordCorrect = await _authorizationService.CheckUserPasswordAsync(user.Id, request.Password, cancellationToken);
 
         if (passwordCorrect is false)
             throw new UnauthorizedException("You are not authorized");
 
-        string userRole = await _identitySetvice.GetUserRoleAsync(user, cancellationToken);
+        string userRole = await _authorizationService.GetUserRoleAsync(user.Id, cancellationToken);
 
         IEnumerable<Claim> claims = new List<Claim>()
             .Append(new Claim(ClaimTypes.Role, userRole))
-            .Append(new Claim(ClaimTypes.Name, user.UserName ?? string.Empty))
+            .Append(new Claim(ClaimTypes.Name, user.Username))
             .Append(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()))
             .Append(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 

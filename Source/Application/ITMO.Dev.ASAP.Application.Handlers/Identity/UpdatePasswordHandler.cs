@@ -1,5 +1,5 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using ITMO.Dev.ASAP.Identity.Exceptions;
 using MediatR;
@@ -10,19 +10,19 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 internal class UpdatePasswordHandler
 {
     private readonly ICurrentUser _currentUser;
-    private readonly IIdentitySetvice _identitySetvice;
+    private readonly IAuthorizationService _authorizationService;
 
-    public UpdatePasswordHandler(ICurrentUser currentUser, IIdentitySetvice identitySetvice)
+    public UpdatePasswordHandler(ICurrentUser currentUser, IAuthorizationService authorizationService)
     {
         _currentUser = currentUser;
-        _identitySetvice = identitySetvice;
+        _authorizationService = authorizationService;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        AsapIdentityUser user = await _identitySetvice.GetUserByIdAsync(_currentUser.Id, cancellationToken);
+        AsapIdentityUserDto user = await _authorizationService.GetUserByIdAsync(_currentUser.Id, cancellationToken);
 
-        bool passwordCorrect = await _identitySetvice.CheckUserPasswordAsync(user, request.CurrentPassword, cancellationToken);
+        bool passwordCorrect = await _authorizationService.CheckUserPasswordAsync(user.Id, request.CurrentPassword, cancellationToken);
 
         if (passwordCorrect is false)
             throw new UpdatePasswordFailedException("Invalid password");
@@ -30,7 +30,7 @@ internal class UpdatePasswordHandler
         if (request.NewPassword.Equals(request.CurrentPassword, StringComparison.Ordinal))
             throw new UpdatePasswordFailedException("The old password is the same as the new one");
 
-        await _identitySetvice.UpdateUserPasswordAsync(user, request.NewPassword, cancellationToken);
+        await _authorizationService.UpdateUserPasswordAsync(user.Id, request.NewPassword, cancellationToken);
 
         return Unit.Value;
     }

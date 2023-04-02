@@ -11,18 +11,18 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Users;
 
 internal class UpdateUserUniversityIdHandler : IRequestHandler<Command>
 {
-    private readonly IIdentitySetvice _identitySetvice;
+    private readonly IAuthorizationService _authorizationService;
     private readonly IDatabaseContext _context;
 
-    public UpdateUserUniversityIdHandler(IDatabaseContext context, IIdentitySetvice identitySetvice)
+    public UpdateUserUniversityIdHandler(IDatabaseContext context, IAuthorizationService authorizationService)
     {
         _context = context;
-        _identitySetvice = identitySetvice;
+        _authorizationService = authorizationService;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        await _identitySetvice.AuthorizeAdminAsync(request.CallerUsername, cancellationToken);
+        await _authorizationService.AuthorizeAdminAsync(request.CallerUsername, cancellationToken);
 
         User user = await _context.Users.GetByIdAsync(request.UserId, cancellationToken);
         IsuUserAssociation? association = user.FindAssociation<IsuUserAssociation>();

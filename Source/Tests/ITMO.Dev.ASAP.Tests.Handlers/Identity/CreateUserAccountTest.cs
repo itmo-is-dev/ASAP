@@ -2,7 +2,7 @@
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Commands;
 using ITMO.Dev.ASAP.Application.Handlers.Identity;
 using ITMO.Dev.ASAP.Application.Users;
-using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -11,9 +11,9 @@ namespace ITMO.Dev.ASAP.Tests.Handlers.Identity;
 public class CreateUserAccountTest : TestBase
 {
     [Theory]
-    [InlineData(AsapIdentityRole.MentorRoleName)]
-    [InlineData(AsapIdentityRole.ModeratorRoleName)]
-    [InlineData(AsapIdentityRole.AdminRoleName)]
+    [InlineData(AsapIdentityRoleNames.MentorRoleName)]
+    [InlineData(AsapIdentityRoleNames.ModeratorRoleName)]
+    [InlineData(AsapIdentityRoleNames.AdminRoleName)]
     public async Task AdminCreateAnyRole_NoThrow(string roleName)
     {
         string username = string.Empty;
@@ -32,9 +32,9 @@ public class CreateUserAccountTest : TestBase
     }
 
     [Theory]
-    [InlineData(AsapIdentityRole.MentorRoleName)]
-    [InlineData(AsapIdentityRole.ModeratorRoleName)]
-    [InlineData(AsapIdentityRole.AdminRoleName)]
+    [InlineData(AsapIdentityRoleNames.MentorRoleName)]
+    [InlineData(AsapIdentityRoleNames.ModeratorRoleName)]
+    [InlineData(AsapIdentityRoleNames.AdminRoleName)]
     public async Task MentorCreateAnyRole_ThrowException(string roleName)
     {
         string username = string.Empty;
@@ -54,9 +54,9 @@ public class CreateUserAccountTest : TestBase
     }
 
     [Theory]
-    [InlineData(AsapIdentityRole.MentorRoleName, false)]
-    [InlineData(AsapIdentityRole.ModeratorRoleName, true)]
-    [InlineData(AsapIdentityRole.AdminRoleName, true)]
+    [InlineData(AsapIdentityRoleNames.MentorRoleName, false)]
+    [InlineData(AsapIdentityRoleNames.ModeratorRoleName, true)]
+    [InlineData(AsapIdentityRoleNames.AdminRoleName, true)]
     public async Task ModeratorCanCreateOnlyMentor(string roleName, bool throwExpected)
     {
         string username = string.Empty;

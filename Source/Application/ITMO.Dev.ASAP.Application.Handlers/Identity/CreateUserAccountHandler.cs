@@ -13,16 +13,16 @@ internal class CreateUserAccountHandler : IRequestHandler<Command>
 {
     private readonly IDatabaseContext _context;
     private readonly ICurrentUser _currentUser;
-    private readonly IIdentitySetvice _identitySetvice;
+    private readonly IAuthorizationService _authorizationService;
 
     public CreateUserAccountHandler(
         IDatabaseContext context,
         ICurrentUser currentUser,
-        IIdentitySetvice identitySetvice)
+        IAuthorizationService authorizationService)
     {
         _context = context;
         _currentUser = currentUser;
-        _identitySetvice = identitySetvice;
+        _authorizationService = authorizationService;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
@@ -33,7 +33,7 @@ internal class CreateUserAccountHandler : IRequestHandler<Command>
         if (_currentUser.CanCreateUserWithRole(request.RoleName) is false)
             throw new AccessDeniedException($"User {_currentUser.Id} can't create user with role {request.RoleName}");
 
-        await _identitySetvice.CreateUserAsync(
+        await _authorizationService.CreateUserAsync(
             request.UserId,
             request.Username,
             request.Password,

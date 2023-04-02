@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.DeveloperEnvironment.Requests;
-using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +8,7 @@ namespace ITMO.Dev.ASAP.DeveloperEnvironment.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = AsapIdentityRole.AdminRoleName)]
+[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
 public class DeveloperController : Controller
 {
     private readonly IMediator _mediator;

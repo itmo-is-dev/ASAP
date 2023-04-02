@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Identity;
-using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +31,7 @@ public class IdentityController : ControllerBase
     }
 
     [HttpPut("users/{username}/role")]
-    [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
+    [Authorize(Roles = $"{AsapIdentityRoleNames.AdminRoleName}, {AsapIdentityRoleNames.ModeratorRoleName}")]
     public async Task<IActionResult> ChangeUserRoleAsync(string username, [FromQuery] string roleName)
     {
         var command = new ChangeUserRole.Command(username, roleName);
@@ -41,7 +41,7 @@ public class IdentityController : ControllerBase
     }
 
     [HttpPost("user/{id:guid}/create")]
-    [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
+    [Authorize(Roles = $"{AsapIdentityRoleNames.AdminRoleName}, {AsapIdentityRoleNames.ModeratorRoleName}")]
     public async Task<IActionResult> CreateUserAccountAsync(Guid id, [FromBody] CreateUserAccountRequest request)
     {
         var command = new CreateUserAccount.Command(id, request.Username, request.Password, request.RoleName);

@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.Identity\ITMO.Dev.ASAP.Identity.csproj" />
+        <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.Identity.Abstractions\ITMO.Dev.ASAP.Identity.Abstractions.csproj" />
         <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.Mapping\ITMO.Dev.ASAP.Mapping.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.Application.Common\ITMO.Dev.ASAP.Application.Common.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.Application.GithubWorkflow.Abstractions\ITMO.Dev.ASAP.Application.GithubWorkflow.Abstractions.csproj" />

@@ -43,7 +43,7 @@ public class TestBase : IDisposable
         collection.AddDatabaseSeeders();
         collection.AddMediatR(typeof(TestBase));
 
-        IdentityServiceMock = new Mock<IIdentitySetvice>();
+        IdentityServiceMock = new Mock<IAuthorizationService>();
         collection.AddScoped(_ => IdentityServiceMock.Object);
 
         // TODO: Do not call virtual methods in constructor
@@ -65,7 +65,7 @@ public class TestBase : IDisposable
 
     protected IServiceProvider Provider { get; }
 
-    protected Mock<IIdentitySetvice> IdentityServiceMock { get; }
+    protected Mock<IAuthorizationService> IdentityServiceMock { get; }
 
     public void Dispose()
     {

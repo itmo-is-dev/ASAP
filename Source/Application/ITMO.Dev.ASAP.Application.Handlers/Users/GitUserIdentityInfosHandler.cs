@@ -4,7 +4,7 @@ using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Application.Queries;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -17,13 +17,13 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Users;
 internal class GitUserIdentityInfosHandler : IRequestHandler<Query, Response>
 {
     private readonly IDatabaseContext _context;
-    private readonly UserManager<AsapIdentityUser> _userManager;
+    private readonly UserManager<AsapIdentityUserDto> _userManager;
     private readonly PaginationConfiguration _paginationConfiguration;
     private readonly IEntityQuery<User, UserQueryParameter> _userQuery;
 
     public GitUserIdentityInfosHandler(
         IDatabaseContext context,
-        UserManager<AsapIdentityUser> userManager,
+        UserManager<AsapIdentityUserDto> userManager,
         IOptions<PaginationConfiguration> paginationConfiguration,
         IEntityQuery<User, UserQueryParameter> userQuery)
     {

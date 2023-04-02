@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.CreateAdmin;
@@ -7,20 +7,20 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 
 internal class CreateAdminHandler : IRequestHandler<Command>
 {
-    private readonly IIdentitySetvice _identitySetvice;
+    private readonly IAuthorizationService _authorizationService;
 
-    public CreateAdminHandler(IIdentitySetvice identitySetvice)
+    public CreateAdminHandler(IAuthorizationService authorizationService)
     {
-        _identitySetvice = identitySetvice;
+        _authorizationService = authorizationService;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        await _identitySetvice.CreateUserAsync(
+        await _authorizationService.CreateUserAsync(
             Guid.NewGuid(),
             request.Username,
             request.Password,
-            AsapIdentityRole.AdminRoleName,
+            AsapIdentityRoleNames.AdminRoleName,
             cancellationToken);
 
         return Unit.Value;

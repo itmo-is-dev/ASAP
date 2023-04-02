@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Commands;
-using ITMO.Dev.ASAP.Identity.Abstractions.Entities;
+using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models;
 using MediatR;
 
@@ -21,7 +21,7 @@ internal static class SeedingHelper
                 var registerCommand = new CreateAdmin.Command(admin.Username, admin.Password);
                 await mediatr.Send(registerCommand);
 
-                var promoteCommand = new ChangeUserRole.Command(admin.Username, AsapIdentityRole.AdminRoleName);
+                var promoteCommand = new ChangeUserRole.Command(admin.Username, AsapIdentityRoleNames.AdminRoleName);
                 await mediatr.Send(promoteCommand);
             }
             catch (Exception e)
