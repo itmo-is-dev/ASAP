@@ -3,7 +3,6 @@ using ITMO.Dev.ASAP.Core.UserAssociations;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
-using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Users.Commands.UpdateUserUniversityId;
 

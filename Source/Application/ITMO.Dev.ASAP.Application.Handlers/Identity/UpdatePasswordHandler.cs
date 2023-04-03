@@ -1,6 +1,5 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
-using ITMO.Dev.ASAP.Identity.Abstractions.Services;
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Identity.Exceptions;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.UpdatePassword;
@@ -20,7 +19,7 @@ internal class UpdatePasswordHandler
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        AsapIdentityUserDto user = await _authorizationService.GetUserByIdAsync(_currentUser.Id, cancellationToken);
+        IdentityUserDto user = await _authorizationService.GetUserByIdAsync(_currentUser.Id, cancellationToken);
 
         bool passwordCorrect = await _authorizationService.CheckUserPasswordAsync(user.Id, request.CurrentPassword, cancellationToken);
 

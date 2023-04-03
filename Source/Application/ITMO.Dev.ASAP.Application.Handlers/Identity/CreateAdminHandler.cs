@@ -1,5 +1,4 @@
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
-using ITMO.Dev.ASAP.Identity.Abstractions.Services;
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.CreateAdmin;
 

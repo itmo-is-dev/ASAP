@@ -1,6 +1,6 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourseGroups.Commands;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.SubjectCourseGroups;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

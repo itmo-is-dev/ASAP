@@ -3,7 +3,6 @@ using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.CreateUserAccount;
 

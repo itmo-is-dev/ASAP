@@ -1,12 +1,12 @@
-﻿using ITMO.Dev.ASAP.Identity.Abstractions.Models;
+﻿using ITMO.Dev.ASAP.Application.Dto.Identity;
 using Microsoft.AspNetCore.Identity;
 
 namespace ITMO.Dev.ASAP.Identity.Entities;
 
 internal class AsapIdentityUser : IdentityUser<Guid>
 {
-    public AsapIdentityUserDto ToDto()
+    public IdentityUserDto ToDto()
     {
-        return new AsapIdentityUserDto(Id, UserName);
+        return new IdentityUserDto(Id, UserName);
     }
 }

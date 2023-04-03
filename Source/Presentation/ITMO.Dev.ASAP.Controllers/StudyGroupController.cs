@@ -1,3 +1,4 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.StudyGroups.Commands;
@@ -5,7 +6,6 @@ using ITMO.Dev.ASAP.Application.Contracts.Study.StudyGroups.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.Users;
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.StudyGroups;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

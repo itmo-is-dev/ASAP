@@ -1,8 +1,9 @@
-﻿using ITMO.Dev.ASAP.Application.Common.Exceptions;
+﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Commands;
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Application.Handlers.Identity;
 using ITMO.Dev.ASAP.Application.Users;
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using Moq;
 using Xunit;
 
@@ -19,7 +20,7 @@ public class ChangeUserRoleTest : TestBase
     [InlineData(AsapIdentityRoleNames.ModeratorRoleName, AsapIdentityRoleNames.AdminRoleName)]
     public async Task AdminChangeAnyRole_NoThrow(string currentRole, string newRole)
     {
-        var user = new AsapIdentityUserDto(
+        var user = new IdentityUserDto(
             Id: Guid.Empty,
             Username: string.Empty);
 
@@ -48,7 +49,7 @@ public class ChangeUserRoleTest : TestBase
     [InlineData(AsapIdentityRoleNames.ModeratorRoleName, AsapIdentityRoleNames.AdminRoleName)]
     public async Task MentorChangeAnyRole_ThrowException(string currentRole, string newRole)
     {
-        var user = new AsapIdentityUserDto(
+        var user = new IdentityUserDto(
             Id: Guid.Empty,
             Username: string.Empty);
 

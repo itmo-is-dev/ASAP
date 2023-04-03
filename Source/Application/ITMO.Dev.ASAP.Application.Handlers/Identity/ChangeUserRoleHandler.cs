@@ -1,7 +1,6 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Common.Exceptions;
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
-using ITMO.Dev.ASAP.Identity.Abstractions.Services;
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.ChangeUserRole;
 
@@ -20,7 +19,7 @@ internal class ChangeUserRoleHandler : IRequestHandler<Command>
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        AsapIdentityUserDto user = await _authorizationService.GetUserByNameAsync(request.Username, cancellationToken);
+        IdentityUserDto user = await _authorizationService.GetUserByNameAsync(request.Username, cancellationToken);
 
         string userRoleName = await _authorizationService.GetUserRoleAsync(user.Id, cancellationToken);
 

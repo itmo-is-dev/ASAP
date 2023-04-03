@@ -1,7 +1,7 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Identity;
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

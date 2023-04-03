@@ -1,15 +1,13 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Tools;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Application.Queries;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using static ITMO.Dev.ASAP.Application.Contracts.Users.Queries.GetUserIdentityInfos;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Users;
@@ -17,20 +15,16 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Users;
 internal class GitUserIdentityInfosHandler : IRequestHandler<Query, Response>
 {
     private readonly IDatabaseContext _context;
-    private readonly UserManager<AsapIdentityUserDto> _userManager;
+    private readonly IAuthorizationService _authorizationService;
     private readonly PaginationConfiguration _paginationConfiguration;
     private readonly IEntityQuery<User, UserQueryParameter> _userQuery;
 
-    public GitUserIdentityInfosHandler(
-        IDatabaseContext context,
-        UserManager<AsapIdentityUserDto> userManager,
-        IOptions<PaginationConfiguration> paginationConfiguration,
-        IEntityQuery<User, UserQueryParameter> userQuery)
+    public GitUserIdentityInfosHandler(IDatabaseContext context, IAuthorizationService authorizationService, PaginationConfiguration paginationConfiguration, IEntityQuery<User, UserQueryParameter> userQuery)
     {
         _context = context;
-        _userManager = userManager;
+        _authorizationService = authorizationService;
+        _paginationConfiguration = paginationConfiguration;
         _userQuery = userQuery;
-        _paginationConfiguration = paginationConfiguration.Value;
     }
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
@@ -52,10 +46,9 @@ internal class GitUserIdentityInfosHandler : IRequestHandler<Query, Response>
 
         IEnumerable<Guid> userIds = users.Select(x => x.Id);
 
-        List<Guid> identityUsers = await _userManager.Users
-            .Where(x => userIds.Contains(x.Id))
+        var identityUsers = _authorizationService.Users
             .Select(x => x.Id)
-            .ToListAsync(cancellationToken);
+            .ToList();
 
         UserIdentityInfoDto[] dto = users
             .GroupJoin(

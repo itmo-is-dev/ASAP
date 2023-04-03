@@ -1,6 +1,6 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
-using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using ITMO.Dev.ASAP.Identity.Tools;
 using MediatR;
 using Microsoft.IdentityModel.Tokens;
@@ -24,7 +24,7 @@ internal class LoginHandler : IRequestHandler<Query, Response>
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        AsapIdentityUserDto user = await _authorizationService.GetUserByNameAsync(request.Username, cancellationToken);
+        IdentityUserDto user = await _authorizationService.GetUserByNameAsync(request.Username, cancellationToken);
 
         bool passwordCorrect = await _authorizationService.CheckUserPasswordAsync(user.Id, request.Password, cancellationToken);
 

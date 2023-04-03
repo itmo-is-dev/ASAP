@@ -89,8 +89,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{6E8685
 		..\Docker\docker-compose.yml = ..\Docker\docker-compose.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Identity.Abstractions", "Infrastructure\ITMO.Dev.ASAP.Identity.Abstractions\ITMO.Dev.ASAP.Identity.Abstractions.csproj", "{9270B6F3-7289-4989-9267-BF1A32A24AD5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -229,10 +227,6 @@ Global
 		{62D756C0-3953-4DB8-A934-87CCAE4A56BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62D756C0-3953-4DB8-A934-87CCAE4A56BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62D756C0-3953-4DB8-A934-87CCAE4A56BC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9270B6F3-7289-4989-9267-BF1A32A24AD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9270B6F3-7289-4989-9267-BF1A32A24AD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9270B6F3-7289-4989-9267-BF1A32A24AD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9270B6F3-7289-4989-9267-BF1A32A24AD5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -272,7 +266,6 @@ Global
 		{148D6229-91DD-41C9-9087-29109A847FA2} = {7A93BF5E-D7A6-4D8A-AC22-9D5AF09C4880}
 		{BF75E2BC-16BD-4520-BD16-F4270F7158D8} = {7A93BF5E-D7A6-4D8A-AC22-9D5AF09C4880}
 		{62D756C0-3953-4DB8-A934-87CCAE4A56BC} = {AE556858-2A9D-481F-9235-3C74F0CDC5A5}
-		{9270B6F3-7289-4989-9267-BF1A32A24AD5} = {C578EF62-E40C-42E7-AB9D-E7BA215F342C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CD5C67DB-70F8-4C47-A3F4-7C94BECE1657}

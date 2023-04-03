@@ -1,8 +1,8 @@
-﻿using ITMO.Dev.ASAP.Application.Common.Exceptions;
+﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Commands;
 using ITMO.Dev.ASAP.Application.Handlers.Identity;
 using ITMO.Dev.ASAP.Application.Users;
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 

@@ -1,6 +1,6 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
-using ITMO.Dev.ASAP.Identity.Abstractions.Services;
 using ITMO.Dev.ASAP.Identity.Entities;
 using ITMO.Dev.ASAP.Identity.Exceptions;
 using ITMO.Dev.ASAP.Identity.Extensions;
@@ -21,6 +21,10 @@ internal class AuthorizationService : IAuthorizationService
         _roleManager = roleManager;
     }
 
+    public IReadOnlyCollection<IdentityUserDto> Users => _userManager.Users
+        .Select(x => x.ToDto())
+        .ToList();
+
     public async Task AuthorizeAdminAsync(string username, CancellationToken cancellationToken = default)
     {
         AsapIdentityUser? user = await _userManager.FindByNameAsync(username);
@@ -36,7 +40,7 @@ internal class AuthorizationService : IAuthorizationService
         await _roleManager.CreateIfNotExistsAsync(roleName, cancellationToken);
     }
 
-    public async Task<AsapIdentityUserDto> CreateUserAsync(Guid userId, string username, string password, string roleName, CancellationToken cancellationToken = default)
+    public async Task<IdentityUserDto> CreateUserAsync(Guid userId, string username, string password, string roleName, CancellationToken cancellationToken = default)
     {
         var user = new AsapIdentityUser
         {
@@ -55,14 +59,14 @@ internal class AuthorizationService : IAuthorizationService
         return user.ToDto();
     }
 
-    public async Task<AsapIdentityUserDto> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<IdentityUserDto> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         AsapIdentityUser user = await _userManager.GetByIdAsync(userId, cancellationToken);
 
         return user.ToDto();
     }
 
-    public async Task<AsapIdentityUserDto> GetUserByNameAsync(string username, CancellationToken cancellationToken = default)
+    public async Task<IdentityUserDto> GetUserByNameAsync(string username, CancellationToken cancellationToken = default)
     {
         AsapIdentityUser user = await _userManager.GetByNameAsync(username, cancellationToken);
 

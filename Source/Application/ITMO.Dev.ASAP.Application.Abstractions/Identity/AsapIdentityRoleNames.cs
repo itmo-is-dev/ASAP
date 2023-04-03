@@ -1,4 +1,4 @@
-namespace ITMO.Dev.ASAP.Identity.Abstractions.Models;
+namespace ITMO.Dev.ASAP.Application.Abstractions.Identity;
 
 public static class AsapIdentityRoleNames
 {

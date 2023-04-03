@@ -1,6 +1,6 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.GithubWorkflow.Abstractions.Models;
 using ITMO.Dev.ASAP.DeveloperEnvironment;
-using ITMO.Dev.ASAP.Identity.Abstractions.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
