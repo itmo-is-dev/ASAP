@@ -1,7 +1,9 @@
-﻿namespace ITMO.Dev.ASAP.Identity.Exceptions;
+﻿using Microsoft.AspNetCore.Identity;
 
-public abstract class IdentityException : Exception
+namespace ITMO.Dev.ASAP.Identity.Exceptions;
+
+public class IdentityException : Exception
 {
-    protected IdentityException(string message)
-        : base(message) { }
+    public IdentityException(IEnumerable<IdentityError> errors)
+        : base(string.Join(' ', errors.Select(x => x.Description))) { }
 }

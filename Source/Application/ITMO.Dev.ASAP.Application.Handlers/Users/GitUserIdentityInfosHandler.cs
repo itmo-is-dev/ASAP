@@ -8,6 +8,7 @@ using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 using static ITMO.Dev.ASAP.Application.Contracts.Users.Queries.GetUserIdentityInfos;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Users;
@@ -46,7 +47,8 @@ internal class GitUserIdentityInfosHandler : IRequestHandler<Query, Response>
 
         IEnumerable<Guid> userIds = users.Select(x => x.Id);
 
-        var identityUsers = _authorizationService.Users
+        var identityUsers = userIds
+            .Select(x => _authorizationService.GetUserByIdAsync(x, cancellationToken).Result)
             .Select(x => x.Id)
             .ToList();
 

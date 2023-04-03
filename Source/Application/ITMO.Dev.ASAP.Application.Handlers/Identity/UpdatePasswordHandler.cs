@@ -19,17 +19,11 @@ internal class UpdatePasswordHandler
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        IdentityUserDto user = await _authorizationService.GetUserByIdAsync(_currentUser.Id, cancellationToken);
-
-        bool passwordCorrect = await _authorizationService.CheckUserPasswordAsync(user.Id, request.CurrentPassword, cancellationToken);
-
-        if (passwordCorrect is false)
-            throw new UpdatePasswordFailedException("Invalid password");
-
-        if (request.NewPassword.Equals(request.CurrentPassword, StringComparison.Ordinal))
-            throw new UpdatePasswordFailedException("The old password is the same as the new one");
-
-        await _authorizationService.UpdateUserPasswordAsync(user.Id, request.NewPassword, cancellationToken);
+        await _authorizationService.UpdateUserPasswordAsync(
+            _currentUser.Id,
+            request.CurrentPassword,
+            request.NewPassword,
+            cancellationToken);
 
         return Unit.Value;
     }

@@ -4,8 +4,6 @@ namespace ITMO.Dev.ASAP.Application.Abstractions.Identity;
 
 public interface IAuthorizationService
 {
-    IReadOnlyCollection<IdentityUserDto> Users { get; }
-
     Task AuthorizeAdminAsync(string username, CancellationToken cancellationToken = default);
 
     Task CreateRoleIfNotExistsAsync(string roleName, CancellationToken cancellationToken = default);
@@ -18,7 +16,7 @@ public interface IAuthorizationService
 
     Task UpdateUserNameAsync(Guid userId, string newUsername, CancellationToken cancellationToken = default);
 
-    Task UpdateUserPasswordAsync(Guid userId, string newPassword, CancellationToken cancellationToken = default);
+    Task UpdateUserPasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken = default);
 
     Task UpdateUserRoleAsync(Guid userId, string newRoleName, CancellationToken cancellationToken = default);
 

@@ -21,10 +21,6 @@ internal class AuthorizationService : IAuthorizationService
         _roleManager = roleManager;
     }
 
-    public IReadOnlyCollection<IdentityUserDto> Users => _userManager.Users
-        .Select(x => x.ToDto())
-        .ToList();
-
     public async Task AuthorizeAdminAsync(string username, CancellationToken cancellationToken = default)
     {
         AsapIdentityUser? user = await _userManager.FindByNameAsync(username);
@@ -52,7 +48,7 @@ internal class AuthorizationService : IAuthorizationService
         IdentityResult result = await _userManager.CreateAsync(user, password);
 
         if (result.Succeeded is false)
-            throw new RegistrationFailedException(string.Join(' ', result.Errors.Select(x => x.Description)));
+            throw new IdentityException(result.Errors);
 
         await _userManager.AddToRoleAsync(user, roleName);
 
@@ -82,25 +78,22 @@ internal class AuthorizationService : IAuthorizationService
         IdentityResult? result = await _userManager.UpdateAsync(user);
 
         if (result.Succeeded is false)
-            throw new UpdateUsernameFailedException(string.Join(' ', result.Errors.Select(r => r.Description)));
+            throw new IdentityException(result.Errors);
     }
 
-    public async Task UpdateUserPasswordAsync(Guid userId, string newPassword, CancellationToken cancellationToken = default)
+    public async Task UpdateUserPasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken = default)
     {
         AsapIdentityUser user = await _userManager.GetByIdAsync(userId, cancellationToken);
 
-        await _userManager.AddPasswordAsync(user, newPassword);
-
-        IdentityResult result = await _userManager.UpdateAsync(user);
+        IdentityResult result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
 
         if (result.Succeeded is false)
-            throw new UpdatePasswordFailedException(string.Join(' ', result.Errors.Select(r => r.Description)));
+            throw new IdentityException(result.Errors);
     }
 
     public async Task UpdateUserRoleAsync(Guid userId, string newRoleName, CancellationToken cancellationToken = default)
     {
         AsapIdentityUser user = await _userManager.GetByIdAsync(userId, cancellationToken);
-
         IList<string> roles = await _userManager.GetRolesAsync(user);
 
         await _userManager.RemoveFromRolesAsync(user, roles);
@@ -110,7 +103,6 @@ internal class AuthorizationService : IAuthorizationService
     public async Task<string> GetUserRoleAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         AsapIdentityUser user = await _userManager.GetByIdAsync(userId, cancellationToken);
-
         IList<string> roles = await _userManager.GetRolesAsync(user);
 
         return roles.Single();
@@ -120,8 +112,6 @@ internal class AuthorizationService : IAuthorizationService
     {
         AsapIdentityUser user = await _userManager.GetByIdAsync(userId, cancellationToken);
 
-        bool passwordCorrect = await _userManager.CheckPasswordAsync(user, password);
-
-        return passwordCorrect;
+        return await _userManager.CheckPasswordAsync(user, password);
     }
 }
