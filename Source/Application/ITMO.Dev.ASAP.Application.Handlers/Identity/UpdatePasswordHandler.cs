@@ -1,6 +1,4 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Application.Dto.Identity;
-using ITMO.Dev.ASAP.Identity.Exceptions;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.UpdatePassword;
 

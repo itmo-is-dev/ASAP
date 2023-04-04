@@ -2,7 +2,6 @@ using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Identity.Entities;
-using ITMO.Dev.ASAP.Identity.Exceptions;
 using ITMO.Dev.ASAP.Identity.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -48,8 +47,7 @@ internal class AuthorizationService : IAuthorizationService
 
         IdentityResult result = await _userManager.CreateAsync(user, password);
 
-        if (result.Succeeded is false)
-            throw new IdentityException(result.Errors);
+        result.EnsureSucceded();
 
         await _userManager.AddToRoleAsync(user, roleName);
 
@@ -91,8 +89,7 @@ internal class AuthorizationService : IAuthorizationService
 
         IdentityResult? result = await _userManager.UpdateAsync(user);
 
-        if (result.Succeeded is false)
-            throw new IdentityException(result.Errors);
+        result.EnsureSucceded();
     }
 
     public async Task UpdateUserPasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken = default)
@@ -101,8 +98,7 @@ internal class AuthorizationService : IAuthorizationService
 
         IdentityResult result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
 
-        if (result.Succeeded is false)
-            throw new IdentityException(result.Errors);
+        result.EnsureSucceded();
     }
 
     public async Task UpdateUserRoleAsync(Guid userId, string newRoleName, CancellationToken cancellationToken = default)
