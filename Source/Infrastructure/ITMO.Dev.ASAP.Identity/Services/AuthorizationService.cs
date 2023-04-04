@@ -5,6 +5,7 @@ using ITMO.Dev.ASAP.Identity.Entities;
 using ITMO.Dev.ASAP.Identity.Exceptions;
 using ITMO.Dev.ASAP.Identity.Extensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITMO.Dev.ASAP.Identity.Services;
 
@@ -60,6 +61,19 @@ internal class AuthorizationService : IAuthorizationService
         AsapIdentityUser user = await _userManager.GetByIdAsync(userId, cancellationToken);
 
         return user.ToDto();
+    }
+
+    public async Task<IReadOnlyCollection<IdentityUserDto>> GetUsersByIdsAsync(IEnumerable<Guid> userIds, CancellationToken cancellationToken = default)
+    {
+        List<AsapIdentityUser> users = await _userManager.Users
+            .Where(x => userIds.Contains(x.Id))
+            .ToListAsync(cancellationToken);
+
+        IReadOnlyCollection<IdentityUserDto> userDtos = users
+            .Select(x => x.ToDto())
+            .ToList();
+
+        return userDtos;
     }
 
     public async Task<IdentityUserDto> GetUserByNameAsync(string username, CancellationToken cancellationToken = default)

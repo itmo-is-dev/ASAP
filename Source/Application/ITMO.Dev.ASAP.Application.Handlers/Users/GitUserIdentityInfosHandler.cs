@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Tools;
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Application.Queries;
@@ -8,7 +9,6 @@ using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
 using static ITMO.Dev.ASAP.Application.Contracts.Users.Queries.GetUserIdentityInfos;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Users;
@@ -47,14 +47,13 @@ internal class GitUserIdentityInfosHandler : IRequestHandler<Query, Response>
 
         IEnumerable<Guid> userIds = users.Select(x => x.Id);
 
-        var identityUsers = userIds
-            .Select(x => _authorizationService.GetUserByIdAsync(x, cancellationToken).Result)
-            .Select(x => x.Id)
-            .ToList();
+        IEnumerable<IdentityUserDto> identityUsers = await _authorizationService.GetUsersByIdsAsync(userIds, cancellationToken);
+
+        IEnumerable<Guid> identityUserIds = identityUsers.Select(x => x.Id);
 
         UserIdentityInfoDto[] dto = users
             .GroupJoin(
-                identityUsers,
+                identityUserIds,
                 x => x.Id,
                 x => x,
                 (x, e) => new UserIdentityInfoDto(x.ToDto(), e.Any()))

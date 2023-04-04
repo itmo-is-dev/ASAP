@@ -12,6 +12,8 @@ public interface IAuthorizationService
 
     Task<IdentityUserDto> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyCollection<IdentityUserDto>> GetUsersByIdsAsync(IEnumerable<Guid> userIds, CancellationToken cancellationToken = default);
+
     Task<IdentityUserDto> GetUserByNameAsync(string username, CancellationToken cancellationToken = default);
 
     Task UpdateUserNameAsync(Guid userId, string newUsername, CancellationToken cancellationToken = default);
