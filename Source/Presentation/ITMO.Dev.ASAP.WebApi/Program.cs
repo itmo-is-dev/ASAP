@@ -1,8 +1,6 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
 using ITMO.Dev.ASAP.DeveloperEnvironment;
-using ITMO.Dev.ASAP.Identity.Entities;
-using ITMO.Dev.ASAP.Identity.Extensions;
 using ITMO.Dev.ASAP.WebApi.Configuration;
 using ITMO.Dev.ASAP.WebApi.Extensions;
 using ITMO.Dev.ASAP.WebApi.Helpers;
@@ -36,19 +34,19 @@ internal class Program
         {
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.Role, AsapIdentityRole.AdminRoleName),
+                new Claim(ClaimTypes.Role, AsapIdentityRoleNames.AdminRoleName),
                 new Claim(ClaimTypes.NameIdentifier, Guid.Empty.ToString()),
             }));
 
             ICurrentUserManager currentUserManager = scope.ServiceProvider.GetRequiredService<ICurrentUserManager>();
             currentUserManager.Authenticate(principal);
 
-            RoleManager<AsapIdentityRole> roleManager = scope.ServiceProvider
-                .GetRequiredService<RoleManager<AsapIdentityRole>>();
+            IAuthorizationService authorizationService = scope.ServiceProvider
+                .GetRequiredService<IAuthorizationService>();
 
-            await roleManager.CreateRoleIfNotExistsAsync(AsapIdentityRole.AdminRoleName);
-            await roleManager.CreateRoleIfNotExistsAsync(AsapIdentityRole.MentorRoleName);
-            await roleManager.CreateRoleIfNotExistsAsync(AsapIdentityRole.ModeratorRoleName);
+            await authorizationService.CreateRoleIfNotExistsAsync(AsapIdentityRoleNames.AdminRoleName);
+            await authorizationService.CreateRoleIfNotExistsAsync(AsapIdentityRoleNames.MentorRoleName);
+            await authorizationService.CreateRoleIfNotExistsAsync(AsapIdentityRoleNames.ModeratorRoleName);
 
             await scope.ServiceProvider.UseDatabaseContext();
 

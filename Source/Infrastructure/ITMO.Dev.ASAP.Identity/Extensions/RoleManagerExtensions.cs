@@ -3,13 +3,16 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ITMO.Dev.ASAP.Identity.Extensions;
 
-public static class RoleManagerExtensions
+internal static class RoleManagerExtensions
 {
-    public static async Task CreateRoleIfNotExistsAsync(
+    public static async Task CreateIfNotExistsAsync(
         this RoleManager<AsapIdentityRole> roleManager,
-        string roleName)
+        string roleName,
+        CancellationToken cancellationToken = default)
     {
-        if (!await roleManager.RoleExistsAsync(roleName))
+        bool roleExists = await roleManager.RoleExistsAsync(roleName);
+
+        if (roleExists is false)
             await roleManager.CreateAsync(new AsapIdentityRole(roleName));
     }
 }

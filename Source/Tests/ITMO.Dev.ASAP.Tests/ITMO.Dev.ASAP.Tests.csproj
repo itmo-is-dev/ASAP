@@ -14,6 +14,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="Moq" />
         <PackageReference Include="Serilog.Extensions.Logging" />
         <PackageReference Include="Serilog.Sinks.Console" />
         <PackageReference Include="Serilog.Sinks.XUnit" />
@@ -29,6 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Abstractions\ITMO.Dev.ASAP.Application.Abstractions.csproj" />
         <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.GithubWorkflow\ITMO.Dev.ASAP.Application.GithubWorkflow.csproj" />
         <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Handlers\ITMO.Dev.ASAP.Application.Handlers.csproj" />
         <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Google\ITMO.Dev.ASAP.Application.Google.csproj" />

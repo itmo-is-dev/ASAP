@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITMO.Dev.ASAP.Identity;
 
-public sealed class AsapIdentityContext : IdentityDbContext<AsapIdentityUser, AsapIdentityRole, Guid>
+internal sealed class AsapIdentityContext : IdentityDbContext<AsapIdentityUser, AsapIdentityRole, Guid>
 {
     public AsapIdentityContext(DbContextOptions<AsapIdentityContext> options)
         : base(options)
