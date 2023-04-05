@@ -1,9 +1,7 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Identity.Entities;
-using ITMO.Dev.ASAP.Identity.Extensions;
+using ITMO.Dev.ASAP.Application.Common.Exceptions;
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.ChangeUserRole;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
@@ -11,27 +9,24 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 internal class ChangeUserRoleHandler : IRequestHandler<Command>
 {
     private readonly ICurrentUser _currentUser;
-    private readonly UserManager<AsapIdentityUser> _userManager;
+    private readonly IAuthorizationService _authorizationService;
 
-    public ChangeUserRoleHandler(
-        ICurrentUser currentUser,
-        UserManager<AsapIdentityUser> userManager)
+    public ChangeUserRoleHandler(ICurrentUser currentUser, IAuthorizationService authorizationService)
     {
         _currentUser = currentUser;
-        _userManager = userManager;
+        _authorizationService = authorizationService;
     }
 
     public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
     {
-        AsapIdentityUser user = await _userManager.GetByNameAsync(request.Username);
-        IList<string> userRoles = await _userManager.GetRolesAsync(user);
-        string userRoleName = userRoles.Single();
+        IdentityUserDto user = await _authorizationService.GetUserByNameAsync(request.Username, cancellationToken);
+
+        string userRoleName = await _authorizationService.GetUserRoleAsync(user.Id, cancellationToken);
 
         if (_currentUser.CanChangeUserRole(userRoleName, request.UserRole) is false)
-            throw new AsapIdentityException($"Unable to change role of {user.UserName}");
+            throw new AccessDeniedException($"Unable to change role of {user.Username}");
 
-        await _userManager.RemoveFromRolesAsync(user, new[] { userRoleName });
-        await _userManager.AddToRoleAsync(user, request.UserRole);
+        await _authorizationService.UpdateUserRoleAsync(user.Id, request.UserRole, cancellationToken);
 
         return Unit.Value;
     }

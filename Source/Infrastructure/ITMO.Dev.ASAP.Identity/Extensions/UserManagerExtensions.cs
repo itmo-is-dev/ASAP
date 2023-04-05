@@ -4,25 +4,30 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ITMO.Dev.ASAP.Identity.Extensions;
 
-public static class UserManagerExtensions
+internal static class UserManagerExtensions
 {
-    public static async Task CreateOrElseThrowAsync(
+    public static async Task<AsapIdentityUser> GetByIdAsync(
         this UserManager<AsapIdentityUser> userManager,
-        AsapIdentityUser user,
-        string password)
+        Guid userId,
+        CancellationToken cancellationToken = default)
     {
-        IdentityResult result = await userManager.CreateAsync(user, password);
-
-        if (result.Succeeded is false)
-            throw new RegistrationFailedException(string.Join(' ', result.Errors.Select(x => x.Description)));
-    }
-
-    public static async Task<AsapIdentityUser> GetByNameAsync(this UserManager<AsapIdentityUser> userManager, string userName)
-    {
-        AsapIdentityUser? user = await userManager.FindByNameAsync(userName);
+        AsapIdentityUser? user = await userManager.FindByIdAsync(userId.ToString());
 
         if (user is null)
-            throw new EntityNotFoundException($"User with username '{userName}' does not exist");
+            throw new EntityNotFoundException($"User with id {userId} was not found");
+
+        return user;
+    }
+
+    public static async Task<AsapIdentityUser> GetByNameAsync(
+        this UserManager<AsapIdentityUser> userManager,
+        string username,
+        CancellationToken cancellationToken = default)
+    {
+        AsapIdentityUser? user = await userManager.FindByNameAsync(username);
+
+        if (user is null)
+            throw new EntityNotFoundException($"User with username {username} was not found");
 
         return user;
     }

@@ -1,6 +1,5 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Identity.Entities;
 
 namespace ITMO.Dev.ASAP.Application.Users;
 
@@ -8,7 +7,7 @@ internal class ModeratorUser : ICurrentUser
 {
     private static readonly HashSet<string?> AvailableRolesToChange = new()
     {
-        AsapIdentityRole.MentorRoleName,
+        AsapIdentityRoleNames.MentorRoleName,
     };
 
     public ModeratorUser(Guid id)

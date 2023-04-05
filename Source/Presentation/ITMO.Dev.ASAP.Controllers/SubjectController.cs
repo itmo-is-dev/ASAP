@@ -1,9 +1,9 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Subjects.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Subjects.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
-using ITMO.Dev.ASAP.Identity.Entities;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Subjects;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +13,7 @@ namespace ITMO.Dev.ASAP.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = AsapIdentityRole.AdminRoleName)]
+[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
 public class SubjectController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -33,8 +33,8 @@ public class SubjectController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = $"{AsapIdentityRole.MentorRoleName}, {AsapIdentityRole.AdminRoleName}, " +
-                       $"{AsapIdentityRole.ModeratorRoleName}")]
+    [Authorize(Roles = $"{AsapIdentityRoleNames.MentorRoleName}, {AsapIdentityRoleNames.AdminRoleName}, " +
+                       $"{AsapIdentityRoleNames.ModeratorRoleName}")]
     public async Task<ActionResult<IReadOnlyCollection<SubjectDto>>> Get()
     {
         var query = new GetSubjects.Query();
@@ -44,8 +44,8 @@ public class SubjectController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = $"{AsapIdentityRole.MentorRoleName}, {AsapIdentityRole.AdminRoleName}, " +
-                       $"{AsapIdentityRole.ModeratorRoleName}")]
+    [Authorize(Roles = $"{AsapIdentityRoleNames.MentorRoleName}, {AsapIdentityRoleNames.AdminRoleName}, " +
+                       $"{AsapIdentityRoleNames.ModeratorRoleName}")]
     public async Task<ActionResult<SubjectDto>> GetById(Guid id)
     {
         var query = new GetSubjectById.Query(id);
@@ -64,8 +64,8 @@ public class SubjectController : ControllerBase
     }
 
     [HttpGet("{id:guid}/courses")]
-    [Authorize(Roles = $"{AsapIdentityRole.MentorRoleName}, {AsapIdentityRole.AdminRoleName}, " +
-                       $"{AsapIdentityRole.ModeratorRoleName}")]
+    [Authorize(Roles = $"{AsapIdentityRoleNames.MentorRoleName}, {AsapIdentityRoleNames.AdminRoleName}, " +
+                       $"{AsapIdentityRoleNames.ModeratorRoleName}")]
     public async Task<ActionResult<IReadOnlyCollection<SubjectCourseDto>>> GetSubjectCourses(Guid id)
     {
         var request = new GetSubjectCoursesBySubjectId.Query(id);
