@@ -1,4 +1,5 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Identity.Entities;
@@ -44,7 +45,12 @@ internal class AuthorizationService : IAuthorizationService
         await _roleManager.CreateIfNotExistsAsync(roleName, cancellationToken);
     }
 
-    public async Task<IdentityUserDto> CreateUserAsync(Guid userId, string username, string password, string roleName, CancellationToken cancellationToken = default)
+    public async Task<IdentityUserDto> CreateUserAsync(
+        Guid userId,
+        string username,
+        string password,
+        string roleName,
+        CancellationToken cancellationToken = default)
     {
         var user = new AsapIdentityUser
         {
@@ -55,7 +61,7 @@ internal class AuthorizationService : IAuthorizationService
 
         IdentityResult result = await _userManager.CreateAsync(user, password);
 
-        result.EnsureSucceded();
+        result.EnsureSucceeded();
 
         await _userManager.AddToRoleAsync(user, roleName);
 
@@ -69,7 +75,9 @@ internal class AuthorizationService : IAuthorizationService
         return user.ToDto();
     }
 
-    public async Task<IReadOnlyCollection<IdentityUserDto>> GetUsersByIdsAsync(IEnumerable<Guid> userIds, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyCollection<IdentityUserDto>> GetUsersByIdsAsync(
+        IEnumerable<Guid> userIds,
+        CancellationToken cancellationToken = default)
     {
         List<AsapIdentityUser> users = await _userManager.Users
             .Where(x => userIds.Contains(x.Id))
@@ -97,16 +105,23 @@ internal class AuthorizationService : IAuthorizationService
 
         IdentityResult? result = await _userManager.UpdateAsync(user);
 
-        result.EnsureSucceded();
+        result.EnsureSucceeded();
     }
 
-    public async Task<IdentityUserDto> UpdateUserPasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken = default)
+    public async Task<IdentityUserDto> UpdateUserPasswordAsync(
+        Guid userId,
+        string currentPassword,
+        string newPassword,
+        CancellationToken cancellationToken = default)
     {
+        if (currentPassword.Equals(newPassword, StringComparison.Ordinal))
+            throw new IdentityOperationNotSucceededException("New password cannot be equal to old password");
+
         AsapIdentityUser user = await _userManager.GetByIdAsync(userId, cancellationToken);
 
         IdentityResult result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
 
-        result.EnsureSucceded();
+        result.EnsureSucceeded();
 
         return user.ToDto();
     }
@@ -128,7 +143,10 @@ internal class AuthorizationService : IAuthorizationService
         return roles.Single();
     }
 
-    public async Task<bool> CheckUserPasswordAsync(Guid userId, string password, CancellationToken cancellationToken = default)
+    public async Task<bool> CheckUserPasswordAsync(
+        Guid userId,
+        string password,
+        CancellationToken cancellationToken = default)
     {
         AsapIdentityUser user = await _userManager.GetByIdAsync(userId, cancellationToken);
 
