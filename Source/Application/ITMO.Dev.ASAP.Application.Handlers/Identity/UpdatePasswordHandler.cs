@@ -1,4 +1,5 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.UpdatePassword;
 
@@ -17,13 +18,13 @@ internal class UpdatePasswordHandler : IRequestHandler<Command, Response>
 
     public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
     {
-        await _authorizationService.UpdateUserPasswordAsync(
+        IdentityUserDto existingUser = await _authorizationService.UpdateUserPasswordAsync(
             _currentUser.Id,
             request.CurrentPassword,
             request.NewPassword,
             cancellationToken);
 
-        string token = await _authorizationService.GetUserTokenAsync(existingUser.UserName, cancellationToken);
+        string token = await _authorizationService.GetUserTokenAsync(existingUser.Username, cancellationToken);
 
         return new Response(token);
     }

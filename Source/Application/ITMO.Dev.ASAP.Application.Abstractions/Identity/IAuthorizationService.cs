@@ -27,7 +27,7 @@ public interface IAuthorizationService
 
     Task UpdateUserNameAsync(Guid userId, string newUsername, CancellationToken cancellationToken = default);
 
-    Task UpdateUserPasswordAsync(
+    Task<IdentityUserDto> UpdateUserPasswordAsync(
         Guid userId,
         string currentPassword,
         string newPassword,

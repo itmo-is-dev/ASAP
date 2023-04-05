@@ -2,14 +2,14 @@ using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Identity.Entities;
-using ITMO.Dev.ASAP.Identity.Tools;
 using ITMO.Dev.ASAP.Identity.Extensions;
+using ITMO.Dev.ASAP.Identity.Tools;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
 
 namespace ITMO.Dev.ASAP.Identity.Services;
 
@@ -100,13 +100,15 @@ internal class AuthorizationService : IAuthorizationService
         result.EnsureSucceded();
     }
 
-    public async Task UpdateUserPasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken = default)
+    public async Task<IdentityUserDto> UpdateUserPasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken = default)
     {
         AsapIdentityUser user = await _userManager.GetByIdAsync(userId, cancellationToken);
 
         IdentityResult result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
 
         result.EnsureSucceded();
+
+        return user.ToDto();
     }
 
     public async Task UpdateUserRoleAsync(Guid userId, string newRoleName, CancellationToken cancellationToken = default)
