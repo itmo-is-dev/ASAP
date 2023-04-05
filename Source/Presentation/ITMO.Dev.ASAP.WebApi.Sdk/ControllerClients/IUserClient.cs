@@ -6,6 +6,8 @@ namespace ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients;
 
 public interface IUserClient
 {
+    Task<UserDto?> FindCurrentUserAsync(CancellationToken cancellationToken);
+
     Task UpdateUniversityIdAsync(Guid userId, int universityId, CancellationToken cancellationToken = default);
 
     Task<UserDto?> FindUserByUniversityIdAsync(int universityId, CancellationToken cancellationToken = default);

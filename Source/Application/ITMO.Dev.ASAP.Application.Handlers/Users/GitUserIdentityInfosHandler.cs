@@ -9,6 +9,7 @@ using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using static ITMO.Dev.ASAP.Application.Contracts.Users.Queries.GetUserIdentityInfos;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Users;
@@ -20,11 +21,15 @@ internal class GitUserIdentityInfosHandler : IRequestHandler<Query, Response>
     private readonly PaginationConfiguration _paginationConfiguration;
     private readonly IEntityQuery<User, UserQueryParameter> _userQuery;
 
-    public GitUserIdentityInfosHandler(IDatabaseContext context, IAuthorizationService authorizationService, PaginationConfiguration paginationConfiguration, IEntityQuery<User, UserQueryParameter> userQuery)
+    public GitUserIdentityInfosHandler(
+        IDatabaseContext context,
+        IAuthorizationService authorizationService,
+        IOptions<PaginationConfiguration> paginationConfiguration,
+        IEntityQuery<User, UserQueryParameter> userQuery)
     {
         _context = context;
         _authorizationService = authorizationService;
-        _paginationConfiguration = paginationConfiguration;
+        _paginationConfiguration = paginationConfiguration.Value;
         _userQuery = userQuery;
     }
 
@@ -47,7 +52,8 @@ internal class GitUserIdentityInfosHandler : IRequestHandler<Query, Response>
 
         IEnumerable<Guid> userIds = users.Select(x => x.Id);
 
-        IEnumerable<IdentityUserDto> identityUsers = await _authorizationService.GetUsersByIdsAsync(userIds, cancellationToken);
+        IEnumerable<IdentityUserDto> identityUsers =
+            await _authorizationService.GetUsersByIdsAsync(userIds, cancellationToken);
 
         IEnumerable<Guid> identityUserIds = identityUsers.Select(x => x.Id);
 

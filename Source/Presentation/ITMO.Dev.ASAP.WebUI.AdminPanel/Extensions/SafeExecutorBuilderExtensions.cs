@@ -27,4 +27,13 @@ public static class SafeExecutorBuilderExtensions
             return Task.CompletedTask;
         });
     }
+
+    public static void OnSuccess<T>(this ISafeExecutionBuilder<T> builder, Action<T> action)
+    {
+        builder.OnSuccessAsync(x =>
+        {
+            action.Invoke(x);
+            return Task.CompletedTask;
+        });
+    }
 }

@@ -6,7 +6,7 @@ using static ITMO.Dev.ASAP.Application.Contracts.Identity.Commands.UpdateUsernam
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 
-internal class UpdateUsernameHandler : IRequestHandler<Command>
+internal class UpdateUsernameHandler : IRequestHandler<Command, Response>
 {
     private readonly ICurrentUser _currentUser;
     private readonly IAuthorizationService _authorizationService;
@@ -17,7 +17,7 @@ internal class UpdateUsernameHandler : IRequestHandler<Command>
         _authorizationService = authorizationService;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
     {
         IdentityUserDto user = await _authorizationService.GetUserByIdAsync(_currentUser.Id, cancellationToken);
 
@@ -26,6 +26,8 @@ internal class UpdateUsernameHandler : IRequestHandler<Command>
 
         await _authorizationService.UpdateUserNameAsync(user.Id, request.Username, cancellationToken);
 
-        return Unit.Value;
+        string token = await _authorizationService.GetUserTokenAsync(request.Username, cancellationToken);
+
+        return new Response(token);
     }
 }

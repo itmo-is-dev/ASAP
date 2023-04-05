@@ -4,7 +4,6 @@ using ITMO.Dev.ASAP.DeveloperEnvironment;
 using ITMO.Dev.ASAP.WebApi.Configuration;
 using ITMO.Dev.ASAP.WebApi.Extensions;
 using ITMO.Dev.ASAP.WebApi.Helpers;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
 namespace ITMO.Dev.ASAP.WebApi;

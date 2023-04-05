@@ -32,4 +32,26 @@ public class PrincipalService : IPrincipalService
             await consumer.OnExpiredAsync();
         }
     }
+
+    public async Task UpdateUsernameAsync(string username, CancellationToken cancellationToken)
+    {
+        var request = new UpdateUsernameRequest(username);
+        UpdateUsernameResponse response = await _identityClient.UpdateUsernameAsync(request, cancellationToken);
+
+        foreach (ITokenConsumer consumer in _consumers)
+        {
+            await consumer.OnNextAsync(response.Token);
+        }
+    }
+
+    public async Task UpdatePasswordAsync(string currentPassword, string newPassword, CancellationToken cancellationToken)
+    {
+        var request = new UpdatePasswordRequest(currentPassword, newPassword);
+        UpdatePasswordResponse response = await _identityClient.UpdatePasswordAsync(request, cancellationToken);
+
+        foreach (ITokenConsumer consumer in _consumers)
+        {
+            await consumer.OnNextAsync(response.Token);
+        }
+    }
 }

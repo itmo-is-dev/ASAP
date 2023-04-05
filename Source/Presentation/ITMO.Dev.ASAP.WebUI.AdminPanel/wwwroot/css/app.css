@@ -83,3 +83,95 @@ a, .btn-link {
     width: 32px;
     height: 32px;
 }
+
+.animation-disable {
+    animation-duration: 0s!important;
+}
+
+
+@media (max-width: 767px) {
+    .account-tools__bar-item {
+        flex-direction: column;
+    }
+
+    .account-tools__bar-menu {
+        border: none !important;
+        background: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .account-tools__dropdown-item {
+        border: none !important;
+        padding-left: 0 !important;
+    }
+
+    .account-tools__dropdown-item:hover {
+        background: none !important;
+    }
+}
+
+.asap-text-field__label {
+    animation-duration: 0.7s;
+    animation-name: label__appear;
+    display: block;
+}
+
+.asap-text-field__label-hidden {
+    display: block;
+    height: 0;
+    opacity: 0;
+    animation-duration: 0.7s;
+    animation-name: label__disappear;
+}
+
+.asap-text-field__footer {
+    animation-duration: 0.7s;
+    animation-name: label__appear;
+    display: block;
+    margin-bottom: 0;
+}
+
+.asap-text-field__footer-hidden {
+    height: 0;
+    opacity: 0;
+    animation-duration: 0.7s;
+    animation-name: label__disappear;
+}
+
+@keyframes label__appear {
+    from {
+        height: 0;
+        opacity: 0;
+        margin-bottom: 0;
+    }
+
+    60% {
+        opacity: 0;
+    }
+
+    to {
+        height: 24px;
+        opacity: 100%;
+    }
+}
+
+@keyframes label__disappear {
+    from {
+        height: 24px;
+        opacity: 100%;
+    }
+
+    60% {
+        opacity: 100%;
+    }
+
+    to {
+        height: 0;
+        opacity: 0;
+    }
+}
+
+.active.b-bar-link:not(:hover) {
+    background: none!important;
+}
