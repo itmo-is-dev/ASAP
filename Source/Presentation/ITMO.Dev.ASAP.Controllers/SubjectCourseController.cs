@@ -1,6 +1,5 @@
-using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Application.Contracts.Github.Commands;
+using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourseGroups.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Commands;
@@ -28,15 +27,6 @@ public class SubjectCourseController : ControllerBase
     }
 
     public CancellationToken CancellationToken => HttpContext.RequestAborted;
-
-    [HttpGet]
-    public async Task<ActionResult<IReadOnlyCollection<SubjectCourseDto>>> Get()
-    {
-        var query = new GetSubjectCourses.Query();
-        GetSubjectCourses.Response response = await _mediator.Send(query, CancellationToken);
-
-        return Ok(response.Subjects);
-    }
 
     [HttpGet("{id:guid}")]
     [Authorize(Roles = $"{AsapIdentityRoleNames.MentorRoleName}, {AsapIdentityRoleNames.AdminRoleName}, " +

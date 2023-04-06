@@ -1,6 +1,5 @@
-using ITMO.Dev.ASAP.Application.Contracts.Students.Commands;
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Application.Contracts.Github.Commands;
+using ITMO.Dev.ASAP.Application.Contracts.Students.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Queries;

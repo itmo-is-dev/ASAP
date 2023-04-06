@@ -1,5 +1,4 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Application.Contracts.Github.Commands;
 using ITMO.Dev.ASAP.Github.Application.Contracts.SubjectCourses.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
