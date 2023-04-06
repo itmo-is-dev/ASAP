@@ -1,11 +1,32 @@
 <Field Display="@(IsDisplayed ? Display.Block : Display.None)">
-    <FieldLabel>@Label</FieldLabel>
+
+    @{
+        var label = Label ?? _fallbackLabel;
+    }
+
+    <FieldLabel Class="@((_disableAnimation ? "animation-disable " : "") + (string.IsNullOrEmpty(label) ? "asap-text-field__label-hidden" : "asap-text-field__label"))">
+        @label
+    </FieldLabel>
+
     <TextEdit Text="@Value"
               Placeholder="@Placeholder"
-              TextChanged="@ValueChanged"/>
+              TextChanged="@ValueChanged"
+              Role="@Role"/>
+
+    <Div Class="@((_disableAnimation ? "animation-disable " : "") + (FooterHidden ? "asap-text-field__footer-hidden" : "asap-text-field__footer"))">
+        @if (FooterHidden is false)
+        {
+            <FieldHelp>
+                @Footer
+            </FieldHelp>
+        }
+    </Div>
 </Field>
 
 @code {
+    private bool _disableAnimation = true;
+    private string? _fallbackLabel;
+
     public string? Value { get; set; }
 
     [Parameter]
@@ -15,14 +36,44 @@
     public string? Placeholder { get; set; }
 
     [Parameter]
+    public bool FooterHidden { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment? Footer { get; set; }
+
+    [Parameter]
+    public bool AnimatePlaceholder { get; set; } = true;
+
+    [Parameter]
     public EventCallback OnStateChanged { get; set; }
 
     [Parameter]
     public bool IsDisplayed { get; set; } = true;
 
+    [Parameter]
+    public TextRole Role { get; set; } = TextRole.Text;
+
+    public bool HasValue => string.IsNullOrEmpty(Value) is false;
+
+    public void Clear()
+    {
+        Value = null;
+    }
+
     private async Task ValueChanged(string value)
     {
+        _disableAnimation = false;
         Value = value;
+
+        if (AnimatePlaceholder && string.IsNullOrEmpty(Value) is false)
+        {
+            _fallbackLabel = Placeholder;
+        }
+        else if (AnimatePlaceholder)
+        {
+            _fallbackLabel = null;
+        }
+
         await OnStateChanged.InvokeAsync();
     }
 

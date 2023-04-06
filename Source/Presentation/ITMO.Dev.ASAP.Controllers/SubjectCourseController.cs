@@ -1,4 +1,6 @@
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Contracts.Github.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourseGroups.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Commands;
@@ -6,7 +8,6 @@ using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.Users;
-using ITMO.Dev.ASAP.Identity.Entities;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.SubjectCourses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,7 @@ namespace ITMO.Dev.ASAP.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = AsapIdentityRole.AdminRoleName)]
+[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
 public class SubjectCourseController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -38,6 +39,8 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = $"{AsapIdentityRoleNames.MentorRoleName}, {AsapIdentityRoleNames.AdminRoleName}, " +
+                       $"{AsapIdentityRoleNames.ModeratorRoleName}")]
     public async Task<ActionResult<SubjectCourseDto>> GetById(Guid id)
     {
         var query = new GetSubjectCourseById.Query(id);

@@ -1,10 +1,11 @@
 using ITMO.Dev.ASAP.Application.Contracts.Students.Commands;
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Contracts.Github.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Dto.Users;
-using ITMO.Dev.ASAP.Identity.Entities;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Students;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,7 @@ namespace ITMO.Dev.ASAP.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = AsapIdentityRole.AdminRoleName)]
+[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
 public class StudentController : ControllerBase
 {
     private readonly IMediator _mediator;

@@ -22,6 +22,9 @@ public static class ServiceCollectionExtensions
         IdentityConfiguration? identityConfiguration = identityConfigurationSection
             .Get<IdentityConfiguration>();
 
+        IConfigurationSection identityOptionsSection = identityConfigurationSection.GetSection("Options");
+        collection.Configure<IdentityOptions>(identityOptionsSection);
+
         collection.AddScoped<IAuthorizationService, AuthorizationService>();
 
         collection.AddSingleton(identityConfiguration);

@@ -1,3 +1,5 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Contracts.Github.Commands;
 using ITMO.Dev.ASAP.Github.Application.Contracts.SubjectCourses.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +9,7 @@ namespace ITMO.Dev.ASAP.Github.Presentation.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
 public class GithubManagementController : ControllerBase
 {
     private readonly IMediator _mediator;

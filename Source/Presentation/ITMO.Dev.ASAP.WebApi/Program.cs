@@ -1,9 +1,11 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
 using ITMO.Dev.ASAP.DeveloperEnvironment;
 using ITMO.Dev.ASAP.Github.DataAccess.Extensions;
 using ITMO.Dev.ASAP.WebApi.Configuration;
 using ITMO.Dev.ASAP.WebApi.Extensions;
 using ITMO.Dev.ASAP.WebApi.Helpers;
+using System.Security.Claims;
 
 namespace ITMO.Dev.ASAP.WebApi;
 
@@ -31,6 +33,22 @@ internal class Program
 
         using (IServiceScope scope = app.Services.CreateScope())
         {
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.Role, AsapIdentityRoleNames.AdminRoleName),
+                new Claim(ClaimTypes.NameIdentifier, Guid.Empty.ToString()),
+            }));
+
+            ICurrentUserManager currentUserManager = scope.ServiceProvider.GetRequiredService<ICurrentUserManager>();
+            currentUserManager.Authenticate(principal);
+
+            IAuthorizationService authorizationService = scope.ServiceProvider
+                .GetRequiredService<IAuthorizationService>();
+
+            await authorizationService.CreateRoleIfNotExistsAsync(AsapIdentityRoleNames.AdminRoleName);
+            await authorizationService.CreateRoleIfNotExistsAsync(AsapIdentityRoleNames.MentorRoleName);
+            await authorizationService.CreateRoleIfNotExistsAsync(AsapIdentityRoleNames.ModeratorRoleName);
+
             await scope.ServiceProvider.UseGithubDatabaseContext();
             await scope.ServiceProvider.UseDatabaseContext();
 

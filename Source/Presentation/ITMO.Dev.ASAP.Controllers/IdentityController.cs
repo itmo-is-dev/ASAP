@@ -1,6 +1,7 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Queries;
-using ITMO.Dev.ASAP.Identity.Entities;
+using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -25,12 +26,12 @@ public class IdentityController : ControllerBase
         var query = new Login.Query(request.Username, request.Password);
         Login.Response response = await _mediator.Send(query, HttpContext.RequestAborted);
 
-        var loginResponse = new LoginResponse(response.Token, response.Expires, response.Roles);
+        var loginResponse = new LoginResponse(response.Token);
         return Ok(loginResponse);
     }
 
     [HttpPut("users/{username}/role")]
-    [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
+    [Authorize(Roles = $"{AsapIdentityRoleNames.AdminRoleName}, {AsapIdentityRoleNames.ModeratorRoleName}")]
     public async Task<IActionResult> ChangeUserRoleAsync(string username, [FromQuery] string roleName)
     {
         var command = new ChangeUserRole.Command(username, roleName);
@@ -39,27 +40,42 @@ public class IdentityController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("register")]
-    [Authorize(Roles = AsapIdentityRole.AdminRoleName)]
-    public async Task<ActionResult<LoginResponse>> RegisterAsync([FromBody] RegisterUserRequest request)
-    {
-        var registerCommand = new Register.Command(request.Username, request.Password);
-        await _mediator.Send(registerCommand);
-
-        var loginCommand = new Login.Query(request.Username, request.Password);
-        Login.Response loginResponse = await _mediator.Send(loginCommand, HttpContext.RequestAborted);
-
-        var credentials = new LoginResponse(loginResponse.Token, loginResponse.Expires, loginResponse.Roles);
-        return Ok(credentials);
-    }
-
     [HttpPost("user/{id:guid}/create")]
-    [Authorize(Roles = $"{AsapIdentityRole.AdminRoleName}, {AsapIdentityRole.ModeratorRoleName}")]
+    [Authorize(Roles = $"{AsapIdentityRoleNames.AdminRoleName}, {AsapIdentityRoleNames.ModeratorRoleName}")]
     public async Task<IActionResult> CreateUserAccountAsync(Guid id, [FromBody] CreateUserAccountRequest request)
     {
         var command = new CreateUserAccount.Command(id, request.Username, request.Password, request.RoleName);
         await _mediator.Send(command);
 
         return Ok();
+    }
+
+    [HttpPut("username")]
+    [Authorize]
+    public async Task<ActionResult<UpdateUsernameResponse>> UpdateUsernameAsync([FromBody] UpdateUsernameRequest request)
+    {
+        var updateCommand = new UpdateUsername.Command(request.Username);
+        UpdateUsername.Response response = await _mediator.Send(updateCommand);
+
+        return Ok(new UpdateUsernameResponse(response.Token));
+    }
+
+    [HttpPut("password")]
+    [Authorize]
+    public async Task<ActionResult<UpdatePasswordResponse>> UpdatePasswordAsync([FromBody] UpdatePasswordRequest request)
+    {
+        var updateCommand = new UpdatePassword.Command(request.CurrentPassword, request.NewPassword);
+        UpdatePassword.Response response = await _mediator.Send(updateCommand);
+
+        return Ok(new UpdatePasswordResponse(response.Token));
+    }
+
+    [HttpGet("password/options")]
+    public async Task<PasswordOptionsDto> GetPasswordOptionsAsync()
+    {
+        var query = new GetPasswordOptions.Query();
+        GetPasswordOptions.Response response = await _mediator.Send(query, HttpContext.RequestAborted);
+
+        return response.PasswordOptions;
     }
 }

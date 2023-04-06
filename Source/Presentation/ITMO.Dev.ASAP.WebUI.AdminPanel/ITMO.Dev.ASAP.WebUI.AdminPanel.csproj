@@ -4,6 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <NoWarn>$(NoWarn);BL0005</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,10 +18,16 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
         <PackageReference Include="Microsoft.Extensions.Http" />
         <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+        <PackageReference Include="System.Reactive" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\ITMO.Dev.ASAP.WebApi.Sdk\ITMO.Dev.ASAP.WebApi.Sdk.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\sample-data\weather.json" />
     </ItemGroup>
 
 </Project>

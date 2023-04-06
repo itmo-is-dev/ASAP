@@ -11,7 +11,7 @@ internal static class ServiceCollectionExtensions
     internal static IServiceCollection AddPlaygroundDependencies(this IServiceCollection servicesCollection)
     {
         return servicesCollection.AddApplicationConfiguration()
-            .AddHandlers()
+            .AddHandlers(new ConfigurationBuilder().Build())
             .AddGithubPresentation()
             .AddDummyGoogleIntegration()
             .AddLogging(logBuilder => logBuilder.AddSerilog());

@@ -13,7 +13,6 @@ using ITMO.Dev.ASAP.WebApi.Abstractions.Models.StudyGroups;
 using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients;
 using ITMO.Dev.ASAP.WebApi.Sdk.Extensions;
 using ITMO.Dev.ASAP.WebApi.Sdk.Identity;
-using ITMO.Dev.ASAP.WebApi.Sdk.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
@@ -30,7 +29,7 @@ var identityProvider = new IdentityProvider();
 
 var collection = new ServiceCollection();
 collection.AddAsapSdk(new Uri(baseUrl));
-collection.AddSingleton<IIdentityProvider>(identityProvider);
+collection.AddSingleton<ITokenProvider>(identityProvider);
 
 ServiceProvider provider = collection.BuildServiceProvider();
 
@@ -46,7 +45,7 @@ string password = ReadLabeled("Password: ");
 
 var loginRequest = new LoginRequest(username, password);
 LoginResponse loginResponse = await identityClient.LoginAsync(loginRequest);
-identityProvider.UserIdentity = new UserIdentity(loginResponse.Token, loginResponse.Expires);
+identityProvider.UserIdentity = loginResponse.Token;
 
 IReadOnlyCollection<StudyGroupDto> createdGroups = await studyGroupClient.QueryAsync(
     new QueryConfiguration<GroupQueryParameter>(ArraySegment<QueryParameter<GroupQueryParameter>>.Empty));

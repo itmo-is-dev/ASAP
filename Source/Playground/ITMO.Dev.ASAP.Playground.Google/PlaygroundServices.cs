@@ -3,6 +3,7 @@ using ITMO.Dev.ASAP.Application.Extensions;
 using ITMO.Dev.ASAP.Application.Google.Extensions;
 using ITMO.Dev.ASAP.Application.Google.Workers;
 using ITMO.Dev.ASAP.Application.Handlers.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
@@ -19,7 +20,7 @@ internal static class PlaygroundServices
             .AddGoogleIntegration(o => o
                 .ConfigureGoogleCredentials(googleCredentials)
                 .ConfigureDriveId("17CfXw__b4nnPp7VEEgWGe-N8VptaL1hP"))
-            .AddHandlers()
+            .AddHandlers(new ConfigurationBuilder().Build())
             .AddLogging(o => o.AddSerilog())
             .AddSingleton<GoogleTableUpdateWorker>()
             .AddGooglePlaygroundDatabase()

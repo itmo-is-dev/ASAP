@@ -1,11 +1,14 @@
 @page "/adminpanel/subjects/{subjectId:guid}"
+@layout PaddedLayout
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling
 @using ITMO.Dev.ASAP.Application.Dto.SubjectCourses
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Authorization
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Components.SubjectCourse
-@using ITMO.Dev.ASAP.WebUI.AdminPanel.Components
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Extensions
 @inject ISubjectClient SubjectClient
 @inject ISafeExecutor SafeExecutor
 @inject NavigationManager NavigationManager
+@inject ICurrentUser CurrentUser
 
 @if (_courses is not null)
 {
@@ -15,9 +18,12 @@
                 Courses
             </Heading>
 
-            <Div Flex="Flex.Column.JustifyContent.Center">
-                <CreateButton Clicked="@(() => _createSubjectCourseModal?.ShowAsync() ?? Task.CompletedTask)"/>
-            </Div>
+            @if (CurrentUser.HasModeratorAccess())
+            {
+                <Div Flex="Flex.Column.JustifyContent.Center">
+                    <CreateButton Clicked="@(() => _createSubjectCourseModal?.ShowAsync() ?? Task.CompletedTask)"/>
+                </Div>
+            }
         </Div>
 
         <Div>
@@ -29,9 +35,12 @@
     </Div>
 
 
-    <CreateSubjectCourseModal @ref="_createSubjectCourseModal"
-                              SubjectId="SubjectId"
-                              OnSuccess="OnSubjectCourseCreated"/>
+    @if (CurrentUser.HasModeratorAccess())
+    {
+        <CreateSubjectCourseModal @ref="_createSubjectCourseModal"
+                                  SubjectId="SubjectId"
+                                  OnSuccess="OnSubjectCourseCreated"/>
+    }
 }
 else
 {

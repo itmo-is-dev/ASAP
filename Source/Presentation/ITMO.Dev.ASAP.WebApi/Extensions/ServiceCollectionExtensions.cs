@@ -40,7 +40,7 @@ internal static class ServiceCollectionExtensions
             .AddSwagger()
             .AddApplicationConfiguration()
             .AddAsapPresentationServices()
-            .AddHandlers()
+            .AddHandlers(configuration)
             .AddDatabaseContext(o => o
                 .UseNpgsql(webApiConfiguration.PostgresConfiguration.ToConnectionString(webApiConfiguration
                     .DbNamesConfiguration.ApplicationDbName))

@@ -1,10 +1,13 @@
 @page "/adminpanel/subjects"
+@layout PaddedLayout
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling
 @using ITMO.Dev.ASAP.Application.Dto.Study
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Authorization
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Components.Subjects
-@using ITMO.Dev.ASAP.WebUI.AdminPanel.Components
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Extensions
 @inject ISubjectClient SubjectClient
 @inject ISafeExecutor SafeExecutor
+@inject ICurrentUser CurrentUser
 
 @if (_subjects is not null)
 {
@@ -13,7 +16,10 @@
             Subjects
         </Heading>
 
-        <CreateButton Clicked="@(() => _createSubjectModal?.ShowAsync() ?? Task.CompletedTask)"/>
+        @if (CurrentUser.HasModeratorAccess())
+        {
+            <CreateButton Clicked="@(() => _createSubjectModal?.ShowAsync() ?? Task.CompletedTask)"/>
+        }
 
     </Div>
 
@@ -24,7 +30,10 @@
         }
     </Div>
 
-    <CreateSubjectModal @ref="_createSubjectModal" OnSuccess="OnSubjectCreated"/>
+    @if (CurrentUser.HasModeratorAccess())
+    {
+        <CreateSubjectModal @ref="_createSubjectModal" OnSuccess="OnSubjectCreated"/>
+    }
 }
 else
 {

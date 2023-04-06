@@ -1,3 +1,4 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
@@ -11,16 +12,23 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Study.Subjects;
 internal class GetSubjectsHandler : IRequestHandler<Query, Response>
 {
     private readonly IDatabaseContext _context;
+    private readonly ICurrentUser _currentUser;
 
-    public GetSubjectsHandler(IDatabaseContext context)
+    public GetSubjectsHandler(IDatabaseContext context, ICurrentUser currentUser)
     {
         _context = context;
+        _currentUser = currentUser;
     }
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        List<Subject> subject = await _context.Subjects.ToListAsync(cancellationToken);
-        SubjectDto[] dto = subject.Select(x => x.ToDto()).ToArray();
+        List<Subject> subjects = await _currentUser
+            .FilterAvailableSubjects(_context.Subjects)
+            .ToListAsync(cancellationToken);
+
+        SubjectDto[] dto = subjects
+            .Select(x => x.ToDto())
+            .ToArray();
 
         return new Response(dto);
     }

@@ -1,0 +1,18 @@
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Shared.Exceptions
+@inherits LayoutComponentBase
+
+<Layout>
+    <LayoutHeader Style="z-index: 2">
+        <NavMenu/>
+    </LayoutHeader>
+
+    <LayoutContent Height="Height.Is100" Width="Width.Is100">
+
+        <CascadingValue Value="@this">
+            @Body
+        </CascadingValue>
+
+    </LayoutContent>
+
+    <ExceptionDisplay/>
+</Layout>
