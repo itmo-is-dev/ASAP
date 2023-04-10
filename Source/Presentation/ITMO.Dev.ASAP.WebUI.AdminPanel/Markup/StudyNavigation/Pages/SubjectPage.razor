@@ -1,0 +1,55 @@
+@page "/adminpanel/subjects/{subjectId:guid}"
+@using ITMO.Dev.ASAP.Application.Dto.Study
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Markup.StudyNavigation.Layouts
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Markup.StudyNavigation.Components
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Markup.StudyNavigation.Providers
+@layout SubjectListLayout
+@inject ISubjectProvider SubjectProvider
+@implements IDisposable
+
+<Div Class="navigation-list__breadcrumb">
+    <Breadcrumb>
+        <BreadcrumbItem Class="navigation-list__breadcrumb__item" Style="max-width: 50%">
+            <BreadcrumbLink To="/adminpanel/subjects">
+                Subjects
+            </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbItem Class="navigation-list__breadcrumb__item" Style="max-width: 50%">
+            @_value?.Title
+        </BreadcrumbItem>
+    </Breadcrumb>
+</Div>
+
+<Heading Size="HeadingSize.Is2" Padding="Padding.Is2">
+    Courses
+</Heading>
+
+<SubjectCourseListComponent/>
+
+@code {
+
+    private SubjectDto? _value;
+
+    private IDisposable? _valueSubscription;
+
+    [Parameter]
+    public Guid SubjectId { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        SubjectProvider.OnNext(SubjectId);
+        _valueSubscription = SubjectProvider.Value.Subscribe(OnSubjectUpdated);
+        _value = SubjectProvider.CurrentValue;
+    }
+
+    public void Dispose()
+    {
+        _valueSubscription?.Dispose();
+    }
+
+    private void OnSubjectUpdated(SubjectDto value)
+    {
+        _value = value;
+    }
+
+}

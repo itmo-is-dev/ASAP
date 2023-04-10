@@ -8,6 +8,7 @@ using ITMO.Dev.ASAP.WebApi.Sdk.Identity;
 using ITMO.Dev.ASAP.WebUI.AdminPanel.Authorization;
 using ITMO.Dev.ASAP.WebUI.AdminPanel.Authorization.Implementations;
 using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling;
+using ITMO.Dev.ASAP.WebUI.AdminPanel.Markup.StudyNavigation.Providers;
 using ITMO.Dev.ASAP.WebUI.AdminPanel.Navigation;
 using ITMO.Dev.ASAP.WebUI.AdminPanel.Navigation.Implementations;
 using ITMO.Dev.ASAP.WebUI.AdminPanel.Tools;
@@ -44,6 +45,9 @@ public static class ServiceCollectionExtensions
         collection.AddAsapAuthorization();
 
         collection.AddScoped<INavigationService, NavigationService>();
+
+        collection.AddSingleton<ISubjectProvider, SubjectProvider>();
+        collection.AddSingleton<ISubjectCourseProvider, SubjectCourseProvider>();
 
         collection.AddAsapSdk(new Uri(environment.BaseAddress));
     }
