@@ -36,7 +36,7 @@ else
 }
 
 @code {
-    private IReadOnlyCollection<SubjectCourseDto>? _courses;
+    private ICollection<SubjectCourseDto>? _courses;
     private Guid? _selected;
 
     private IDisposable? _subjectSubscription;
@@ -44,6 +44,11 @@ else
 
     [Parameter]
     public EventCallback OnLoaded { get; set; }
+
+    public void AddCourse(SubjectCourseDto course)
+    {
+        _courses?.Add(course);
+    }
 
     protected override void OnParametersSet()
     {
@@ -68,7 +73,7 @@ else
             () => SubjectClient.GetCoursesAsync(subjectId));
 
         builder.Title = "Failed to load subject courses";
-        builder.OnSuccess(x => _courses = x);
+        builder.OnSuccess(x => _courses = x.ToList());
         builder.OnSuccess(StateHasChanged);
     }
 

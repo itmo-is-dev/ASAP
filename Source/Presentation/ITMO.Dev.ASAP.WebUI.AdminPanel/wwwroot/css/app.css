@@ -188,6 +188,10 @@ a, .btn-link {
 }
 
 @media (min-width: 1001px) {
+    .navigation-list__container {
+        border-right: 0.01px var(--secondary) solid;
+    }
+
     .navigation-list__breadcrumb {
         display: none;
     }
@@ -211,5 +215,6 @@ a, .btn-link {
 }
 
 .tab-content {
-    overflow: scroll;
+    overflow-y: scroll;
+    scrollbar-width: auto;
 }
