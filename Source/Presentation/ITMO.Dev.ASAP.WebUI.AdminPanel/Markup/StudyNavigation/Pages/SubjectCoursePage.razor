@@ -37,8 +37,7 @@
         </Breadcrumb>
     </Div>
 
-    <Div Padding="Padding.Is2"
-         Flex="Flex.Column"
+    <Div Flex="Flex.Column"
          Height="Height.Is100"
          Overflow="Overflow.Hidden">
 
@@ -47,7 +46,7 @@
 
         <Divider/>
 
-        <Tabs SelectedTab="@_selectedTab">
+        <Tabs SelectedTab="@_selectedTab" Padding="Padding.Is2.FromStart">
             <Items>
                 <DropdownTabTitleComponent OnClick="OnSelectedTabChanged" Name="@nameof(_assignments)">
                     <ButtonContent>

@@ -6,14 +6,14 @@
 @using ITMO.Dev.ASAP.Application.Dto.Study
 @inject ICurrentUser CurrentUser
 
-<Div Flex="Flex.Row.JustifyContent.Between">
-    <Heading Size="HeadingSize.Is2" Padding="Padding.Is2">
+<Div Flex="Flex.Row.JustifyContent.Between.AlignItems.Center">
+    <Heading Size="HeadingSize.Is2" Padding="Padding.Is3.FromStart.Is2">
         Subjects
     </Heading>
 
     @if (CurrentUser.HasModeratorAccess())
     {
-        <Div Padding="Padding.Is2">
+        <Div Padding="Padding.Is3.FromEnd.Is2">
             <CreateButton Clicked="@(() => _createSubjectModal?.ShowAsync() ?? Task.CompletedTask)"/>
         </Div>
     }

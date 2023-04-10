@@ -1,10 +1,15 @@
 @page "/adminpanel/subjects/{subjectId:guid}"
 @using ITMO.Dev.ASAP.Application.Dto.Study
+@using ITMO.Dev.ASAP.Application.Dto.SubjectCourses
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Authorization
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Components.SubjectCourse
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Extensions
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Markup.StudyNavigation.Layouts
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Markup.StudyNavigation.Components
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Markup.StudyNavigation.Providers
 @layout SubjectListLayout
 @inject ISubjectProvider SubjectProvider
+@inject ICurrentUser CurrentUser
 @implements IDisposable
 
 <Div Class="navigation-list__breadcrumb">
@@ -20,17 +25,36 @@
     </Breadcrumb>
 </Div>
 
-<Heading Size="HeadingSize.Is2" Padding="Padding.Is2">
-    Courses
-</Heading>
+<Div Flex="Flex.Row.JustifyContent.Between.AlignContent.Center">
+    <Heading Size="HeadingSize.Is2" Padding="Padding.Is3.FromStart.Is2">
+        Courses
+    </Heading>
 
-<SubjectCourseListComponent/>
+    @if (CurrentUser.HasModeratorAccess())
+    {
+        <Div Flex="Flex.Column.JustifyContent.Center" Padding="Padding.Is3.FromEnd.Is2">
+            <CreateButton Clicked="@(() => _createSubjectCourseModal?.ShowAsync() ?? Task.CompletedTask)"/>
+        </Div>
+    }
+</Div>
+
+
+@if (CurrentUser.HasModeratorAccess())
+{
+    <CreateSubjectCourseModal @ref="_createSubjectCourseModal"
+                              SubjectId="SubjectId"
+                              OnSuccess="OnSubjectCourseCreated"/>
+}
+
+<SubjectCourseListComponent @ref="_subjectCourseList"/>
 
 @code {
 
     private SubjectDto? _value;
 
     private IDisposable? _valueSubscription;
+    private CreateSubjectCourseModal? _createSubjectCourseModal;
+    private SubjectCourseListComponent? _subjectCourseList;
 
     [Parameter]
     public Guid SubjectId { get; set; }
@@ -51,5 +75,12 @@
     {
         _value = value;
     }
+
+    private Task OnSubjectCourseCreated(SubjectCourseDto course)
+    {
+        _subjectCourseList?.AddCourse(course);
+        return Task.CompletedTask;
+    }
+
 
 }
