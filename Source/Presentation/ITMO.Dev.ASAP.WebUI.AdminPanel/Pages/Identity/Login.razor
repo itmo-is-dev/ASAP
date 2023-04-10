@@ -8,8 +8,13 @@
 @inject ICurrentUser CurrentUser
 @attribute [AllowAnonymous]
 
-<Div Flex="Flex.Column.JustifyContent.Center.AlignItems.Center" Height="Height.Is100">
-    <Form Padding="Padding.Is5.FromTop" style="width: 30%">
+<Div Flex="Flex.Column.JustifyContent.Center.AlignItems.Center"
+     Height="Height.Is100">
+
+    <Form Padding="Padding.Is5.FromTop"
+          Width="Width.Is100"
+          Style="max-width: 500px">
+
         <FocusTrap Active="true">
             <Field>
                 <TextEdit Placeholder="Username" @bind-Text="_username"/>

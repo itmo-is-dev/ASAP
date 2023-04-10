@@ -30,4 +30,17 @@
       <_ContentIncludedByDefault Remove="wwwroot\sample-data\weather.json" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Markup\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Markup\StudyNavigation\Components\SubjectCourseListComponent.razor" />
+      <AdditionalFiles Include="Markup\StudyNavigation\Components\SubjectListComponent.razor" />
+      <AdditionalFiles Include="Markup\StudyNavigation\Layouts\SubjectCourseListLayout.razor" />
+      <AdditionalFiles Include="Markup\StudyNavigation\Layouts\SubjectListLayout.razor" />
+      <AdditionalFiles Include="Markup\StudyNavigation\Pages\SubjectCoursePage.razor" />
+      <AdditionalFiles Include="Markup\StudyNavigation\Pages\SubjectPage.razor" />
+    </ItemGroup>
+
 </Project>

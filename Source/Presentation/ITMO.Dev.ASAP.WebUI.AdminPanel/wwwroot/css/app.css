@@ -85,7 +85,7 @@ a, .btn-link {
 }
 
 .animation-disable {
-    animation-duration: 0s!important;
+    animation-duration: 0s !important;
 }
 
 
@@ -173,5 +173,43 @@ a, .btn-link {
 }
 
 .active.b-bar-link:not(:hover) {
-    background: none!important;
+    background: none !important;
+}
+
+@media (max-width: 1000px) {
+    .navigation-list__container {
+        display: none;
+    }
+
+    .navigation-list__layout {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media (min-width: 1001px) {
+    .navigation-list__breadcrumb {
+        display: none;
+    }
+
+    .navigation-list__layout {
+        display: flex;
+        flex-direction: row;
+    }
+}
+
+.navigation-list__breadcrumb__item {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.text-overflow-dotted {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.tab-content {
+    overflow: scroll;
 }

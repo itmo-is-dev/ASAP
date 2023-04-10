@@ -1,11 +1,9 @@
 @using ITMO.Dev.ASAP.Application.Dto.Study
 @if (Assignment is not null)
 {
-    <Card Margin="Margin.Is3.FromBottom.Is3.FromTop.Is0.FromStart.Is0.FromEnd"
-          Padding="Padding.Is3"
-          type="button"
-          onclick="@Clicked"
-          Class="btn-light">
+    <ListGroupItem type="button"
+                   onclick="@Clicked"
+                   Class="btn-light">
 
         <Heading Size="HeadingSize.Is4">
             @Assignment.Title
@@ -16,7 +14,7 @@
         <br/>
 
         Max Points: @Assignment.MaxPoints
-    </Card>
+    </ListGroupItem>
 
     <Modal @ref="_modal" @bind-Visible="@_modalVisible">
         <ModalContent Size="ModalSize.Fullscreen">

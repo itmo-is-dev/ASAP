@@ -6,12 +6,12 @@
 
 @if (_groups is not null)
 {
-    <Div>
+    <ListGroup Flush>
         @foreach (var group in _groups.OrderBy(x => x.Group.Name))
         {
             <StudyGroupInfoComponent Group="@group.Group"/>
         }
-    </Div>
+    </ListGroup>
 }
 else
 {
@@ -28,12 +28,17 @@ else
     protected override async Task OnParametersSetAsync()
     {
         if (SubjectCourseGroups is null)
+        {
+            _groups = null;
             return;
+        }
 
-        IEnumerable<Guid> groupIds = SubjectCourseGroups.Select(x => x.StudentGroupId);
+        IEnumerable<SubjectCourseGroupDto>? groups = SubjectCourseGroups;
+
+        IEnumerable<Guid> groupIds = groups.Select(x => x.StudentGroupId);
         IReadOnlyCollection<StudyGroupDto> studyGroups = await StudyGroupClient.GetAsync(groupIds);
 
-        _groups = SubjectCourseGroups.Join
+        _groups = groups.Join
             (
                 studyGroups,
                 x => x.StudentGroupId,
