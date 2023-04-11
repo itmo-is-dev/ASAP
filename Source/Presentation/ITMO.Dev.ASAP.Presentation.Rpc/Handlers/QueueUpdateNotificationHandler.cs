@@ -17,9 +17,11 @@ internal class QueueUpdateNotificationHandler : INotificationHandler<QueueUpdate
 
     public async Task Handle(QueueUpdated.Notification notification, CancellationToken cancellationToken)
     {
+        string notificationGroup = string.Concat(notification.SubjectCourseId, notification.GroupId);
+
         await _hubContext
             .Clients
-            .Group(notification.NotificationGroup)
+            .Group(notificationGroup)
             .SendUpdateQueueMessage(notification.SubmissionsQueue, cancellationToken);
     }
 }

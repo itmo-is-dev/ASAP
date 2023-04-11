@@ -5,5 +5,5 @@ namespace ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Notifications;
 
 public class QueueUpdated
 {
-    public record Notification(string NotificationGroup, SubmissionsQueueDto SubmissionsQueue) : INotification;
+    public record Notification(Guid SubjectCourseId, Guid GroupId, SubmissionsQueueDto SubmissionsQueue) : INotification;
 }

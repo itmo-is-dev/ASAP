@@ -67,7 +67,7 @@ internal class SubjectCourseGroupQueueUpdateHandler : INotificationHandler<Subje
 
         await _sheet.UpdateAsync(spreadsheetId, submissionsQueue, cancellationToken);
 
-        var updateCacheNotification = new UpdateSubmissionsQueueCache.Notification(
+        var updateCacheNotification = new QueueUpdated.Notification(
             notification.SubjectCourseId,
             notification.GroupId,
             submissionsQueue);

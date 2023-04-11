@@ -5,19 +5,19 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Study.Queues;
 
-internal class UpdateSubmissionsQueueCacheNotificationHandler
-    : INotificationHandler<UpdateSubmissionsQueueCache.Notification>
+internal class UpdateQueueCacheNotificationHandler
+    : INotificationHandler<QueueUpdated.Notification>
 {
     private readonly IMemoryCache _cache;
     private readonly IServiceScopeFactory _serviceProvider;
 
-    public UpdateSubmissionsQueueCacheNotificationHandler(IMemoryCache cache, IServiceScopeFactory serviceProvider)
+    public UpdateQueueCacheNotificationHandler(IMemoryCache cache, IServiceScopeFactory serviceProvider)
     {
         _cache = cache;
         _serviceProvider = serviceProvider;
     }
 
-    public Task Handle(UpdateSubmissionsQueueCache.Notification notification, CancellationToken cancellationToken)
+    public Task Handle(QueueUpdated.Notification notification, CancellationToken cancellationToken)
     {
         using IServiceScope serviceScope = _serviceProvider.CreateScope();
         IPublisher publisher = serviceScope.ServiceProvider.GetRequiredService<IPublisher>();
@@ -26,7 +26,11 @@ internal class UpdateSubmissionsQueueCacheNotificationHandler
         _cache.Remove(cacheKey);
         _cache.Set(cacheKey, notification.SubmissionsQueue);
 
-        var queueUpdatedNotification = new QueueUpdated.Notification(cacheKey, notification.SubmissionsQueue);
+        var queueUpdatedNotification = new QueueUpdated.Notification(
+            notification.SubjectCourseId,
+            notification.GroupId,
+            notification.SubmissionsQueue);
+
         publisher.Publish(queueUpdatedNotification, cancellationToken);
 
         return Task.CompletedTask;
