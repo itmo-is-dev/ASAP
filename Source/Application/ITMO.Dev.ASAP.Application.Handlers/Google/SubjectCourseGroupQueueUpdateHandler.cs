@@ -5,7 +5,6 @@ using ITMO.Dev.ASAP.Application.Abstractions.Queue;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Notifications;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Google;
@@ -16,20 +15,20 @@ internal class SubjectCourseGroupQueueUpdateHandler : INotificationHandler<Subje
     private readonly IQueueUpdateService _queueUpdateService;
     private readonly ISheet<SubmissionsQueueDto> _sheet;
     private readonly ISubjectCourseTableService _subjectCourseTableService;
-    private readonly IServiceScopeFactory _serviceProvider;
+    private readonly IPublisher _publisher;
 
     public SubjectCourseGroupQueueUpdateHandler(
         ILogger<SubjectCourseGroupQueueUpdateHandler> logger,
         IQueueUpdateService queueUpdateService,
         ISheet<SubmissionsQueueDto> sheet,
         ISubjectCourseTableService subjectCourseTableService,
-        IServiceScopeFactory serviceProvider)
+        IPublisher publisher)
     {
         _logger = logger;
         _queueUpdateService = queueUpdateService;
         _sheet = sheet;
         _subjectCourseTableService = subjectCourseTableService;
-        _serviceProvider = serviceProvider;
+        _publisher = publisher;
     }
 
     public async Task Handle(
@@ -54,9 +53,6 @@ internal class SubjectCourseGroupQueueUpdateHandler : INotificationHandler<Subje
         SubjectCourseGroupQueueUpdateNotification notification,
         CancellationToken cancellationToken)
     {
-        using IServiceScope serviceScope = _serviceProvider.CreateScope();
-        IPublisher publisher = serviceScope.ServiceProvider.GetRequiredService<IPublisher>();
-
         SubmissionsQueueDto submissionsQueue = await _queueUpdateService.GetSubmmissionsQueue(
             notification.GroupId,
             notification.SubjectCourseId,
@@ -67,11 +63,11 @@ internal class SubjectCourseGroupQueueUpdateHandler : INotificationHandler<Subje
 
         await _sheet.UpdateAsync(spreadsheetId, submissionsQueue, cancellationToken);
 
-        var updateCacheNotification = new QueueUpdated.Notification(
+        var updatedNotification = new QueueUpdated.Notification(
             notification.SubjectCourseId,
             notification.GroupId,
             submissionsQueue);
 
-        await publisher.Publish(updateCacheNotification, cancellationToken);
+        await _publisher.Publish(updatedNotification, cancellationToken);
     }
 }
