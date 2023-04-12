@@ -1,6 +1,6 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.GithubWorkflow.Abstractions.Models;
 using ITMO.Dev.ASAP.DeveloperEnvironment;
-using ITMO.Dev.ASAP.Identity.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -9,7 +9,7 @@ namespace ITMO.Dev.ASAP.Controllers;
 
 [ApiController]
 [Route("api/internal/")]
-[Authorize(Roles = AsapIdentityRole.AdminRoleName)]
+[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
 public class InternalController : ControllerBase
 {
     private readonly DeveloperEnvironmentSeeder _developerEnvironmentSeeder;

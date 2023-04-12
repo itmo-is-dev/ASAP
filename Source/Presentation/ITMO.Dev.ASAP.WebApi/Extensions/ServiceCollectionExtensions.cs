@@ -9,7 +9,6 @@ using ITMO.Dev.ASAP.Identity.Extensions;
 using ITMO.Dev.ASAP.Integration.Github.Extensions;
 using ITMO.Dev.ASAP.Presentation.GitHub.Extensions;
 using ITMO.Dev.ASAP.WebApi.Configuration;
-using ITMO.Dev.ASAP.WebApi.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ConfigurationBuilder = FluentSerialization.ConfigurationBuilder;
@@ -22,6 +21,7 @@ internal static class ServiceCollectionExtensions
 {
     internal static IServiceCollection ConfigureServiceCollection(
         this IServiceCollection serviceCollection,
+        IConfiguration configuration,
         WebApiConfiguration webApiConfiguration,
         IConfigurationSection identityConfigurationSection,
         bool isDevelopmentEnvironment)
@@ -30,7 +30,7 @@ internal static class ServiceCollectionExtensions
             serviceCollection.TryAddSingleton(webApiConfiguration.TestEnvironmentConfiguration);
 
         serviceCollection
-            .AddControllers(x => x.Filters.Add<AuthenticationFilter>())
+            .AddControllers()
             .AddNewtonsoftJson(x =>
             {
                 ConfigurationBuilder
@@ -43,7 +43,7 @@ internal static class ServiceCollectionExtensions
         serviceCollection
             .AddSwagger()
             .AddApplicationConfiguration()
-            .AddHandlers()
+            .AddHandlers(configuration)
             .AddGithubPresentation()
             .AddDatabaseContext(o => o
                 .UseNpgsql(webApiConfiguration.PostgresConfiguration.ToConnectionString(webApiConfiguration

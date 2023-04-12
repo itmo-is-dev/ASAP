@@ -1,5 +1,12 @@
+﻿using ITMO.Dev.ASAP.Application.Dto.Identity;
 using Microsoft.AspNetCore.Identity;
 
 namespace ITMO.Dev.ASAP.Identity.Entities;
 
-public class AsapIdentityUser : IdentityUser<Guid> { }
+internal class AsapIdentityUser : IdentityUser<Guid>
+{
+    public IdentityUserDto ToDto()
+    {
+        return new IdentityUserDto(Id, UserName);
+    }
+}

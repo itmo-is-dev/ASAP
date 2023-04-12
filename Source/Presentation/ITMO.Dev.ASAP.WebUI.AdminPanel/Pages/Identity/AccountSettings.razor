@@ -1,0 +1,11 @@
+@page "/adminpanel/account"
+@inject NavigationManager NavigationManager
+
+
+@code {
+    protected override void OnParametersSet()
+    {
+        NavigationManager.NavigateTo("/adminpanel/account/credentials");
+    }
+
+}

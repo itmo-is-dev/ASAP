@@ -1,4 +1,3 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32611.2
@@ -65,23 +64,30 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITMO.Dev.ASAP.WebApi", "Pre
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DeveloperEnvironment", "DeveloperEnvironment", "{9A989DE7-89B0-4761-83FA-CE8AF8DEEFDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.DeveloperEnvironment", "DeveloperEnvironment\ITMO.Dev.ASAP.DeveloperEnvironment\ITMO.Dev.ASAP.DeveloperEnvironment.csproj", "{356898AB-4F8A-43C4-945C-670B2757848C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITMO.Dev.ASAP.DeveloperEnvironment", "DeveloperEnvironment\ITMO.Dev.ASAP.DeveloperEnvironment\ITMO.Dev.ASAP.DeveloperEnvironment.csproj", "{356898AB-4F8A-43C4-945C-670B2757848C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.WebUI.AdminPanel", "Presentation\ITMO.Dev.ASAP.WebUI.AdminPanel\ITMO.Dev.ASAP.WebUI.AdminPanel.csproj", "{CF582C5B-EAA5-4368-BC10-33C1584DB1EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITMO.Dev.ASAP.WebUI.AdminPanel", "Presentation\ITMO.Dev.ASAP.WebUI.AdminPanel\ITMO.Dev.ASAP.WebUI.AdminPanel.csproj", "{CF582C5B-EAA5-4368-BC10-33C1584DB1EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.WebApi.Sdk", "Presentation\ITMO.Dev.ASAP.WebApi.Sdk\ITMO.Dev.ASAP.WebApi.Sdk.csproj", "{3B2120BB-437C-4485-A039-EF4C0CD5D94D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITMO.Dev.ASAP.WebApi.Sdk", "Presentation\ITMO.Dev.ASAP.WebApi.Sdk\ITMO.Dev.ASAP.WebApi.Sdk.csproj", "{3B2120BB-437C-4485-A039-EF4C0CD5D94D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Tests.Handlers", "Tests\ITMO.Dev.ASAP.Tests.Handlers\ITMO.Dev.ASAP.Tests.Handlers.csproj", "{93EFB7C0-9A60-4C33-8415-863E5F4FA9A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITMO.Dev.ASAP.Tests.Handlers", "Tests\ITMO.Dev.ASAP.Tests.Handlers\ITMO.Dev.ASAP.Tests.Handlers.csproj", "{93EFB7C0-9A60-4C33-8415-863E5F4FA9A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Application.Contracts", "Application\ITMO.Dev.ASAP.Application.Contracts\ITMO.Dev.ASAP.Application.Contracts.csproj", "{23BBD282-9EF2-48A2-85E5-165575849494}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITMO.Dev.ASAP.Application.Contracts", "Application\ITMO.Dev.ASAP.Application.Contracts\ITMO.Dev.ASAP.Application.Contracts.csproj", "{23BBD282-9EF2-48A2-85E5-165575849494}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Tests.Services", "Tests\ITMO.Dev.ASAP.Tests.Services\ITMO.Dev.ASAP.Tests.Services.csproj", "{97C0825F-67A0-439B-B5D6-8434FE673DDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITMO.Dev.ASAP.Tests.Services", "Tests\ITMO.Dev.ASAP.Tests.Services\ITMO.Dev.ASAP.Tests.Services.csproj", "{97C0825F-67A0-439B-B5D6-8434FE673DDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.WebApi.Abstractions", "Presentation\ITMO.Dev.ASAP.WebApi.Abstractions\ITMO.Dev.ASAP.WebApi.Abstractions.csproj", "{BC102022-FC92-41B7-946D-ABE6225ECAE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITMO.Dev.ASAP.WebApi.Abstractions", "Presentation\ITMO.Dev.ASAP.WebApi.Abstractions\ITMO.Dev.ASAP.WebApi.Abstractions.csproj", "{BC102022-FC92-41B7-946D-ABE6225ECAE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Commands", "Presentation\ITMO.Dev.ASAP.Commands\ITMO.Dev.ASAP.Commands.csproj", "{148D6229-91DD-41C9-9087-29109A847FA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITMO.Dev.ASAP.Commands", "Presentation\ITMO.Dev.ASAP.Commands\ITMO.Dev.ASAP.Commands.csproj", "{148D6229-91DD-41C9-9087-29109A847FA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Presentation.GitHub", "Presentation\ITMO.Dev.ASAP.Presentation.GitHub\ITMO.Dev.ASAP.Presentation.GitHub.csproj", "{BF75E2BC-16BD-4520-BD16-F4270F7158D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITMO.Dev.ASAP.Presentation.GitHub", "Presentation\ITMO.Dev.ASAP.Presentation.GitHub\ITMO.Dev.ASAP.Presentation.GitHub.csproj", "{BF75E2BC-16BD-4520-BD16-F4270F7158D8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITMO.Dev.ASAP.Application.Common", "Application\ITMO.Dev.ASAP.Application.Common\ITMO.Dev.ASAP.Application.Common.csproj", "{62D756C0-3953-4DB8-A934-87CCAE4A56BC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{6E86854D-B1A4-451F-B57F-29DE51237681}"
+	ProjectSection(SolutionItems) = preProject
+		..\Docker\docker-compose.yml = ..\Docker\docker-compose.yml
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Presentation.Rpc", "Presentation\ITMO.Dev.ASAP.Presentation.Rpc\ITMO.Dev.ASAP.Presentation.Rpc.csproj", "{912497E4-EA9F-4BF4-8587-038E021F62DF}"
 EndProject

@@ -1,5 +1,6 @@
 using FluentChaining;
 using FluentChaining.Configurators;
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
 using ITMO.Dev.ASAP.Application.Abstractions.Queue;
 using ITMO.Dev.ASAP.Application.Abstractions.SubjectCourses;
@@ -8,6 +9,7 @@ using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Queries;
 using ITMO.Dev.ASAP.Application.Services;
 using ITMO.Dev.ASAP.Application.Tools;
+using ITMO.Dev.ASAP.Application.Users;
 using ITMO.Dev.ASAP.Application.Validators;
 using ITMO.Dev.ASAP.Core.Queue;
 using ITMO.Dev.ASAP.Core.Study;
@@ -27,19 +29,29 @@ public static class ServiceCollectionExtensions
         collection.AddScoped<IQueueUpdateService, QueueUpdateService>();
 
         collection.AddQueryChains();
+        collection.AddCurrentUser();
 
         return collection;
+    }
+
+    private static void AddCurrentUser(this IServiceCollection collection)
+    {
+        collection.AddScoped<CurrentUserProxy>();
+        collection.AddScoped<ICurrentUser>(x => x.GetRequiredService<CurrentUserProxy>());
+        collection.AddScoped<ICurrentUserManager>(x => x.GetRequiredService<CurrentUserProxy>());
     }
 
     private static void AddQueryChains(this IServiceCollection collection)
     {
         collection.AddEntityQuery<Student, StudentQueryParameter>();
         collection.AddEntityQuery<StudentGroup, GroupQueryParameter>();
+        collection.AddEntityQuery<User, UserQueryParameter>();
 
         collection
             .AddFluentChaining(x => x.ChainLifetime = ServiceLifetime.Singleton)
             .AddQueryChain<Student, StudentQueryParameter>()
-            .AddQueryChain<StudentGroup, GroupQueryParameter>();
+            .AddQueryChain<StudentGroup, GroupQueryParameter>()
+            .AddQueryChain<User, UserQueryParameter>();
     }
 
     private static IChainConfigurator AddQueryChain<TValue, TParameter>(this IChainConfigurator configurator)

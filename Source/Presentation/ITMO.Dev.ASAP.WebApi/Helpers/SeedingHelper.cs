@@ -1,5 +1,5 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Commands;
-using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models;
 using MediatR;
 
@@ -18,13 +18,13 @@ internal static class SeedingHelper
         {
             try
             {
-                var registerCommand = new Register.Command(admin.Username, admin.Password);
+                var registerCommand = new CreateAdmin.Command(admin.Username, admin.Password);
                 await mediatr.Send(registerCommand);
 
-                var promoteCommand = new PromoteToAdmin.Command(admin.Username);
+                var promoteCommand = new ChangeUserRole.Command(admin.Username, AsapIdentityRoleNames.AdminRoleName);
                 await mediatr.Send(promoteCommand);
             }
-            catch (RegistrationFailedException e)
+            catch (Exception e)
             {
                 logger.LogWarning(e, "Failed registration of {AdminUsername}", admin.Username);
             }

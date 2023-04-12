@@ -6,7 +6,7 @@ public partial class GithubSubmissionAssociation : SubmissionAssociation
 {
     public GithubSubmissionAssociation(
         Guid id,
-        GithubSubmission submission,
+        Submission submission,
         string organization,
         string repository,
         long prNumber)

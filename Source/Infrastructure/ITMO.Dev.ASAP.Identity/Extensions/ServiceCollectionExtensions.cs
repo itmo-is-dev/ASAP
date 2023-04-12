@@ -22,6 +22,9 @@ public static class ServiceCollectionExtensions
         IdentityConfiguration? identityConfiguration = identityConfigurationSection
             .Get<IdentityConfiguration>();
 
+        IConfigurationSection identityOptionsSection = identityConfigurationSection.GetSection("Options");
+        collection.Configure<IdentityOptions>(identityOptionsSection);
+
         collection.AddScoped<IAuthorizationService, AuthorizationService>();
 
         collection.AddSingleton(identityConfiguration);
@@ -47,6 +50,19 @@ public static class ServiceCollectionExtensions
                 ValidAudience = identityConfiguration.Audience,
                 ValidIssuer = identityConfiguration.Issuer,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identityConfiguration.Secret)),
+            };
+            options.Events = new JwtBearerEvents
+            {
+                OnTokenValidated = context =>
+                {
+                    if (context.Principal is null)
+                        return Task.CompletedTask;
+
+                    ICurrentUserManager userManager = context.HttpContext.RequestServices.GetRequiredService<ICurrentUserManager>();
+                    userManager.Authenticate(context.Principal);
+
+                    return Task.CompletedTask;
+                },
             };
         });
     }

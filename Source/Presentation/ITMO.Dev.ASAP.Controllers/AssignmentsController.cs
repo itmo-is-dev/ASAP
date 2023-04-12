@@ -1,9 +1,9 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Study;
-using ITMO.Dev.ASAP.Identity.Entities;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.GroupAssignments;
 using MediatR;
@@ -14,7 +14,7 @@ namespace ITMO.Dev.ASAP.Controllers;
 
 [Route("/api/[controller]")]
 [ApiController]
-[Authorize(Roles = AsapIdentityRole.AdminRoleName)]
+[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
 public class AssignmentsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -69,6 +69,8 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpPut("{assignmentId:guid}/groups/{groupId:guid}")]
+
+    [Authorize(Roles = $"{AsapIdentityRoleNames.AdminRoleName},{AsapIdentityRoleNames.MentorRoleName},{AsapIdentityRoleNames.ModeratorRoleName}")]
     public async Task<ActionResult<GroupAssignmentDto>> UpdateById(
         Guid assignmentId,
         Guid groupId,
@@ -76,7 +78,6 @@ public class AssignmentsController : ControllerBase
     {
         var deadline = DateOnly.FromDateTime(request.Deadline);
         var command = new UpdateGroupAssignmentDeadline.Command(groupId, assignmentId, deadline);
-
         UpdateGroupAssignmentDeadline.Response response = await _mediator.Send(command);
 
         return Ok(response.GroupAssignment);

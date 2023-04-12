@@ -1,13 +1,18 @@
-@inject IIdentityManager IdentityManager
-@inject ISafeExecutor Executor
-@inject NavigationManager NavigationManager
-@using ITMO.Dev.ASAP.WebUI.AdminPanel.Identity
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Extensions
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Authorization
+@using ITMO.Dev.ASAP.Application.Dto.Users
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.SafeExecution
 @implements IDisposable
+@inject ISafeExecutor SafeExecutor
+@inject NavigationManager NavigationManager
+@inject ICurrentUser CurrentUser
+@inject IPrincipalService PrincipalService
 
 <Bar Breakpoint="Breakpoint.Desktop"
      Background="Background.Light"
-     ThemeContrast="ThemeContrast.Light">
+     ThemeContrast="ThemeContrast.Light"
+     Visible="false">
 
     <BarBrand>
         <Anchor To="/" TextColor="TextColor.Dark">
@@ -19,33 +24,62 @@
 
     <BarMenu>
         <BarStart>
-            @if (_hasIdentity)
+            @if (CurrentUser.HasModeratorAccess())
             {
                 <BarItem>
                     <BarLink @ref="_globalLink" To="@GlobalPath">Global</BarLink>
                 </BarItem>
+            }
 
-                <BarItem>
-                    <BarLink @ref="_subjectsLink" To="@SubjectsPath">Subjects</BarLink>
-                </BarItem>
+            <BarItem>
+                <BarLink @ref="_subjectsLink" To="@SubjectsPath">Subjects</BarLink>
+            </BarItem>
 
+            @if (CurrentUser.HasModeratorAccess())
+            {
                 <BarItem>
                     <BarLink @ref="_studentsLink" To="@StudentsPath">Students</BarLink>
                 </BarItem>
+            }
 
+            @if (CurrentUser.HasModeratorAccess())
+            {
                 <BarItem>
                     <BarLink @ref="_groupsLink" To="@GroupsPath">Groups</BarLink>
                 </BarItem>
             }
-        </BarStart>
 
-        <BarEnd>
-            @if (_hasIdentity)
+            @if (CurrentUser.HasModeratorAccess())
             {
                 <BarItem>
-                    <BarLink To="logout">Logout</BarLink>
+                    <BarLink @ref="_usersLink" To="@UsersPath">Users</BarLink>
                 </BarItem>
             }
+        </BarStart>
+
+        <BarEnd Width="Width.Is100">
+            <BarItem Width="Width.Is100" Flex="Flex.JustifyContent.End" Class="account-tools__bar-item">
+                <BarDropdown>
+                    <BarDropdownToggle TextWeight="TextWeight.Bold">
+                        @_name
+                    </BarDropdownToggle>
+                    <BarDropdownMenu Style="left: auto" Class="account-tools__bar-menu">
+                        <BarDropdownItem Class="account-tools__dropdown-item">
+                            <BarLink To="adminpanel/account"
+                                     Padding="Padding.Is0">
+                                Settings
+                            </BarLink>
+                        </BarDropdownItem>
+                        <BarDropdownDivider Margin="Margin.Is0"/>
+                        <BarDropdownItem Class="account-tools__dropdown-item">
+                            <Button Clicked="LogoutAsync"
+                                    Padding="Padding.Is0">
+                                Log out
+                            </Button>
+                        </BarDropdownItem>
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
         </BarEnd>
     </BarMenu>
 </Bar>
@@ -56,21 +90,36 @@
         private const string SubjectsPath = "adminpanel/subjects";
         private const string StudentsPath = "adminpanel/students";
         private const string GroupsPath = "adminpanel/groups";
-
-    private bool _hasIdentity;
+        private const string UsersPath = "adminpanel/users";
 
     private BarLink? _globalLink;
     private BarLink? _subjectsLink;
     private BarLink? _studentsLink;
     private BarLink? _groupsLink;
+    private BarLink? _usersLink;
 
-    protected override async Task OnInitializedAsync()
+    private string? _name;
+    private IDisposable? _nameSubscription;
+
+    protected override Task OnInitializedAsync()
     {
-        _hasIdentity = await IdentityManager.HasIdentityAsync(default);
         NavigationManager.LocationChanged += HandleLocationChanged;
+        _name = CurrentUser.Name;
+
+        _nameSubscription = CurrentUser.OnNameChanged.Subscribe(x =>
+        {
+            _name = x;
+            StateHasChanged();
+        });
+
+        return Task.CompletedTask;
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= HandleLocationChanged;
+        _nameSubscription?.Dispose();
+    }
 
     private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
     {
@@ -82,6 +131,7 @@
             SubjectsPath => _subjectsLink,
             StudentsPath => _studentsLink,
             GroupsPath => _groupsLink,
+            UsersPath => _usersLink,
             _ => null,
             };
 
@@ -91,10 +141,14 @@
 
     private void Activate(BaseComponent component)
     {
-#pragma warning disable BL0005
-    // Component parameter 'Class' should not be set outside of its component.
         component.Class = $"active {component.Class}";
-#pragma warning restore BL0005
+    }
+
+    private async Task LogoutAsync()
+    {
+        await using var builder = SafeExecutor.Execute(() => PrincipalService.LogoutAsync(default));
+        builder.Title = "Failed to log out";
+        builder.OnSuccess(() => NavigationManager.NavigateTo("/"));
     }
 
 }

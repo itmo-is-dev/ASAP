@@ -42,7 +42,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasIndex("SubjectCourseId");
 
-                    b.ToTable("DeadlinePolicy");
+                    b.ToTable("DeadlinePolicy", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("DeadlinePolicy");
                 });
@@ -224,10 +224,6 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                     b.Property<int>("Code")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<double?>("ExtraPoints")
                         .HasColumnType("double precision");
 
@@ -260,8 +256,6 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                     b.HasIndex("GroupAssignmentGroupId", "GroupAssignmentAssignmentId");
 
                     b.ToTable("Submissions");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Submission");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.UserAssociations.UserAssociation", b =>
@@ -419,13 +413,6 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                         .HasColumnType("text");
 
                     b.HasDiscriminator().HasValue("GithubSubmissionAssociation");
-                });
-
-            modelBuilder.Entity("ITMO.Dev.ASAP.Core.Submissions.GithubSubmission", b =>
-                {
-                    b.HasBaseType("ITMO.Dev.ASAP.Core.Submissions.Submission");
-
-                    b.HasDiscriminator().HasValue("GithubSubmission");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.UserAssociations.GithubUserAssociation", b =>

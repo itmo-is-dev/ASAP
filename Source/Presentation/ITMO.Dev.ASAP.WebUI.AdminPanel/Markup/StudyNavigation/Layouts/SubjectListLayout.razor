@@ -1,0 +1,46 @@
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Markup.StudyNavigation.Providers
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Markup.StudyNavigation.Components
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject ISubjectProvider SubjectProvider
+
+@layout MainLayout
+
+<Div Class="navigation-list__layout"
+     Width="Width.Is100"
+     Height="Height.Is100">
+
+    <Div Class="navigation-list__container hide-scroll-bar"
+         Width="@(_loaded ? Width.Is25 : Width.Is100)"
+         Overflow="Overflow.Scroll">
+
+        <SubjectListComponent OnLoaded="OnLoaded"/>
+    </Div>
+
+    @if (_loaded)
+    {
+        <Div Width="Width.Is100" 
+             Height="Height.Is100"
+             Flex="Flex.Column">
+            @Body
+        </Div>
+    }
+</Div>
+
+
+@code {
+
+    private bool _loaded;
+
+    public void Dispose()
+    {
+        SubjectProvider.Clear();
+    }
+
+    private void OnLoaded()
+    {
+        _loaded = true;
+        StateHasChanged();
+    }
+
+}

@@ -9,7 +9,7 @@
 <QueryComponent TParameter="@StudentQueryParameter"
                 TValue="@StudentDto"
                 QueryExecutor="QueryAsync">
-    <Table Context="students">
+    <ContentTable Context="students">
 
         @if (StudentTable is not null)
         {
@@ -19,7 +19,7 @@
         {
             <StudentTableComponent Students="students"/>
         }
-    </Table>
+    </ContentTable>
 </QueryComponent>
 
 
