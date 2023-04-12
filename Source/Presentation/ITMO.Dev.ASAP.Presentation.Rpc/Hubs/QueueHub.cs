@@ -14,7 +14,7 @@ public class QueueHub : Hub<IQueueHubClient>
         return Groups.AddToGroupAsync(Context.ConnectionId, CombineIdentifiers(courseId, groupId));
     }
 
-    public Task QueueUpdateUnubscribe(Guid courseId, Guid groupId)
+    public Task QueueUpdateUnsubscribe(Guid courseId, Guid groupId)
     {
         return Groups.RemoveFromGroupAsync(Context.ConnectionId, CombineIdentifiers(courseId, groupId));
     }
