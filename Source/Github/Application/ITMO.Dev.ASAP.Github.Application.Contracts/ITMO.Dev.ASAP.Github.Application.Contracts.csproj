@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    
+    <ItemGroup>
+        <PackageReference Include="MediatR.Contracts"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\Presentation\ITMO.Dev.ASAP.Commands\ITMO.Dev.ASAP.Commands.csproj"/>
+        <ProjectReference Include="..\ITMO.Dev.ASAP.Github.Application.Dto\ITMO.Dev.ASAP.Github.Application.Dto.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Github.Application.Handlers"/>
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Github.Application"/>
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Github.Presentation.Controllers"/>
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Github.Presentation.Webhooks"/>
+    </ItemGroup>
+
+</Project>

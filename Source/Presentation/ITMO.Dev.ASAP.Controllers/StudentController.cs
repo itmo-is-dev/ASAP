@@ -1,5 +1,4 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Application.Contracts.Github.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Commands;
@@ -63,24 +62,6 @@ public class StudentController : ControllerBase
         TransferStudent.Response response = await _mediator.Send(command);
 
         return Ok(response.Student);
-    }
-
-    [HttpPost("{id:guid}/association/github")]
-    public async Task<ActionResult> AddGithubAssociation(Guid id, string githubUsername)
-    {
-        var command = new AddGithubUserAssociation.Command(id, githubUsername);
-        await _mediator.Send(command);
-
-        return Ok();
-    }
-
-    [HttpDelete("{id:guid}/association/github")]
-    public async Task<ActionResult> RemoveGithubAssociation(Guid id)
-    {
-        var command = new RemoveGithubUserAssociation.Command(id);
-        await _mediator.Send(command);
-
-        return Ok();
     }
 
     [HttpPost("query")]

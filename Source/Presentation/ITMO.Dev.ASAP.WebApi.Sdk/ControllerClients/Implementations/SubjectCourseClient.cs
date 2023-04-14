@@ -1,6 +1,8 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.Users;
+using ITMO.Dev.ASAP.Github.Application.Dto.SubjectCourses;
+using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Github;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.SubjectCourses;
 using ITMO.Dev.ASAP.WebApi.Sdk.Extensions;
 using ITMO.Dev.ASAP.WebApi.Sdk.Tools;
@@ -19,16 +21,16 @@ internal class SubjectCourseClient : ISubjectCourseClient
         _handler = new ClientRequestHandler(client, serializerSettings);
     }
 
-    public async Task<SubjectCourseDto> CreateAsync(
-        CreateSubjectCourseRequest request,
-        CancellationToken cancellationToken = default)
+    public async Task<GithubSubjectCourseDto> CreateForGithubAsync(
+        CreateGithubSubjectCourseRequest request,
+        CancellationToken cancellationToken)
     {
-        using var message = new HttpRequestMessage(HttpMethod.Post, "api/SubjectCourse")
+        using var message = new HttpRequestMessage(HttpMethod.Post, "api/SubjectCourse/github")
         {
             Content = request.ToContent(_serializerSettings),
         };
 
-        return await _handler.SendAsync<SubjectCourseDto>(message, cancellationToken);
+        return await _handler.SendAsync<GithubSubjectCourseDto>(message, cancellationToken);
     }
 
     public async Task<IReadOnlyCollection<SubjectCourseDto>> GetAsync(CancellationToken cancellationToken = default)
@@ -90,14 +92,6 @@ internal class SubjectCourseClient : ISubjectCourseClient
             Content = request.ToContent(_serializerSettings),
         };
 
-        return await _handler.SendAsync<SubjectCourseDto>(message, cancellationToken);
-    }
-
-    public async Task<SubjectCourseDto> RemoveGithubAssociationAsync(
-        Guid id,
-        CancellationToken cancellationToken = default)
-    {
-        using var message = new HttpRequestMessage(HttpMethod.Delete, $"api/SubjectCourse/{id}/association/github");
         return await _handler.SendAsync<SubjectCourseDto>(message, cancellationToken);
     }
 

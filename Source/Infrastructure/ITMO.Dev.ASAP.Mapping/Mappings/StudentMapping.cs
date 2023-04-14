@@ -6,15 +6,14 @@ namespace ITMO.Dev.ASAP.Mapping.Mappings;
 
 public static class StudentMapping
 {
-    public static StudentDto ToDto(this Student student)
+    public static StudentDto ToDto(this Student student, string? githubUsername)
     {
         IsuUserAssociation? isuAssociation = student.User.FindAssociation<IsuUserAssociation>();
-        GithubUserAssociation? githubAssociation = student.User.FindAssociation<GithubUserAssociation>();
 
         return new StudentDto(
             student.User.ToDto(),
             student.Group?.Name ?? string.Empty,
             isuAssociation?.UniversityId,
-            githubAssociation?.GithubUsername);
+            githubUsername);
     }
 }

@@ -6,7 +6,10 @@ using ITMO.Dev.ASAP.Application.Abstractions.Queue;
 using ITMO.Dev.ASAP.Application.Abstractions.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Abstractions.Submissions;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
+using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Application.Queries;
+using ITMO.Dev.ASAP.Application.Queries.Adapters;
+using ITMO.Dev.ASAP.Application.Queries.Requests;
 using ITMO.Dev.ASAP.Application.Services;
 using ITMO.Dev.ASAP.Application.Tools;
 using ITMO.Dev.ASAP.Application.Users;
@@ -29,6 +32,8 @@ public static class ServiceCollectionExtensions
         collection.AddScoped<IQueueUpdateService, QueueUpdateService>();
 
         collection.AddQueryChains();
+        collection.AddFilterChains();
+
         collection.AddCurrentUser();
 
         return collection;
@@ -64,5 +69,26 @@ public static class ServiceCollectionExtensions
     private static void AddEntityQuery<TValue, TParameter>(this IServiceCollection collection)
     {
         collection.AddSingleton<IEntityQuery<TValue, TParameter>, EntityQueryAdapter<TValue, TParameter>>();
+    }
+
+    private static void AddFilterChains(this IServiceCollection collection)
+    {
+        collection.AddEntityFilter<StudentDto, StudentQueryParameter>();
+
+        collection
+            .AddFluentChaining(x => x.ChainLifetime = ServiceLifetime.Singleton)
+            .AddFilterChain<StudentDto, StudentQueryParameter>();
+    }
+
+    private static IChainConfigurator AddFilterChain<TValue, TParameter>(this IChainConfigurator configurator)
+    {
+        return configurator.AddChain<EntityFilterRequest<TValue, TParameter>, IEnumerable<TValue>>(x => x
+            .ThenFromAssemblies(typeof(IAssemblyMarker))
+            .FinishWith((r, _) => r.Data));
+    }
+
+    private static void AddEntityFilter<TValue, TParameter>(this IServiceCollection collection)
+    {
+        collection.AddSingleton<IEntityFilter<TValue, TParameter>, EntityFilterAdapter<TValue, TParameter>>();
     }
 }

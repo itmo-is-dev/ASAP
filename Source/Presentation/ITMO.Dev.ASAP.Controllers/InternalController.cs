@@ -1,5 +1,4 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Application.GithubWorkflow.Abstractions.Models;
 using ITMO.Dev.ASAP.DeveloperEnvironment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,25 +12,17 @@ namespace ITMO.Dev.ASAP.Controllers;
 public class InternalController : ControllerBase
 {
     private readonly DeveloperEnvironmentSeeder _developerEnvironmentSeeder;
-    private readonly TestEnvironmentConfiguration _testEnvironmentConfiguration;
 
     public InternalController(
-        DeveloperEnvironmentSeeder developerEnvironmentSeeder,
-        TestEnvironmentConfiguration testEnvironmentConfiguration)
+        DeveloperEnvironmentSeeder developerEnvironmentSeeder)
     {
-        _testEnvironmentConfiguration = testEnvironmentConfiguration;
         _developerEnvironmentSeeder = developerEnvironmentSeeder;
     }
 
     [HttpPost("seed-test-data")]
     public async Task<IActionResult> SeedTestData([FromQuery] string environment)
     {
-        var command = new DeveloperEnvironmentSeedingRequest(
-            environment,
-            _testEnvironmentConfiguration.Organization,
-            _testEnvironmentConfiguration.TemplateRepository,
-            _testEnvironmentConfiguration.MentorTeamName,
-            _testEnvironmentConfiguration.Users);
+        var command = new DeveloperEnvironmentSeedingRequest(environment);
 
         try
         {

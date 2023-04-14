@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Tools;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
+using ITMO.Dev.ASAP.Application.Queries.BaseLinks;
 using ITMO.Dev.ASAP.Core.UserAssociations;
 using ITMO.Dev.ASAP.Core.Users;
 

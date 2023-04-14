@@ -1,4 +1,3 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Submissions.Models;
 using ITMO.Dev.ASAP.Application.Dto.Submissions;
 
 namespace ITMO.Dev.ASAP.Application.Abstractions.Submissions;
@@ -40,6 +39,6 @@ public interface ISubmissionWorkflow
         Guid issuerId,
         Guid userId,
         Guid assignmentId,
-        ISubmissionFactory submissionFactory,
+        string payload,
         CancellationToken cancellationToken);
 }

@@ -27,7 +27,9 @@ public static class ServiceCollectionExtensions
 
         collection.AddScoped<IAuthorizationService, AuthorizationService>();
 
-        collection.AddSingleton(identityConfiguration);
+        if (identityConfiguration is not null)
+            collection.AddSingleton(identityConfiguration);
+
         collection.AddDbContext<AsapIdentityContext>(dbContextAction);
 
         collection.AddIdentity<AsapIdentityUser, AsapIdentityRole>()
@@ -39,7 +41,8 @@ public static class ServiceCollectionExtensions
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
+        })
+        .AddJwtBearer(options =>
         {
             options.SaveToken = true;
             options.RequireHttpsMetadata = false;
@@ -47,9 +50,10 @@ public static class ServiceCollectionExtensions
             {
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidAudience = identityConfiguration.Audience,
-                ValidIssuer = identityConfiguration.Issuer,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identityConfiguration.Secret)),
+                ValidAudience = identityConfiguration?.Audience,
+                ValidIssuer = identityConfiguration?.Issuer,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(identityConfiguration?.Secret ?? string.Empty)),
             };
             options.Events = new JwtBearerEvents
             {
@@ -58,7 +62,9 @@ public static class ServiceCollectionExtensions
                     if (context.Principal is null)
                         return Task.CompletedTask;
 
-                    ICurrentUserManager userManager = context.HttpContext.RequestServices.GetRequiredService<ICurrentUserManager>();
+                    ICurrentUserManager userManager = context.HttpContext.RequestServices
+                        .GetRequiredService<ICurrentUserManager>();
+
                     userManager.Authenticate(context.Principal);
 
                     return Task.CompletedTask;

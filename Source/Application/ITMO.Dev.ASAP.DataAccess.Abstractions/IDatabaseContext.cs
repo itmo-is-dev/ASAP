@@ -1,7 +1,6 @@
 using ITMO.Dev.ASAP.Core.DeadlinePolicies;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
-using ITMO.Dev.ASAP.Core.SubmissionAssociations;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.UserAssociations;
 using ITMO.Dev.ASAP.Core.Users;
@@ -31,8 +30,6 @@ public interface IDatabaseContext
     DbSet<SubjectCourseGroup> SubjectCourseGroups { get; }
 
     DbSet<Submission> Submissions { get; }
-
-    DbSet<SubmissionAssociation> SubmissionAssociations { get; }
 
     DbSet<UserAssociation> UserAssociations { get; }
 

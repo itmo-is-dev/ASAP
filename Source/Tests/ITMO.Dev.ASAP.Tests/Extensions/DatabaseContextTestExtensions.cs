@@ -1,6 +1,5 @@
 using ITMO.Dev.ASAP.Core.Models;
 using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubmissionAssociations;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.Submissions.States;
 using ITMO.Dev.ASAP.Core.SubmissionStateWorkflows;
@@ -12,13 +11,11 @@ namespace ITMO.Dev.ASAP.Tests.Extensions;
 
 public static class DatabaseContextTestExtensions
 {
-    public static Task<Submission> GetGithubSubmissionAsync(
+    public static Task<Submission> GetSubmissionAsync(
         this IDatabaseContext context,
         params ISubmissionState[] states)
     {
-        return context.SubmissionAssociations
-            .OfType<GithubSubmissionAssociation>()
-            .Select(x => x.Submission)
+        return context.Submissions
             .Where(submission => states.Any(x => x.Equals(submission.State)))
             .Where(x =>
                 x.GroupAssignment.Assignment.SubjectCourse.WorkflowType ==

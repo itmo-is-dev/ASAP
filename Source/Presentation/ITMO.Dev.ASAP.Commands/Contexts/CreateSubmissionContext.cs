@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Application.Dto.Study;
+using ITMO.Dev.ASAP.Application.Dto.Submissions;
 using MediatR;
 
 namespace ITMO.Dev.ASAP.Commands.Contexts;

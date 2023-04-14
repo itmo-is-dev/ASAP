@@ -1,9 +1,7 @@
 using Bogus;
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.UserAssociations;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Context;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
@@ -31,11 +29,9 @@ public class TestBase : IDisposable
         {
             x.ConfigureEntityGenerator<Submission>(xx => xx.Count = 1000);
             x.ConfigureEntityGenerator<SubjectCourse>(xx => xx.Count = 1);
-            x.ConfigureEntityGenerator<GithubSubjectCourseAssociation>(xx => xx.Count = 1);
 
             x.ConfigureEntityGenerator<Student>(xx => xx.Count = 50);
             x.ConfigureEntityGenerator<User>(xx => xx.Count = 100);
-            x.ConfigureEntityGenerator<GithubUserAssociation>(xx => xx.Count = 100);
 
             ConfigureSeeding(x);
         });

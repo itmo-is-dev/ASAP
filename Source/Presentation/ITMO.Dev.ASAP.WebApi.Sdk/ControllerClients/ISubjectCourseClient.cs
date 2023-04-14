@@ -1,14 +1,16 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.Users;
+using ITMO.Dev.ASAP.Github.Application.Dto.SubjectCourses;
+using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Github;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.SubjectCourses;
 
 namespace ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients;
 
 public interface ISubjectCourseClient
 {
-    Task<SubjectCourseDto> CreateAsync(
-        CreateSubjectCourseRequest request,
+    Task<GithubSubjectCourseDto> CreateForGithubAsync(
+        CreateGithubSubjectCourseRequest request,
         CancellationToken cancellationToken = default);
 
     Task<IReadOnlyCollection<SubjectCourseDto>> GetAsync(CancellationToken cancellationToken = default);
@@ -31,10 +33,6 @@ public interface ISubjectCourseClient
     Task<SubjectCourseDto> AddGithubAssociationAsync(
         Guid id,
         AddSubjectCourseGithubAssociationRequest request,
-        CancellationToken cancellationToken = default);
-
-    Task<SubjectCourseDto> RemoveGithubAssociationAsync(
-        Guid id,
         CancellationToken cancellationToken = default);
 
     Task AddFractionDeadlinePolicyAsync(

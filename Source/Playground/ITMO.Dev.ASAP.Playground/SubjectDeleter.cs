@@ -1,7 +1,6 @@
 using ITMO.Dev.ASAP.Core.DeadlinePolicies;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
-using ITMO.Dev.ASAP.Core.SubmissionAssociations;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
@@ -28,9 +27,6 @@ public class SubjectDeleter
             .Where(x => x.GroupAssignment.Assignment.SubjectCourse.Subject.Id.Equals(subjectId))
             .ToListAsync();
 
-        IEnumerable<SubmissionAssociation> submissionAssociations = submissions.SelectMany(x => x.Associations);
-
-        _context.SubmissionAssociations.RemoveRange(submissionAssociations);
         _context.Submissions.RemoveRange(submissions);
 
         await _context.SaveChangesAsync(default);

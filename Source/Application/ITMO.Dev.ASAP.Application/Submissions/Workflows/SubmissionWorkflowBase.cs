@@ -1,15 +1,16 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
 using ITMO.Dev.ASAP.Application.Abstractions.Submissions;
-using ITMO.Dev.ASAP.Application.Abstractions.Submissions.Models;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Submissions.Notifications;
-using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.Submissions;
 using ITMO.Dev.ASAP.Application.Factories;
+using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Common.Resources;
+using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.Submissions.States;
 using ITMO.Dev.ASAP.Core.Tools;
+using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.Core.ValueObject;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
@@ -136,7 +137,7 @@ public abstract class SubmissionWorkflowBase : ISubmissionWorkflow
         Guid issuerId,
         Guid userId,
         Guid assignmentId,
-        ISubmissionFactory submissionFactory,
+        string payload,
         CancellationToken cancellationToken)
     {
         ISubmissionState[] acceptedStates =
@@ -146,8 +147,8 @@ public abstract class SubmissionWorkflowBase : ISubmissionWorkflow
         };
 
         Submission? submission = await _context.Submissions
-            .Where(x => x.Student.UserId.Equals(userId))
-            .Where(x => x.GroupAssignment.Assignment.Id.Equals(assignmentId))
+            .ForUser(userId)
+            .ForAssignment(assignmentId)
             .Where(submission => acceptedStates.Any(x => x.Equals(submission.State)))
             .OrderByDescending(x => x.Code)
             .FirstOrDefaultAsync(cancellationToken);
@@ -167,7 +168,29 @@ public abstract class SubmissionWorkflowBase : ISubmissionWorkflow
                 throw new UnauthorizedException(message);
             }
 
-            submission = await submissionFactory.CreateAsync(userId, assignmentId, cancellationToken);
+            int code = await _context.Submissions
+                .ForUser(userId)
+                .ForAssignment(assignmentId)
+                .Where(s => acceptedStates.Any(x => x.Equals(s.State)))
+                .CountAsync(cancellationToken);
+
+            Student student = await _context.Students.GetByIdAsync(userId, cancellationToken);
+
+            GroupAssignment? assignment = await _context.GroupAssignments
+                .ForStudent(userId)
+                .Where(x => x.AssignmentId.Equals(assignmentId))
+                .SingleOrDefaultAsync(cancellationToken);
+
+            if (assignment is null)
+                throw EntityNotFoundException.For<Assignment>(assignmentId);
+
+            submission = new Submission(
+                Guid.NewGuid(),
+                code + 1,
+                student,
+                assignment,
+                Calendar.CurrentDateTime,
+                payload);
 
             _context.Submissions.Add(submission);
             await _context.SaveChangesAsync(cancellationToken);

@@ -1,5 +1,4 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Application.Contracts.Github.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourseGroups.Queries;
@@ -28,20 +27,6 @@ public class SubjectCourseController : ControllerBase
     }
 
     public CancellationToken CancellationToken => HttpContext.RequestAborted;
-
-    [HttpPost]
-    public async Task<ActionResult<SubjectCourseDto>> Create(CreateSubjectCourseRequest request)
-    {
-        var command = new CreateSubjectCourse.Command(
-            request.SubjectId,
-            request.Name,
-            request.WorkflowType,
-            request.Associations);
-
-        CreateSubjectCourse.Response response = await _mediator.Send(command, CancellationToken);
-
-        return Ok(response.SubjectCourse);
-    }
 
     [HttpGet("{id:guid}")]
     [Authorize(Roles = $"{AsapIdentityRoleNames.MentorRoleName}, {AsapIdentityRoleNames.AdminRoleName}, " +
@@ -90,46 +75,12 @@ public class SubjectCourseController : ControllerBase
         return Ok(result.Groups);
     }
 
-    [HttpPost("{id:guid}/association/github")]
-    public async Task<ActionResult<SubjectCourseDto>> AddGithubAssociation(
-        Guid id,
-        AddSubjectCourseGithubAssociationRequest request)
-    {
-        var command = new AddGithubSubjectCourseAssociation.Command(
-            id,
-            request.OrganizationName,
-            request.TemplateRepositoryName,
-            request.MentorTeamName);
-
-        AddGithubSubjectCourseAssociation.Response response = await _mediator.Send(command, CancellationToken);
-
-        return Ok(response.SubjectCourse);
-    }
-
-    [HttpDelete("{id:guid}/association/github")]
-    public async Task<ActionResult<SubjectCourseDto>> RemoveGithubAssociation(Guid id)
-    {
-        var command = new RemoveGithubSubjectCourseAssociation.Command(id);
-        RemoveGithubSubjectCourseAssociation.Response response = await _mediator.Send(command, CancellationToken);
-
-        return Ok(response.SubjectCourse);
-    }
-
     [HttpPost("{id:guid}/deadline/fraction")]
     public async Task<ActionResult> AddDeadline(Guid id, AddFractionPolicyRequest request)
     {
         (TimeSpan spanBeforeActivation, double fraction) = request;
 
         var command = new AddFractionDeadlinePolicy.Command(id, spanBeforeActivation, fraction);
-        await _mediator.Send(command, CancellationToken);
-
-        return Ok();
-    }
-
-    [HttpPut("{id:guid}/github/mentor-team")]
-    public async Task<ActionResult> UpdateMentorsTeamNameAsync(Guid id, UpdateMentorsTeamNameRequest request)
-    {
-        var command = new UpdateSubjectCourseMentorTeam.Command(id, request.TeamName);
         await _mediator.Send(command, CancellationToken);
 
         return Ok();

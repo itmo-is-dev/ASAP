@@ -7,6 +7,6 @@ internal class AsapIdentityUser : IdentityUser<Guid>
 {
     public IdentityUserDto ToDto()
     {
-        return new IdentityUserDto(Id, UserName);
+        return new IdentityUserDto(Id, UserName ?? string.Empty);
     }
 }

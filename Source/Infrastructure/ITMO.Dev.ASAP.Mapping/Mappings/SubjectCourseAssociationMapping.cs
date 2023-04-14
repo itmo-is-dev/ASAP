@@ -6,14 +6,6 @@ namespace ITMO.Dev.ASAP.Mapping.Mappings;
 
 public static class SubjectCourseAssociationMapping
 {
-    public static GithubSubjectCourseAssociationDto ToDto(this GithubSubjectCourseAssociation association)
-    {
-        return new GithubSubjectCourseAssociationDto(
-            association.GithubOrganizationName,
-            association.TemplateRepositoryName,
-            association.MentorTeamName);
-    }
-
     public static GoogleSubjectCourseAssociationDto ToDto(this GoogleTableSubjectCourseAssociation association)
     {
         return new GoogleSubjectCourseAssociationDto(association.SpreadsheetId);
@@ -23,22 +15,9 @@ public static class SubjectCourseAssociationMapping
     {
         return entity switch
         {
-            GithubSubjectCourseAssociation association => association.ToDto(),
             GoogleTableSubjectCourseAssociation association => association.ToDto(),
             _ => throw new ArgumentOutOfRangeException(nameof(entity)),
         };
-    }
-
-    public static GithubSubjectCourseAssociation ToEntity(
-        this GithubSubjectCourseAssociationDto dto,
-        SubjectCourse subjectCourse)
-    {
-        return new GithubSubjectCourseAssociation(
-            Guid.NewGuid(),
-            subjectCourse,
-            dto.GithubOrganizationName,
-            dto.TemplateRepositoryName,
-            dto.MentorTeamName);
     }
 
     public static GoogleTableSubjectCourseAssociation ToEntity(

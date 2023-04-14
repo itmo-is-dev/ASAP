@@ -1,8 +1,10 @@
+using ITMO.Dev.ASAP.Application.Dto.Users;
+using ITMO.Dev.ASAP.Application.Extensions;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.Mapping.Mappings;
+using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using static ITMO.Dev.ASAP.Application.Contracts.Students.Commands.CreateStudent;
@@ -12,10 +14,12 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Students;
 internal class CreateStudentHandler : IRequestHandler<Command, Response>
 {
     private readonly IDatabaseContext _context;
+    private readonly IGithubUserService _githubUserService;
 
-    public CreateStudentHandler(IDatabaseContext context)
+    public CreateStudentHandler(IDatabaseContext context, IGithubUserService githubUserService)
     {
         _context = context;
+        _githubUserService = githubUserService;
     }
 
     public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
@@ -33,6 +37,8 @@ internal class CreateStudentHandler : IRequestHandler<Command, Response>
         _context.Students.Add(student);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return new Response(student.ToDto());
+        StudentDto dto = await _githubUserService.MapToStudentDtoAsync(student, default);
+
+        return new Response(dto);
     }
 }

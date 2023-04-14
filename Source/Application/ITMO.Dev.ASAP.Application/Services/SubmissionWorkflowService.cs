@@ -6,7 +6,6 @@ using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.SubmissionStateWorkflows;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,15 +39,26 @@ public class SubmissionWorkflowService : ISubmissionWorkflowService
         if (subjectCourse is null)
             throw EntityNotFoundException.For<Submission>(submissionId);
 
-        return await GetSubjectCourseWorkflowAsync(subjectCourse.Id, cancellationToken);
+        return GetSubmissionWorkflow(subjectCourse);
     }
 
-    public async Task<ISubmissionWorkflow> GetSubjectCourseWorkflowAsync(
-        Guid subjectCourseId,
+    public async Task<ISubmissionWorkflow> GetAssignmentWorkflowAsync(
+        Guid assignmentId,
         CancellationToken cancellationToken)
     {
-        SubjectCourse subjectCourse = await _context.SubjectCourses.GetByIdAsync(subjectCourseId, cancellationToken);
+        SubjectCourse? subjectCourse = await _context.Assignments
+            .Where(x => x.Id.Equals(assignmentId))
+            .Select(x => x.SubjectCourse)
+            .SingleOrDefaultAsync(cancellationToken);
 
+        if (subjectCourse is null)
+            throw EntityNotFoundException.For<Assignment>(assignmentId);
+
+        return GetSubmissionWorkflow(subjectCourse);
+    }
+
+    private ISubmissionWorkflow GetSubmissionWorkflow(SubjectCourse subjectCourse)
+    {
         return subjectCourse.WorkflowType switch
         {
             null or SubmissionStateWorkflowType.ReviewOnly
@@ -58,7 +68,7 @@ public class SubmissionWorkflowService : ISubmissionWorkflowService
                 => new ReviewWithDefenceSubmissionWorkflow(_permissionValidator, _context, _publisher),
 
             _ => throw new ArgumentOutOfRangeException(
-                nameof(subjectCourseId),
+                nameof(subjectCourse),
                 $@"Invalid WorkflowType {subjectCourse.WorkflowType:G}"),
         };
     }
