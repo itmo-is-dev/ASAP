@@ -19,7 +19,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
             migrationBuilder.Sql("""
             insert into "GithubUsers" as gu
-            (gu."Id", gu."Username")
+            ("Id", "Username")
             select ua."UserId", ua."GithubUsername"
             from "UserAssociations" as ua
             where ua."Discriminator" = 'GithubUserAssociation'
