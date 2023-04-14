@@ -9,12 +9,12 @@
                 QueryExecutor="QueryAsync">
     <ContentTable Context="groups">
 
-        <Div>
+        <ListGroup Margin="Margin.Is3.FromTop" Flush Overflow="Overflow.Scroll">
             @foreach (var group in groups.OrderBy(x => x.Name))
             {
                 <StudyGroupInfoComponent Group="group"/>
             }
-        </Div>
+        </ListGroup>
     </ContentTable>
 </QueryComponent>
 

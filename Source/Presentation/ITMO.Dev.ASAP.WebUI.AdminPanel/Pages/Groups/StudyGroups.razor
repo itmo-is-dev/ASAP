@@ -3,11 +3,14 @@
 @using ITMO.Dev.ASAP.WebUI.AdminPanel.Components.Groups
 @attribute [Authorize(Roles = "Admin, Moderator")]
 
-<Heading Size="HeadingSize.Is2">
-    Groups
-</Heading>
+<Div Flex="Flex.Column" Height="Height.Is100">
 
-<GroupQueryComponent/>
+    <Heading Size="HeadingSize.Is2">
+        Groups
+    </Heading>
+
+    <GroupQueryComponent/>
+</Div>
 
 @code {
 
