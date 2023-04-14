@@ -14,7 +14,7 @@ public class StudentGithubFilterLink : FilterLinkBase<StudentDto, StudentQueryPa
         if (parameter.Type is not StudentQueryParameter.GithubUsername)
             return null;
 
-        var regex = new Regex(parameter.Pattern);
+        var regex = new Regex(parameter.Pattern, RegexOptions.Compiled, TimeSpan.FromSeconds(5));
 
         return data.Where(x => x.GitHubUsername is not null && regex.IsMatch(x.GitHubUsername));
     }
