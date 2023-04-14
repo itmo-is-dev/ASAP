@@ -18,15 +18,15 @@ public class GoogleTableUpdateWorker : BackgroundService
     private readonly TableUpdateQueue _tableUpdateQueue;
 
     public GoogleTableUpdateWorker(
-        TableUpdateQueue tableUpdateQueue,
+        ILogger<GoogleTableUpdateWorker> logger,
         IServiceScopeFactory serviceProvider,
-        ILogger<GoogleTableUpdateWorker> logger)
+        TableUpdateQueue tableUpdateQueue)
     {
-        _tableUpdateQueue = tableUpdateQueue;
-        _serviceProvider = serviceProvider;
         _logger = logger;
-
+        _serviceProvider = serviceProvider;
         _stopwatch = new Stopwatch();
+
+        _tableUpdateQueue = tableUpdateQueue;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -82,7 +82,7 @@ public class GoogleTableUpdateWorker : BackgroundService
 
         foreach ((Guid courseId, Guid groupId) in queues)
         {
-            var notification = new SubjectCourseGroupQueueUpdatedNotification(courseId, groupId);
+            var notification = new SubjectCourseGroupQueueUpdateNotification(courseId, groupId);
             await publisher.Publish(notification, cancellationToken);
         }
 
