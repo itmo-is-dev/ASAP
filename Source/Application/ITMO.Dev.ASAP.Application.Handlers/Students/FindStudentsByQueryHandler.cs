@@ -32,10 +32,14 @@ internal class FindStudentsByQueryHandler : IRequestHandler<Query, Response>
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        IQueryable<Student> query = _context.Students;
+        IQueryable<Student> query = _context.Students
+            .Include(x => x.User)
+            .ThenInclude(x => x.Associations)
+            .Include(x => x.Group);
+
         query = _query.Apply(query, request.Configuration);
 
-        List<Student> students = await query.ToListAsync(cancellationToken);
+        List<Student> students = await query.AsSplitQuery().ToListAsync(cancellationToken);
 
         IReadOnlyCollection<StudentDto> dto = await _githubUserService
             .MapToStudentDtosAsync(students, cancellationToken);

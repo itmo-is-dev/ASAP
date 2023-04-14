@@ -8,49 +8,51 @@
 @layout PaddedLayout
 @attribute [Authorize(Roles = "Admin, Moderator")]
 
-<Heading Size="HeadingSize.Is2">
-    Users
-</Heading>
+<Div Flex="Flex.Column" Height="Height.Is100">
+    <Heading Size="HeadingSize.Is2">
+        Users
+    </Heading>
 
-<QueryComponent @ref="_usersQueryComponent"
-                TParameter="UserQueryParameter"
-                TValue="UserIdentityInfoDto"
-                QueryExecutor="ExecuteQueryAsync">
-    <ContentTable Context="users">
-        <UsersPagePaginationComponent PageCount="_pageCount" CurrentPage="_page" OnPageChanged="i => SelectPageAsync(i)"/>
+    <QueryComponent @ref="_usersQueryComponent"
+                    TParameter="UserQueryParameter"
+                    TValue="UserIdentityInfoDto"
+                    QueryExecutor="ExecuteQueryAsync">
+        <ContentTable Context="users">
+            <UsersPagePaginationComponent PageCount="_pageCount" CurrentPage="_page" OnPageChanged="i => SelectPageAsync(i)"/>
 
-        <Table Margin="Margin.Is0">
-            <TableHeader>
-                <TableRow>
-                    <TableHeaderCell>Name</TableHeaderCell>
-                    <TableHeaderCell>Action</TableHeaderCell>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                @foreach (var user in users)
-                {
+            <Table Margin="Margin.Is0" FixedHeader FixedHeaderTableHeight="" FixedHeaderTableMaxHeight="">
+                <TableHeader>
                     <TableRow>
-                        <TableRowCell>@user.Value.FullName()</TableRowCell>
-
-                        @if (user.HasIdentity is false)
-                        {
-                            <TableRowCell>
-                                <Div Flex="Flex.Row.JustifyContent.Center">
-                                    <Button Clicked="@(() => OpenCreateUserAsync(user.Value))" Color="Color.Primary">
-                                        Create account
-                                    </Button>
-                                </Div>
-                            </TableRowCell>
-                        }
-
+                        <TableHeaderCell>Name</TableHeaderCell>
+                        <TableHeaderCell>Action</TableHeaderCell>
                     </TableRow>
-                }
-            </TableBody>
-        </Table>
-    </ContentTable>
-</QueryComponent>
+                </TableHeader>
+                <TableBody>
+                    @foreach (var user in users)
+                    {
+                        <TableRow>
+                            <TableRowCell>@user.Value.FullName()</TableRowCell>
 
-<UsersPagePaginationComponent PageCount="_pageCount" CurrentPage="_page" OnPageChanged="i => SelectPageAsync(i)"/>
+                            @if (user.HasIdentity is false)
+                            {
+                                <TableRowCell>
+                                    <Div Flex="Flex.Row.JustifyContent.Center">
+                                        <Button Clicked="@(() => OpenCreateUserAsync(user.Value))" Color="Color.Primary">
+                                            Create account
+                                        </Button>
+                                    </Div>
+                                </TableRowCell>
+                            }
+
+                        </TableRow>
+                    }
+                </TableBody>
+            </Table>
+        </ContentTable>
+    </QueryComponent>
+
+    <UsersPagePaginationComponent PageCount="_pageCount" CurrentPage="_page" OnPageChanged="i => SelectPageAsync(i)"/>
+</Div>
 
 <CreateUserAccoutModal @ref="_createUserAccountModal"/>
 
