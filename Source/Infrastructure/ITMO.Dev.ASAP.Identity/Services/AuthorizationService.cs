@@ -90,20 +90,25 @@ internal class AuthorizationService : IAuthorizationService
         return userDtos;
     }
 
-    public async Task<IdentityUserDto> GetUserByNameAsync(string username, CancellationToken cancellationToken = default)
+    public async Task<IdentityUserDto> GetUserByNameAsync(
+        string username,
+        CancellationToken cancellationToken = default)
     {
         AsapIdentityUser user = await _userManager.GetByNameAsync(username, cancellationToken);
 
         return user.ToDto();
     }
 
-    public async Task UpdateUserNameAsync(Guid userId, string newUsername, CancellationToken cancellationToken = default)
+    public async Task UpdateUserNameAsync(
+        Guid userId,
+        string newUsername,
+        CancellationToken cancellationToken = default)
     {
         AsapIdentityUser user = await _userManager.GetByIdAsync(userId, cancellationToken);
 
         user.UserName = newUsername;
 
-        IdentityResult? result = await _userManager.UpdateAsync(user);
+        IdentityResult result = await _userManager.UpdateAsync(user);
 
         result.EnsureSucceeded();
     }
@@ -126,7 +131,10 @@ internal class AuthorizationService : IAuthorizationService
         return user.ToDto();
     }
 
-    public async Task UpdateUserRoleAsync(Guid userId, string newRoleName, CancellationToken cancellationToken = default)
+    public async Task UpdateUserRoleAsync(
+        Guid userId,
+        string newRoleName,
+        CancellationToken cancellationToken = default)
     {
         AsapIdentityUser user = await _userManager.GetByIdAsync(userId, cancellationToken);
         IList<string> roles = await _userManager.GetRolesAsync(user);
@@ -155,12 +163,12 @@ internal class AuthorizationService : IAuthorizationService
 
     public async Task<string> GetUserTokenAsync(string username, CancellationToken cancellationToken)
     {
-        AsapIdentityUser? user = await _userManager.FindByNameAsync(username);
+        AsapIdentityUser user = await _userManager.GetByNameAsync(username, cancellationToken: cancellationToken);
         IList<string> roles = await _userManager.GetRolesAsync(user);
 
         IEnumerable<Claim> claims = roles
             .Select(userRole => new Claim(ClaimTypes.Role, userRole))
-            .Append(new Claim(ClaimTypes.Name, user.UserName))
+            .Append(new Claim(ClaimTypes.Name, user.UserName ?? string.Empty))
             .Append(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()))
             .Append(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 

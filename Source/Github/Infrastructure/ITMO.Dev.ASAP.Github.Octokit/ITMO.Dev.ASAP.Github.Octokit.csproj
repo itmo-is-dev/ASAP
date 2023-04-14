@@ -1,11 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-
     <ItemGroup>
       <ProjectReference Include="..\..\Application\Abstractions\ITMO.Dev.ASAP.Github.Application.Octokit\ITMO.Dev.ASAP.Github.Application.Octokit.csproj" />
       <ProjectReference Include="..\..\ITMO.Dev.ASAP.Github.Common\ITMO.Dev.ASAP.Github.Common.csproj" />

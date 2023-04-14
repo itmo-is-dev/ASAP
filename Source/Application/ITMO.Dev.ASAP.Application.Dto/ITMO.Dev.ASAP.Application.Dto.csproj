@@ -1,14 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <AnalysisLevel>latest</AnalysisLevel>
-        <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    </PropertyGroup>
-
+    
     <ItemGroup>
-      <PackageReference Include="ronimizy.FluentSerialization.Extensions.NewtonsoftJson" />
+        <PackageReference Include="ronimizy.FluentSerialization.Extensions.NewtonsoftJson"/>
     </ItemGroup>
 </Project>

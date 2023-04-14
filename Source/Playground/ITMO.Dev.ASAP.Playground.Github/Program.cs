@@ -18,19 +18,23 @@ internal static class Program
 
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-        TestEnvironmentConfiguration testEnvironmentConfiguration = builder.Configuration
+        TestEnvironmentConfiguration? testEnvironmentConfiguration = builder.Configuration
             .GetSection(nameof(TestEnvironmentConfiguration))
             .Get<TestEnvironmentConfiguration>();
 
         builder.Services
             .AddPlaygroundDependencies()
-            .AddGithubServices(builder.Configuration)
-            .AddGithubPlaygroundDatabase(testEnvironmentConfiguration);
+            .AddGithubServices(builder.Configuration);
+
+        if (testEnvironmentConfiguration is not null)
+            builder.Services.AddGithubPlaygroundDatabase(testEnvironmentConfiguration);
 
         WebApplication app = builder.Build();
 
         app.UseGithubIntegration();
-        await app.Services.UseTestEnv(testEnvironmentConfiguration);
+
+        if (testEnvironmentConfiguration is not null)
+            await app.Services.UseTestEnv(testEnvironmentConfiguration);
 
         await app.RunAsync();
     }
