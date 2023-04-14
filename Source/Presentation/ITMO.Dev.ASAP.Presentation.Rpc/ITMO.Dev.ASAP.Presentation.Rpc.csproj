@@ -9,7 +9,6 @@
     
     <ItemGroup>
       <PackageReference Include="MediatR" />
-      <PackageReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
     <ItemGroup>
