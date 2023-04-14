@@ -3,7 +3,7 @@ using MediatR;
 
 namespace ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Queries;
 
-public static class GetSubmmissionsQueue
+public static class GetSubmissionsQueue
 {
     public record Query(Guid SubjectCourseId, Guid GroupId) : IRequest<Response>;
 

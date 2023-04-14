@@ -2,16 +2,16 @@ using ITMO.Dev.ASAP.Application.Abstractions.Queue;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
-using static ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Queries.GetSubmmissionsQueue;
+using static ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Queries.GetSubmissionsQueue;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Study.Queues;
 
-internal class GetSubmmissionsQueueHandler : IRequestHandler<Query, Response>
+internal class GetSubmissionsQueueHandler : IRequestHandler<Query, Response>
 {
     private readonly IQueueUpdateService _queueUpdateService;
     private readonly IMemoryCache _cache;
 
-    public GetSubmmissionsQueueHandler(IQueueUpdateService queueUpdateService, IMemoryCache cache)
+    public GetSubmissionsQueueHandler(IQueueUpdateService queueUpdateService, IMemoryCache cache)
     {
         _queueUpdateService = queueUpdateService;
         _cache = cache;
@@ -26,7 +26,7 @@ internal class GetSubmmissionsQueueHandler : IRequestHandler<Query, Response>
             return new Response(submissionsQueue);
         }
 
-        submissionsQueue = await _queueUpdateService.GetSubmmissionsQueue(
+        submissionsQueue = await _queueUpdateService.GetSubmissionsQueue(
             request.GroupId,
             request.SubjectCourseId,
             cancellationToken);

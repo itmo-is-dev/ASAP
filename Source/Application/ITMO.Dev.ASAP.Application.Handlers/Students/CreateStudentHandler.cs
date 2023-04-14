@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.Dto.Users;
-using ITMO.Dev.ASAP.Application.Handlers.Extensions;
+using ITMO.Dev.ASAP.Application.Extensions;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.Users;

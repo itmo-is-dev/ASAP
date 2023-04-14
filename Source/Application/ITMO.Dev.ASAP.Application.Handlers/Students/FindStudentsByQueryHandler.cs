@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Dto.Users;
-using ITMO.Dev.ASAP.Application.Handlers.Extensions;
+using ITMO.Dev.ASAP.Application.Extensions;
 using ITMO.Dev.ASAP.Application.Queries;
 using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;

@@ -5,7 +5,7 @@ using ITMO.Dev.ASAP.Github.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 
-namespace ITMO.Dev.ASAP.Application.Handlers.Extensions;
+namespace ITMO.Dev.ASAP.Application.Extensions;
 
 public static class GithubSubjectCourseExtensions
 {
