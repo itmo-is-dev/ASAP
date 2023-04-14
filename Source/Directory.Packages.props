@@ -66,7 +66,6 @@
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.8"/>
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.8"/>
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.8"/>
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.8"/>
     </ItemGroup>
 
     <ItemGroup>
