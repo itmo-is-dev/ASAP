@@ -127,6 +127,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{6E86854D-B1A4-451F-B57F-29DE51237681}"
 	ProjectSection(SolutionItems) = preProject
 		..\Docker\docker-compose.yml = ..\Docker\docker-compose.yml
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Presentation.Rpc", "Presentation\ITMO.Dev.ASAP.Presentation.Rpc\ITMO.Dev.ASAP.Presentation.Rpc.csproj", "{912497E4-EA9F-4BF4-8587-038E021F62DF}"
