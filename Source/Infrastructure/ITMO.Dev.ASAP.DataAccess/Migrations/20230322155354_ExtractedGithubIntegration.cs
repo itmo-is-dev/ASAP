@@ -12,9 +12,9 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
             insert into "GithubSubmissions"
             ("Id", "AssignmentId", "UserId", "CreatedAt", "Organization", "Repository", "PullRequestNumber")
             select "SubmissionId", "GroupAssignmentAssignmentId", "StudentUserId", "SubmissionDate", "Organization", "Repository", "PrNumber"
-            from "SubmissionAssociations"
-            join "Submissions" S on S."Id" = "SubmissionAssociations"."SubmissionId"
-            where "Discriminator" = 'GithubSubmissionAssociation'
+            from "SubmissionAssociations" as sa
+            join "Submissions" S on S."Id" = sa."SubmissionId"
+            where sa."Discriminator" = 'GithubSubmissionAssociation'
             """);
 
             migrationBuilder.Sql("""

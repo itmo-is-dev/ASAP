@@ -20,12 +20,3 @@
         }
     </CascadingValue>
 </CascadingValue>
-
-@code {
-
-    protected bool ShouldRenderContent =>
-        RenderMode == ModalRenderMode.Default ||
-        (RenderMode == ModalRenderMode.LazyReload && IsVisible) ||
-        (RenderMode == ModalRenderMode.LazyLoad && lazyLoaded);
-
-}
