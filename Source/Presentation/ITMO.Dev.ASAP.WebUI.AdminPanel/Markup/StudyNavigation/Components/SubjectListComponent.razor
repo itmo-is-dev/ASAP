@@ -1,0 +1,79 @@
+@using ITMO.Dev.ASAP.Application.Dto.Study
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Extensions
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Markup.StudyNavigation.Providers
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.SafeExecution
+@inject ISubjectClient SubjectClient
+@inject ISafeExecutor SafeExecutor
+@inject ISubjectProvider SubjectProvider
+@inject NavigationManager NavigationManager
+
+@if (_subjects is not null)
+{
+    <ListGroup Flush>
+        @foreach (var subject in _subjects)
+        {
+            <ListGroupItem Padding="Padding.Is0">
+                <Button Clicked="@(() => NavigationManager.NavigateTo($"adminpanel/subjects/{subject.Id}"))"
+                        Padding="Padding.Is2"
+                        Width="Width.Is100"
+                        Border="Border.RoundedZero"
+                        Color="@(_selected.Equals(subject.Id) ? Color.Secondary : Color.Light)"
+                        TextAlignment="TextAlignment.Start"
+                        Class="text-overflow-dotted">
+
+                    @subject.Title
+                </Button>
+            </ListGroupItem>
+        }
+    </ListGroup>
+}
+else
+{
+    <LoaderComponent/>
+}
+
+@code {
+    private ICollection<SubjectDto>? _subjects;
+    private Guid? _selected;
+
+    private IDisposable? _subjectSubscription;
+    
+    [Parameter]
+    public EventCallback OnLoaded { get; set; }
+
+    public void AddSubject(SubjectDto subject)
+    {
+        _subjects?.Add(subject);
+    }
+
+    protected override void OnParametersSet()
+    {
+        _subjectSubscription = SubjectProvider.Id.Subscribe(OnCurrentSubjectUpdated);
+        _selected = SubjectProvider.CurrentId;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using ISafeExecutionBuilder<IReadOnlyCollection<SubjectDto>> builder = SafeExecutor
+            .Execute(() => SubjectClient.GetAsync());
+
+        builder.Title = "Failed to load subjects";
+        builder.ShowExceptionDetails = true;
+        builder.OnSuccess(x => _subjects = x.ToList());
+        builder.OnSuccessAsync(OnLoaded.InvokeAsync);
+    }
+
+    private void OnCurrentSubjectUpdated(Guid id)
+    {
+        if (_subjects is not null)
+        {
+            var value = _subjects.Single(x => x.Id.Equals(id));
+            SubjectProvider.OnNext(value);
+        }
+        
+        _selected = id;
+        StateHasChanged();
+    }
+
+}

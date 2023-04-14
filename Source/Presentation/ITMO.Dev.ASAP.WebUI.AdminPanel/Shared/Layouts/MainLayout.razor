@@ -2,11 +2,14 @@
 @inherits LayoutComponentBase
 
 <Layout>
-    <LayoutHeader Style="z-index: 2">
+    <LayoutHeader>
         <NavMenu/>
     </LayoutHeader>
 
-    <LayoutContent Height="Height.Is100" Width="Width.Is100">
+    <LayoutContent Height="Height.Is100"
+                   Width="Width.Is100"
+                   Flex="Flex.Column"
+                   Overflow="Overflow.Hidden">
 
         <CascadingValue Value="@this">
             @Body

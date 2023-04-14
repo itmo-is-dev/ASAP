@@ -2,6 +2,7 @@ using FluentChaining;
 using FluentChaining.Configurators;
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
+using ITMO.Dev.ASAP.Application.Abstractions.Queue;
 using ITMO.Dev.ASAP.Application.Abstractions.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Abstractions.Submissions;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
@@ -28,6 +29,7 @@ public static class ServiceCollectionExtensions
         collection.AddScoped<IPermissionValidator, PermissionValidator>();
         collection.AddScoped<ISubjectCourseService, SubjectCourseService>();
         collection.AddScoped<ISubmissionWorkflowService, SubmissionWorkflowService>();
+        collection.AddScoped<IQueueUpdateService, QueueUpdateService>();
 
         collection.AddQueryChains();
         collection.AddFilterChains();

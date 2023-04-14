@@ -15,6 +15,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\Domain\ITMO.Dev.ASAP.Core\ITMO.Dev.ASAP.Core.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.Application.Dto\ITMO.Dev.ASAP.Application.Dto.csproj" />
+
     </ItemGroup>
 
     <ItemGroup>
