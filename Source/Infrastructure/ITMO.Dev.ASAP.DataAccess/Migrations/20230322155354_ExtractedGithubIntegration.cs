@@ -18,17 +18,17 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
             """);
 
             migrationBuilder.Sql("""
-            insert into "GithubUsers"
-            ("Id", "Username")
-            select "UserId", "GithubUsername"
-            from "UserAssociations"
-            where "Discriminator" = 'GithubUserAssociation'
+            insert into "GithubUsers" as gu
+            (gu."Id", gu."Username")
+            select ua."UserId", ua."GithubUsername"
+            from "UserAssociations" as ua
+            where ua."Discriminator" = 'GithubUserAssociation'
             """);
 
             migrationBuilder.Sql("""
             insert into "GithubSubjectCourses"
             ("Id", "OrganizationName", "TemplateRepositoryName", "MentorTeamName")
-            select "SubjectCourseId", "GithubOrganizationName", "TemplateRepositoryName", "MentorTeamName"
+            select "SubjectCourseId", "GithubOrganizationName", "TemplateRepositoryName", coalesce("MentorTeamName", '')
             from "SubjectCourseAssociations"
             where "Discriminator" = 'GithubSubjectCourseAssociation'
             """);
