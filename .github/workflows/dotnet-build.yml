@@ -5,6 +5,7 @@ on:
     branches: [ master, dev ]
     paths:
       - 'src/**'
+      - 'tests/**'
 jobs:
   build:
     name: Build & Test
