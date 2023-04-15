@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'Source/**'
+      - 'src/**'
 
 jobs:
   deploy:

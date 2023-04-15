@@ -3,13 +3,13 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'Source/**'
+      - 'src/**'
 
   pull_request:
     branches: [ master, dev ]
     types: [ opened, synchronize, reopened ]
     paths:
-      - 'Source/**'
+      - 'src/**'
 jobs:
   build:
     name: SonarCloud style check
