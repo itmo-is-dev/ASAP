@@ -10,7 +10,7 @@ internal static class GoogleIntegrationServiceCollectionExtensions
         this IServiceCollection serviceCollection,
         WebApiConfiguration webApiConfiguration)
     {
-        if (!webApiConfiguration.GoogleIntegrationConfiguration.EnableGoogleIntegration)
+        if (webApiConfiguration.GoogleIntegrationConfiguration.EnableGoogleIntegration is false)
             return serviceCollection.AddDummyGoogleIntegration();
 
         return serviceCollection
