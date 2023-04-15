@@ -5,8 +5,8 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ./src .
-RUN dotnet restore "src/ITMO.Dev.ASAP/ITMO.Dev.ASAP.csproj"
+COPY . .
+RUN dotnet restore "ITMO.Dev.ASAP/ITMO.Dev.ASAP.csproj"
 
 WORKDIR "/src/ITMO.Dev.ASAP"
 RUN dotnet build "ITMO.Dev.ASAP.csproj" -c Release -o /app/build
