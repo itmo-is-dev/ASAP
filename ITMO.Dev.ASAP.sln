@@ -142,6 +142,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{6E8685
 		Docker\.env = Docker\.env
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{F1CC24D7-1743-4961-816E-DD23BCF48BC7}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\start-test.yml = .github\workflows\start-test.yml
+		.github\workflows\start-prod.yml = .github\workflows\start-prod.yml
+		.github\workflows\sonar-cloud.yml = .github\workflows\sonar-cloud.yml
+		.github\workflows\dotnet-build.yml = .github\workflows\dotnet-build.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -413,6 +421,8 @@ Global
 		{039ABD29-B975-4380-A858-0ED6B9350DDB} = {4265F334-2F2B-4B59-A7B4-D62A83264C37}
 		{CF582C5B-EAA5-4368-BC10-33C1584DB1EA} = {039ABD29-B975-4380-A858-0ED6B9350DDB}
 		{EBEC3E85-B4EA-4DFD-B66C-5EB0E7D37BD4} = {4265F334-2F2B-4B59-A7B4-D62A83264C37}
+		{22DF8218-9029-40AF-9CD0-53A18E0939A7} = {6E86854D-B1A4-451F-B57F-29DE51237681}
+		{F1CC24D7-1743-4961-816E-DD23BCF48BC7} = {6E86854D-B1A4-451F-B57F-29DE51237681}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CD5C67DB-70F8-4C47-A3F4-7C94BECE1657}
