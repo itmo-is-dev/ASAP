@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Dto\ITMO.Dev.ASAP.Application.Dto.csproj" />
+        <ProjectReference Include="..\..\Domain\ITMO.Dev.ASAP.Domain\ITMO.Dev.ASAP.Domain.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.Identity\ITMO.Dev.ASAP.Identity.csproj" />
+    </ItemGroup>
+
+</Project>

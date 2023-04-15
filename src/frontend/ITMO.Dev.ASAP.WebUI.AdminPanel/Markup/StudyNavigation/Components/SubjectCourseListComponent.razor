@@ -1,0 +1,92 @@
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.ExceptionHandling
+@using ITMO.Dev.ASAP.Application.Dto.SubjectCourses
+@using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Extensions
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.Markup.StudyNavigation.Providers
+@using ITMO.Dev.ASAP.WebUI.AdminPanel.SafeExecution
+@inject ISubjectProvider SubjectProvider
+@inject ISubjectClient SubjectClient
+@inject ISafeExecutor SafeExecutor
+@inject NavigationManager NavigationManager
+@inject ISubjectCourseProvider SubjectCourseProvider
+@implements IDisposable
+
+@if (_courses is not null)
+{
+    <ListGroup Flush>
+        @foreach (var course in _courses)
+        {
+            <ListGroupItem Padding="Padding.Is0">
+                <Button Clicked="@(() => NavigationManager.NavigateTo($"adminpanel/courses/{course.Id}"))"
+                        Padding="Padding.Is2"
+                        Width="Width.Is100"
+                        Border="Border.RoundedZero"
+                        Color="@(_selected.Equals(course.Id) ? Color.Secondary : Color.Light)"
+                        TextAlignment="TextAlignment.Start"
+                        Style="word-break: break-all">
+                    
+                    @course.Title
+                </Button>
+            </ListGroupItem>
+        }
+    </ListGroup>
+}
+else
+{
+    <LoaderComponent/>
+}
+
+@code {
+    private ICollection<SubjectCourseDto>? _courses;
+    private Guid? _selected;
+
+    private IDisposable? _subjectSubscription;
+    private IDisposable? _subjectCourseSubscription;
+
+    [Parameter]
+    public EventCallback OnLoaded { get; set; }
+
+    public void AddCourse(SubjectCourseDto course)
+    {
+        _courses?.Add(course);
+    }
+
+    protected override void OnParametersSet()
+    {
+        _subjectSubscription = SubjectProvider.Id.Subscribe(x => _ = UpdateCourses(x));
+        _subjectCourseSubscription = SubjectCourseProvider.Id.Subscribe(OnSubjectCourseUpdated);
+        _selected = SubjectCourseProvider.Current;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Guid? currentSubjectId = SubjectProvider.CurrentId;
+
+        if (currentSubjectId is null)
+            return;
+
+        await UpdateCourses(currentSubjectId.Value);
+    }
+
+    private async Task UpdateCourses(Guid subjectId)
+    {
+        await using ISafeExecutionBuilder<IReadOnlyCollection<SubjectCourseDto>> builder = SafeExecutor.Execute(
+            () => SubjectClient.GetCoursesAsync(subjectId));
+
+        builder.Title = "Failed to load subject courses";
+        builder.OnSuccess(x => _courses = x.ToList());
+        builder.OnSuccess(StateHasChanged);
+    }
+
+    private void OnSubjectCourseUpdated(Guid subjectCourseId)
+    {
+        _selected = subjectCourseId;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _subjectSubscription?.Dispose();
+    }
+
+}
