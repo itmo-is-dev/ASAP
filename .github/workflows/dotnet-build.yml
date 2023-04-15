@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ master, dev ]
     paths:
-      - 'Source/**'
+      - 'src/**'
 jobs:
   build:
     name: Build & Test

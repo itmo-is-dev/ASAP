@@ -26,7 +26,7 @@ internal static class SeedingHelper
             }
             catch (Exception e)
             {
-                logger.LogWarning(e, "Failed registration of {AdminUsername}", admin.Username);
+                logger.LogWarning(e, "Failed to register admin {AdminUsername}", admin.Username);
             }
         }
     }
