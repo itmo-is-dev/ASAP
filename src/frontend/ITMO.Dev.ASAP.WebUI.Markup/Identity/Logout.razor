@@ -1,0 +1,14 @@
+@page "/logout"
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
+@inject NavigationManager NavigationManager
+@inject IPrincipalService PrincipalService
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await PrincipalService.LogoutAsync(default);
+        NavigationManager.NavigateTo("/");
+    }
+
+}

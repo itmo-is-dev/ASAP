@@ -1,0 +1,31 @@
+@using ITMO.Dev.ASAP.WebUI.Markup.Layouts
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Navigation
+@using ITMO.Dev.ASAP.WebUI.Markup
+@using ITMO.Dev.ASAP.WebUI.Markup.Shared
+@inject INavigationService NavigationService
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly"
+            AdditionalAssemblies="new[]{typeof(IMarkupAssemblyMarker).Assembly}"
+            OnNavigateAsync="@NavigationService.OnNavigateAsync">
+
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <LoginRedirect/>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(EmptyLayout)">
+                <p>Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+
+    </Router>
+</CascadingAuthenticationState>
+
+@code
+{
+}

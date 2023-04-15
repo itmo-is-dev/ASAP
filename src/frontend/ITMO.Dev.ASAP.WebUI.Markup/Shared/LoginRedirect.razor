@@ -1,0 +1,12 @@
+@inject NavigationManager NavigationManager 
+@layout EmptyLayout
+@attribute [AllowAnonymous]
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.NavigateTo("adminpanel/identity/login");
+    }
+
+}

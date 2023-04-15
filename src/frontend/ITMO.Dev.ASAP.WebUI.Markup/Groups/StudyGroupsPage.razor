@@ -1,0 +1,17 @@
+@page "/adminpanel/groups"
+@layout PaddedLayout
+@using ITMO.Dev.ASAP.WebUI.Markup.Groups.Components
+@attribute [Authorize(Roles = "Admin, Moderator")]
+
+<Div Flex="Flex.Column" Height="Height.Is100">
+
+    <Heading Size="HeadingSize.Is2">
+        Groups
+    </Heading>
+
+    <GroupQueryComponent/>
+</Div>
+
+@code {
+
+}

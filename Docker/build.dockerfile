@@ -12,7 +12,7 @@ COPY ./.editorconfig .
 
 RUN dotnet restore "src/ITMO.Dev.ASAP/ITMO.Dev.ASAP.csproj"
 
-WORKDIR "/source/src/ITMO.Dev.ASAP"
+WORKDIR "/src/ITMO.Dev.ASAP"
 RUN dotnet build "ITMO.Dev.ASAP.csproj" -c Release -o /app/build
 
 FROM build AS publish
