@@ -1,0 +1,53 @@
+@using ITMO.Dev.ASAP.Application.Dto.SubjectCourses
+@using ITMO.Dev.ASAP.Application.Dto.Study
+@using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Models
+@using ITMO.Dev.ASAP.WebUI.Markup.Groups.Components
+@inject IStudyGroupClient StudyGroupClient
+
+@if (_groups is not null)
+{
+    <ListGroup Flush>
+        @foreach (var group in _groups.OrderBy(x => x.Group.Name))
+        {
+            <StudyGroupInfoComponent Group="@group.Group"/>
+        }
+    </ListGroup>
+}
+else
+{
+    <LoaderComponent/>
+}
+
+@code {
+
+    private IReadOnlyCollection<ExtendedSubjectCourseGroupDto>? _groups;
+
+    [Parameter]
+    public IEnumerable<SubjectCourseGroupDto>? SubjectCourseGroups { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (SubjectCourseGroups is null)
+        {
+            _groups = null;
+            return;
+        }
+
+        IEnumerable<SubjectCourseGroupDto>? groups = SubjectCourseGroups;
+
+        IEnumerable<Guid> groupIds = groups.Select(x => x.StudentGroupId);
+        IReadOnlyCollection<StudyGroupDto> studyGroups = await StudyGroupClient.GetAsync(groupIds);
+
+        _groups = groups.Join
+            (
+                studyGroups,
+                x => x.StudentGroupId,
+                x => x.Id,
+                (courseGroup, group) => (courseGroup, group)
+            )
+            .Select(pair => new ExtendedSubjectCourseGroupDto(pair.courseGroup, pair.group))
+            .ToArray();
+    }
+
+}

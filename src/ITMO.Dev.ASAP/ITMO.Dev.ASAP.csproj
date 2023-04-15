@@ -36,7 +36,7 @@
         <ProjectReference Include="..\github\Infrastructure\ITMO.Dev.ASAP.Github.Octokit\ITMO.Dev.ASAP.Github.Octokit.csproj" />
         <ProjectReference Include="..\github\Presentation\ITMO.Dev.ASAP.Github.Presentation.Services\ITMO.Dev.ASAP.Github.Presentation.Services.csproj" />
         <ProjectReference Include="..\github\Presentation\ITMO.Dev.ASAP.Github.Presentation.Webhooks\ITMO.Dev.ASAP.Github.Presentation.Webhooks.csproj" />
-        <ProjectReference Include="..\frontend\ITMO.Dev.ASAP.WebUI.AdminPanel\ITMO.Dev.ASAP.WebUI.AdminPanel.csproj" />
+        <ProjectReference Include="..\frontend\ITMO.Dev.ASAP.WebUI\ITMO.Dev.ASAP.WebUI.csproj" />
     </ItemGroup>
 
     <ItemGroup>

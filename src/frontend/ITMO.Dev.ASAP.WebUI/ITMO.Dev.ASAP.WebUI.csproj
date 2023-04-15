@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+    <ItemGroup>
+        <PackageReference Include="Blazorise.Bootstrap" />
+        <PackageReference Include="Blazorise.Components" />
+        <PackageReference Include="Blazorise.Icons.FontAwesome" />
+        <PackageReference Include="Blazorise.SpinKit" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.Http" />
+        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+        <PackageReference Include="System.Reactive" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\core\Presentation\ITMO.Dev.ASAP.WebApi.Sdk\ITMO.Dev.ASAP.WebApi.Sdk.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.WebUI.Abstractions\ITMO.Dev.ASAP.WebUI.Abstractions.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.WebUI.Application\ITMO.Dev.ASAP.WebUI.Application.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.WebUI.Markup\ITMO.Dev.ASAP.WebUI.Markup.csproj" />
+    </ItemGroup>
+
+</Project>

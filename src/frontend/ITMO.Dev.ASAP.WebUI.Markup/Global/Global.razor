@@ -1,0 +1,16 @@
+@page "/adminpanel/global"
+@using ITMO.Dev.ASAP.WebUI.Markup.Global.Components
+@layout PaddedLayout
+@attribute [Authorize(Roles = "Admin, Moderator")]
+
+<Div Display="Display.Flex" Flex="Flex.Column.AlignContent.Start">
+
+    <CardDeck>
+        <GlobalGithubManagementComponent/>
+    </CardDeck>
+
+</Div>
+
+@code {
+
+}

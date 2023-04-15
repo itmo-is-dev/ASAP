@@ -1,0 +1,22 @@
+@using ITMO.Dev.ASAP.WebUI.Markup.Errors
+@using ITMO.Dev.ASAP.WebUI.Markup.Shared
+@inherits LayoutComponentBase
+
+<Layout>
+    <LayoutHeader>
+        <NavMenu/>
+    </LayoutHeader>
+
+    <LayoutContent Height="Height.Is100"
+                   Width="Width.Is100"
+                   Flex="Flex.Column"
+                   Overflow="Overflow.Hidden">
+
+        <CascadingValue Value="@this">
+            @Body
+        </CascadingValue>
+
+    </LayoutContent>
+
+    <ExceptionDisplay/>
+</Layout>

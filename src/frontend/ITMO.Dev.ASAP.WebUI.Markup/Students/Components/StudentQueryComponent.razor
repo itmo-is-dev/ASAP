@@ -1,0 +1,33 @@
+@using ITMO.Dev.ASAP.Application.Dto.Querying;
+@using ITMO.Dev.ASAP.Application.Dto.Users;
+@using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Markup.Query
+
+@inject IStudentClient StudentClient
+
+<QueryComponent TParameter="@StudentQueryParameter"
+                TValue="@StudentDto"
+                QueryExecutor="QueryAsync">
+    <ContentTable Context="students">
+
+        @if (StudentTable is not null)
+        {
+            @StudentTable.Invoke(students)
+        }
+        else
+        {
+            <StudentTableComponent Students="students"/>
+        }
+    </ContentTable>
+</QueryComponent>
+
+
+@code
+{
+
+    [Parameter]
+    public RenderFragment<IReadOnlyCollection<StudentDto>?>? StudentTable { get; set; }
+
+    private Task<IReadOnlyCollection<StudentDto>> QueryAsync(QueryConfiguration<StudentQueryParameter> configuration)
+        => StudentClient.QueryAsync(configuration);
+}
