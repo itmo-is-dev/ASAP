@@ -4,12 +4,14 @@ on:
     branches: [ master ]
     paths:
       - 'src/**'
+      - 'tests/**'
 
   pull_request:
     branches: [ master, dev ]
     types: [ opened, synchronize, reopened ]
     paths:
       - 'src/**'
+      - 'tests/**'
 jobs:
   build:
     name: SonarCloud style check
