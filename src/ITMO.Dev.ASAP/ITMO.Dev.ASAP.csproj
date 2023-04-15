@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <UserSecretsId>dcb623c6-ceae-4ac4-9f2c-a7bfc6535dcb</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -47,6 +48,9 @@
       </Content>
       <Content Update="appsettings.Staging.json">
         <DependentUpon>appsettings.json</DependentUpon>
+      </Content>
+      <Content Include="..\..\.dockerignore">
+        <Link>.dockerignore</Link>
       </Content>
     </ItemGroup>
 
