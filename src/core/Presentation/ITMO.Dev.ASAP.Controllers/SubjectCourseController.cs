@@ -1,11 +1,13 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries;
+using ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourseGroups.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
+using ITMO.Dev.ASAP.Application.Dto.Tables;
 using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.SubjectCourses;
 using MediatR;
@@ -73,6 +75,18 @@ public class SubjectCourseController : ControllerBase
         GetSubjectCourseGroupsBySubjectCourseId.Response result = await _mediator.Send(query, CancellationToken);
 
         return Ok(result.Groups);
+    }
+
+    [HttpGet("{subjectCourseId:guid}/groups/{studyGroupId:guid}/queue")]
+    public async Task<ActionResult<SubmissionsQueueDto>> GetStudyGroupQueueAsync(
+        Guid subjectCourseId,
+        Guid studyGroupId,
+        CancellationToken cancellationToken)
+    {
+        var queue = new GetSubmissionsQueue.Query(subjectCourseId, studyGroupId);
+        GetSubmissionsQueue.Response response = await _mediator.Send(queue, cancellationToken);
+
+        return Ok(response.SubmissionsQueue);
     }
 
     [HttpPost("{id:guid}/deadline/fraction")]

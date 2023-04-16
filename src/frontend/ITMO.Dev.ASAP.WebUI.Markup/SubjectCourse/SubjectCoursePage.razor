@@ -1,0 +1,77 @@
+@page "/adminpanel/courses/{subjectCourseId:guid}"
+@using ITMO.Dev.ASAP.WebUI.Markup.Assignments.Components
+@using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourse.Components
+@using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourseGroups.Components
+@using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling
+@using ITMO.Dev.ASAP.WebUI.Abstractions.StudyNavigation
+@using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourse.Components.Assignments
+@using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourse.Components.Groups
+@using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourse.Components.Queue
+@inject ISubjectCourseClient SubjectCourseClient
+@inject ISafeExecutor SafeExecutor
+@inject ISubjectCourseProvider SubjectCourseProvider
+@inject ISubjectProvider SubjectProvider
+@layout SubjectCourseListLayout
+@inject NavigationManager NavigationManager
+@inject IStudyGroupClient StudyGroupClient
+
+@if (_course is not null)
+{
+    <SubjectCourseBreadcrumb Course="_course"/>
+
+    <Div Flex="Flex.Column"
+         Height="Height.Is100"
+         Overflow="Overflow.Hidden">
+
+        <AssociationsComponent Associations="_course.Associations"
+                               SubjectCourse="_course"/>
+
+        <Divider/>
+
+        <Tabs SelectedTab="@_selectedTab" Padding="Padding.Is2.FromStart">
+            <Items>
+                <AssignmentsTabComponent
+                    OnSelectedTabChanged="OnSelectedTabChanged"
+                    OnClicked="@(() => _createAssignmentModal?.ShowAsync() ?? Task.CompletedTask)"/>
+
+                <GroupsTabComponent
+                    OnSelectedTabChanged="OnSelectedTabChanged"
+                    OnClicked="ShowAddSubjectCourseGroupsAsync"/>
+
+                <SubmissionQueueTabComponent
+                    OnSelectedTabChanged="OnSelectedTabChanged"/>
+            </Items>
+
+            <Content>
+                <TabPanel Name="@AssignmentsTabComponent.Key">
+                    <AssignmentsComponent Assignments="_assignments"/>
+                </TabPanel>
+
+                <TabPanel Name="@GroupsTabComponent.Key">
+                    <SubjectCourseGroupsComponent Groups="_subjectCourseGroups"/>
+                </TabPanel>
+
+                <TabPanel Name="@SubmissionQueueTabComponent.Key">
+                    <SubmissionQueueComponent Groups="_subjectCourseGroups"/>
+                </TabPanel>
+            </Content>
+        </Tabs>
+    </Div>
+
+
+    <CreateAssignmentModal @ref="_createAssignmentModal"
+                           SubjectCourseId="@_course?.Id"
+                           OnSuccess="AddAssignmentAsync"/>
+
+    <AddSubjectCourseGroupModal @ref="_addSubjectCourseGroupModal"
+                                SubjectCourse="_course"
+                                OnStudyGroupsAdded="AddSubjectCourseGroupsAsync"
+                                ExistingGroups="_subjectCourseGroups"/>
+}
+
+@code
+{
+    private CreateAssignmentModal? _createAssignmentModal;
+    private AddSubjectCourseGroupModal? _addSubjectCourseGroupModal;
+}

@@ -32,7 +32,6 @@
     <ItemGroup>
       <AdditionalFiles Include="Shared\Components\Tabs\DropdownTabTitleComponent.razor" />
       <AdditionalFiles Include="Shared\Components\Tabs\TabTitleComponent.razor" />
-      <AdditionalFiles Include="StudyNavigation\Pages\SubjectsPage.razor" />
     </ItemGroup>
 
     <ItemGroup>

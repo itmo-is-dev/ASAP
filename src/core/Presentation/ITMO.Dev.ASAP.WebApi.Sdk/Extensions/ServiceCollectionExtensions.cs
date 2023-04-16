@@ -1,6 +1,8 @@
 using ITMO.Dev.ASAP.Application.Dto.Extensions;
 using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients;
 using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients.Implementations;
+using ITMO.Dev.ASAP.WebApi.Sdk.HubClients;
+using ITMO.Dev.ASAP.WebApi.Sdk.HubClients.Implementations;
 using ITMO.Dev.ASAP.WebApi.Sdk.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,7 +12,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddAsapSdk(this IServiceCollection collection, Uri baseAddress)
     {
-        void AddClient<TClient, TImplementation>()
+        void AddControllerClient<TClient, TImplementation>()
             where TClient : class
             where TImplementation : class, TClient
         {
@@ -23,17 +25,34 @@ public static class ServiceCollectionExtensions
                 });
         }
 
-        AddClient<IAssignmentClient, AssignmentClient>();
-        AddClient<IGithubManagementClient, GithubManagementClient>();
-        AddClient<IGoogleClient, GoogleClient>();
-        AddClient<IGroupAssignmentClient, GroupAssignmentClient>();
-        AddClient<IIdentityClient, IdentityClient>();
-        AddClient<IStudentClient, StudentClient>();
-        AddClient<IStudyGroupClient, StudyGroupClient>();
-        AddClient<ISubjectClient, SubjectClient>();
-        AddClient<ISubjectCourseClient, SubjectCourseClient>();
-        AddClient<ISubjectCourseGroupClient, SubjectCourseGroupClient>();
-        AddClient<IUserClient, UserClient>();
+        void AddHubClient<TClient, TImplementation>(string address)
+            where TClient : IHubClient
+            where TImplementation : IHubConnectionCreatable<TClient>
+        {
+            collection.AddScoped<IHubClientProvider<TClient>>(p =>
+            {
+                ITokenProvider tokenProvider = p.GetRequiredService<ITokenProvider>();
+
+                return new HubClientProvider<TClient>(
+                    new Uri(baseAddress, address),
+                    TImplementation.Create,
+                    tokenProvider);
+            });
+        }
+
+        AddControllerClient<IAssignmentClient, AssignmentClient>();
+        AddControllerClient<IGithubManagementClient, GithubManagementClient>();
+        AddControllerClient<IGoogleClient, GoogleClient>();
+        AddControllerClient<IGroupAssignmentClient, GroupAssignmentClient>();
+        AddControllerClient<IIdentityClient, IdentityClient>();
+        AddControllerClient<IStudentClient, StudentClient>();
+        AddControllerClient<IStudyGroupClient, StudyGroupClient>();
+        AddControllerClient<ISubjectClient, SubjectClient>();
+        AddControllerClient<ISubjectCourseClient, SubjectCourseClient>();
+        AddControllerClient<ISubjectCourseGroupClient, SubjectCourseGroupClient>();
+        AddControllerClient<IUserClient, UserClient>();
+
+        AddHubClient<IQueueHubClient, StubQueueHubClient>("hubs/queue");
 
         collection.AddDtoConfiguration();
 

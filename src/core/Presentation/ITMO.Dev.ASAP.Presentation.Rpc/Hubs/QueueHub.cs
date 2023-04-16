@@ -9,12 +9,12 @@ public class QueueHub : Hub<IQueueHubClient>
     {
     }
 
-    public Task QueueUpdateSubscribe(Guid courseId, Guid groupId)
+    public Task QueueUpdateSubscribeAsync(Guid courseId, Guid groupId)
     {
         return Groups.AddToGroupAsync(Context.ConnectionId, CombineIdentifiers(courseId, groupId));
     }
 
-    public Task QueueUpdateUnsubscribe(Guid courseId, Guid groupId)
+    public Task QueueUpdateUnsubscribeAsync(Guid courseId, Guid groupId)
     {
         return Groups.RemoveFromGroupAsync(Context.ConnectionId, CombineIdentifiers(courseId, groupId));
     }

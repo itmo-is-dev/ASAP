@@ -1,0 +1,27 @@
+@using ITMO.Dev.ASAP.Application.Dto.SubjectCourses
+@using ITMO.Dev.ASAP.Application.Dto.Study
+@using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Models
+@using ITMO.Dev.ASAP.WebUI.Markup.Groups.Components
+@inject IStudyGroupClient StudyGroupClient
+
+@if (Groups is not null)
+{
+    <ListGroup Flush>
+        @foreach (var group in Groups.OrderBy(x => x.Group.Name))
+        {
+            <StudyGroupInfoComponent Group="@group.Group"/>
+        }
+    </ListGroup>
+}
+else
+{
+    <LoaderComponent/>
+}
+
+@code {
+
+    [Parameter]
+    public IEnumerable<ExtendedSubjectCourseGroupDto>? Groups { get; set; }
+
+}

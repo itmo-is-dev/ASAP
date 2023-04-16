@@ -1,6 +1,7 @@
 using ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Notifications;
 using ITMO.Dev.ASAP.Presentation.Rpc.Abstractions;
 using ITMO.Dev.ASAP.Presentation.Rpc.Hubs;
+using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Queue;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
@@ -19,7 +20,12 @@ internal class QueueUpdateNotificationHandler : INotificationHandler<QueueUpdate
     {
         string notificationGroup = string.Concat(notification.SubjectCourseId, notification.GroupId);
 
+        var queue = new SubjectCourseQueueModel(
+            notification.SubjectCourseId,
+            notification.GroupId,
+            notification.SubmissionsQueue);
+
         IQueueHubClient group = _hubContext.Clients.Group(notificationGroup);
-        await group.SendUpdateQueueMessage(notification.SubmissionsQueue, cancellationToken);
+        await group.SendUpdateQueueMessage(queue, cancellationToken);
     }
 }

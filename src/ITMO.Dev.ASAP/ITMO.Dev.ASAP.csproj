@@ -30,6 +30,7 @@
         <ProjectReference Include="..\core\Infrastructure\ITMO.Dev.ASAP.DataAccess\ITMO.Dev.ASAP.DataAccess.csproj" />
         <ProjectReference Include="..\core\Infrastructure\ITMO.Dev.ASAP.Mapping\ITMO.Dev.ASAP.Mapping.csproj" />
         <ProjectReference Include="..\core\Presentation\ITMO.Dev.ASAP.Controllers\ITMO.Dev.ASAP.Controllers.csproj" />
+        <ProjectReference Include="..\core\Presentation\ITMO.Dev.ASAP.Presentation.Rpc\ITMO.Dev.ASAP.Presentation.Rpc.csproj" />
         <ProjectReference Include="..\core\Presentation\ITMO.Dev.ASAP.Presentation.Services\ITMO.Dev.ASAP.Presentation.Services.csproj" />
         <ProjectReference Include="..\github\Application\ITMO.Dev.ASAP.Github.Application.Handlers\ITMO.Dev.ASAP.Github.Application.Handlers.csproj" />
         <ProjectReference Include="..\github\Infrastructure\ITMO.Dev.ASAP.Github.DataAccess\ITMO.Dev.ASAP.Github.DataAccess.csproj" />
