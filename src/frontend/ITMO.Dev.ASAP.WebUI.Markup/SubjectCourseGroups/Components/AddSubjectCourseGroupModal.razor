@@ -70,7 +70,7 @@
     public SubjectCourseDto? SubjectCourse { get; set; }
 
     [Parameter]
-    public ICollection<SubjectCourseGroupDto>? ExistingGroups { get; set; }
+    public ICollection<ExtendedSubjectCourseGroupDto>? ExistingGroups { get; set; }
 
     [Parameter]
     public EventCallback<IReadOnlyCollection<SubjectCourseGroupDto>> OnStudyGroupsAdded { get; set; }
@@ -110,8 +110,10 @@
 
         if (ExistingGroups is not null)
         {
+            IEnumerable<Guid> groupIds = ExistingGroups.Select(course => course.SubjectCourseGroup.StudentGroupId);
+
             groupsEnumerable = groupsEnumerable
-                .Where(sg => ExistingGroups.Any(x => x.StudentGroupId.Equals(sg.Id)) is false);
+                .ExceptBy(groupIds, x => x.Id);
         }
 
         _groups = groupsEnumerable.Select(x => new SelectableStudyGroup(x, false)).ToArray();

@@ -2,13 +2,15 @@
     <PropertyGroup>
         <OutputType>Library</OutputType>
     </PropertyGroup>
-    
+
     <ItemGroup>
-      <PackageReference Include="MediatR" />
+        <PackageReference Include="MediatR" />
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Contracts\ITMO.Dev.ASAP.Application.Contracts.csproj" />
+        <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Contracts\ITMO.Dev.ASAP.Application.Contracts.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.WebApi.Abstractions\ITMO.Dev.ASAP.WebApi.Abstractions.csproj" />
     </ItemGroup>
 
 </Project>

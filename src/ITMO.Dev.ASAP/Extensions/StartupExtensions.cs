@@ -1,4 +1,5 @@
 using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Extensions;
+using ITMO.Dev.ASAP.Presentation.Rpc.Extensions;
 
 namespace ITMO.Dev.ASAP.Extensions;
 
@@ -28,7 +29,10 @@ internal static class StartupExtensions
 
         app.MapFallbackToFile("index.html");
 
+        app.UseRouting();
+
         app.MapControllers();
+        app.UseRpcPresentation();
         app.UseGithubIntegration();
 
         return app;

@@ -10,7 +10,7 @@ public static class AppBuilderExtensions
 {
     public static IApplicationBuilder UseGithubIntegration(this IApplicationBuilder app)
     {
-        app.UseRouting().UseEndpoints(endpoints =>
+        app.UseEndpoints(endpoints =>
         {
             IOptions<GithubIntegrationConfiguration> options = endpoints.ServiceProvider
                 .GetRequiredService<IOptions<GithubIntegrationConfiguration>>();

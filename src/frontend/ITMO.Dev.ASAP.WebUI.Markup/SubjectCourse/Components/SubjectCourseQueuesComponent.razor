@@ -1,0 +1,19 @@
+@using ITMO.Dev.ASAP.Application.Dto.SubjectCourses
+
+@if (Groups is not null)
+{
+    <ListGroup Flush>
+        @foreach (var group in Groups)
+        {
+            
+        }
+    </ListGroup>
+}
+else
+{
+    <LoaderComponent/>
+}
+
+@code {
+    public IEnumerable<SubjectCourseGroupDto>? Groups { get; set; }
+}

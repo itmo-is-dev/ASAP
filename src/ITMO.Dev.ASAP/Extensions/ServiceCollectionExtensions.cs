@@ -11,6 +11,7 @@ using ITMO.Dev.ASAP.Github.Octokit.Extensions;
 using ITMO.Dev.ASAP.Github.Presentation.Services.Extensions;
 using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Extensions;
 using ITMO.Dev.ASAP.Identity.Extensions;
+using ITMO.Dev.ASAP.Presentation.Rpc.Extensions;
 using ITMO.Dev.ASAP.Presentation.Services.Extensions;
 using Microsoft.EntityFrameworkCore;
 using ConfigurationBuilder = FluentSerialization.ConfigurationBuilder;
@@ -35,6 +36,8 @@ internal static class ServiceCollectionExtensions
                 .ApplyToSerializationSettings(x.SerializerSettings))
             .AddApplicationPart(typeof(IControllerProjectMarker).Assembly)
             .AddControllersAsServices();
+
+        serviceCollection.AddRpcPresentation();
 
         serviceCollection
             .AddSwagger()

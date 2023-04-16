@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
+using ITMO.Dev.ASAP.Application.Dto.Tables;
 using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Github.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Github;
@@ -80,6 +81,17 @@ internal class SubjectCourseClient : ISubjectCourseClient
     {
         using var message = new HttpRequestMessage(HttpMethod.Get, $"api/SubjectCourse/{id}/groups");
         return await _handler.SendAsync<IReadOnlyCollection<SubjectCourseGroupDto>>(message, cancellationToken);
+    }
+
+    public async Task<SubmissionsQueueDto> GetStudyGroupQueueAsync(
+        Guid subjectCourseId,
+        Guid studyGroupId,
+        CancellationToken cancellationToken = default)
+    {
+        string uri = $"api/SubjectCourse/{subjectCourseId}/groups/{studyGroupId}/queue";
+        using var message = new HttpRequestMessage(HttpMethod.Get, uri);
+
+        return await _handler.SendAsync<SubmissionsQueueDto>(message, cancellationToken);
     }
 
     public async Task<SubjectCourseDto> AddGithubAssociationAsync(

@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
+using ITMO.Dev.ASAP.Application.Dto.Tables;
 using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Github.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Github;
@@ -24,10 +25,17 @@ public interface ISubjectCourseClient
 
     Task<IReadOnlyCollection<StudentDto>> GetStudentsAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyCollection<AssignmentDto>> GetAssignmentsAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<IReadOnlyCollection<AssignmentDto>> GetAssignmentsAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
 
     Task<IReadOnlyCollection<SubjectCourseGroupDto>> GetGroupsAsync(
         Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task<SubmissionsQueueDto> GetStudyGroupQueueAsync(
+        Guid subjectCourseId,
+        Guid studyGroupId,
         CancellationToken cancellationToken = default);
 
     Task<SubjectCourseDto> AddGithubAssociationAsync(
