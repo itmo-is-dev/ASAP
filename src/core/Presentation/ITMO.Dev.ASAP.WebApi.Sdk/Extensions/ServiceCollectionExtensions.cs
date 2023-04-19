@@ -52,7 +52,7 @@ public static class ServiceCollectionExtensions
         AddControllerClient<ISubjectCourseGroupClient, SubjectCourseGroupClient>();
         AddControllerClient<IUserClient, UserClient>();
 
-        AddHubClient<IQueueHubClient, StubQueueHubClient>("hubs/queue");
+        AddHubClient<IQueueHubClient, QueueHubClient>("hubs/queue");
 
         collection.AddDtoConfiguration();
 
