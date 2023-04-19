@@ -16,7 +16,7 @@ internal class DeleteSubjectCourseGroupHandler : IRequestHandler<Command>
         _context = context;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         SubjectCourse subjectCourse =
             await _context.SubjectCourses.GetByIdAsync(request.SubjectCourseId, cancellationToken);
@@ -31,7 +31,5 @@ internal class DeleteSubjectCourseGroupHandler : IRequestHandler<Command>
 
         _context.SubjectCourseGroups.Update(subjectCourseGroup);
         await _context.SaveChangesAsync(cancellationToken);
-
-        return Unit.Value;
     }
 }

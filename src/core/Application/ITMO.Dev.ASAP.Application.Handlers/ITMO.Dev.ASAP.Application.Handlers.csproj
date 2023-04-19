@@ -11,7 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="Kysect.CommonLib" />
-        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" />
+        <PackageReference Include="MediatR" />
     </ItemGroup>
 
     <ItemGroup>

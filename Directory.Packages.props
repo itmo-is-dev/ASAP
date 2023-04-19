@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="AspNet.Security.OAuth.GitHub" Version="6.0.9" />
+    <PackageVersion Include="MediatR" Version="12.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5" />
   </ItemGroup>
   <ItemGroup>
@@ -36,9 +37,7 @@
     <PackageVersion Include="Kysect.GithubUtils" Version="1.0.12" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="MediatR" Version="10.0.1" />
     <PackageVersion Include="MediatR.Contracts" Version="1.0.1" />
-    <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />

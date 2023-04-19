@@ -13,7 +13,7 @@ internal class CreateAdminHandler : IRequestHandler<Command>
         _authorizationService = authorizationService;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         await _authorizationService.CreateUserAsync(
             Guid.NewGuid(),
@@ -21,7 +21,5 @@ internal class CreateAdminHandler : IRequestHandler<Command>
             request.Password,
             AsapIdentityRoleNames.AdminRoleName,
             cancellationToken);
-
-        return Unit.Value;
     }
 }
