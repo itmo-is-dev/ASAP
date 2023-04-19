@@ -31,7 +31,7 @@ internal class PullRequestClosedHandler : IRequestHandler<Command>
         _notifier = notifier;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         GithubUser issuer = await _context.Users
             .GetForUsernameAsync(request.PullRequest.Sender, cancellationToken);
@@ -64,7 +64,5 @@ internal class PullRequestClosedHandler : IRequestHandler<Command>
         };
 
         await _notifier.SendCommentToPullRequest(result.Message);
-
-        return Unit.Value;
     }
 }

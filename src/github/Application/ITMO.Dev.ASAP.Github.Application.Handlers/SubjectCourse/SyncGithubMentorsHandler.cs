@@ -43,7 +43,7 @@ internal class SyncGithubMentorsHandler :
         _asapSubjectCourseService = asapSubjectCourseService;
     }
 
-    public async Task<Unit> Handle(SyncGithubMentors.Command request, CancellationToken cancellationToken)
+    public async Task Handle(SyncGithubMentors.Command request, CancellationToken cancellationToken)
     {
         GithubSubjectCourse? subjectCourse = await _context.SubjectCourses
             .ForOrganizationName(request.OrganizationName)
@@ -53,8 +53,6 @@ internal class SyncGithubMentorsHandler :
             throw EntityNotFoundException.SubjectCourse(request.OrganizationName);
 
         await UpdateMentorsAsync(subjectCourse, cancellationToken);
-
-        return Unit.Value;
     }
 
     public async Task Handle(

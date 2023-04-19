@@ -38,7 +38,7 @@ internal class SubjectCourseOrganizationUpdateHandler
         _githubRepositoryService = githubRepositoryService;
     }
 
-    public async Task<Unit> Handle(UpdateSubjectCourseOrganizations.Command request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateSubjectCourseOrganizations.Command request, CancellationToken cancellationToken)
     {
         IReadOnlyCollection<GithubSubjectCourse> subjectCourses = await _context.SubjectCourses
             .ToListAsync(cancellationToken);
@@ -47,18 +47,14 @@ internal class SubjectCourseOrganizationUpdateHandler
         {
             await UpdateOrganizationAsync(subjectCourse, cancellationToken);
         }
-
-        return Unit.Value;
     }
 
-    public async Task<Unit> Handle(UpdateSubjectCourseOrganization.Command request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateSubjectCourseOrganization.Command request, CancellationToken cancellationToken)
     {
         GithubSubjectCourse subjectCourse = await _context.SubjectCourses
             .GetByIdAsync(request.SubjectCourseId, cancellationToken);
 
         await UpdateOrganizationAsync(subjectCourse, cancellationToken);
-
-        return Unit.Value;
     }
 
     private async Task UpdateOrganizationAsync(GithubSubjectCourse subjectCourse, CancellationToken cancellationToken)
