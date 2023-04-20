@@ -1,6 +1,5 @@
 ﻿using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Queue;
 using Microsoft.AspNetCore.SignalR.Client;
-using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
 namespace ITMO.Dev.ASAP.WebApi.Sdk.HubClients.Implementations;
@@ -23,18 +22,18 @@ public class QueueHubClient : IQueueHubClient, IHubConnectionCreatable<IQueueHub
             x => _subject.OnNext(x));
     }
 
-    public IObservable<SubjectCourseQueueModel> QueueUpdated => _subject.AsObservable();
+    public IObservable<SubjectCourseQueueModel> QueueUpdated => _subject;
 
     public static IQueueHubClient Create(HubConnection connection)
     {
         return new QueueHubClient(connection);
     }
 
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
-        await _connection.DisposeAsync();
         _updateHandler.Dispose();
         _subject.Dispose();
+        return ValueTask.CompletedTask;
     }
 
     public async Task QueueUpdateSubscribeAsync(Guid courseId, Guid groupId, CancellationToken cancellationToken)
