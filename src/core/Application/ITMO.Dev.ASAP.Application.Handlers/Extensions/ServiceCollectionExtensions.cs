@@ -11,7 +11,7 @@ public static class ServiceCollectionExtensions
         IConfigurationSection paginationSection = configuration.GetSection("Pagination");
         collection.Configure<PaginationConfiguration>(paginationSection);
 
-        collection.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(IAssemblyMarker).Assembly));
+        collection.AddMediatR(x => x.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarker)));
 
         return collection;
     }

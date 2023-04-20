@@ -10,6 +10,6 @@ public static class ServiceCollectionExtensions
         }
 
         builder.Services.AddMvc().AddApplicationPart(typeof(IAssemblyMarker).Assembly);
-        builder.Services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(IAssemblyMarker).Assembly));
+        builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarker)));
     }
 }
