@@ -37,7 +37,7 @@ public class TestBase : IDisposable
 
         collection.AddDatabaseSeeders();
 
-        collection.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(TestBase).Assembly));
+        collection.AddMediatR(x => x.RegisterServicesFromAssemblyContaining(typeof(TestBase)));
 
         IdentityServiceMock = new Mock<IAuthorizationService>();
         collection.AddScoped(_ => IdentityServiceMock.Object);
