@@ -26,7 +26,7 @@ internal class GetSubmissionsQueueHandler : IRequestHandler<Query, Response>
             return new Response(submissionsQueue);
         }
 
-        submissionsQueue = await _queueUpdateService.GetSubmissionsQueue(
+        submissionsQueue = await _queueUpdateService.GetSubmissionsQueueAsync(
             request.SubjectCourseId,
             request.GroupId,
             cancellationToken);
