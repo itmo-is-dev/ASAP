@@ -1,7 +1,12 @@
 @using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
 @inject IGoogleClient GoogleClient
 
-<Button Clicked="OnClickedAsync" Color="Color.Secondary" Disabled="@(_component?.Executing ?? false)">
+<Button
+    Clicked="OnClickedAsync" 
+    Color="Color.Secondary" 
+    Margin="Margin.Is1.FromBottom"
+    Disabled="@(_component?.Executing ?? false)">
+    
     Sync Google
 </Button>
 

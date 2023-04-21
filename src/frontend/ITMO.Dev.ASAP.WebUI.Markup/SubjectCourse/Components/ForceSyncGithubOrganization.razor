@@ -2,7 +2,12 @@
 @using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
 @inject IGithubManagementClient Client
 
-<Button Clicked="OnClickedAsync" Color="Color.Secondary" Disabled="@(_component?.Executing ?? false)">
+<Button
+    Clicked="OnClickedAsync"
+    Margin="Margin.Is1.FromBottom"
+    Color="Color.Secondary"
+    Disabled="@(_component?.Executing ?? false)">
+
     Sync GitHub Organization
 </Button>
 
@@ -22,7 +27,7 @@
             : Client.ForceOrganizationUpdateAsync(SubjectCourse.Id, cancellationToken);
     }
 
-    private Task OnClickedAsync() 
+    private Task OnClickedAsync()
         => _component?.Show() ?? Task.CompletedTask;
 
 }

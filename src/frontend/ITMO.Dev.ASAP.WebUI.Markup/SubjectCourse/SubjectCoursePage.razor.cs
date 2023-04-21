@@ -1,4 +1,5 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
+using ITMO.Dev.ASAP.Application.Dto.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Models;
 using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution;
@@ -22,6 +23,11 @@ public partial class SubjectCoursePage
 
     [Parameter]
     public Guid SubjectCourseId { get; set; }
+
+    private string? GithubOrganizationName => _course?.Associations
+        .OfType<GithubSubjectCourseAssociationDto>()
+        .FirstOrDefault()?
+        .GithubOrganizationName;
 
     protected override async Task OnParametersSetAsync()
     {
