@@ -24,8 +24,14 @@ public class ActionNotifier : IActionNotifier
 
         GitHubClient installationClient = _installationClientFactory.GetClient(installation.Id);
 
+        _logger.LogInformation(
+            "Sending comment to organization = {Organization}, repository = {Repository}, issue = {Issue}",
+            repository.Organization,
+            repository.Name,
+            issueNumber);
+
         await installationClient.Issue.Comment.Create(
-            repository.Owner.Login,
+            repository.Organization,
             repository.Name,
             (int)issueNumber,
             message);
@@ -37,6 +43,12 @@ public class ActionNotifier : IActionNotifier
 
         GitHubClient installationClient = _installationClientFactory.GetClient(installation.Id);
 
+        _logger.LogInformation(
+            "Sending comment to organization = {Organization}, repository = {Repository}, commit = {CommitSha}",
+            repository.Organization,
+            repository.Name,
+            sha);
+
         await installationClient.Repository.Comment.Create(repository.Id, sha, new NewCommitComment(message));
     }
 
@@ -45,6 +57,12 @@ public class ActionNotifier : IActionNotifier
         ParseWebhookEvent(webhookEvent, out Repository repository, out InstallationLite installation);
 
         GitHubClient installationClient = _installationClientFactory.GetClient(installation.Id);
+
+        _logger.LogInformation(
+            "Sending comment to organization = {Organization}, repository = {Repository}, comment id = {CommentId}",
+            repository.Organization,
+            repository.Name,
+            commentId);
 
         await installationClient.Reaction.IssueComment.Create(
             repository.Id,
