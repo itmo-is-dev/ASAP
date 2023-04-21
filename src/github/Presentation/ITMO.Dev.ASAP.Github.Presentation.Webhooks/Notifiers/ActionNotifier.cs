@@ -26,12 +26,12 @@ public class ActionNotifier : IActionNotifier
 
         _logger.LogInformation(
             "Sending comment to organization = {Organization}, repository = {Repository}, issue = {Issue}",
-            repository.Organization,
+            repository.Owner.Login,
             repository.Name,
             issueNumber);
 
         await installationClient.Issue.Comment.Create(
-            repository.Organization,
+            repository.Owner.Login,
             repository.Name,
             (int)issueNumber,
             message);

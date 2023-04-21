@@ -67,7 +67,7 @@ public class EventNotifierProxy : IPullRequestCommentEventNotifier
             _actionNotifier,
             commentEvent,
             commentEvent.Comment.Id,
-            commentEvent.Issue.Id,
+            commentEvent.Issue.Number,
             logger);
 
         _eventNotifier = null;
