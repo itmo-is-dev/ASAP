@@ -53,9 +53,9 @@ internal class SubjectCourseGroupQueueUpdateHandler : INotificationHandler<Subje
         SubjectCourseGroupQueueUpdateNotification notification,
         CancellationToken cancellationToken)
     {
-        SubmissionsQueueDto submissionsQueue = await _queueUpdateService.GetSubmissionsQueue(
-            notification.GroupId,
+        SubmissionsQueueDto submissionsQueue = await _queueUpdateService.GetSubmissionsQueueAsync(
             notification.SubjectCourseId,
+            notification.GroupId,
             cancellationToken);
 
         string spreadsheetId = await _subjectCourseTableService

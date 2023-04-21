@@ -28,7 +28,7 @@ public class QueueUpdateService : IQueueUpdateService
         _githubUserService = githubUserService;
     }
 
-    public async Task<SubmissionsQueueDto> GetSubmissionsQueue(
+    public async Task<SubmissionsQueueDto> GetSubmissionsQueueAsync(
         Guid subjectCourseId,
         Guid studentGroupId,
         CancellationToken cancellationToken)

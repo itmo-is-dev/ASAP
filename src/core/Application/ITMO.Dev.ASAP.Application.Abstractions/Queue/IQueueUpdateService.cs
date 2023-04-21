@@ -4,5 +4,5 @@ namespace ITMO.Dev.ASAP.Application.Abstractions.Queue;
 
 public interface IQueueUpdateService
 {
-    Task<SubmissionsQueueDto> GetSubmissionsQueue(Guid subjectCourseId, Guid studentGroupId, CancellationToken cancellationToken);
+    Task<SubmissionsQueueDto> GetSubmissionsQueueAsync(Guid subjectCourseId, Guid studentGroupId, CancellationToken cancellationToken);
 }
