@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Commands.Extensions;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Notifications;
+using ITMO.Dev.ASAP.Github.Presentation.Controllers.Extensions;
 using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Notifiers;
 using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Processing;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,8 @@ public static class ServiceCollectionExtensions
 
         collection.AddScoped<IActionNotifier, ActionNotifier>();
         collection.AddPresentationCommands();
+
+        collection.AddGithubPresentationControllers();
 
         return collection;
     }
