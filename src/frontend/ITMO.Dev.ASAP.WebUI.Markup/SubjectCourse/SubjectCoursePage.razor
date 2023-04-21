@@ -3,7 +3,9 @@
 @using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourse.Components
 @using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourseGroups.Components
 @using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
 @using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
 @using ITMO.Dev.ASAP.WebUI.Abstractions.StudyNavigation
 @using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourse.Components.Assignments
 @using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourse.Components.Groups
@@ -15,6 +17,7 @@
 @layout SubjectCourseListLayout
 @inject NavigationManager NavigationManager
 @inject IStudyGroupClient StudyGroupClient
+@inject ICurrentUser CurrentUser
 
 @if (_course is not null)
 {
@@ -24,8 +27,31 @@
          Height="Height.Is100"
          Overflow="Overflow.Hidden">
 
-        <AssociationsComponent Associations="_course.Associations"
-                               SubjectCourse="_course"/>
+        <Div Flex="Flex.Row.JustifyContent.Between">
+            <AssociationsComponent
+                Associations="_course.Associations"
+                SubjectCourse="_course"/>
+
+            @if (CurrentUser.HasModeratorAccess())
+            {
+                <Div Flex="Flex.Column"
+                     Padding="Padding.Is2.FromTop.Is2.FromEnd">
+
+                    <ForceSyncGoogle
+                        SubjectCourseId="_course.Id"/>
+
+                    @{
+                        var organizationName = GithubOrganizationName;
+                    }
+
+                    <ForceSyncGitHubMentors
+                        OrganizationName="@organizationName"/>
+
+                    <ForceSyncGithubOrganization
+                        SubjectCourse="_course"/>
+                </Div>
+            }
+        </Div>
 
         <Divider/>
 
