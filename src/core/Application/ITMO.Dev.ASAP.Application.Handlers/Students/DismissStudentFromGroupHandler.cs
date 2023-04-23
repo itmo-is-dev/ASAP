@@ -16,7 +16,7 @@ internal class DismissStudentFromGroupHandler : IRequestHandler<Command>
         _context = context;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         Student? student = await _context.Students
             .SingleOrDefaultAsync(x => x.User.Id.Equals(request.StudentId), cancellationToken);
@@ -28,7 +28,5 @@ internal class DismissStudentFromGroupHandler : IRequestHandler<Command>
 
         _context.Students.Update(student);
         await _context.SaveChangesAsync(cancellationToken);
-
-        return Unit.Value;
     }
 }

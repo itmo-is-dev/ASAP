@@ -29,7 +29,7 @@ internal class ExecuteSubmissionCommandHandler : IRequestHandler<Command>
         _notifier = notifier;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         var visitor = new PullRequestContextCommandVisitor(
             _asapSubmissionService,
@@ -62,7 +62,5 @@ internal class ExecuteSubmissionCommandHandler : IRequestHandler<Command>
             await _notifier.SendCommentToPullRequest(message);
             await _notifier.ReactToUserComment(false);
         }
-
-        return Unit.Value;
     }
 }

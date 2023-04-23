@@ -1,5 +1,4 @@
 using ITMO.Dev.ASAP.Application.Contracts.Tools;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +11,7 @@ public static class ServiceCollectionExtensions
         IConfigurationSection paginationSection = configuration.GetSection("Pagination");
         collection.Configure<PaginationConfiguration>(paginationSection);
 
-        collection.AddMediatR(typeof(IAssemblyMarker));
+        collection.AddMediatR(x => x.RegisterServicesFromAssemblyContaining(typeof(IAssemblyMarker)));
 
         return collection;
     }

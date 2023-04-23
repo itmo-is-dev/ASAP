@@ -16,7 +16,7 @@ internal class AddFractionDeadlinePolicyHandling : IRequestHandler<Command>
         _context = context;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         SubjectCourse subjectCourse = await _context.SubjectCourses
             .Include(x => x.DeadlinePolicies)
@@ -27,7 +27,5 @@ internal class AddFractionDeadlinePolicyHandling : IRequestHandler<Command>
 
         _context.SubjectCourses.Update(subjectCourse);
         await _context.SaveChangesAsync(cancellationToken);
-
-        return Unit.Value;
     }
 }

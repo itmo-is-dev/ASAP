@@ -19,7 +19,7 @@ internal class UpdateUserUniversityIdHandler : IRequestHandler<Command>
         _authorizationService = authorizationService;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         await _authorizationService.AuthorizeAdminAsync(request.CallerUsername, cancellationToken);
 
@@ -46,7 +46,5 @@ internal class UpdateUserUniversityIdHandler : IRequestHandler<Command>
             Console.WriteLine(e);
             throw;
         }
-
-        return Unit.Value;
     }
 }

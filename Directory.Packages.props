@@ -36,9 +36,8 @@
     <PackageVersion Include="Kysect.GithubUtils" Version="1.0.12" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="MediatR" Version="10.0.1" />
-    <PackageVersion Include="MediatR.Contracts" Version="1.0.1" />
-    <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+    <PackageVersion Include="MediatR" Version="12.0.1" />
+    <PackageVersion Include="MediatR.Contracts" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />

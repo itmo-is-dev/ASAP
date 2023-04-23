@@ -6,7 +6,7 @@ using static ITMO.Dev.ASAP.Application.Contracts.Students.Commands.UpdateUserNam
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Users;
 
-internal class UpdateUserNameHandler : IRequestHandler<Command, Response>
+internal class UpdateUserNameHandler : IRequestHandler<Command>
 {
     private readonly IDatabaseContext _context;
 
@@ -15,7 +15,7 @@ internal class UpdateUserNameHandler : IRequestHandler<Command, Response>
         _context = context;
     }
 
-    public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
+    public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         User user = await _context.Users.GetByIdAsync(request.UserId, cancellationToken);
 
@@ -25,7 +25,5 @@ internal class UpdateUserNameHandler : IRequestHandler<Command, Response>
 
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
-
-        return new Response();
     }
 }

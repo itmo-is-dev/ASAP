@@ -24,7 +24,7 @@ internal class CreateUserAccountHandler : IRequestHandler<Command>
         _authorizationService = authorizationService;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         if (_context.Users.Any(x => x.Id.Equals(request.UserId)) is false)
             throw EntityNotFoundException.For<User>(request.UserId);
@@ -38,7 +38,5 @@ internal class CreateUserAccountHandler : IRequestHandler<Command>
             request.Password,
             request.RoleName,
             cancellationToken);
-
-        return Unit.Value;
     }
 }

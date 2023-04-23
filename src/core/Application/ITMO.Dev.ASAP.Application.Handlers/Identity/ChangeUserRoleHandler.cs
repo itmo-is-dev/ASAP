@@ -17,7 +17,7 @@ internal class ChangeUserRoleHandler : IRequestHandler<Command>
         _authorizationService = authorizationService;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         IdentityUserDto user = await _authorizationService.GetUserByNameAsync(request.Username, cancellationToken);
 
@@ -27,7 +27,5 @@ internal class ChangeUserRoleHandler : IRequestHandler<Command>
             throw new AccessDeniedException($"Unable to change role of {user.Username}");
 
         await _authorizationService.UpdateUserRoleAsync(user.Id, request.UserRole, cancellationToken);
-
-        return Unit.Value;
     }
 }

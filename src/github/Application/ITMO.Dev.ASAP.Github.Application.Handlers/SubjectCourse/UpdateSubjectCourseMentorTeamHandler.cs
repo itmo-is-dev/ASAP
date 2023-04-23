@@ -18,7 +18,7 @@ internal class UpdateSubjectCourseMentorTeamHandler : IRequestHandler<Command>
         _publisher = publisher;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         GithubSubjectCourse subjectCourse = await _context.SubjectCourses
             .GetByIdAsync(request.SubjectCourseId, cancellationToken);
@@ -30,7 +30,5 @@ internal class UpdateSubjectCourseMentorTeamHandler : IRequestHandler<Command>
 
         var notification = new SubjectCourseMentorTeamUpdated.Notification(subjectCourse.Id);
         await _publisher.Publish(notification, cancellationToken);
-
-        return Unit.Value;
     }
 }

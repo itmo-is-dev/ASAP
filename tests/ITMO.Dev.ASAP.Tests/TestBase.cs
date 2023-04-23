@@ -7,7 +7,6 @@ using ITMO.Dev.ASAP.DataAccess.Context;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Seeding.Extensions;
 using ITMO.Dev.ASAP.Seeding.Options;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -37,7 +36,8 @@ public class TestBase : IDisposable
         });
 
         collection.AddDatabaseSeeders();
-        collection.AddMediatR(typeof(TestBase));
+
+        collection.AddMediatR(x => x.RegisterServicesFromAssemblyContaining(typeof(TestBase)));
 
         IdentityServiceMock = new Mock<IAuthorizationService>();
         collection.AddScoped(_ => IdentityServiceMock.Object);

@@ -17,7 +17,7 @@ internal class UpdateMentorsHandler : IRequestHandler<Command>
         _context = context;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         SubjectCourse subjectCourse = await _context.SubjectCourses
             .Include(x => x.Mentors)
@@ -44,7 +44,5 @@ internal class UpdateMentorsHandler : IRequestHandler<Command>
         _context.Mentors.AddRange(addedMentors);
 
         await _context.SaveChangesAsync(cancellationToken);
-
-        return Unit.Value;
     }
 }
