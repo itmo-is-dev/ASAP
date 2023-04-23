@@ -1,16 +1,16 @@
 using ITMO.Dev.ASAP.Core.ValueObject;
 
-namespace ITMO.Dev.ASAP.Core.DeadlinePolicies;
+namespace ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalty;
 
-public class AbsoluteDeadlinePolicy : DeadlinePolicy
+public class AbsoluteDeadlinePenalty : DeadlinePenalty
 {
-    public AbsoluteDeadlinePolicy(TimeSpan spanBeforeActivation, Points absoluteValue)
+    public AbsoluteDeadlinePenalty(TimeSpan spanBeforeActivation, Points absoluteValue)
         : base(spanBeforeActivation)
     {
         AbsoluteValue = absoluteValue;
     }
 
-    protected AbsoluteDeadlinePolicy() { }
+    protected AbsoluteDeadlinePenalty() { }
 
     public Points AbsoluteValue { get; set; }
 
@@ -19,9 +19,9 @@ public class AbsoluteDeadlinePolicy : DeadlinePolicy
         return points - AbsoluteValue;
     }
 
-    public override bool Equals(DeadlinePolicy? other)
+    public override bool Equals(DeadlinePenalty? other)
     {
-        return other is AbsoluteDeadlinePolicy absoluteDeadlineSpan &&
+        return other is AbsoluteDeadlinePenalty absoluteDeadlineSpan &&
                absoluteDeadlineSpan.AbsoluteValue.Equals(AbsoluteValue) &&
                base.Equals(absoluteDeadlineSpan);
     }

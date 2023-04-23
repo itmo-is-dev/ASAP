@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Core.DeadlinePolicies;
+using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalty;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.Core.Submissions;
@@ -35,7 +35,7 @@ public interface IDatabaseContext
 
     DbSet<SubjectCourseAssociation> SubjectCourseAssociations { get; }
 
-    DbSet<DeadlinePolicy> DeadlinePolicies { get; }
+    DbSet<DeadlinePenalty> DeadlinePolicies { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 

@@ -1,19 +1,19 @@
 using ITMO.Dev.ASAP.Core.ValueObject;
 
-namespace ITMO.Dev.ASAP.Core.DeadlinePolicies;
+namespace ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalty;
 
-public abstract class DeadlinePolicy : IEquatable<DeadlinePolicy>
+public abstract class DeadlinePenalty : IEquatable<DeadlinePenalty>
 {
-    protected DeadlinePolicy(TimeSpan spanBeforeActivation)
+    protected DeadlinePenalty(TimeSpan spanBeforeActivation)
     {
         SpanBeforeActivation = spanBeforeActivation;
     }
 
-    protected DeadlinePolicy() { }
+    protected DeadlinePenalty() { }
 
     public TimeSpan SpanBeforeActivation { get; protected init; }
 
-    public virtual bool Equals(DeadlinePolicy? other)
+    public virtual bool Equals(DeadlinePenalty? other)
     {
         return other?.SpanBeforeActivation.Equals(SpanBeforeActivation) ?? false;
     }
@@ -22,7 +22,7 @@ public abstract class DeadlinePolicy : IEquatable<DeadlinePolicy>
 
     public override bool Equals(object? obj)
     {
-        return Equals(obj as DeadlinePolicy);
+        return Equals(obj as DeadlinePenalty);
     }
 
     public override int GetHashCode()

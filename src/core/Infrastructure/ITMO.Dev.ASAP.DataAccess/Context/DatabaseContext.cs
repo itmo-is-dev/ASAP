@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Core.DeadlinePolicies;
+using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalty;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.Core.Submissions;
@@ -44,7 +44,7 @@ public class DatabaseContext : DbContext, IDatabaseContext
 
     public DbSet<SubjectCourseAssociation> SubjectCourseAssociations { get; protected init; } = null!;
 
-    public DbSet<DeadlinePolicy> DeadlinePolicies { get; protected init; } = null!;
+    public DbSet<DeadlinePenalty> DeadlinePolicies { get; protected init; } = null!;
 
     public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken)
         => Database.BeginTransactionAsync(cancellationToken);
@@ -63,7 +63,7 @@ public class DatabaseContext : DbContext, IDatabaseContext
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(IAssemblyMarker).Assembly);
 
-        modelBuilder.Entity<DeadlinePolicy>().ToTable("DeadlinePolicy");
+        modelBuilder.Entity<DeadlinePenalty>().ToTable("DeadlinePolicy");
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

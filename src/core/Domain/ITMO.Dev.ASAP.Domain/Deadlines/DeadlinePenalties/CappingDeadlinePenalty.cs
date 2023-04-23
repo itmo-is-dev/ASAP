@@ -1,16 +1,16 @@
 using ITMO.Dev.ASAP.Core.ValueObject;
 
-namespace ITMO.Dev.ASAP.Core.DeadlinePolicies;
+namespace ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalty;
 
-public class CappingDeadlinePolicy : DeadlinePolicy
+public class CappingDeadlinePenalty : DeadlinePenalty
 {
-    public CappingDeadlinePolicy(TimeSpan spanBeforeActivation, double cap)
+    public CappingDeadlinePenalty(TimeSpan spanBeforeActivation, double cap)
         : base(spanBeforeActivation)
     {
         Cap = new Points(cap);
     }
 
-    protected CappingDeadlinePolicy() { }
+    protected CappingDeadlinePenalty() { }
 
     public Points Cap { get; set; }
 
@@ -19,9 +19,9 @@ public class CappingDeadlinePolicy : DeadlinePolicy
         return Points.Min(points, Cap);
     }
 
-    public override bool Equals(DeadlinePolicy? other)
+    public override bool Equals(DeadlinePenalty? other)
     {
-        return other is CappingDeadlinePolicy cappingDeadlineSpan &&
+        return other is CappingDeadlinePenalty cappingDeadlineSpan &&
                cappingDeadlineSpan.Cap.Equals(Cap) &&
                base.Equals(cappingDeadlineSpan);
     }

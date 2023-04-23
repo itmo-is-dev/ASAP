@@ -1,16 +1,16 @@
 using ITMO.Dev.ASAP.Core.ValueObject;
 
-namespace ITMO.Dev.ASAP.Core.DeadlinePolicies;
+namespace ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalty;
 
-public class FractionDeadlinePolicy : DeadlinePolicy
+public class FractionDeadlinePenalty : DeadlinePenalty
 {
-    public FractionDeadlinePolicy(TimeSpan spanBeforeActivation, Fraction fraction)
+    public FractionDeadlinePenalty(TimeSpan spanBeforeActivation, Fraction fraction)
         : base(spanBeforeActivation)
     {
         Fraction = fraction;
     }
 
-    protected FractionDeadlinePolicy() { }
+    protected FractionDeadlinePenalty() { }
 
     public Fraction Fraction { get; set; }
 
@@ -19,9 +19,9 @@ public class FractionDeadlinePolicy : DeadlinePolicy
         return points * Fraction;
     }
 
-    public override bool Equals(DeadlinePolicy? other)
+    public override bool Equals(DeadlinePenalty? other)
     {
-        return other is FractionDeadlinePolicy fractionDeadlineSpan &&
+        return other is FractionDeadlinePenalty fractionDeadlineSpan &&
                fractionDeadlineSpan.Fraction.Equals(Fraction) &&
                base.Equals(fractionDeadlineSpan);
     }
