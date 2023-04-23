@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalty;
+using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
 using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.Core.SubmissionStateWorkflows;
 using ITMO.Dev.ASAP.Core.Users;

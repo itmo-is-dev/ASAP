@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Core.ValueObject;
 
-namespace ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalty;
+namespace ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
 
 public abstract class DeadlinePenalty : IEquatable<DeadlinePenalty>
 {

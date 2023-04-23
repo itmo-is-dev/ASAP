@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalty;
+using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.Core.Submissions;

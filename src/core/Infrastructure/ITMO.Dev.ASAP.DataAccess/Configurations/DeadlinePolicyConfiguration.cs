@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalty;
+using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
