@@ -9,9 +9,9 @@ namespace ITMO.Dev.ASAP.Presentation.Rpc.Hubs;
 public class QueueHub : Hub<IQueueHubClient>
 {
     private readonly IMediator _mediator;
-    private readonly ILogger _logger;
+    private readonly ILogger<QueueHub> _logger;
 
-    public QueueHub(IMediator mediator, ILogger logger)
+    public QueueHub(IMediator mediator, ILogger<QueueHub> logger)
     {
         _mediator = mediator;
         _logger = logger;
