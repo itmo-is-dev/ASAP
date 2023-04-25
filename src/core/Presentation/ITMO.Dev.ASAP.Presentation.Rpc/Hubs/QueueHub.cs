@@ -1,11 +1,14 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Queries;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Presentation.Rpc.Abstractions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ITMO.Dev.ASAP.Presentation.Rpc.Hubs;
 
+[Authorize(Roles = $"{AsapIdentityRoleNames.AdminRoleName}, {AsapIdentityRoleNames.ModeratorRoleName}, {AsapIdentityRoleNames.MentorRoleName}")]
 public class QueueHub : Hub<IQueueHubClient>
 {
     private readonly IMediator _mediator;
