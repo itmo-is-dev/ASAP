@@ -1,6 +1,6 @@
+using ITMO.Dev.ASAP.WebApi.Sdk.Errors;
 using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Models;
-using ITMO.Dev.ASAP.WebUI.Application.Tools;
 
 namespace ITMO.Dev.ASAP.WebUI.Application.ExceptionHandling;
 
@@ -12,22 +12,20 @@ internal class ExceptionManager : IExceptionSink, IExceptionStore
     public ExceptionManager(ExceptionDisplayConfiguration configuration)
     {
         _configuration = configuration;
-        IEqualityComparer<ExceptionMessage> comparer =
-            EqualityComparerFactory.Create<ExceptionMessage>((a, b) => a.Exception.Equals(b.Exception));
-        _exceptions = new HashSet<ExceptionMessage>(comparer);
+        _exceptions = new HashSet<ExceptionMessage>();
     }
 
-    public async ValueTask ConsumeAsync(Exception exception, string? title, string? message)
+    public IReadOnlyCollection<ExceptionMessage> Exceptions => _exceptions;
+
+    public async ValueTask ConsumeAsync(string? title, string? message)
     {
-        var value = new ExceptionMessage(title, message, exception);
+        var value = new ExceptionMessage(title, message);
         _exceptions.Add(value);
         OnExceptionAdded(value);
 
         await Task.Delay(_configuration.PopupLifetime);
-        Dismiss(new ExceptionMessage(title, message, exception));
+        Dismiss(value);
     }
-
-    public IReadOnlyCollection<ExceptionMessage> Exceptions => _exceptions;
 
     public void Dismiss(ExceptionMessage exception)
     {

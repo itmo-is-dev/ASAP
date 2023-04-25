@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using ITMO.Dev.ASAP.WebApi.Sdk.Errors;
 using ITMO.Dev.ASAP.WebApi.Sdk.Identity;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization;
 using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling;

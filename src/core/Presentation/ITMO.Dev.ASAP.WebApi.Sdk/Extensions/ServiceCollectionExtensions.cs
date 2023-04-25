@@ -35,7 +35,7 @@ public static class ServiceCollectionExtensions
 
                 return new HubClientProvider<TClient>(
                     new Uri(baseAddress, address),
-                    TImplementation.Create,
+                    connection => TImplementation.Create(p, connection),
                     tokenProvider);
             });
         }

@@ -1,39 +1,51 @@
 ﻿using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Queue;
+using ITMO.Dev.ASAP.WebApi.Sdk.Errors;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reactive.Subjects;
 
 namespace ITMO.Dev.ASAP.WebApi.Sdk.HubClients.Implementations;
 
 public class QueueHubClient : IQueueHubClient, IHubConnectionCreatable<IQueueHubClient>
 {
-    private readonly Subject<SubjectCourseQueueModel> _subject;
+    private readonly Subject<SubjectCourseQueueModel> _queues;
+
+    private readonly IDisposable _queueSubscription;
+    private readonly IDisposable _errorSubscription;
 
     private readonly HubConnection _connection;
 
-    private readonly IDisposable _updateHandler;
-
-    public QueueHubClient(HubConnection connection)
+    public QueueHubClient(HubConnection connection, IExceptionSink exceptionSink)
     {
         _connection = connection;
-        _subject = new Subject<SubjectCourseQueueModel>();
 
-        _updateHandler = _connection.On<SubjectCourseQueueModel>(
+        _queues = new Subject<SubjectCourseQueueModel>();
+
+        _queueSubscription = _connection.On<SubjectCourseQueueModel>(
             "SendUpdateQueueMessage",
-            x => _subject.OnNext(x));
+            x => _queues.OnNext(x));
+
+        _errorSubscription = connection.On<string>(
+            "SendError",
+            async x => await exceptionSink.ConsumeAsync("Failed to execute queue request", x));
     }
 
-    public IObservable<SubjectCourseQueueModel> QueueUpdated => _subject;
+    public IObservable<SubjectCourseQueueModel> QueueUpdated => _queues;
 
-    public static IQueueHubClient Create(HubConnection connection)
+    public static IQueueHubClient Create(IServiceProvider provider, HubConnection connection)
     {
-        return new QueueHubClient(connection);
+        IExceptionSink exceptionSink = provider.GetRequiredService<IExceptionSink>();
+        return new QueueHubClient(connection, exceptionSink);
     }
 
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        _updateHandler.Dispose();
-        _subject.Dispose();
-        return ValueTask.CompletedTask;
+        _queueSubscription.Dispose();
+        _errorSubscription.Dispose();
+
+        _queues.Dispose();
+
+        await _connection.DisposeAsync();
     }
 
     public async Task QueueUpdateSubscribeAsync(Guid courseId, Guid groupId, CancellationToken cancellationToken)
