@@ -5,4 +5,6 @@ namespace ITMO.Dev.ASAP.Presentation.Rpc.Abstractions;
 public interface IQueueHubClient
 {
     Task SendUpdateQueueMessage(SubjectCourseQueueModel submissionsQueue, CancellationToken cancellationToken);
+
+    Task SendError(string message);
 }

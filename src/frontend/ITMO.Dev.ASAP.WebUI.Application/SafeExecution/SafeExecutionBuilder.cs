@@ -1,6 +1,6 @@
+using ITMO.Dev.ASAP.WebApi.Sdk.Errors;
 using ITMO.Dev.ASAP.WebApi.Sdk.Exceptions;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization;
-using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Models;
 using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution;
 using Microsoft.AspNetCore.Components;
@@ -86,7 +86,7 @@ public class SafeExecutionBuilder : ISafeExecutionBuilder
                 Console.WriteLine(e.Message);
             }
 
-            await _exceptionSink.ConsumeAsync(e, Title, message);
+            await _exceptionSink.ConsumeAsync(Title, message);
         }
     }
 }
@@ -177,7 +177,7 @@ public class SafeExecutionBuilder<T> : ISafeExecutionBuilder<T>
                 Console.WriteLine(e.Message);
             }
 
-            await _exceptionSink.ConsumeAsync(e, Title, message);
+            await _exceptionSink.ConsumeAsync(Title, message);
         }
     }
 }
