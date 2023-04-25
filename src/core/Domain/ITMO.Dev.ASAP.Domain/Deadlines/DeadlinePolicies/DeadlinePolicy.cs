@@ -2,19 +2,23 @@
 using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.ValueObject;
+using RichEntity.Annotations;
 
 namespace ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
 
-public class DeadlinePolicy
+public partial class DeadlinePolicy : IEntity<Guid>
 {
     private readonly HashSet<DeadlinePenalty> _deadlinePenalties;
 
-    public DeadlinePolicy()
+    public DeadlinePolicy(Guid id)
     {
+        Id = id;
         _deadlinePenalties = new HashSet<DeadlinePenalty>();
     }
 
-    public void AddDeadlinePolicy(DeadlinePenalty penalty)
+    public virtual IReadOnlyCollection<DeadlinePenalty> DeadlinePenalties => _deadlinePenalties;
+
+    public void AddDeadlinePenalty(DeadlinePenalty penalty)
     {
         ArgumentNullException.ThrowIfNull(penalty);
 
@@ -22,7 +26,7 @@ public class DeadlinePolicy
             throw new DomainInvalidOperationException($"Deadline span {penalty} already exists");
     }
 
-    public void RemoveDeadlinePolicy(DeadlinePenalty penalty)
+    public void RemoveDeadlinePenalty(DeadlinePenalty penalty)
     {
         ArgumentNullException.ThrowIfNull(penalty);
 
