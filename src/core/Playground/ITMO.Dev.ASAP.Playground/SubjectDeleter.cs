@@ -73,7 +73,7 @@ public class SubjectDeleter
 
         IEnumerable<DeadlinePenalty> deadlinePolicies = courses.SelectMany(x => x.DeadlinePolicies);
 
-        _context.DeadlinePolicies.RemoveRange(deadlinePolicies);
+        _context.DeadlinePenalties.RemoveRange(deadlinePolicies);
         await _context.SaveChangesAsync(default);
 
         _context.SubjectCourses.RemoveRange(courses);

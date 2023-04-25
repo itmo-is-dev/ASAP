@@ -9,6 +9,7 @@ using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.Core.ValueObject;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.ValueConverters;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -44,7 +45,9 @@ public class DatabaseContext : DbContext, IDatabaseContext
 
     public DbSet<SubjectCourseAssociation> SubjectCourseAssociations { get; protected init; } = null!;
 
-    public DbSet<DeadlinePenalty> DeadlinePolicies { get; protected init; } = null!;
+    public DbSet<DeadlinePenalty> DeadlinePenalties { get; protected init; } = null!;
+
+    public DbSet<DeadlinePolicy> DeadlinePolicies { get; protected init; } = null!;
 
     public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken)
         => Database.BeginTransactionAsync(cancellationToken);

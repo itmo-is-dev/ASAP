@@ -1,19 +1,19 @@
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
+﻿using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations;
 
-public class DeadlinePolicyConfiguration : IEntityTypeConfiguration<DeadlinePenalty>
+public class DeadlinePolicyConfiguration : IEntityTypeConfiguration<DeadlinePolicy>
 {
-    public void Configure(EntityTypeBuilder<DeadlinePenalty> builder)
+    public void Configure(EntityTypeBuilder<DeadlinePolicy> builder)
     {
-        builder.Property<Guid>("Id");
-        builder.HasKey("Id");
+        builder.ToTable("DeadlinePolicies");
+        builder.HasMany(dp => dp.DeadlinePenalties).WithOne();
 
-        builder.HasDiscriminator<string>("Discriminator")
-            .HasValue<AbsoluteDeadlinePenalty>(nameof(AbsoluteDeadlinePenalty))
-            .HasValue<FractionDeadlinePenalty>(nameof(FractionDeadlinePenalty))
-            .HasValue<CappingDeadlinePenalty>(nameof(CappingDeadlinePenalty));
+        builder
+            .Navigation(dp => dp.DeadlinePenalties)
+            .HasField("_deadlinePenalties")
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }
