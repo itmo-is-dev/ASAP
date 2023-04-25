@@ -3,10 +3,12 @@ using ITMO.Dev.ASAP.Identity.Entities;
 using ITMO.Dev.ASAP.Identity.Services;
 using ITMO.Dev.ASAP.Identity.Tools;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -66,6 +68,20 @@ public static class ServiceCollectionExtensions
                         .GetRequiredService<ICurrentUserManager>();
 
                     userManager.Authenticate(context.Principal);
+
+                    return Task.CompletedTask;
+                },
+                OnMessageReceived = context =>
+                {
+                    StringValues accessToken = context.Request.Query["access_token"];
+
+                    PathString path = context.HttpContext.Request.Path;
+
+                    if (!string.IsNullOrEmpty(accessToken)
+                        && path.StartsWithSegments("/hubs", StringComparison.Ordinal))
+                    {
+                        context.Token = accessToken;
+                    }
 
                     return Task.CompletedTask;
                 },
