@@ -1,28 +1,36 @@
+using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Queries;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Presentation.Rpc.Abstractions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ITMO.Dev.ASAP.Presentation.Rpc.Hubs;
 
+[Authorize(Roles = AsapIdentityRoleNames.AtLeastMentor)]
 public class QueueHub : Hub<IQueueHubClient>
 {
-    private readonly IMediator _mediator;
     private readonly ILogger<QueueHub> _logger;
 
-    public QueueHub(IMediator mediator, ILogger<QueueHub> logger, ILoggerFactory lf)
+    public QueueHub(ILogger<QueueHub> logger)
     {
-        _mediator = mediator;
         _logger = logger;
     }
 
     public async Task QueueUpdateSubscribeAsync(Guid courseId, Guid groupId)
     {
+        IServiceProvider? services = Context.GetHttpContext()?.RequestServices;
+
+        if (services is null)
+            return;
+
         await ExecuteSafeAsync(async () =>
         {
+            IMediator mediator = services.GetRequiredService<IMediator>();
+
             var query = new HasAccessToSubjectCourse.Query(courseId);
-            HasAccessToSubjectCourse.Response response = await _mediator.Send(query, Context.ConnectionAborted);
+            HasAccessToSubjectCourse.Response response = await mediator.Send(query, Context.ConnectionAborted);
 
             if (response.HasAccess)
             {

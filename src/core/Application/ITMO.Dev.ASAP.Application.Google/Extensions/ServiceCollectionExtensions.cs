@@ -7,6 +7,8 @@ using ITMO.Dev.ASAP.Application.Abstractions.Google;
 using ITMO.Dev.ASAP.Application.Abstractions.Google.Sheets;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
+using ITMO.Dev.ASAP.Application.Google.Dummy.Services;
+using ITMO.Dev.ASAP.Application.Google.Dummy.Sheets;
 using ITMO.Dev.ASAP.Application.Google.Services;
 using ITMO.Dev.ASAP.Application.Google.Workers;
 using ITMO.Dev.ASAP.Integration.Google.Models;
@@ -51,6 +53,10 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddDummyGoogleIntegration(this IServiceCollection serviceCollection)
     {
         return serviceCollection
+            .AddSingleton<ISheet<CourseStudentsDto>, DummyPointsSheet>()
+            .AddSingleton<ISheet<SubjectCoursePointsDto>, DummyLabsSheet>()
+            .AddSingleton<ISheet<SubmissionsQueueDto>, DummyQueueSheet>()
+            .AddScoped<ISubjectCourseTableService, DummySubjectCourseTableService>()
             .AddSingleton<TableUpdateQueue>()
             .AddSingleton<ITableUpdateQueue>(p => p.GetRequiredService<TableUpdateQueue>())
             .AddSingleton<IUserFullNameFormatter, UserFullNameFormatter>()
