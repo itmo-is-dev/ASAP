@@ -65,8 +65,6 @@ public class DatabaseContext : DbContext, IDatabaseContext
         }
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(IAssemblyMarker).Assembly);
-
-        modelBuilder.Entity<DeadlinePenalty>().ToTable("DeadlinePolicy");
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
