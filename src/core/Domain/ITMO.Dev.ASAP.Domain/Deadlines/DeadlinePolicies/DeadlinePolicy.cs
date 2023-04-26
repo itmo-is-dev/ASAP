@@ -42,12 +42,12 @@ public partial class DeadlinePolicy : IEntity<Guid>
             return null;
 
         Points points = submission.Points.Value;
-        DeadlinePenalty? deadlinePolicy = GetEffectiveDeadlinePolicy(submission);
+        DeadlinePenalty? deadlinePolicy = GetEffectiveDeadlinePenalty(submission);
 
         return deadlinePolicy?.Apply(points);
     }
 
-    private DeadlinePenalty? GetEffectiveDeadlinePolicy(Submission submission)
+    private DeadlinePenalty? GetEffectiveDeadlinePenalty(Submission submission)
     {
         DateOnly deadline = submission.GroupAssignment.Deadline;
 
