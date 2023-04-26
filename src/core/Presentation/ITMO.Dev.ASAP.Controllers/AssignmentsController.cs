@@ -25,6 +25,7 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     public async Task<ActionResult<AssignmentDto>> CreateAssignment(CreateAssignmentRequest request)
     {
         var command = new CreateAssignment.Command(
