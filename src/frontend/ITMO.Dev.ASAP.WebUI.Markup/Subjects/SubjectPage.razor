@@ -77,6 +77,8 @@
     private Task OnSubjectCourseCreated(SubjectCourseDto course)
     {
         _subjectCourseList?.AddCourse(course);
+        StateHasChanged();
+
         return Task.CompletedTask;
     }
 

@@ -169,6 +169,6 @@ public partial class SubjectCoursePage
                 x => x.Id,
                 (courseGroup, group) => (courseGroup, group))
             .Select(pair => new ExtendedSubjectCourseGroupDto(pair.courseGroup, pair.group))
-            .ToArray();
+            .ToList();
     }
 }
