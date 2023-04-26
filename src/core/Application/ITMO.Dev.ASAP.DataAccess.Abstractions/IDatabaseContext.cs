@@ -1,10 +1,10 @@
 using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
+using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePolicies;
 using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.UserAssociations;
 using ITMO.Dev.ASAP.Core.Users;
-using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 

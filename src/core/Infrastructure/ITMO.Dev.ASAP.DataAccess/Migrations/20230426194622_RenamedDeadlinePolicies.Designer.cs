@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ITMO.Dev.ASAP.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230424164045_RenamedDeadlinePolicyToDeadlinePenalty")]
-    partial class RenamedDeadlinePolicyToDeadlinePenalty
+    [Migration("20230426194622_RenamedDeadlinePolicies")]
+    partial class RenamedDeadlinePolicies
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -8,6 +8,7 @@ public class DeadlinePenaltyConfiguration : IEntityTypeConfiguration<DeadlinePen
 {
     public void Configure(EntityTypeBuilder<DeadlinePenalty> builder)
     {
+        builder.ToTable("DeadlinePenalty");
         builder.Property<Guid>("Id");
         builder.HasKey("Id");
 

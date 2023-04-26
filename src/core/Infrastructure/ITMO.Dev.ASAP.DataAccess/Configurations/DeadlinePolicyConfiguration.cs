@@ -1,4 +1,4 @@
-﻿using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
+﻿using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePolicies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,7 +13,6 @@ public class DeadlinePolicyConfiguration : IEntityTypeConfiguration<DeadlinePoli
 
         builder
             .Navigation(dp => dp.DeadlinePenalties)
-            .HasField("_deadlinePenalties")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
+            .HasField("_deadlinePenalties");
     }
 }

@@ -4,13 +4,14 @@
 
 namespace ITMO.Dev.ASAP.DataAccess.Migrations
 {
-    public partial class RenamedDeadlinePolicyToDeadlinePenalty : Migration
+    public partial class RenamedDeadlinePolicies : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            // migrationBuilder.RenameTable(
-            //     name: "DeadlinePolicy",
-            //     newName: "DeadlinePenalty");
+            migrationBuilder.RenameTable(
+                name: "DeadlinePolicy",
+                newName: "DeadlinePenalty");
+
             migrationBuilder.CreateTable(
                 name: "DeadlinePolicies",
                 columns: table => new
@@ -20,13 +21,13 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                 constraints: table => table.PrimaryKey("PK_DeadlinePolicies", x => x.Id));
 
             migrationBuilder.AddColumn<Guid>(
-                table: "DeadlinePolicy",
+                table: "DeadlinePenalty",
                 name: "DeadlinePolicyId",
                 nullable: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_DeadlinePolicy_DeadlinePolicies_DeadlinePolicyId",
-                table: "DeadlinePolicy",
+                name: "FK_DeadlinePenalty_DeadlinePolicies_DeadlinePolicyId",
+                table: "DeadlinePenalty",
                 column: "DeadlinePolicyId",
                 principalTable: "DeadlinePolicies",
                 principalColumn: "Id");
@@ -36,16 +37,17 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_DeadlinePenalty_DeadlinePolicies_DeadlinePolicyId",
-                table: "DeadlinePolicy");
+                table: "DeadlinePenalty");
 
-            // migrationBuilder.DropColumn(
-            //     table: "DeadlinePolicy",
-            //     name: "DeadlinePolicyId");
+            migrationBuilder.DropColumn(
+                table: "DeadlinePenalty",
+                name: "DeadlinePolicyId");
+
             migrationBuilder.DropTable(name: "DeadlinePolicies");
 
-            // migrationBuilder.RenameTable(
-            //     name: "DeadlinePenalty",
-            //     newName: "DeadlinePolicy");
+            migrationBuilder.RenameTable(
+                name: "DeadlinePenalty",
+                newName: "DeadlinePolicy");
         }
     }
 }
