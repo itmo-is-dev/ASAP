@@ -4,7 +4,7 @@ using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.ValueObject;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
+namespace ITMO.Dev.ASAP.Core.Deadlines.DeadlinePolicies;
 
 public partial class DeadlinePolicy : IEntity<Guid>
 {
