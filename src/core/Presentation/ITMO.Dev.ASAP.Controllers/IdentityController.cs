@@ -31,7 +31,7 @@ public class IdentityController : ControllerBase
     }
 
     [HttpPut("users/{username}/role")]
-    [Authorize(Roles = $"{AsapIdentityRoleNames.AdminRoleName}, {AsapIdentityRoleNames.ModeratorRoleName}")]
+    [Authorize(Roles = AsapIdentityRoleNames.AtLeastModerator)]
     public async Task<IActionResult> ChangeUserRoleAsync(string username, [FromQuery] string roleName)
     {
         var command = new ChangeUserRole.Command(username, roleName);
@@ -41,7 +41,7 @@ public class IdentityController : ControllerBase
     }
 
     [HttpPost("user/{id:guid}/create")]
-    [Authorize(Roles = $"{AsapIdentityRoleNames.AdminRoleName}, {AsapIdentityRoleNames.ModeratorRoleName}")]
+    [Authorize(Roles = AsapIdentityRoleNames.AtLeastModerator)]
     public async Task<IActionResult> CreateUserAccountAsync(Guid id, [FromBody] CreateUserAccountRequest request)
     {
         var command = new CreateUserAccount.Command(id, request.Username, request.Password, request.RoleName);
