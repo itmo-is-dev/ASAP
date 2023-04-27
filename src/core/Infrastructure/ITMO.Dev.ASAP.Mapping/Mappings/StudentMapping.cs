@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Application.Dto.Users;
-using ITMO.Dev.ASAP.Core.UserAssociations;
-using ITMO.Dev.ASAP.Core.Users;
+using IsuUserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.IsuUserAssociation;
+using Student = ITMO.Dev.ASAP.Domain.Users.Student;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 

@@ -1,14 +1,15 @@
 using ITMO.Dev.ASAP.Configuration;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.UserAssociations;
-using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Seeding.EntityGenerators;
 using ITMO.Dev.ASAP.Seeding.Extensions;
 using Microsoft.EntityFrameworkCore;
+using IsuUserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.IsuUserAssociation;
+using Student = ITMO.Dev.ASAP.Domain.Users.Student;
+using SubjectCourse = ITMO.Dev.ASAP.Domain.Study.SubjectCourse;
+using SubjectCourseAssociation = ITMO.Dev.ASAP.Domain.SubjectCourseAssociations.SubjectCourseAssociation;
+using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
+using User = ITMO.Dev.ASAP.Domain.Users.User;
 
 namespace ITMO.Dev.ASAP.Playground.Github.TestEnv;
 

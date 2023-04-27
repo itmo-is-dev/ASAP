@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
+using ITMO.Dev.ASAP.Domain.Study;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourseGroups.Commands.DeleteSubjectCourseGroup;
 
@@ -21,7 +21,7 @@ internal class DeleteSubjectCourseGroupHandler : IRequestHandler<Command>
         SubjectCourse subjectCourse =
             await _context.SubjectCourses.GetByIdAsync(request.SubjectCourseId, cancellationToken);
 
-        Core.Study.SubjectCourseGroup? subjectCourseGroup =
+        SubjectCourseGroup? subjectCourseGroup =
             subjectCourse.Groups.FirstOrDefault(g => g.StudentGroupId == request.StudentGroupId);
 
         if (subjectCourseGroup is null)

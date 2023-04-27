@@ -1,7 +1,7 @@
-using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.DataAccess.ValueConverters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Assignment = ITMO.Dev.ASAP.Domain.Study.Assignment;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations;
 

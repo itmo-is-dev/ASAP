@@ -1,11 +1,15 @@
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Context;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Seeding.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Assignment = ITMO.Dev.ASAP.Domain.Study.Assignment;
+using GroupAssignment = ITMO.Dev.ASAP.Domain.Study.GroupAssignment;
+using Student = ITMO.Dev.ASAP.Domain.Users.Student;
+using StudentGroup = ITMO.Dev.ASAP.Domain.Study.StudentGroup;
+using SubjectCourseGroup = ITMO.Dev.ASAP.Domain.Study.SubjectCourseGroup;
+using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
+using User = ITMO.Dev.ASAP.Domain.Users.User;
 
 namespace ITMO.Dev.ASAP.Playground.Google;
 

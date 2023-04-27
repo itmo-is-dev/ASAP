@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.Seeding.EntityGenerators;
+using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
 
 namespace ITMO.Dev.ASAP.Seeding.DatabaseSeeders;
 

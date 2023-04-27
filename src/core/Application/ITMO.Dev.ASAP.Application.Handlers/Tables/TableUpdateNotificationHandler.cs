@@ -7,8 +7,8 @@ using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourseGroups.Notification
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Notifications;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Submissions.Notifications;
 using ITMO.Dev.ASAP.Application.Extensions;
-using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Domain.Study;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

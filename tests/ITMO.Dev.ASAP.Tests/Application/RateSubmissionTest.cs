@@ -1,8 +1,8 @@
 using FluentAssertions;
-using ITMO.Dev.ASAP.Core.Models;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.Submissions.States;
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.Models;
+using ITMO.Dev.ASAP.Domain.Submissions;
+using ITMO.Dev.ASAP.Domain.Submissions.States;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 using ITMO.Dev.ASAP.Tests.Extensions;
 using Xunit;
 

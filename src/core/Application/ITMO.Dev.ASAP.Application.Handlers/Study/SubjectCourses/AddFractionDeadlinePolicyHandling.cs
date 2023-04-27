@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.DeadlinePolicies;
-using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Study;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Commands.AddFractionDeadlinePolicy;

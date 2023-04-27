@@ -1,4 +1,4 @@
-namespace ITMO.Dev.ASAP.Core.Queue;
+namespace ITMO.Dev.ASAP.Domain.Queue;
 
 public interface IQueryExecutor
 {

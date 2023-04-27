@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 
-namespace ITMO.Dev.ASAP.Core.DeadlinePolicies;
+namespace ITMO.Dev.ASAP.Domain.DeadlinePolicies;
 
 public class CappingDeadlinePolicy : DeadlinePolicy
 {

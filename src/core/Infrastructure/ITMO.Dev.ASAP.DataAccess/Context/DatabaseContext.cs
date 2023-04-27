@@ -1,17 +1,24 @@
-using ITMO.Dev.ASAP.Core.DeadlinePolicies;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.Submissions.States;
-using ITMO.Dev.ASAP.Core.Tools;
-using ITMO.Dev.ASAP.Core.UserAssociations;
-using ITMO.Dev.ASAP.Core.Users;
-using ITMO.Dev.ASAP.Core.ValueObject;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.ValueConverters;
+using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Submissions.States;
+using ITMO.Dev.ASAP.Domain.Tools;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
+using Assignment = ITMO.Dev.ASAP.Domain.Study.Assignment;
+using GroupAssignment = ITMO.Dev.ASAP.Domain.Study.GroupAssignment;
+using Mentor = ITMO.Dev.ASAP.Domain.Users.Mentor;
+using Student = ITMO.Dev.ASAP.Domain.Users.Student;
+using StudentGroup = ITMO.Dev.ASAP.Domain.Study.StudentGroup;
+using Subject = ITMO.Dev.ASAP.Domain.Study.Subject;
+using SubjectCourse = ITMO.Dev.ASAP.Domain.Study.SubjectCourse;
+using SubjectCourseAssociation = ITMO.Dev.ASAP.Domain.SubjectCourseAssociations.SubjectCourseAssociation;
+using SubjectCourseGroup = ITMO.Dev.ASAP.Domain.Study.SubjectCourseGroup;
+using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
+using User = ITMO.Dev.ASAP.Domain.Users.User;
+using UserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.UserAssociation;
 
 namespace ITMO.Dev.ASAP.DataAccess.Context;
 

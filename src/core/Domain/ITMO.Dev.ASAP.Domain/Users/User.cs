@@ -1,8 +1,8 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.UserAssociations;
+using ITMO.Dev.ASAP.Domain.UserAssociations;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.Users;
+namespace ITMO.Dev.ASAP.Domain.Users;
 
 public partial class User : IEntity<Guid>
 {

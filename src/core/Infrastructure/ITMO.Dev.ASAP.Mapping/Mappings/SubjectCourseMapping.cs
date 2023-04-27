@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
-using ITMO.Dev.ASAP.Core.Study;
+using SubjectCourse = ITMO.Dev.ASAP.Domain.Study.SubjectCourse;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 

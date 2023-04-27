@@ -1,14 +1,14 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Queue;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
 using ITMO.Dev.ASAP.Application.Extensions;
-using ITMO.Dev.ASAP.Core.Queue;
-using ITMO.Dev.ASAP.Core.Queue.Building;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
+using ITMO.Dev.ASAP.Domain.Queue;
+using ITMO.Dev.ASAP.Domain.Queue.Building;
+using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using Microsoft.EntityFrameworkCore;
+using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
 
 namespace ITMO.Dev.ASAP.Application.Services;
 

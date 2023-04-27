@@ -13,4 +13,9 @@ public class HttpTaggedException : AsapGithubException
     public AsapGithubException Wrapped { get; }
 
     public HttpStatusCode Code { get; }
+
+    public override string ToString()
+    {
+        return $"{Code} - {Wrapped.GetType().Name} = {Wrapped.Message}";
+    }
 }

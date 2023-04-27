@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
-using ITMO.Dev.ASAP.Core.Models;
-using ITMO.Dev.ASAP.Core.SubmissionStateWorkflows;
-using ITMO.Dev.ASAP.Core.Tools;
+using ITMO.Dev.ASAP.Domain.Models;
+using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
+using ITMO.Dev.ASAP.Domain.Tools;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 

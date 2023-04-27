@@ -1,6 +1,7 @@
-using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using GoogleTableSubjectCourseAssociation = ITMO.Dev.ASAP.Domain.SubjectCourseAssociations.GoogleTableSubjectCourseAssociation;
+using SubjectCourseAssociation = ITMO.Dev.ASAP.Domain.SubjectCourseAssociations.SubjectCourseAssociation;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations.SubjectCourses;
 

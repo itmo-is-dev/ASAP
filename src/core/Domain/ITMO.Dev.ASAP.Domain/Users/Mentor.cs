@@ -1,7 +1,7 @@
-using ITMO.Dev.ASAP.Core.Study;
+using ITMO.Dev.ASAP.Domain.Study;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.Users;
+namespace ITMO.Dev.ASAP.Domain.Users;
 
 public partial class Mentor : IEntity
 {

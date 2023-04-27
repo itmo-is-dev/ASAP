@@ -1,12 +1,12 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Google;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
+using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Integration.Google.Tools;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using GoogleTableSubjectCourseAssociation = ITMO.Dev.ASAP.Domain.SubjectCourseAssociations.GoogleTableSubjectCourseAssociation;
 
 namespace ITMO.Dev.ASAP.Application.Google.Services;
 

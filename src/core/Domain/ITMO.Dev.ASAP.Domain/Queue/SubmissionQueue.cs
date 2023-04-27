@@ -1,11 +1,11 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.Models;
-using ITMO.Dev.ASAP.Core.Queue.Evaluators;
-using ITMO.Dev.ASAP.Core.Queue.Filters;
-using ITMO.Dev.ASAP.Core.Submissions;
+using ITMO.Dev.ASAP.Domain.Models;
+using ITMO.Dev.ASAP.Domain.Queue.Evaluators;
+using ITMO.Dev.ASAP.Domain.Queue.Filters;
+using ITMO.Dev.ASAP.Domain.Submissions;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.Queue;
+namespace ITMO.Dev.ASAP.Domain.Queue;
 
 public partial class SubmissionQueue : IEntity<Guid>
 {

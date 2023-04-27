@@ -1,4 +1,4 @@
-namespace ITMO.Dev.ASAP.Core.Models;
+namespace ITMO.Dev.ASAP.Domain.Models;
 
 public readonly record struct ForwardIterator<T>
 {

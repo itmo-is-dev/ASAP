@@ -1,9 +1,9 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.Study;
+using ITMO.Dev.ASAP.Domain.Study;
 using RichEntity.Annotations;
 using System.Text;
 
-namespace ITMO.Dev.ASAP.Core.Users;
+namespace ITMO.Dev.ASAP.Domain.Users;
 
 public partial class Student : IEntity
 {

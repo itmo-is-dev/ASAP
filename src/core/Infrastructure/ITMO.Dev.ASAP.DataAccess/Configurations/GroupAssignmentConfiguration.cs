@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.Study;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using GroupAssignment = ITMO.Dev.ASAP.Domain.Study.GroupAssignment;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations;
 

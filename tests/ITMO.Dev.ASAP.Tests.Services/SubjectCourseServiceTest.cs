@@ -3,7 +3,7 @@ using ITMO.Dev.ASAP.Application.Abstractions.Formatters;
 using ITMO.Dev.ASAP.Application.Abstractions.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Services;
-using ITMO.Dev.ASAP.Core.Study;
+using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Github.Application.Dto.Users;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using Microsoft.EntityFrameworkCore;

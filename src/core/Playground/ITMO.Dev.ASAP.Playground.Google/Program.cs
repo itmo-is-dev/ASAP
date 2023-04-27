@@ -1,9 +1,10 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Google;
 using ITMO.Dev.ASAP.Application.Google.Workers;
-using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.DataAccess.Context;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using StudentGroup = ITMO.Dev.ASAP.Domain.Study.StudentGroup;
+using SubjectCourse = ITMO.Dev.ASAP.Domain.Study.SubjectCourse;
 
 namespace ITMO.Dev.ASAP.Playground.Google;
 

@@ -1,4 +1,4 @@
-namespace ITMO.Dev.ASAP.Core.Tools;
+namespace ITMO.Dev.ASAP.Domain.Tools;
 
 public static class Calendar
 {

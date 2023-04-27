@@ -1,9 +1,9 @@
 using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Application.Extensions;
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

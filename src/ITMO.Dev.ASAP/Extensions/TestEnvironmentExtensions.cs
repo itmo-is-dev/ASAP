@@ -1,10 +1,12 @@
 using ITMO.Dev.ASAP.Configuration;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.UserAssociations;
-using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.Seeding.Extensions;
+using IsuUserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.IsuUserAssociation;
+using Mentor = ITMO.Dev.ASAP.Domain.Users.Mentor;
+using Student = ITMO.Dev.ASAP.Domain.Users.Student;
+using SubjectCourse = ITMO.Dev.ASAP.Domain.Study.SubjectCourse;
+using SubjectCourseAssociation = ITMO.Dev.ASAP.Domain.SubjectCourseAssociations.SubjectCourseAssociation;
+using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
+using User = ITMO.Dev.ASAP.Domain.Users.User;
 
 namespace ITMO.Dev.ASAP.Extensions;
 

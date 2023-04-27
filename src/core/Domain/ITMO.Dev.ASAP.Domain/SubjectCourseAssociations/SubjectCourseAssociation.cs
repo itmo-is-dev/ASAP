@@ -1,7 +1,7 @@
-using ITMO.Dev.ASAP.Core.Study;
+using ITMO.Dev.ASAP.Domain.Study;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
+namespace ITMO.Dev.ASAP.Domain.SubjectCourseAssociations;
 
 public abstract partial class SubjectCourseAssociation : IEntity<Guid>
 {
