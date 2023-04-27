@@ -1,14 +1,14 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Formatters;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Services;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.Users;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Github.Application.Dto.Users;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using Moq;
 using Xunit;
 
-namespace ITMO.Dev.ASAP.Tests.Handlers.Study.Assignments;
+namespace ITMO.Dev.ASAP.Tests.Handlers.Study.SubjectCourses;
 
 #pragma warning disable CA1506
 public class CalculatePointsOfTransferedStudent : TestBase
