@@ -171,7 +171,6 @@ public abstract class SubmissionWorkflowBase : ISubmissionWorkflow
             int code = await _context.Submissions
                 .ForUser(userId)
                 .ForAssignment(assignmentId)
-                .Where(s => acceptedStates.Any(x => x.Equals(s.State)))
                 .CountAsync(cancellationToken);
 
             Student student = await _context.Students.GetByIdAsync(userId, cancellationToken);
