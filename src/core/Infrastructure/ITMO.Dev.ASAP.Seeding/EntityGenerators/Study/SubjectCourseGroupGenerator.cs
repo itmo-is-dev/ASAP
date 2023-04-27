@@ -1,5 +1,7 @@
-using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Seeding.Options;
+using StudentGroup = ITMO.Dev.ASAP.Domain.Study.StudentGroup;
+using SubjectCourse = ITMO.Dev.ASAP.Domain.Study.SubjectCourse;
+using SubjectCourseGroup = ITMO.Dev.ASAP.Domain.Study.SubjectCourseGroup;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators;
 

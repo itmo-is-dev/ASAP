@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.Seeding.EntityGenerators;
+using SubjectCourseGroup = ITMO.Dev.ASAP.Domain.Study.SubjectCourseGroup;
 
 namespace ITMO.Dev.ASAP.Seeding.DatabaseSeeders;
 

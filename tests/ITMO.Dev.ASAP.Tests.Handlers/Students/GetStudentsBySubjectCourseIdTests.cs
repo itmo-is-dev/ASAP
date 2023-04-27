@@ -1,7 +1,7 @@
 using FluentAssertions;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Handlers.Students;
-using ITMO.Dev.ASAP.Core.Study;
+using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Github.Application.Dto.Users;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using Moq;

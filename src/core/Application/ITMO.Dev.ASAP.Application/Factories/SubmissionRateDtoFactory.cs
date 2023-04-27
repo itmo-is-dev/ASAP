@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Application.Dto.Submissions;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.ValueObject;
+using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
 
 namespace ITMO.Dev.ASAP.Application.Factories;
 

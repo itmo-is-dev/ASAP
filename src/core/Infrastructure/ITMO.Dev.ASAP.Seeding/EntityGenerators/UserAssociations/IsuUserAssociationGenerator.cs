@@ -1,7 +1,8 @@
 using Bogus;
-using ITMO.Dev.ASAP.Core.UserAssociations;
-using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.Seeding.Options;
+using IsuUserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.IsuUserAssociation;
+using User = ITMO.Dev.ASAP.Domain.Users.User;
+using UserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.UserAssociation;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators;
 

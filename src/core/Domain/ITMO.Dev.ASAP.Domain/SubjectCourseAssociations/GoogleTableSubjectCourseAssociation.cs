@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.Study;
+using ITMO.Dev.ASAP.Domain.Study;
 
-namespace ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
+namespace ITMO.Dev.ASAP.Domain.SubjectCourseAssociations;
 
 public partial class GoogleTableSubjectCourseAssociation : SubjectCourseAssociation
 {

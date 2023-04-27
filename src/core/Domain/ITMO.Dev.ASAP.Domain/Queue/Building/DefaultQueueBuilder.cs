@@ -1,10 +1,10 @@
-using ITMO.Dev.ASAP.Core.Models;
-using ITMO.Dev.ASAP.Core.Queue.Evaluators;
-using ITMO.Dev.ASAP.Core.Queue.Filters;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.Submissions.States;
+using ITMO.Dev.ASAP.Domain.Models;
+using ITMO.Dev.ASAP.Domain.Queue.Evaluators;
+using ITMO.Dev.ASAP.Domain.Queue.Filters;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Submissions.States;
 
-namespace ITMO.Dev.ASAP.Core.Queue.Building;
+namespace ITMO.Dev.ASAP.Domain.Queue.Building;
 
 public class DefaultQueueBuilder : QueueBuilder
 {

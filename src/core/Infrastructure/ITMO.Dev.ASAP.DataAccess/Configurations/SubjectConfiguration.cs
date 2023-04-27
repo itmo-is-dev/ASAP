@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.Study;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Subject = ITMO.Dev.ASAP.Domain.Study.Subject;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations;
 

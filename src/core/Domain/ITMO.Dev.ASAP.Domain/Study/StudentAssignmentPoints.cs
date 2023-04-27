@@ -1,7 +1,7 @@
-using ITMO.Dev.ASAP.Core.Users;
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.Users;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 
-namespace ITMO.Dev.ASAP.Core.Study;
+namespace ITMO.Dev.ASAP.Domain.Study;
 
 public record struct StudentAssignmentPoints(
     Student Student,

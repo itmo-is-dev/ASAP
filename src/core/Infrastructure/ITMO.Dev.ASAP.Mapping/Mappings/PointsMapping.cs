@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 

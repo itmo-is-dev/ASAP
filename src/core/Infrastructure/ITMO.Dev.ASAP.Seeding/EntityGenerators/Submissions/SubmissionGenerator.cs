@@ -1,12 +1,13 @@
 using Bogus;
-using ITMO.Dev.ASAP.Core.Models;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.Tools;
-using ITMO.Dev.ASAP.Core.Users;
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.Models;
+using ITMO.Dev.ASAP.Domain.Tools;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 using ITMO.Dev.ASAP.Seeding.Extensions;
 using ITMO.Dev.ASAP.Seeding.Options;
+using Assignment = ITMO.Dev.ASAP.Domain.Study.Assignment;
+using GroupAssignment = ITMO.Dev.ASAP.Domain.Study.GroupAssignment;
+using Student = ITMO.Dev.ASAP.Domain.Users.Student;
+using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators.Submissions;
 

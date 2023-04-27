@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Core.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,9 +1,10 @@
 using Bogus;
-using ITMO.Dev.ASAP.Core.DeadlinePolicies;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubmissionStateWorkflows;
-using ITMO.Dev.ASAP.Core.Users;
+using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
 using ITMO.Dev.ASAP.Seeding.Options;
+using Subject = ITMO.Dev.ASAP.Domain.Study.Subject;
+using SubjectCourse = ITMO.Dev.ASAP.Domain.Study.SubjectCourse;
+using User = ITMO.Dev.ASAP.Domain.Users.User;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators;
 

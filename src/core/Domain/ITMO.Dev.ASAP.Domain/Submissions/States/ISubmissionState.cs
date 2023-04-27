@@ -1,8 +1,8 @@
-using ITMO.Dev.ASAP.Core.Models;
-using ITMO.Dev.ASAP.Core.Tools;
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.Models;
+using ITMO.Dev.ASAP.Domain.Tools;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 
-namespace ITMO.Dev.ASAP.Core.Submissions.States;
+namespace ITMO.Dev.ASAP.Domain.Submissions.States;
 
 public interface ISubmissionState
 {

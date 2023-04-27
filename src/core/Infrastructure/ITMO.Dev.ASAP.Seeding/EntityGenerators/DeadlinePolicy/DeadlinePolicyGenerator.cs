@@ -1,5 +1,5 @@
 using Bogus;
-using ITMO.Dev.ASAP.Core.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
 using ITMO.Dev.ASAP.Seeding.Extensions;
 using ITMO.Dev.ASAP.Seeding.Options;
 

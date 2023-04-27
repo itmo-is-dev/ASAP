@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.Submissions;
+using ITMO.Dev.ASAP.Domain.Submissions;
 
-namespace ITMO.Dev.ASAP.Core.Queue.Filters;
+namespace ITMO.Dev.ASAP.Domain.Queue.Filters;
 
 public interface IQueueFilter
 {

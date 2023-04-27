@@ -1,11 +1,11 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.DeadlinePolicies;
-using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
-using ITMO.Dev.ASAP.Core.SubmissionStateWorkflows;
-using ITMO.Dev.ASAP.Core.Users;
+using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.SubjectCourseAssociations;
+using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
+using ITMO.Dev.ASAP.Domain.Users;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.Study;
+namespace ITMO.Dev.ASAP.Domain.Study;
 
 public partial class SubjectCourse : IEntity<Guid>
 {

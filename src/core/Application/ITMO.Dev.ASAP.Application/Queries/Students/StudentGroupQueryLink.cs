@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Tools;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Queries.BaseLinks;
-using ITMO.Dev.ASAP.Core.Users;
+using ITMO.Dev.ASAP.Domain.Users;
 
 namespace ITMO.Dev.ASAP.Application.Queries.Students;
 

@@ -149,14 +149,14 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
             pullRequestReviewEvent.PullRequest.Number);
     }
 
-    private PullRequestDto CreateDescriptor(PullRequestEvent @event)
+    private PullRequestDto CreateDescriptor(PullRequestEvent evt)
     {
-        string login = @event.Sender!.Login;
-        string payload = @event.PullRequest.HtmlUrl;
-        string organization = @event.Organization!.Login;
-        string repository = @event.Repository!.Name;
-        string branch = @event.PullRequest.Head.Ref;
-        long prNum = @event.PullRequest.Number;
+        string login = evt.Sender!.Login;
+        string payload = evt.PullRequest.HtmlUrl;
+        string organization = evt.Organization!.Login;
+        string repository = evt.Repository!.Name;
+        string branch = evt.PullRequest.Head.Ref;
+        long prNum = evt.PullRequest.Number;
 
         var pullRequestDescriptor = new PullRequestDto(
             login,

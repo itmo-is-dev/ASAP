@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Core.Queue;
+using ITMO.Dev.ASAP.Domain.Queue;
 using Microsoft.EntityFrameworkCore;
 
 namespace ITMO.Dev.ASAP.Application.Tools;

@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.Study;
+namespace ITMO.Dev.ASAP.Domain.Study;
 
 public partial class Subject : IEntity<Guid>
 {
