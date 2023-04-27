@@ -1,0 +1,43 @@
+@page "/adminpanel/subjects"
+@using ITMO.Dev.ASAP.WebUI.Markup.Subjects.Components
+@using ITMO.Dev.ASAP.Application.Dto.Study
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
+@inject ICurrentUser CurrentUser
+
+<Div Flex="Flex.Row.JustifyContent.Between.AlignItems.Center">
+    <Heading Size="HeadingSize.Is2" Padding="Padding.Is3.FromStart.Is2">
+        Subjects
+    </Heading>
+
+    @if (CurrentUser.HasModeratorAccess())
+    {
+        <Div Padding="Padding.Is3.FromEnd.Is2">
+            <CreateButton Clicked="@(() => _createSubjectModal?.ShowAsync() ?? Task.CompletedTask)"/>
+        </Div>
+    }
+
+</Div>
+
+<SubjectListComponent @ref="_subjectList"/>
+
+
+@if (CurrentUser.HasModeratorAccess())
+{
+    <CreateSubjectModal @ref="_createSubjectModal" OnSuccess="OnSubjectCreated"/>
+}
+
+
+@code {
+    private CreateSubjectModal? _createSubjectModal;
+    private SubjectListComponent? _subjectList;
+
+    private Task OnSubjectCreated(SubjectDto subject)
+    {
+        _subjectList?.AddSubject(subject);
+        StateHasChanged();
+
+        return Task.CompletedTask;
+    }
+
+}

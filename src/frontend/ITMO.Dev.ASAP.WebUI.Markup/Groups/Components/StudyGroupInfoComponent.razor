@@ -1,0 +1,42 @@
+@using ITMO.Dev.ASAP.Application.Dto.Study
+@if (Group is not null)
+{
+    <ListGroupItem type="button"
+                   onclick="@Clicked"
+                   Class="btn-light">
+
+        @Group.Name
+    </ListGroupItem>
+
+    <Modal @ref="_modal" @bind-Visible="@_modalVisible">
+        <ModalContent Size="ModalSize.Fullscreen">
+            <ModalHeader>
+                <CloseButton/>
+            </ModalHeader>
+
+            @if (_modalVisible)
+            {
+                <ModalBody>
+                    <StudyGroupComponent Group="Group"/>
+                </ModalBody>
+            }
+
+        </ModalContent>
+    </Modal>
+}
+
+@code {
+
+    [Parameter]
+    public StudyGroupDto? Group { get; set; }
+
+    private Modal? _modal;
+    private bool _modalVisible;
+
+    private Task Clicked()
+    {
+        _modalVisible = true;
+        return _modal?.Show() ?? Task.CompletedTask;
+    }
+
+}

@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\ITMO.Dev.ASAP.Github.Domain\ITMO.Dev.ASAP.Github.Domain.csproj" />
+      <ProjectReference Include="..\ITMO.Dev.ASAP.Github.Application.Dto\ITMO.Dev.ASAP.Github.Application.Dto.csproj" />
+    </ItemGroup>
+
+</Project>

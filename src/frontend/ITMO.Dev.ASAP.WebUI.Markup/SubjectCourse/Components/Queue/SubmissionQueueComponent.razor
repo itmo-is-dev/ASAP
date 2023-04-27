@@ -1,0 +1,22 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Models
+
+@if (Groups is not null)
+{
+    <ListGroup Flush>
+        @foreach (var group in Groups.OrderBy(x => x.Group.Name))
+        {
+            <SubmissionQueueItemComponent CourseGroup="group"/>
+        }
+    </ListGroup>
+}
+else
+{
+    <LoaderComponent/>
+}
+
+@code {
+
+    [Parameter]
+    public ICollection<ExtendedSubjectCourseGroupDto>? Groups { get; set; }
+
+}

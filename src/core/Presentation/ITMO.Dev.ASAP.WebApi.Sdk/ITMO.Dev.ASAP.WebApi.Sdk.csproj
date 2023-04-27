@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.Http" />
+        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="System.Reactive" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Dto\ITMO.Dev.ASAP.Application.Dto.csproj" />
+        <ProjectReference Include="..\..\..\github\Application\ITMO.Dev.ASAP.Github.Application.Dto\ITMO.Dev.ASAP.Github.Application.Dto.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.WebApi.Abstractions\ITMO.Dev.ASAP.WebApi.Abstractions.csproj" />
+    </ItemGroup>
+
+</Project>

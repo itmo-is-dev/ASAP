@@ -4,7 +4,8 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'Source/**'
+      - 'src/**'
+      - 'Docker/build.dockerfile'
 
 jobs:
   deploy:

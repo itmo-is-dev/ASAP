@@ -1,0 +1,31 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.StudyNavigation
+@using ITMO.Dev.ASAP.Application.Dto.SubjectCourses
+@inject ISubjectProvider SubjectProvider
+
+@if (Course is not null)
+{
+    <Div Class="navigation-list__breadcrumb">
+        <Breadcrumb>
+            <BreadcrumbItem Class="navigation-list__breadcrumb__item" Style="max-width: 30%">
+                <BreadcrumbLink To="/adminpanel/subjects">
+                    Subjects
+                </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbItem Class="navigation-list__breadcrumb__item" Style="max-width: 35%">
+                <BreadcrumbLink To="@($"/adminpanel/subjects/{Course.SubjectId}")">
+                    @SubjectProvider.CurrentValue?.Title
+                </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbItem Active Class="navigation-list__breadcrumb__item" Style="max-width: 35%">
+                @Course.Title
+            </BreadcrumbItem>
+        </Breadcrumb>
+    </Div>
+}
+
+@code {
+
+    [Parameter]
+    public SubjectCourseDto? Course { get; set; }
+
+}

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="RichEntity" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ITMO.Dev.ASAP.Common\ITMO.Dev.ASAP.Common.csproj" />
+    </ItemGroup>
+
+</Project>

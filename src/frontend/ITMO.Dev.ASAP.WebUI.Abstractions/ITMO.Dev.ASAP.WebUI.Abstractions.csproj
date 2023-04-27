@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+      <OutputType>Library</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.Reactive" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\core\Application\ITMO.Dev.ASAP.Application.Dto\ITMO.Dev.ASAP.Application.Dto.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Compile Remove="wwwroot/**" />
+    </ItemGroup>
+    
+</Project>

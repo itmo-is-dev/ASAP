@@ -4,7 +4,8 @@ on:
   pull_request:
     branches: [ master, dev ]
     paths:
-      - 'Source/**'
+      - 'src/**'
+      - 'tests/**'
 jobs:
   build:
     name: Build & Test
@@ -12,13 +13,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Setup .NET 6
+      - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 7.0.x
       - name: Install dependencies
-        run: dotnet restore Source/ITMO.Dev.ASAP.sln
+        run: dotnet restore ITMO.Dev.ASAP.sln
       - name: Build
-        run: dotnet build Source/ITMO.Dev.ASAP.sln --configuration Release --no-restore
+        run: dotnet build ITMO.Dev.ASAP.sln --configuration Release --no-restore
       - name: Test
-        run: dotnet test Source/ITMO.Dev.ASAP.sln --no-restore --verbosity normal
+        run: dotnet test ITMO.Dev.ASAP.sln --no-restore --verbosity normal

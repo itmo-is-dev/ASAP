@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\core\Domain\ITMO.Dev.ASAP.Common\ITMO.Dev.ASAP.Common.csproj" />
+      <ProjectReference Include="..\..\..\core\Presentation\ITMO.Dev.ASAP.Commands\ITMO.Dev.ASAP.Commands.csproj" />
+      <ProjectReference Include="..\..\Application\Abstractions\ITMO.Dev.ASAP.Github.Application.Octokit\ITMO.Dev.ASAP.Github.Application.Octokit.csproj" />
+      <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Github.Application.Contracts\ITMO.Dev.ASAP.Github.Application.Contracts.csproj" />
+      <ProjectReference Include="..\ITMO.Dev.ASAP.Github.Presentation.Controllers\ITMO.Dev.ASAP.Github.Presentation.Controllers.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="GitHubJwt" />
+        <PackageReference Include="Octokit" />
+        <PackageReference Include="Octokit.Webhooks.AspNetCore" />
+    </ItemGroup>
+
+</Project>

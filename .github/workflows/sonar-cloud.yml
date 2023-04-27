@@ -3,13 +3,15 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'Source/**'
+      - 'src/**'
+      - 'tests/**'
 
   pull_request:
     branches: [ master, dev ]
     types: [ opened, synchronize, reopened ]
     paths:
-      - 'Source/**'
+      - 'src/**'
+      - 'tests/**'
 jobs:
   build:
     name: SonarCloud style check
@@ -48,5 +50,5 @@ jobs:
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"itmo-is-dev_ASAP" /o:"itmo-is-dev" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.exclusions="**/Migrations/**"
-          dotnet build Source/ITMO.Dev.ASAP.sln
+          dotnet build ITMO.Dev.ASAP.sln
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"

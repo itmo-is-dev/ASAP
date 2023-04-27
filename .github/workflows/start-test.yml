@@ -4,7 +4,10 @@ on:
   push:
     branches: [ dev ]
     paths:
-      - 'Source/**'
+      - 'src/**'
+      - 'Docker/build.dockerfile'
+
+  workflow_dispatch:
 
 jobs:
   deploy:

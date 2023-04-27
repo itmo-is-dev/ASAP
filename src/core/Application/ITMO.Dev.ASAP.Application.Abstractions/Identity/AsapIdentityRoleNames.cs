@@ -1,0 +1,11 @@
+namespace ITMO.Dev.ASAP.Application.Abstractions.Identity;
+
+public static class AsapIdentityRoleNames
+{
+    public const string AdminRoleName = "Admin";
+    public const string ModeratorRoleName = "Moderator";
+    public const string MentorRoleName = "Mentor";
+
+    public const string AtLeastMentor = $"{AdminRoleName}, {ModeratorRoleName}, {MentorRoleName}";
+    public const string AtLeastModerator = $"{AdminRoleName}, {ModeratorRoleName}";
+}

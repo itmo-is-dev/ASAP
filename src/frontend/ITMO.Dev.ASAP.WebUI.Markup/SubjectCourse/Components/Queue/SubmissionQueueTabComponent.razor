@@ -1,0 +1,15 @@
+<Tab Name="@Key">
+    <div @onclick:stopPropagation="true">
+        <Button Clicked="@(() => OnSelectedTabChanged.InvokeAsync(Key))">
+            Queues
+        </Button>
+    </div>
+</Tab>
+
+@code {
+
+        public const string Key = "queue";
+    
+    [Parameter]
+    public EventCallback<string> OnSelectedTabChanged { get; set; }
+}

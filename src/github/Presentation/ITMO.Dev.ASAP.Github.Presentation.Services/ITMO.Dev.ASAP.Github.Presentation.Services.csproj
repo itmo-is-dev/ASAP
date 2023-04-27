@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Github.Application.Contracts\ITMO.Dev.ASAP.Github.Application.Contracts.csproj" />
+      <ProjectReference Include="..\ITMO.Dev.ASAP.Github.Presentation.Contracts\ITMO.Dev.ASAP.Github.Presentation.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MediatR" />
+    </ItemGroup>
+
+</Project>

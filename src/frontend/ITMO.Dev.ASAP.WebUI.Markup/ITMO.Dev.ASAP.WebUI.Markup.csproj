@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <NoWarn>$(NoWarn);BL0005</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <SupportedPlatform Include="browser" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+        <PackageReference Include="Blazorise.Bootstrap" />
+        <PackageReference Include="Blazorise.Components" />
+        <PackageReference Include="Blazorise.Icons.FontAwesome" />
+        <PackageReference Include="Blazorise.SpinKit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="wwwroot\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\core\Presentation\ITMO.Dev.ASAP.WebApi.Sdk\ITMO.Dev.ASAP.WebApi.Sdk.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.WebUI.Abstractions\ITMO.Dev.ASAP.WebUI.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Shared\Components\Tabs\DropdownTabTitleComponent.razor" />
+      <AdditionalFiles Include="Shared\Components\Tabs\TabTitleComponent.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Tabs\DropdownTabTitleComponent.razor" />
+      <_ContentIncludedByDefault Remove="Tabs\TabTitleComponent.razor" />
+    </ItemGroup>
+
+</Project>

@@ -44,7 +44,7 @@ def get_secrets(token, secret, version=None):
 def start_container(name, secret, port, asp_env=None):
     token = get_service_token()
     secrets = get_secrets(token, secret)
-    docker.build("./Source", file='./Docker/build.dockerfile', tags=name)
+    docker.build(".", file='./Docker/build.dockerfile', tags=name)
     try:
         docker.stop(name)
         docker.remove(name)

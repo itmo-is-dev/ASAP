@@ -1,0 +1,18 @@
+@page "/adminpanel/students"
+@layout PaddedLayout
+@using ITMO.Dev.ASAP.WebUI.Markup.Students.Components
+
+@attribute [Authorize(Roles = "Admin, Moderator")]
+
+<Div Flex="Flex.Column" Height="Height.Is100">
+
+    <Heading Size="HeadingSize.Is2">
+        Students
+    </Heading>
+
+    <StudentQueryComponent/>
+</Div>
+
+@code {
+
+}

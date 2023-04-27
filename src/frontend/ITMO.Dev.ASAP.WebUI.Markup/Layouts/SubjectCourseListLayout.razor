@@ -1,0 +1,34 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.StudyNavigation
+@using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourse.Components
+@inherits LayoutComponentBase
+@implements IDisposable
+@layout SubjectListLayout
+@inject ISubjectCourseProvider SubjectCourseProvider
+
+<Div Class="navigation-list__layout"
+     Width="Width.Is100"
+     Height="Height.Is100">
+
+    <Div Class="navigation-list__container hide-scroll-bar"
+         Width="Width.Is25"
+         Overflow="Overflow.Scroll">
+
+        <SubjectCourseListComponent/>
+    </Div>
+
+    <Div Width="Width.Is100"
+         Height="Height.Is100"
+         Flex="Flex.Column">
+
+        @Body
+    </Div>
+</Div>
+
+@code {
+
+    public void Dispose()
+    {
+        SubjectCourseProvider.Clear();
+    }
+
+}

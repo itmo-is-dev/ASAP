@@ -1,0 +1,22 @@
+@using ITMO.Dev.ASAP.Application.Dto.Study
+
+@if (Assignments is not null)
+{
+    <ListGroup Flush>
+        @foreach (var assignment in Assignments.OrderBy(x => x.Order))
+        {
+            <AssignmentInfoComponent Assignment="assignment"/>
+        }
+    </ListGroup>
+}
+else
+{
+    <LoaderComponent/>
+}
+
+@code {
+
+    [Parameter]
+    public ICollection<AssignmentDto>? Assignments { get; set; }
+
+}

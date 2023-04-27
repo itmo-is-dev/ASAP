@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <UserSecretsId>dcb623c6-ceae-4ac4-9f2c-a7bfc6535dcb</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+        <PackageReference Include="Serilog" />
+        <PackageReference Include="Serilog.AspNetCore" />
+        <PackageReference Include="Serilog.Extensions.Hosting" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="Swashbuckle.AspNetCore" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\core\Application\ITMO.Dev.ASAP.Application.Contracts\ITMO.Dev.ASAP.Application.Contracts.csproj" />
+        <ProjectReference Include="..\core\Application\ITMO.Dev.ASAP.Application.Google\ITMO.Dev.ASAP.Application.Google.csproj" />
+        <ProjectReference Include="..\core\Application\ITMO.Dev.ASAP.Application.Handlers\ITMO.Dev.ASAP.Application.Handlers.csproj" />
+        <ProjectReference Include="..\core\Infrastructure\Integration\ITMO.Dev.ASAP.Integration.Google\ITMO.Dev.ASAP.Integration.Google.csproj" />
+        <ProjectReference Include="..\core\Infrastructure\ITMO.Dev.ASAP.DataAccess\ITMO.Dev.ASAP.DataAccess.csproj" />
+        <ProjectReference Include="..\core\Infrastructure\ITMO.Dev.ASAP.Mapping\ITMO.Dev.ASAP.Mapping.csproj" />
+        <ProjectReference Include="..\core\Presentation\ITMO.Dev.ASAP.Controllers\ITMO.Dev.ASAP.Controllers.csproj" />
+        <ProjectReference Include="..\core\Presentation\ITMO.Dev.ASAP.Presentation.Rpc\ITMO.Dev.ASAP.Presentation.Rpc.csproj" />
+        <ProjectReference Include="..\core\Presentation\ITMO.Dev.ASAP.Presentation.Services\ITMO.Dev.ASAP.Presentation.Services.csproj" />
+        <ProjectReference Include="..\github\Application\ITMO.Dev.ASAP.Github.Application.Handlers\ITMO.Dev.ASAP.Github.Application.Handlers.csproj" />
+        <ProjectReference Include="..\github\Infrastructure\ITMO.Dev.ASAP.Github.DataAccess\ITMO.Dev.ASAP.Github.DataAccess.csproj" />
+        <ProjectReference Include="..\github\Infrastructure\ITMO.Dev.ASAP.Github.Octokit\ITMO.Dev.ASAP.Github.Octokit.csproj" />
+        <ProjectReference Include="..\github\Presentation\ITMO.Dev.ASAP.Github.Presentation.Services\ITMO.Dev.ASAP.Github.Presentation.Services.csproj" />
+        <ProjectReference Include="..\github\Presentation\ITMO.Dev.ASAP.Github.Presentation.Webhooks\ITMO.Dev.ASAP.Github.Presentation.Webhooks.csproj" />
+        <ProjectReference Include="..\frontend\ITMO.Dev.ASAP.WebUI\ITMO.Dev.ASAP.WebUI.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="appsettings.Development.json">
+        <DependentUpon>appsettings.json</DependentUpon>
+      </Content>
+      <Content Update="appsettings.Production.json">
+        <DependentUpon>appsettings.json</DependentUpon>
+      </Content>
+      <Content Update="appsettings.Staging.json">
+        <DependentUpon>appsettings.json</DependentUpon>
+      </Content>
+      <Content Include="..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+</Project>
