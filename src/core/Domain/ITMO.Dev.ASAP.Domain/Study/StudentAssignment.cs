@@ -1,4 +1,3 @@
-using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Domain.Models;
 using ITMO.Dev.ASAP.Domain.Submissions;
 using ITMO.Dev.ASAP.Domain.Users;
@@ -12,13 +11,6 @@ public partial class StudentAssignment : IEntity
     public StudentAssignment(Student student, GroupAssignment assignment)
         : this(assignment.GroupId, assignment.AssignmentId, student.UserId)
     {
-        if (assignment.Group.Students.Contains(student) is false)
-        {
-            string studentString = student.ToString();
-            string groupString = assignment.Group.ToString();
-            throw StudentAssignmentException.StudentGroupAssignmentMismatch(studentString, groupString);
-        }
-
         Student = student;
         Assignment = assignment;
     }
