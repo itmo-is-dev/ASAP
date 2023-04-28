@@ -11,7 +11,7 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Handlers.Study.SubjectCourses;
 
 #pragma warning disable CA1506
-public class CalculatePointsOfTransferedStudent : TestBase
+public class CalculatePointsOfTransferedStudentTest : TestBase
 {
     [Fact]
     public async Task TransferStudent_CreateNewSubmission_RateSubmission_CalculatePoints()
