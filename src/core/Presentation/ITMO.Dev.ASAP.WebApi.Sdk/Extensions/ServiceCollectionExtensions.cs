@@ -42,7 +42,6 @@ public static class ServiceCollectionExtensions
 
         AddControllerClient<IAssignmentClient, AssignmentClient>();
         AddControllerClient<IGithubManagementClient, GithubManagementClient>();
-        AddControllerClient<IGoogleClient, GoogleClient>();
         AddControllerClient<IGroupAssignmentClient, GroupAssignmentClient>();
         AddControllerClient<IIdentityClient, IdentityClient>();
         AddControllerClient<IStudentClient, StudentClient>();

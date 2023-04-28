@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\google\Presentation\ITMO.Dev.ASAP.Google.Presentation.Contracts\ITMO.Dev.ASAP.Google.Presentation.Contracts.csproj" />
         <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.Mapping\ITMO.Dev.ASAP.Mapping.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.Application.Abstractions\ITMO.Dev.ASAP.Application.Abstractions.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.Application.Common\ITMO.Dev.ASAP.Application.Common.csproj" />

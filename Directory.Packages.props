@@ -5,7 +5,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="AspNet.Security.OAuth.GitHub" Version="6.0.9" />
+    <PackageVersion Include="Dapper" Version="2.0.123" />
     <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5" />
+    <PackageVersion Include="Npgsql" Version="6.0.6" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Blazored.LocalStorage" Version="4.3.0" />

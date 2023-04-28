@@ -52,4 +52,6 @@ public interface ISubjectCourseClient
         Guid id,
         UpdateMentorsTeamNameRequest request,
         CancellationToken cancellationToken = default);
+
+    Task ForceSyncSubjectCoursePointsAsync(Guid subjectCourseId, CancellationToken cancellationToken = default);
 }

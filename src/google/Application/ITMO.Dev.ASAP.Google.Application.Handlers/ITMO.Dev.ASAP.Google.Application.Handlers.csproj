@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Abstractions\ITMO.Dev.ASAP.Google.Application.Abstractions\ITMO.Dev.ASAP.Google.Application.Abstractions.csproj" />
+      <ProjectReference Include="..\ITMO.Dev.ASAP.Google.Application.Contracts\ITMO.Dev.ASAP.Google.Application.Contracts.csproj" />
+      <ProjectReference Include="..\Abstractions\ITMO.Dev.ASAP.Google.Application.DataAccess\ITMO.Dev.ASAP.Google.Application.DataAccess.csproj" />
+      <ProjectReference Include="..\Abstractions\ITMO.Dev.ASAP.Google.Application.Spreadsheets\ITMO.Dev.ASAP.Google.Application.Spreadsheets.csproj" />
+      <ProjectReference Include="..\ITMO.Dev.ASAP.Google.Application.Mapping\ITMO.Dev.ASAP.Google.Application.Mapping.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MediatR" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    </ItemGroup>
+
+</Project>
