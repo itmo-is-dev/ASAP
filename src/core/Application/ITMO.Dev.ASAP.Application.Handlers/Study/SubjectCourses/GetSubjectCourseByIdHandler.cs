@@ -6,6 +6,8 @@ using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Github.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
+using ITMO.Dev.ASAP.Google.Application.Dto.SubjectCourses;
+using ITMO.Dev.ASAP.Google.Presentation.Contracts.Services;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Queries.GetSubjectCourseById;
@@ -17,15 +19,18 @@ internal class GetSubjectCourseByIdHandler : IRequestHandler<Query, Response>
     private readonly IDatabaseContext _context;
     private readonly ICurrentUser _currentUser;
     private readonly IGithubSubjectCourseService _githubSubjectCourseService;
+    private readonly IGoogleSubjectCourseService _googleSubjectCourseService;
 
     public GetSubjectCourseByIdHandler(
         IDatabaseContext context,
         ICurrentUser currentUser,
-        IGithubSubjectCourseService githubSubjectCourseService)
+        IGithubSubjectCourseService githubSubjectCourseService,
+        IGoogleSubjectCourseService googleSubjectCourseService)
     {
         _context = context;
         _currentUser = currentUser;
         _githubSubjectCourseService = githubSubjectCourseService;
+        _googleSubjectCourseService = googleSubjectCourseService;
     }
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
@@ -39,13 +44,16 @@ internal class GetSubjectCourseByIdHandler : IRequestHandler<Query, Response>
         IReadOnlyCollection<GithubSubjectCourseDto> githubSubjectCourses = await _githubSubjectCourseService
             .FindByIdsAsync(new[] { subjectCourse.Id }, cancellationToken);
 
-        IEnumerable<SubjectCourseAssociationDto> associations = githubSubjectCourses.Select(x =>
-        {
-            return new GithubSubjectCourseAssociationDto(
-                x.OrganizationName,
-                x.TemplateRepositoryName,
-                x.MentorTeamName);
-        });
+        IEnumerable<GoogleSubjectCourseDto> googleSubjectCourses = await _googleSubjectCourseService
+            .FindByIdsAsync(new[] { subjectCourse.Id }, cancellationToken);
+
+        IEnumerable<SubjectCourseAssociationDto> githubAssociations = githubSubjectCourses
+            .Select(x => x.ToAssociationDto());
+
+        IEnumerable<SubjectCourseAssociationDto> googleAssociations = googleSubjectCourses
+            .Select(x => x.ToAssociationDto());
+
+        IEnumerable<SubjectCourseAssociationDto> associations = githubAssociations.Concat(googleAssociations);
 
         return new Response(subjectCourse.ToDto(associations));
     }

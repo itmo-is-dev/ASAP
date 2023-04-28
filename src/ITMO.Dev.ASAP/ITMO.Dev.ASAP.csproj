@@ -24,9 +24,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\core\Application\ITMO.Dev.ASAP.Application.Contracts\ITMO.Dev.ASAP.Application.Contracts.csproj" />
-        <ProjectReference Include="..\core\Application\ITMO.Dev.ASAP.Application.Google\ITMO.Dev.ASAP.Application.Google.csproj" />
         <ProjectReference Include="..\core\Application\ITMO.Dev.ASAP.Application.Handlers\ITMO.Dev.ASAP.Application.Handlers.csproj" />
-        <ProjectReference Include="..\core\Infrastructure\Integration\ITMO.Dev.ASAP.Integration.Google\ITMO.Dev.ASAP.Integration.Google.csproj" />
         <ProjectReference Include="..\core\Infrastructure\ITMO.Dev.ASAP.DataAccess\ITMO.Dev.ASAP.DataAccess.csproj" />
         <ProjectReference Include="..\core\Infrastructure\ITMO.Dev.ASAP.Mapping\ITMO.Dev.ASAP.Mapping.csproj" />
         <ProjectReference Include="..\core\Presentation\ITMO.Dev.ASAP.Controllers\ITMO.Dev.ASAP.Controllers.csproj" />
@@ -38,6 +36,7 @@
         <ProjectReference Include="..\github\Presentation\ITMO.Dev.ASAP.Github.Presentation.Services\ITMO.Dev.ASAP.Github.Presentation.Services.csproj" />
         <ProjectReference Include="..\github\Presentation\ITMO.Dev.ASAP.Github.Presentation.Webhooks\ITMO.Dev.ASAP.Github.Presentation.Webhooks.csproj" />
         <ProjectReference Include="..\frontend\ITMO.Dev.ASAP.WebUI\ITMO.Dev.ASAP.WebUI.csproj" />
+        <ProjectReference Include="..\google\ITMO.Dev.ASAP.Google\ITMO.Dev.ASAP.Google.csproj" />
     </ItemGroup>
 
     <ItemGroup>

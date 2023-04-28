@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Application\Abstractions\ITMO.Dev.ASAP.Google.Application.DataAccess\ITMO.Dev.ASAP.Google.Application.DataAccess.csproj" />
+      <ProjectReference Include="..\..\Application\Abstractions\ITMO.Dev.ASAP.Google.Application.Spreadsheets\ITMO.Dev.ASAP.Google.Application.Spreadsheets.csproj" />
+      <ProjectReference Include="..\..\ITMO.Dev.ASAP.Google.Common\ITMO.Dev.ASAP.Google.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Google.Apis.Drive.v3" />
+      <PackageReference Include="Google.Apis.Sheets.v4" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    </ItemGroup>
+
+</Project>

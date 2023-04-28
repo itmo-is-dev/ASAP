@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Application\ITMO.Dev.ASAP.Google.Application.Handlers\ITMO.Dev.ASAP.Google.Application.Handlers.csproj" />
+      <ProjectReference Include="..\Application\ITMO.Dev.ASAP.Google.Application\ITMO.Dev.ASAP.Google.Application.csproj" />
+      <ProjectReference Include="..\Infrastructure\ITMO.Dev.ASAP.Google.DataAccess\ITMO.Dev.ASAP.Google.DataAccess.csproj" />
+      <ProjectReference Include="..\Infrastructure\ITMO.Dev.ASAP.Google.Spreadsheets\ITMO.Dev.ASAP.Google.Spreadsheets.csproj" />
+      <ProjectReference Include="..\Presentation\ITMO.Dev.ASAP.Google.Presentation.Services\ITMO.Dev.ASAP.Google.Presentation.Services.csproj" />
+    </ItemGroup>
+
+</Project>

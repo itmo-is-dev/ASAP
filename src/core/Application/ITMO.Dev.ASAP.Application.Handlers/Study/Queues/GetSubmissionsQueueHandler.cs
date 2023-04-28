@@ -8,12 +8,12 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Study.Queues;
 
 internal class GetSubmissionsQueueHandler : IRequestHandler<Query, Response>
 {
-    private readonly IQueueUpdateService _queueUpdateService;
+    private readonly IQueueService _queueService;
     private readonly IMemoryCache _cache;
 
-    public GetSubmissionsQueueHandler(IQueueUpdateService queueUpdateService, IMemoryCache cache)
+    public GetSubmissionsQueueHandler(IQueueService queueService, IMemoryCache cache)
     {
-        _queueUpdateService = queueUpdateService;
+        _queueService = queueService;
         _cache = cache;
     }
 
@@ -26,7 +26,7 @@ internal class GetSubmissionsQueueHandler : IRequestHandler<Query, Response>
             return new Response(submissionsQueue);
         }
 
-        submissionsQueue = await _queueUpdateService.GetSubmissionsQueueAsync(
+        submissionsQueue = await _queueService.GetSubmissionsQueueAsync(
             request.SubjectCourseId,
             request.GroupId,
             cancellationToken);

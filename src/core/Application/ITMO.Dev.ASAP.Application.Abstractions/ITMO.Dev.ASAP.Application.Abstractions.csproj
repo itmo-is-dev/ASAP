@@ -11,8 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Google\Notifications\" />
-        <Folder Include="Google\Sheets\" />
         <Folder Include="Submissions\Models" />
     </ItemGroup>
 

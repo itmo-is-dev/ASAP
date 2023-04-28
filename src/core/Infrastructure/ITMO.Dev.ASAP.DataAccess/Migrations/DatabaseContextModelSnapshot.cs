@@ -169,29 +169,6 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                     b.ToTable("SubjectCourseGroups");
                 });
 
-            modelBuilder.Entity("ITMO.Dev.ASAP.Domain.SubjectCourseAssociations.SubjectCourseAssociation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SubjectCourseId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubjectCourseId", "Discriminator")
-                        .IsUnique();
-
-                    b.ToTable("SubjectCourseAssociations");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("SubjectCourseAssociation");
-                });
-
             modelBuilder.Entity("ITMO.Dev.ASAP.Domain.Submissions.Submission", b =>
                 {
                     b.Property<Guid>("Id")
@@ -341,17 +318,6 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                     b.HasDiscriminator().HasValue("FractionDeadlinePolicy");
                 });
 
-            modelBuilder.Entity("ITMO.Dev.ASAP.Domain.SubjectCourseAssociations.GoogleTableSubjectCourseAssociation", b =>
-                {
-                    b.HasBaseType("ITMO.Dev.ASAP.Domain.SubjectCourseAssociations.SubjectCourseAssociation");
-
-                    b.Property<string>("SpreadsheetId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasDiscriminator().HasValue("GoogleTableSubjectCourseAssociation");
-                });
-
             modelBuilder.Entity("ITMO.Dev.ASAP.Domain.UserAssociations.IsuUserAssociation", b =>
                 {
                     b.HasBaseType("ITMO.Dev.ASAP.Domain.UserAssociations.UserAssociation");
@@ -428,17 +394,6 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("StudentGroup");
-
-                    b.Navigation("SubjectCourse");
-                });
-
-            modelBuilder.Entity("ITMO.Dev.ASAP.Domain.SubjectCourseAssociations.SubjectCourseAssociation", b =>
-                {
-                    b.HasOne("ITMO.Dev.ASAP.Domain.Study.SubjectCourse", "SubjectCourse")
-                        .WithMany("Associations")
-                        .HasForeignKey("SubjectCourseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
 
                     b.Navigation("SubjectCourse");
                 });
@@ -532,8 +487,6 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
             modelBuilder.Entity("ITMO.Dev.ASAP.Domain.Study.SubjectCourse", b =>
                 {
                     b.Navigation("Assignments");
-
-                    b.Navigation("Associations");
 
                     b.Navigation("DeadlinePolicies");
 

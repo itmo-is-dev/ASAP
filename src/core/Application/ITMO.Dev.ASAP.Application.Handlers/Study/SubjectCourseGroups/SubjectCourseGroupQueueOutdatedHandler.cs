@@ -5,21 +5,21 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourseGroups.Notifications.SubjectCourseGroupQueueOutdated;
 
-namespace ITMO.Dev.ASAP.Application.Handlers.Google;
+namespace ITMO.Dev.ASAP.Application.Handlers.Study.SubjectCourseGroups;
 
 internal class SubjectCourseGroupQueueOutdatedHandler : INotificationHandler<Notification>
 {
     private readonly ILogger<SubjectCourseGroupQueueOutdatedHandler> _logger;
-    private readonly IQueueUpdateService _queueUpdateService;
+    private readonly IQueueService _queueService;
     private readonly IPublisher _publisher;
 
     public SubjectCourseGroupQueueOutdatedHandler(
         ILogger<SubjectCourseGroupQueueOutdatedHandler> logger,
-        IQueueUpdateService queueUpdateService,
+        IQueueService queueService,
         IPublisher publisher)
     {
         _logger = logger;
-        _queueUpdateService = queueUpdateService;
+        _queueService = queueService;
         _publisher = publisher;
     }
 
@@ -41,7 +41,7 @@ internal class SubjectCourseGroupQueueOutdatedHandler : INotificationHandler<Not
 
     private async Task ExecuteAsync(Notification notification, CancellationToken cancellationToken)
     {
-        SubmissionsQueueDto submissionsQueue = await _queueUpdateService.GetSubmissionsQueueAsync(
+        SubmissionsQueueDto submissionsQueue = await _queueService.GetSubmissionsQueueAsync(
             notification.SubjectCourseId,
             notification.GroupId,
             cancellationToken);
