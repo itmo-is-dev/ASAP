@@ -3,7 +3,7 @@ using MediatR;
 
 namespace ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Notifications;
 
-public static class SubjectCourseCreated
+public static class SubjectCoursePointsUpdated
 {
-    public record Notification(SubjectCourseDto SubjectCourse) : INotification;
+    public record Notification(Guid SubjectCourseId, SubjectCoursePointsDto Points) : INotification;
 }

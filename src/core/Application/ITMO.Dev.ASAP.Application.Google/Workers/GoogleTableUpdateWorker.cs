@@ -1,4 +1,3 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Google.Notifications;
 using ITMO.Dev.ASAP.Application.Google.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -62,7 +61,7 @@ public class GoogleTableUpdateWorker : BackgroundService
 
         foreach (Guid subjectCourseId in subjectCourses)
         {
-            var notification = new SubjectCoursePointsUpdatedNotification(subjectCourseId);
+            var notification = new Notification(subjectCourseId);
             await publisher.Publish(notification, cancellationToken);
         }
 

@@ -4,10 +4,8 @@ using FluentSpreadsheets.Rendering;
 using FluentSpreadsheets.Tables;
 using ITMO.Dev.ASAP.Application.Abstractions.Formatters;
 using ITMO.Dev.ASAP.Application.Abstractions.Google;
-using ITMO.Dev.ASAP.Application.Abstractions.Google.Sheets;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
-using ITMO.Dev.ASAP.Application.Google.Dummy.Services;
 using ITMO.Dev.ASAP.Application.Google.Dummy.Sheets;
 using ITMO.Dev.ASAP.Application.Google.Services;
 using ITMO.Dev.ASAP.Application.Google.Workers;
@@ -44,7 +42,6 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ISpreadsheetManagementService, SpreadsheetManagementService>()
             .AddSingleton<IRenderCommandFactory, RenderCommandFactory>()
             .AddSingleton<ISheetTitleComparer, SheetTitleComparer>()
-            .AddScoped<ISubjectCourseTableService, SubjectCourseTableService>()
             .AddSingleton<IComponentRenderer<GoogleSheetRenderCommand>, GoogleSheetComponentRenderer>()
             .AddGoogleTableUpdateWorker()
             .AddGoogleFormatter();
@@ -56,7 +53,6 @@ public static class ServiceCollectionExtensions
             .AddSingleton<ISheet<CourseStudentsDto>, DummyPointsSheet>()
             .AddSingleton<ISheet<SubjectCoursePointsDto>, DummyLabsSheet>()
             .AddSingleton<ISheet<SubmissionsQueueDto>, DummyQueueSheet>()
-            .AddScoped<ISubjectCourseTableService, DummySubjectCourseTableService>()
             .AddSingleton<TableUpdateQueue>()
             .AddSingleton<ITableUpdateQueue>(p => p.GetRequiredService<TableUpdateQueue>())
             .AddSingleton<IUserFullNameFormatter, UserFullNameFormatter>()
