@@ -1,4 +1,5 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Abstractions.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Queries;
@@ -22,10 +23,12 @@ namespace ITMO.Dev.ASAP.Controllers;
 public class SubjectCourseController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ISubjectCourseUpdateService _subjectCourseUpdateService;
 
-    public SubjectCourseController(IMediator mediator)
+    public SubjectCourseController(IMediator mediator, ISubjectCourseUpdateService subjectCourseUpdateService)
     {
         _mediator = mediator;
+        _subjectCourseUpdateService = subjectCourseUpdateService;
     }
 
     public CancellationToken CancellationToken => HttpContext.RequestAborted;
@@ -97,6 +100,14 @@ public class SubjectCourseController : ControllerBase
         var command = new AddFractionDeadlinePolicy.Command(id, spanBeforeActivation, fraction);
         await _mediator.Send(command, CancellationToken);
 
+        return Ok();
+    }
+
+    [HttpPost("{id:guid}/points/force-sync")]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
+    public IActionResult ForceSyncSubjectCoursePoints(Guid id)
+    {
+        _subjectCourseUpdateService.UpdatePoints(id);
         return Ok();
     }
 }

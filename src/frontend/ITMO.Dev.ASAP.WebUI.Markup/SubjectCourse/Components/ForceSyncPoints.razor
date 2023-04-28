@@ -1,0 +1,35 @@
+@using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@inject ISubjectCourseClient SubjectCourseClient
+
+<Button
+    Clicked="OnClickedAsync" 
+    Color="Color.Secondary" 
+    Margin="Margin.Is1.FromBottom"
+    Disabled="@(_component?.Executing ?? false)">
+    
+    Force Sync Points
+</Button>
+
+<ConfirmationComponent @ref="_component" Action="SyncAsync" ActionName="sync points"/>
+
+@code {
+
+    [Parameter]
+    public Guid? SubjectCourseId { get; set; }
+
+    private ConfirmationComponent? _component;
+
+    private Task SyncAsync(CancellationToken cancellationToken)
+    {
+        if (SubjectCourseId is null)
+            return Task.CompletedTask;
+
+        return SubjectCourseClient.ForceSyncSubjectCoursePointsAsync(SubjectCourseId.Value, cancellationToken);
+    }
+
+    private Task OnClickedAsync()
+    {
+        return _component?.Show() ?? Task.CompletedTask;
+    }
+
+}

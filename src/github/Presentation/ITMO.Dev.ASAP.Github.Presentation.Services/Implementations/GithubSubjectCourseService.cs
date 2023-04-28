@@ -14,16 +14,6 @@ public class GithubSubjectCourseService : IGithubSubjectCourseService
         _mediator = mediator;
     }
 
-    public async Task<GithubSubjectCourseDto> GetByOrganizationName(
-        string organizationName,
-        CancellationToken cancellationToken)
-    {
-        var query = new GetSubjectCourseByOrganizationName.Query(organizationName);
-        GetSubjectCourseByOrganizationName.Response response = await _mediator.Send(query, cancellationToken);
-
-        return response.SubjectCourse;
-    }
-
     public async Task<IReadOnlyCollection<GithubSubjectCourseDto>> FindByIdsAsync(
         IEnumerable<Guid> subjectCourseIds,
         CancellationToken cancellationToken)
