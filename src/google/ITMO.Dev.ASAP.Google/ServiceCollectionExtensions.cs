@@ -28,6 +28,10 @@ public static class ServiceCollectionExtensions
 
             collection.AddGoogleDataAccess(_ => new NpgsqlConnection(databaseConnectionString));
         }
+        else
+        {
+            collection.AddDummyGooglePresentationServices();
+        }
 
         return collection;
     }
