@@ -18,11 +18,4 @@ public class CappingDeadlinePenalty : DeadlinePenalty
     {
         return Points.Min(points, Cap);
     }
-
-    public override bool Equals(DeadlinePenalty? other)
-    {
-        return other is CappingDeadlinePenalty cappingDeadlineSpan &&
-               cappingDeadlineSpan.Cap.Equals(Cap) &&
-               base.Equals(cappingDeadlineSpan);
-    }
 }

@@ -1,6 +1,5 @@
 ﻿using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
-using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.Core.ValueObject;
 using RichEntity.Annotations;
 
@@ -22,7 +21,7 @@ public partial class DeadlinePolicy : IEntity<Guid>
     {
         ArgumentNullException.ThrowIfNull(penalty);
 
-        if (!_deadlinePenalties.Add(penalty))
+        if (_deadlinePenalties.Add(penalty) is false)
             throw new DomainInvalidOperationException($"Deadline span {penalty} already exists");
     }
 
@@ -30,37 +29,32 @@ public partial class DeadlinePolicy : IEntity<Guid>
     {
         ArgumentNullException.ThrowIfNull(penalty);
 
-        if (!_deadlinePenalties.Remove(penalty))
+        if (_deadlinePenalties.Remove(penalty) is false)
             throw new DomainInvalidOperationException($"Deadline span {penalty} cannot be removed");
     }
 
-    public Points? GetPointPenalty(Submission submission)
+    public Points? GetPointPenalty(Points? points, DateOnly deadline, DateOnly submissionDate)
     {
-        ArgumentNullException.ThrowIfNull(submission);
-
-        if (submission.Points is null)
+        if (points is null)
             return null;
 
-        Points points = submission.Points.Value;
-        DeadlinePenalty? deadlinePolicy = GetEffectiveDeadlinePenalty(submission);
+        DeadlinePenalty? deadlinePenalty = GetEffectiveDeadlinePenalty(deadline, submissionDate);
 
-        return deadlinePolicy?.Apply(points);
+        return deadlinePenalty?.Apply(points.Value);
     }
 
-    private DeadlinePenalty? GetEffectiveDeadlinePenalty(Submission submission)
+    private DeadlinePenalty? GetEffectiveDeadlinePenalty(DateOnly deadline, DateOnly submissionDate)
     {
-        DateOnly deadline = submission.GroupAssignment.Deadline;
-
-        if (submission.SubmissionDateOnly <= deadline)
+        if (submissionDate <= deadline)
             return null;
 
         var submissionDeadlineOffset = TimeSpan.FromDays(
-            submission.SubmissionDateOnly.DayNumber - deadline.DayNumber);
+            submissionDate.DayNumber - deadline.DayNumber);
 
-        DeadlinePenalty? activeDeadlinePolicy = _deadlinePenalties
+        DeadlinePenalty? activeDeadlinePenalty = _deadlinePenalties
             .Where(dp => dp.SpanBeforeActivation < submissionDeadlineOffset)
             .MaxBy(dp => dp.SpanBeforeActivation);
 
-        return activeDeadlinePolicy;
+        return activeDeadlinePenalty;
     }
 }

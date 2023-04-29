@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ITMO.Dev.ASAP.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230426194622_RenamedDeadlinePolicies")]
-    partial class RenamedDeadlinePolicies
+    [Migration("20230427200143_RenamedDeadlinePolicyToDeadlinePenalties")]
+    partial class RenamedDeadlinePolicyToDeadlinePenalties
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,6 +30,9 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("DeadlinePolicyId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasColumnType("text");
@@ -42,11 +45,24 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DeadlinePolicyId");
+
                     b.HasIndex("SubjectCourseId");
 
-                    b.ToTable("DeadlinePolicy", (string)null);
+                    b.ToTable("DeadlinePenalties");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("DeadlinePenalty");
+                });
+
+            modelBuilder.Entity("ITMO.Dev.ASAP.Core.Deadlines.DeadlinePolicies.DeadlinePolicy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DeadlinePolicies");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Study.Assignment", b =>
@@ -369,6 +385,10 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties.DeadlinePenalty", b =>
                 {
+                    b.HasOne("ITMO.Dev.ASAP.Core.Deadlines.DeadlinePolicies.DeadlinePolicy", null)
+                        .WithMany("DeadlinePenalties")
+                        .HasForeignKey("DeadlinePolicyId");
+
                     b.HasOne("ITMO.Dev.ASAP.Core.Study.SubjectCourse", null)
                         .WithMany("DeadlinePolicies")
                         .HasForeignKey("SubjectCourseId");
@@ -509,6 +529,11 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ITMO.Dev.ASAP.Core.Deadlines.DeadlinePolicies.DeadlinePolicy", b =>
+                {
+                    b.Navigation("DeadlinePenalties");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Study.Assignment", b =>

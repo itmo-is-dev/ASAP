@@ -18,11 +18,4 @@ public class AbsoluteDeadlinePenalty : DeadlinePenalty
     {
         return points - AbsoluteValue;
     }
-
-    public override bool Equals(DeadlinePenalty? other)
-    {
-        return other is AbsoluteDeadlinePenalty absoluteDeadlineSpan &&
-               absoluteDeadlineSpan.AbsoluteValue.Equals(AbsoluteValue) &&
-               base.Equals(absoluteDeadlineSpan);
-    }
 }

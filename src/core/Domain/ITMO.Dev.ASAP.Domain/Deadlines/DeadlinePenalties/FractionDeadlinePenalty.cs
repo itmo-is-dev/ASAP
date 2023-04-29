@@ -18,11 +18,4 @@ public class FractionDeadlinePenalty : DeadlinePenalty
     {
         return points * Fraction;
     }
-
-    public override bool Equals(DeadlinePenalty? other)
-    {
-        return other is FractionDeadlinePenalty fractionDeadlineSpan &&
-               fractionDeadlineSpan.Fraction.Equals(Fraction) &&
-               base.Equals(fractionDeadlineSpan);
-    }
 }
