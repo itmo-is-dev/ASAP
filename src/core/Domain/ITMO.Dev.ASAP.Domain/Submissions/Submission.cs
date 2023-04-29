@@ -1,13 +1,13 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.Submissions.States;
-using ITMO.Dev.ASAP.Core.Tools;
-using ITMO.Dev.ASAP.Core.Users;
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Submissions.States;
+using ITMO.Dev.ASAP.Domain.Tools;
+using ITMO.Dev.ASAP.Domain.Users;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.Submissions;
+namespace ITMO.Dev.ASAP.Domain.Submissions;
 
 public partial class Submission : IEntity<Guid>
 {

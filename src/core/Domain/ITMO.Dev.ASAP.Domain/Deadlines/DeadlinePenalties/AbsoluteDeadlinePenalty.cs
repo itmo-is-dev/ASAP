@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 
-namespace ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
+namespace ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
 
 public class AbsoluteDeadlinePenalty : DeadlinePenalty
 {

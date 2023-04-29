@@ -1,16 +1,14 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
-using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
-using ITMO.Dev.ASAP.Core.SubmissionStateWorkflows;
-using ITMO.Dev.ASAP.Core.Users;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
+using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
+using ITMO.Dev.ASAP.Domain.Users;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.Study;
+namespace ITMO.Dev.ASAP.Domain.Study;
 
 public partial class SubjectCourse : IEntity<Guid>
 {
     private readonly HashSet<Assignment> _assignments;
-    private readonly HashSet<SubjectCourseAssociation> _associations;
     private readonly HashSet<DeadlinePenalty> _deadlinePolicies;
     private readonly HashSet<SubjectCourseGroup> _groups;
     private readonly HashSet<Mentor> _mentors;
@@ -24,7 +22,6 @@ public partial class SubjectCourse : IEntity<Guid>
 
         _groups = new HashSet<SubjectCourseGroup>();
         _assignments = new HashSet<Assignment>();
-        _associations = new HashSet<SubjectCourseAssociation>();
         _mentors = new HashSet<Mentor>();
 
         // TODO: change when deadline policy customization is implemented
@@ -43,8 +40,6 @@ public partial class SubjectCourse : IEntity<Guid>
     public virtual IReadOnlyCollection<SubjectCourseGroup> Groups => _groups;
 
     public virtual IReadOnlyCollection<Assignment> Assignments => _assignments;
-
-    public virtual IReadOnlyCollection<SubjectCourseAssociation> Associations => _associations;
 
     public virtual IReadOnlyCollection<Mentor> Mentors => _mentors;
 
@@ -102,26 +97,6 @@ public partial class SubjectCourse : IEntity<Guid>
             throw new DomainInvalidOperationException($"Assignment {assignment} is not assigned to this course");
     }
 
-    public void AddAssociation(SubjectCourseAssociation association)
-    {
-        ArgumentNullException.ThrowIfNull(association);
-
-        Type associationType = association.GetType();
-
-        if (Assignments.Any(a => a.GetType() == associationType))
-            throw new DomainInvalidOperationException($"Course {this} already has {associationType} association");
-
-        _associations.Add(association);
-    }
-
-    public void RemoveAssociation(SubjectCourseAssociation association)
-    {
-        ArgumentNullException.ThrowIfNull(association);
-
-        if (!_associations.Remove(association))
-            throw new DomainInvalidOperationException($"Association {association} is not assigned to this course");
-    }
-
     public Mentor AddMentor(User user)
     {
         ArgumentNullException.ThrowIfNull(user);
@@ -143,19 +118,19 @@ public partial class SubjectCourse : IEntity<Guid>
             throw new DomainInvalidOperationException($"Mentor {mentor} is not a mentor of this subject course");
     }
 
-    public void AddDeadlinePolicy(DeadlinePenalty penalty)
+    public void AddDeadlinePolicy(DeadlinePenalty policy)
     {
-        ArgumentNullException.ThrowIfNull(penalty);
+        ArgumentNullException.ThrowIfNull(policy);
 
-        if (!_deadlinePolicies.Add(penalty))
-            throw new DomainInvalidOperationException($"Deadline span {penalty} already exists");
+        if (!_deadlinePolicies.Add(policy))
+            throw new DomainInvalidOperationException($"Deadline span {policy} already exists");
     }
 
-    public void RemoveDeadlinePolicy(DeadlinePenalty penalty)
+    public void RemoveDeadlinePolicy(DeadlinePenalty policy)
     {
-        ArgumentNullException.ThrowIfNull(penalty);
+        ArgumentNullException.ThrowIfNull(policy);
 
-        if (!_deadlinePolicies.Remove(penalty))
-            throw new DomainInvalidOperationException($"Deadline span {penalty} cannot be removed");
+        if (!_deadlinePolicies.Remove(policy))
+            throw new DomainInvalidOperationException($"Deadline span {policy} cannot be removed");
     }
 }

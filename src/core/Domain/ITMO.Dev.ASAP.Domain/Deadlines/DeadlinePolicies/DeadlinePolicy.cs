@@ -1,9 +1,9 @@
 ﻿using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.Deadlines.DeadlinePolicies;
+namespace ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
 
 public partial class DeadlinePolicy : IEntity<Guid>
 {

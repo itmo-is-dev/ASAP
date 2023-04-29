@@ -1,10 +1,9 @@
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePolicies;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.UserAssociations;
-using ITMO.Dev.ASAP.Core.Users;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Submissions;
+using ITMO.Dev.ASAP.Domain.UserAssociations;
+using ITMO.Dev.ASAP.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -34,11 +33,9 @@ public interface IDatabaseContext
 
     DbSet<UserAssociation> UserAssociations { get; }
 
-    DbSet<SubjectCourseAssociation> SubjectCourseAssociations { get; }
-
     DbSet<DeadlinePenalty> DeadlinePenalties { get; }
 
-    DbSet<DeadlinePolicy> DeadlinePolicies { get; }
+    DbSet<DeadlinePolicy> DeadlinePolicies { get;  }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 

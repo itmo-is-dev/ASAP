@@ -1,15 +1,14 @@
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePolicies;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.Submissions.States;
-using ITMO.Dev.ASAP.Core.Tools;
-using ITMO.Dev.ASAP.Core.UserAssociations;
-using ITMO.Dev.ASAP.Core.Users;
-using ITMO.Dev.ASAP.Core.ValueObject;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.ValueConverters;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Submissions;
+using ITMO.Dev.ASAP.Domain.Submissions.States;
+using ITMO.Dev.ASAP.Domain.Tools;
+using ITMO.Dev.ASAP.Domain.UserAssociations;
+using ITMO.Dev.ASAP.Domain.Users;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -42,8 +41,6 @@ public class DatabaseContext : DbContext, IDatabaseContext
     public DbSet<Submission> Submissions { get; protected init; } = null!;
 
     public DbSet<UserAssociation> UserAssociations { get; protected init; } = null!;
-
-    public DbSet<SubjectCourseAssociation> SubjectCourseAssociations { get; protected init; } = null!;
 
     public DbSet<DeadlinePenalty> DeadlinePenalties { get; protected init; } = null!;
 
