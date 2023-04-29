@@ -1,6 +1,6 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Formatters;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
-using ITMO.Dev.ASAP.Application.Services;
+using ITMO.Dev.ASAP.Application.SubjectCourses;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Github.Application.Dto.Users;
