@@ -1,9 +1,9 @@
 using FluentAssertions;
 using ITMO.Dev.ASAP.Application.Tools;
-using ITMO.Dev.ASAP.Core.Queue;
-using ITMO.Dev.ASAP.Core.Queue.Building;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.Submissions;
+using ITMO.Dev.ASAP.Domain.Queue;
+using ITMO.Dev.ASAP.Domain.Queue.Building;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Submissions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 

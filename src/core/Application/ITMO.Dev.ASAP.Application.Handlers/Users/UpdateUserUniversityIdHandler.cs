@@ -1,10 +1,10 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Core.UserAssociations;
-using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
+using ITMO.Dev.ASAP.Domain.UserAssociations;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Users.Commands.UpdateUserUniversityId;
+using User = ITMO.Dev.ASAP.Domain.Users.User;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Users;
 

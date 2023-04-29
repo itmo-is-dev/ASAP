@@ -1,8 +1,8 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.Submissions;
+using ITMO.Dev.ASAP.Domain.Submissions;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.Study;
+namespace ITMO.Dev.ASAP.Domain.Study;
 
 public partial class GroupAssignment : IEntity
 {

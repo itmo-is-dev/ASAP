@@ -1,7 +1,7 @@
 using Bogus;
-using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.Seeding.Extensions;
 using ITMO.Dev.ASAP.Seeding.Options;
+using User = ITMO.Dev.ASAP.Domain.Users.User;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators;
 

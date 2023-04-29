@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Dto.Users;
-using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

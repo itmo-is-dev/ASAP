@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.Seeding.EntityGenerators;
+using Student = ITMO.Dev.ASAP.Domain.Users.Student;
 
 namespace ITMO.Dev.ASAP.Seeding.DatabaseSeeders;
 

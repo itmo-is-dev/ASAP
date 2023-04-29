@@ -1,6 +1,6 @@
 using Bogus;
-using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.Seeding.Options;
+using Subject = ITMO.Dev.ASAP.Domain.Study.Subject;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators;
 

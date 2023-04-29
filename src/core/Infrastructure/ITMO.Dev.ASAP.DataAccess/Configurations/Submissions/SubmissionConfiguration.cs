@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.Submissions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations.Submissions;
 

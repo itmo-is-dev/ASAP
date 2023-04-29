@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
+using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.StudyGroups.Queries.GetStudyGroupById;

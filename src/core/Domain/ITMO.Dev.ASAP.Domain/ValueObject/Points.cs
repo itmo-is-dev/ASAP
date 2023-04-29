@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace ITMO.Dev.ASAP.Core.ValueObject;
+namespace ITMO.Dev.ASAP.Domain.ValueObject;
 
 public readonly record struct Points : IComparable<Points>
 {

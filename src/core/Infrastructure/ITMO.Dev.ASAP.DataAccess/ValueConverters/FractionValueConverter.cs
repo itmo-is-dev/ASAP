@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ITMO.Dev.ASAP.DataAccess.ValueConverters;

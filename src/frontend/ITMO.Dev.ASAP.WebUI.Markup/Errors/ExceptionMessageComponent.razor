@@ -7,7 +7,7 @@
 
         <CardHeader Flex="Flex.JustifyContent.Between.AlignContent.Center">
             <Heading Size="HeadingSize.Is4" Margin="Margin.Is0.FromBottom">
-                @Message.Value.Title
+                @Message.Title
             </Heading>
 
             <Div Flex="Flex.Column.AlignContent.Center">
@@ -16,11 +16,11 @@
 
         </CardHeader>
 
-        @if (Message.Value.Message is not null)
+        @if (Message.Message is not null)
         {
             <CardBody>
                 <CardTitle>
-                    @Message.Value.Message
+                    @Message.Message
                 </CardTitle>
             </CardBody>
         }
@@ -40,7 +40,7 @@
         if (Message is null || Dismiss is null)
             return;
 
-        Dismiss.Invoke(Message.Value);
+        Dismiss.Invoke(Message);
     }
 
 }

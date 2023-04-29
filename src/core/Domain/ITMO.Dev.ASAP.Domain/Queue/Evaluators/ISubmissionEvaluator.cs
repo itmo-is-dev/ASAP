@@ -1,7 +1,7 @@
-using ITMO.Dev.ASAP.Core.Models;
-using ITMO.Dev.ASAP.Core.Submissions;
+using ITMO.Dev.ASAP.Domain.Models;
+using ITMO.Dev.ASAP.Domain.Submissions;
 
-namespace ITMO.Dev.ASAP.Core.Queue.Evaluators;
+namespace ITMO.Dev.ASAP.Domain.Queue.Evaluators;
 
 public interface ISubmissionEvaluator
 {

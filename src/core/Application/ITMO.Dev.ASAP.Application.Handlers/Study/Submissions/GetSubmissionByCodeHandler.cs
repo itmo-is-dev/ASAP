@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.Submissions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Domain.Submissions;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

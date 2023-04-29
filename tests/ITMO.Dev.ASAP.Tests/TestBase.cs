@@ -1,10 +1,10 @@
 using Bogus;
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Context;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Submissions;
+using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Seeding.Extensions;
 using ITMO.Dev.ASAP.Seeding.Options;
 using Microsoft.EntityFrameworkCore;

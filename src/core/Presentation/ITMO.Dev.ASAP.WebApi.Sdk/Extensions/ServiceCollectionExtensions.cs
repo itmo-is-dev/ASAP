@@ -35,14 +35,13 @@ public static class ServiceCollectionExtensions
 
                 return new HubClientProvider<TClient>(
                     new Uri(baseAddress, address),
-                    TImplementation.Create,
+                    connection => TImplementation.Create(p, connection),
                     tokenProvider);
             });
         }
 
         AddControllerClient<IAssignmentClient, AssignmentClient>();
         AddControllerClient<IGithubManagementClient, GithubManagementClient>();
-        AddControllerClient<IGoogleClient, GoogleClient>();
         AddControllerClient<IGroupAssignmentClient, GroupAssignmentClient>();
         AddControllerClient<IIdentityClient, IdentityClient>();
         AddControllerClient<IStudentClient, StudentClient>();

@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using User = ITMO.Dev.ASAP.Domain.Users.User;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations.Users;
 

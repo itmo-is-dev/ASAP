@@ -14,7 +14,7 @@ namespace ITMO.Dev.ASAP.Controllers;
 
 [Route("/api/[controller]")]
 [ApiController]
-[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
+[Authorize(Roles = AsapIdentityRoleNames.AtLeastMentor)]
 public class AssignmentsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -25,6 +25,7 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     public async Task<ActionResult<AssignmentDto>> CreateAssignment(CreateAssignmentRequest request)
     {
         var command = new CreateAssignment.Command(
@@ -40,6 +41,7 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpPatch("{id:guid}")]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     public async Task<ActionResult<AssignmentDto>> UpdateAssignmentPoints(Guid id, double minPoints, double maxPoints)
     {
         var command = new UpdateAssignmentPoints.Command(id, minPoints, maxPoints);
@@ -69,8 +71,7 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpPut("{assignmentId:guid}/groups/{groupId:guid}")]
-
-    [Authorize(Roles = $"{AsapIdentityRoleNames.AdminRoleName},{AsapIdentityRoleNames.MentorRoleName},{AsapIdentityRoleNames.ModeratorRoleName}")]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     public async Task<ActionResult<GroupAssignmentDto>> UpdateById(
         Guid assignmentId,
         Guid groupId,

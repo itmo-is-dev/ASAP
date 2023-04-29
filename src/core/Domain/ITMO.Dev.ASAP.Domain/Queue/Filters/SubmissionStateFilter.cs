@@ -1,7 +1,7 @@
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.Submissions.States;
+using ITMO.Dev.ASAP.Domain.Submissions;
+using ITMO.Dev.ASAP.Domain.Submissions.States;
 
-namespace ITMO.Dev.ASAP.Core.Queue.Filters;
+namespace ITMO.Dev.ASAP.Domain.Queue.Filters;
 
 public class SubmissionStateFilter : IQueueFilter
 {

@@ -10,6 +10,7 @@ using ITMO.Dev.ASAP.Github.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Github.Octokit.Extensions;
 using ITMO.Dev.ASAP.Github.Presentation.Services.Extensions;
 using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Extensions;
+using ITMO.Dev.ASAP.Google;
 using ITMO.Dev.ASAP.Identity.Extensions;
 using ITMO.Dev.ASAP.Presentation.Rpc.Extensions;
 using ITMO.Dev.ASAP.Presentation.Services.Extensions;
@@ -39,14 +40,16 @@ internal static class ServiceCollectionExtensions
 
         serviceCollection.AddRpcPresentation();
 
+        string applicationDatabaseConnectionString = webApiConfiguration.PostgresConfiguration
+            .ToConnectionString(webApiConfiguration.DbNamesConfiguration.ApplicationDbName);
+
         serviceCollection
             .AddSwagger()
             .AddApplicationConfiguration()
             .AddAsapPresentationServices()
             .AddHandlers(configuration)
             .AddDatabaseContext(o => o
-                .UseNpgsql(webApiConfiguration.PostgresConfiguration.ToConnectionString(webApiConfiguration
-                    .DbNamesConfiguration.ApplicationDbName))
+                .UseNpgsql(applicationDatabaseConnectionString)
                 .UseLazyLoadingProxies());
 
         serviceCollection
@@ -55,8 +58,7 @@ internal static class ServiceCollectionExtensions
             .AddGithubServices(configuration)
             .AddGithubApplicationHandlers()
             .AddGithubDatabaseContext(o => o
-                .UseNpgsql(webApiConfiguration.PostgresConfiguration.ToConnectionString(webApiConfiguration
-                    .DbNamesConfiguration.ApplicationDbName))
+                .UseNpgsql(applicationDatabaseConnectionString)
                 .UseLazyLoadingProxies());
 
         serviceCollection.AddIdentityConfiguration(
@@ -65,8 +67,7 @@ internal static class ServiceCollectionExtensions
                 webApiConfiguration.PostgresConfiguration.ToConnectionString(webApiConfiguration.DbNamesConfiguration
                     .IdentityDbName)));
 
-        serviceCollection
-            .AddGoogleIntegrationServices(webApiConfiguration);
+        serviceCollection.AddAsapGoogle(configuration, applicationDatabaseConnectionString);
 
         if (isDevelopmentEnvironment && webApiConfiguration.TestEnvironmentConfiguration is not null)
             serviceCollection.AddEntityGeneratorsAndSeeding(webApiConfiguration.TestEnvironmentConfiguration);

@@ -1,5 +1,5 @@
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.Users;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Users;
 
 namespace ITMO.Dev.ASAP.Tests.Extensions;
 

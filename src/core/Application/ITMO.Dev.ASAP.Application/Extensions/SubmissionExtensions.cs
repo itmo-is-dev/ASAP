@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Core.Submissions;
+using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
 
 namespace ITMO.Dev.ASAP.Application.Extensions;
 

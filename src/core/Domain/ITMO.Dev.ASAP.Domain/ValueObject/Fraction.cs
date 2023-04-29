@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
 
-namespace ITMO.Dev.ASAP.Core.ValueObject;
+namespace ITMO.Dev.ASAP.Domain.ValueObject;
 
 public readonly record struct Fraction
 {

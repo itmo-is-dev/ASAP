@@ -69,6 +69,17 @@ public static class ServiceCollectionExtensions
 
                     return Task.CompletedTask;
                 },
+                OnMessageReceived = context =>
+                {
+                    string? accessToken = context.Request.Query["access_token"];
+
+                    if (string.IsNullOrEmpty(accessToken) is false)
+                    {
+                        context.Token = accessToken;
+                    }
+
+                    return Task.CompletedTask;
+                },
             };
         });
     }

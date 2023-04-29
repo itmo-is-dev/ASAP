@@ -1,11 +1,11 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.Models;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.Users;
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.Models;
+using ITMO.Dev.ASAP.Domain.Submissions;
+using ITMO.Dev.ASAP.Domain.Users;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.Study;
+namespace ITMO.Dev.ASAP.Domain.Study;
 
 public partial class StudentAssignment : IEntity
 {

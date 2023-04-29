@@ -35,6 +35,8 @@
     private Task OnSubjectCreated(SubjectDto subject)
     {
         _subjectList?.AddSubject(subject);
+        StateHasChanged();
+
         return Task.CompletedTask;
     }
 

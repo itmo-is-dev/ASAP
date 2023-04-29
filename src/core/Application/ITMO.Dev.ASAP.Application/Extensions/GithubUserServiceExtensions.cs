@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Application.Dto.Tables;
 using ITMO.Dev.ASAP.Application.Dto.Users;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.Users;
+using ITMO.Dev.ASAP.Domain.Submissions;
+using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Github.Application.Dto.Users;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using ITMO.Dev.ASAP.Mapping.Mappings;

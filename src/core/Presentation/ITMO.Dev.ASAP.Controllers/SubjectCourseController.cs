@@ -1,4 +1,5 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Abstractions.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Queues.Queries;
@@ -18,21 +19,21 @@ namespace ITMO.Dev.ASAP.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
+[Authorize(Roles = AsapIdentityRoleNames.AtLeastMentor)]
 public class SubjectCourseController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ISubjectCourseUpdateService _subjectCourseUpdateService;
 
-    public SubjectCourseController(IMediator mediator)
+    public SubjectCourseController(IMediator mediator, ISubjectCourseUpdateService subjectCourseUpdateService)
     {
         _mediator = mediator;
+        _subjectCourseUpdateService = subjectCourseUpdateService;
     }
 
     public CancellationToken CancellationToken => HttpContext.RequestAborted;
 
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = $"{AsapIdentityRoleNames.MentorRoleName}, {AsapIdentityRoleNames.AdminRoleName}, " +
-                       $"{AsapIdentityRoleNames.ModeratorRoleName}")]
     public async Task<ActionResult<SubjectCourseDto>> GetById(Guid id)
     {
         var query = new GetSubjectCourseById.Query(id);
@@ -42,6 +43,7 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     public async Task<ActionResult<SubjectCourseDto>> Update(Guid id, UpdateSubjectCourseRequest request)
     {
         var command = new UpdateSubjectCourse.Command(id, request.Name);
@@ -90,6 +92,7 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpPost("{id:guid}/deadline/fraction")]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     public async Task<ActionResult> AddDeadline(Guid id, AddFractionPolicyRequest request)
     {
         (TimeSpan spanBeforeActivation, double fraction) = request;
@@ -97,6 +100,14 @@ public class SubjectCourseController : ControllerBase
         var command = new AddFractionDeadlinePolicy.Command(id, spanBeforeActivation, fraction);
         await _mediator.Send(command, CancellationToken);
 
+        return Ok();
+    }
+
+    [HttpPost("{id:guid}/points/force-sync")]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
+    public IActionResult ForceSyncSubjectCoursePoints(Guid id)
+    {
+        _subjectCourseUpdateService.UpdatePoints(id);
         return Ok();
     }
 }

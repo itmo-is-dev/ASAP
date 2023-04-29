@@ -1,4 +1,4 @@
-namespace ITMO.Dev.ASAP.Core.SubmissionStateWorkflows;
+namespace ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
 
 public enum SubmissionStateWorkflowType
 {

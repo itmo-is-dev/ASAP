@@ -15,7 +15,7 @@ public partial class GithubSubmission : IEntity<Guid>
     {
         AssignmentId = assignmentId;
         UserId = userId;
-        CreatedAt = createdAt;
+        CreatedAt = DateTime.SpecifyKind(createdAt, DateTimeKind.Utc);
         Repository = repository;
         PullRequestNumber = pullRequestNumber;
         Organization = organization;

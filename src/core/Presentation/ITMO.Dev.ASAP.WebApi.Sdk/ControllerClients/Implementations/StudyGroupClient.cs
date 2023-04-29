@@ -47,7 +47,8 @@ internal class StudyGroupClient : IStudyGroupClient
         IEnumerable<Guid> ids,
         CancellationToken cancellationToken = default)
     {
-        string uri = $"api/StudyGroup?ids={string.Join(",", ids)}";
+        IEnumerable<string> idsStrings = ids.Select(x => $"ids={x}");
+        string uri = $"api/StudyGroup/bulk?{string.Join('&', idsStrings)}";
         using var message = new HttpRequestMessage(HttpMethod.Get, uri);
 
         return await _handler.SendAsync<IReadOnlyCollection<StudyGroupDto>>(message, cancellationToken);

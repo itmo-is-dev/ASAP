@@ -1,7 +1,7 @@
-using ITMO.Dev.ASAP.Core.Queue.Evaluators;
-using ITMO.Dev.ASAP.Core.Queue.Filters;
+using ITMO.Dev.ASAP.Domain.Queue.Evaluators;
+using ITMO.Dev.ASAP.Domain.Queue.Filters;
 
-namespace ITMO.Dev.ASAP.Core.Queue.Building;
+namespace ITMO.Dev.ASAP.Domain.Queue.Building;
 
 public class QueueBuilder : IQueueFilterBuilder
 {

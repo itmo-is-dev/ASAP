@@ -1,7 +1,7 @@
-using ITMO.Dev.ASAP.Core.Users;
+using ITMO.Dev.ASAP.Domain.Users;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.UserAssociations;
+namespace ITMO.Dev.ASAP.Domain.UserAssociations;
 
 public abstract partial class UserAssociation : IEntity<Guid>
 {

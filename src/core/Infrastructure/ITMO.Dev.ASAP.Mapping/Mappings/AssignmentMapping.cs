@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
-using ITMO.Dev.ASAP.Core.Study;
+using Assignment = ITMO.Dev.ASAP.Domain.Study.Assignment;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 

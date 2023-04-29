@@ -1,9 +1,9 @@
-using ITMO.Dev.ASAP.Core.Models;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.Tools;
+using ITMO.Dev.ASAP.Domain.Models;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Submissions;
+using ITMO.Dev.ASAP.Domain.Tools;
 
-namespace ITMO.Dev.ASAP.Core.Queue.Evaluators;
+namespace ITMO.Dev.ASAP.Domain.Queue.Evaluators;
 
 public class AssignmentDeadlineStateEvaluator : ISubmissionEvaluator
 {

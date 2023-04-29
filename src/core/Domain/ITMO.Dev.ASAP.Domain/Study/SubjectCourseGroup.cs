@@ -1,6 +1,6 @@
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.Study;
+namespace ITMO.Dev.ASAP.Domain.Study;
 
 public partial class SubjectCourseGroup : IEntity
 {

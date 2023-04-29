@@ -19,7 +19,7 @@ public class SubjectCourseController : ControllerBase
 
     [HttpPost("github")]
     public async Task<ActionResult<GithubSubjectCourseDto>> CreateGithubSubjectCourseAsync(
-        CreateGithubSubjectCourseRequest request,
+        [FromBody] CreateGithubSubjectCourseRequest request,
         CancellationToken cancellationToken)
     {
         var command = new CreateSubjectCourse.Command(

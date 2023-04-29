@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
-using ITMO.Dev.ASAP.Core.Study;
+using SubjectCourseGroup = ITMO.Dev.ASAP.Domain.Study.SubjectCourseGroup;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 

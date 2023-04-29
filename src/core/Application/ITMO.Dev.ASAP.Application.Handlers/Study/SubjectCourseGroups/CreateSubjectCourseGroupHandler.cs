@@ -1,8 +1,8 @@
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourseGroups.Notifications;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
-using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
+using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

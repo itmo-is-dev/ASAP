@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.Core.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Student = ITMO.Dev.ASAP.Domain.Users.Student;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations.Users;
 

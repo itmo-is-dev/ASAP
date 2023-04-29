@@ -1,8 +1,8 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.ValueObject;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 using RichEntity.Annotations;
 
-namespace ITMO.Dev.ASAP.Core.Study;
+namespace ITMO.Dev.ASAP.Domain.Study;
 
 public partial class Assignment : IEntity<Guid>
 {

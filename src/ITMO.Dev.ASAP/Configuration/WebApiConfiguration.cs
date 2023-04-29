@@ -1,5 +1,4 @@
 using ITMO.Dev.ASAP.DataAccess.Configuration;
-using ITMO.Dev.ASAP.Integration.Google.Models;
 
 namespace ITMO.Dev.ASAP.Configuration;
 
@@ -9,13 +8,6 @@ internal class WebApiConfiguration
     {
         if (configuration == null)
             throw new ArgumentNullException(nameof(configuration));
-
-        GoogleIntegrationConfiguration? googleIntegrationConfiguration = configuration
-            .GetSection(nameof(GoogleIntegrationConfiguration))
-            .Get<GoogleIntegrationConfiguration>();
-
-        GoogleIntegrationConfiguration = googleIntegrationConfiguration ??
-                                         throw new ArgumentException(nameof(GoogleIntegrationConfiguration));
 
         PostgresConfiguration? postgresConfiguration = configuration
             .GetSection(nameof(PostgresConfiguration))
@@ -35,8 +27,6 @@ internal class WebApiConfiguration
             .GetSection(nameof(TestEnvironmentConfiguration))
             .Get<TestEnvironmentConfiguration>();
     }
-
-    public GoogleIntegrationConfiguration GoogleIntegrationConfiguration { get; }
 
     public PostgresConfiguration PostgresConfiguration { get; }
 

@@ -1,5 +1,5 @@
-using ITMO.Dev.ASAP.Core.Models;
-using ITMO.Dev.ASAP.Core.Submissions.States;
+using ITMO.Dev.ASAP.Domain.Models;
+using ITMO.Dev.ASAP.Domain.Submissions.States;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ITMO.Dev.ASAP.DataAccess.ValueConverters;

@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Core.Study;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Domain.Study;
 using Microsoft.EntityFrameworkCore;
 
 namespace ITMO.Dev.ASAP.Application.Extensions;

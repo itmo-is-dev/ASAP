@@ -1,6 +1,7 @@
-using ITMO.Dev.ASAP.Core.UserAssociations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using IsuUserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.IsuUserAssociation;
+using UserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.UserAssociation;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations.UserAssociations;
 

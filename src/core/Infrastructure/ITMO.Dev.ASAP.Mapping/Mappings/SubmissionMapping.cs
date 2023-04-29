@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
-using ITMO.Dev.ASAP.Core.Submissions;
+using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 

@@ -15,7 +15,7 @@ namespace ITMO.Dev.ASAP.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
+[Authorize(Roles = AsapIdentityRoleNames.AtLeastMentor)]
 public class StudyGroupController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -26,6 +26,7 @@ public class StudyGroupController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     public async Task<ActionResult<StudyGroupDto>> Create(CreateStudyGroupRequest request)
     {
         var command = new CreateStudyGroup.Command(request.Name);
@@ -43,7 +44,7 @@ public class StudyGroupController : ControllerBase
         return Ok(response.Groups);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult<StudyGroupDto>> GetById(Guid id)
     {
         var query = new GetStudyGroupById.Query(id);
@@ -63,6 +64,7 @@ public class StudyGroupController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     public async Task<ActionResult<StudyGroupDto>> Update(Guid id, UpdateStudyGroupRequest request)
     {
         var command = new UpdateStudyGroup.Command(id, request.Name);
@@ -72,6 +74,7 @@ public class StudyGroupController : ControllerBase
     }
 
     [HttpGet("{id:guid}/students")]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     public async Task<ActionResult<IReadOnlyCollection<StudentDto>>> GetStudentAsync(Guid id)
     {
         var query = new GetStudentsByGroupId.Query(id);
@@ -81,6 +84,7 @@ public class StudyGroupController : ControllerBase
     }
 
     [HttpGet("{groupId:guid}/assignments")]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     public async Task<ActionResult<GroupAssignmentDto>> GetAssignmentsAsync(Guid groupId)
     {
         var query = new GetGroupAssignmentsByStudyGroupId.Query(groupId);
@@ -90,6 +94,7 @@ public class StudyGroupController : ControllerBase
     }
 
     [HttpGet("find")]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     public async Task<ActionResult<StudyGroupDto?>> FindByName(string name)
     {
         var query = new FindStudyGroupByName.Query(name);
@@ -99,6 +104,7 @@ public class StudyGroupController : ControllerBase
     }
 
     [HttpPost("query")]
+    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     public async Task<ActionResult<IReadOnlyCollection<StudyGroupDto>>> Query(
         QueryConfiguration<GroupQueryParameter> configuration)
     {
