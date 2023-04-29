@@ -1,8 +1,8 @@
 using Bogus;
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubmissionStateWorkflows;
-using ITMO.Dev.ASAP.Core.Users;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
+using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Seeding.Options;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators;

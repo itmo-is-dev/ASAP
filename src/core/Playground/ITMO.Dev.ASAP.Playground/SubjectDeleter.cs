@@ -1,10 +1,9 @@
-using ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties;
-using ITMO.Dev.ASAP.Core.Study;
-using ITMO.Dev.ASAP.Core.SubjectCourseAssociations;
-using ITMO.Dev.ASAP.Core.Submissions;
-using ITMO.Dev.ASAP.Core.Users;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Submissions;
+using ITMO.Dev.ASAP.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -45,13 +44,6 @@ public class SubjectDeleter
         _context.Assignments.RemoveRange(assignments);
         await _context.SaveChangesAsync(default);
 
-        List<SubjectCourseAssociation> subjectCourseAssociations = await _context.SubjectCourseAssociations
-            .Where(x => x.SubjectCourse.Subject.Id.Equals(subjectId))
-            .ToListAsync();
-
-        _context.SubjectCourseAssociations.RemoveRange(subjectCourseAssociations);
-        await _context.SaveChangesAsync(default);
-
         List<SubjectCourseGroup> courseGroups = await _context.SubjectCourseGroups
             .Where(x => x.SubjectCourse.Subject.Id.Equals(subjectId))
             .ToListAsync();
@@ -71,9 +63,9 @@ public class SubjectDeleter
             .Include(x => x.DeadlinePolicies)
             .ToListAsync();
 
-        IEnumerable<DeadlinePenalty> deadlinePolicies = courses.SelectMany(x => x.DeadlinePolicies);
+        IEnumerable<DeadlinePenalty> deadlinePenalties = courses.SelectMany(x => x.DeadlinePolicies);
 
-        _context.DeadlinePenalties.RemoveRange(deadlinePolicies);
+        _context.DeadlinePenalties.RemoveRange(deadlinePenalties);
         await _context.SaveChangesAsync(default);
 
         _context.SubjectCourses.RemoveRange(courses);
