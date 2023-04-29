@@ -1,3 +1,0 @@
-namespace ITMO.Dev.ASAP.Google.Application.Spreadsheets.Models;
-
-public record struct SheetId(int Value);

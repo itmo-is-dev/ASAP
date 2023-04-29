@@ -1,6 +1,5 @@
 using FluentChaining;
 using FluentChaining.Configurators;
-using ITMO.Dev.ASAP.Application.Abstractions.Formatters;
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
 using ITMO.Dev.ASAP.Application.Abstractions.Queue;
@@ -11,13 +10,10 @@ using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Application.Queries;
 using ITMO.Dev.ASAP.Application.Queries.Adapters;
 using ITMO.Dev.ASAP.Application.Queries.Requests;
-using ITMO.Dev.ASAP.Application.Queue;
-using ITMO.Dev.ASAP.Application.SubjectCourses;
-using ITMO.Dev.ASAP.Application.Submissions.Workflows;
+using ITMO.Dev.ASAP.Application.Services;
 using ITMO.Dev.ASAP.Application.Tools;
 using ITMO.Dev.ASAP.Application.Users;
 using ITMO.Dev.ASAP.Application.Validators;
-using ITMO.Dev.ASAP.Application.Workers;
 using ITMO.Dev.ASAP.Domain.Queue;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Domain.Users;
@@ -33,16 +29,12 @@ public static class ServiceCollectionExtensions
         collection.AddScoped<IPermissionValidator, PermissionValidator>();
         collection.AddScoped<ISubjectCourseService, SubjectCourseService>();
         collection.AddScoped<ISubmissionWorkflowService, SubmissionWorkflowService>();
-        collection.AddScoped<IQueueService, QueueService>();
-
-        collection.AddSingleton<IUserFullNameFormatter, UserFullNameFormatter>();
+        collection.AddScoped<IQueueUpdateService, QueueUpdateService>();
 
         collection.AddQueryChains();
         collection.AddFilterChains();
 
         collection.AddCurrentUser();
-
-        collection.AddUpdateWorkers();
 
         return collection;
     }
@@ -52,18 +44,6 @@ public static class ServiceCollectionExtensions
         collection.AddScoped<CurrentUserProxy>();
         collection.AddScoped<ICurrentUser>(x => x.GetRequiredService<CurrentUserProxy>());
         collection.AddScoped<ICurrentUserManager>(x => x.GetRequiredService<CurrentUserProxy>());
-    }
-
-    private static void AddUpdateWorkers(this IServiceCollection collection)
-    {
-        collection.AddSingleton<QueueUpdater>();
-        collection.AddSingleton<IQueueUpdateService>(x => x.GetRequiredService<QueueUpdater>());
-
-        collection.AddSingleton<SubjectCourseUpdater>();
-        collection.AddSingleton<ISubjectCourseUpdateService>(x => x.GetRequiredService<SubjectCourseUpdater>());
-
-        collection.AddHostedService<QueueUpdateWorker>();
-        collection.AddHostedService<SubjectCoursePointsUpdateWorker>();
     }
 
     private static void AddQueryChains(this IServiceCollection collection)

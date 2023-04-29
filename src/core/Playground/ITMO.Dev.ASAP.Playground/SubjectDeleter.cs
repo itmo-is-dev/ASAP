@@ -1,11 +1,16 @@
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
 using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
-using ITMO.Dev.ASAP.Domain.Study;
-using ITMO.Dev.ASAP.Domain.Submissions;
-using ITMO.Dev.ASAP.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Assignment = ITMO.Dev.ASAP.Domain.Study.Assignment;
+using GroupAssignment = ITMO.Dev.ASAP.Domain.Study.GroupAssignment;
+using Mentor = ITMO.Dev.ASAP.Domain.Users.Mentor;
+using Subject = ITMO.Dev.ASAP.Domain.Study.Subject;
+using SubjectCourse = ITMO.Dev.ASAP.Domain.Study.SubjectCourse;
+using SubjectCourseAssociation = ITMO.Dev.ASAP.Domain.SubjectCourseAssociations.SubjectCourseAssociation;
+using SubjectCourseGroup = ITMO.Dev.ASAP.Domain.Study.SubjectCourseGroup;
+using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
 
 namespace ITMO.Dev.ASAP.Playground;
 
@@ -42,6 +47,13 @@ public class SubjectDeleter
             .ToListAsync();
 
         _context.Assignments.RemoveRange(assignments);
+        await _context.SaveChangesAsync(default);
+
+        List<SubjectCourseAssociation> subjectCourseAssociations = await _context.SubjectCourseAssociations
+            .Where(x => x.SubjectCourse.Subject.Id.Equals(subjectId))
+            .ToListAsync();
+
+        _context.SubjectCourseAssociations.RemoveRange(subjectCourseAssociations);
         await _context.SaveChangesAsync(default);
 
         List<SubjectCourseGroup> courseGroups = await _context.SubjectCourseGroups

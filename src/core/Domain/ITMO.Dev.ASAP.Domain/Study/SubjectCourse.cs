@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
 using ITMO.Dev.ASAP.Domain.Users;
 using RichEntity.Annotations;
@@ -9,6 +10,7 @@ namespace ITMO.Dev.ASAP.Domain.Study;
 public partial class SubjectCourse : IEntity<Guid>
 {
     private readonly HashSet<Assignment> _assignments;
+    private readonly HashSet<SubjectCourseAssociation> _associations;
     private readonly HashSet<DeadlinePolicy> _deadlinePolicies;
     private readonly HashSet<SubjectCourseGroup> _groups;
     private readonly HashSet<Mentor> _mentors;
@@ -22,6 +24,7 @@ public partial class SubjectCourse : IEntity<Guid>
 
         _groups = new HashSet<SubjectCourseGroup>();
         _assignments = new HashSet<Assignment>();
+        _associations = new HashSet<SubjectCourseAssociation>();
         _mentors = new HashSet<Mentor>();
 
         // TODO: change when deadline policy customization is implemented
@@ -40,6 +43,8 @@ public partial class SubjectCourse : IEntity<Guid>
     public virtual IReadOnlyCollection<SubjectCourseGroup> Groups => _groups;
 
     public virtual IReadOnlyCollection<Assignment> Assignments => _assignments;
+
+    public virtual IReadOnlyCollection<SubjectCourseAssociation> Associations => _associations;
 
     public virtual IReadOnlyCollection<Mentor> Mentors => _mentors;
 
@@ -95,6 +100,26 @@ public partial class SubjectCourse : IEntity<Guid>
 
         if (!_assignments.Remove(assignment))
             throw new DomainInvalidOperationException($"Assignment {assignment} is not assigned to this course");
+    }
+
+    public void AddAssociation(SubjectCourseAssociation association)
+    {
+        ArgumentNullException.ThrowIfNull(association);
+
+        Type associationType = association.GetType();
+
+        if (Assignments.Any(a => a.GetType() == associationType))
+            throw new DomainInvalidOperationException($"Course {this} already has {associationType} association");
+
+        _associations.Add(association);
+    }
+
+    public void RemoveAssociation(SubjectCourseAssociation association)
+    {
+        ArgumentNullException.ThrowIfNull(association);
+
+        if (!_associations.Remove(association))
+            throw new DomainInvalidOperationException($"Association {association} is not assigned to this course");
     }
 
     public Mentor AddMentor(User user)

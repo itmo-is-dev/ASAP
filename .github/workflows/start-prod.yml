@@ -7,8 +7,6 @@ on:
       - 'src/**'
       - 'Docker/build.dockerfile'
 
-  workflow_dispatch:
-    
 jobs:
   deploy:
     name: Deploy Prod

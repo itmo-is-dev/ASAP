@@ -132,14 +132,4 @@ internal class SubjectCourseClient : ISubjectCourseClient
 
         await _handler.SendAsync(message, cancellationToken);
     }
-
-    public async Task ForceSyncSubjectCoursePointsAsync(
-        Guid subjectCourseId,
-        CancellationToken cancellationToken = default)
-    {
-        string uri = $"api/SubjectCourse/{subjectCourseId}/points/force-sync";
-        using var message = new HttpRequestMessage(HttpMethod.Post, uri);
-
-        await _handler.SendAsync(message, cancellationToken);
-    }
 }

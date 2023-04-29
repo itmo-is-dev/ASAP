@@ -8,6 +8,7 @@ using Student = ITMO.Dev.ASAP.Domain.Users.Student;
 using StudentGroup = ITMO.Dev.ASAP.Domain.Study.StudentGroup;
 using Subject = ITMO.Dev.ASAP.Domain.Study.Subject;
 using SubjectCourse = ITMO.Dev.ASAP.Domain.Study.SubjectCourse;
+using SubjectCourseAssociation = ITMO.Dev.ASAP.Domain.SubjectCourseAssociations.SubjectCourseAssociation;
 using SubjectCourseGroup = ITMO.Dev.ASAP.Domain.Study.SubjectCourseGroup;
 using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
 using User = ITMO.Dev.ASAP.Domain.Users.User;
@@ -38,6 +39,8 @@ public interface IDatabaseContext
     DbSet<Submission> Submissions { get; }
 
     DbSet<UserAssociation> UserAssociations { get; }
+
+    DbSet<SubjectCourseAssociation> SubjectCourseAssociations { get; }
 
     DbSet<DeadlinePolicy> DeadlinePolicies { get; }
 

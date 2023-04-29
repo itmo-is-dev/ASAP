@@ -1,5 +1,4 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Queue;
-using ITMO.Dev.ASAP.Application.Abstractions.SubjectCourses;
+using ITMO.Dev.ASAP.Application.Abstractions.Google;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Notifications;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Notifications;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Notifications;
@@ -28,29 +27,24 @@ internal class TableUpdateNotificationHandler :
     INotificationHandler<SubmissionUpdated.Notification>,
     INotificationHandler<StudentTransferred.Notification>
 {
+    private readonly ITableUpdateQueue _tableUpdateQueue;
     private readonly IDatabaseContext _context;
-    private readonly IQueueUpdateService _queueUpdateService;
-    private readonly ISubjectCourseUpdateService _subjectCourseUpdateService;
 
-    public TableUpdateNotificationHandler(
-        IDatabaseContext context,
-        IQueueUpdateService queueUpdateService,
-        ISubjectCourseUpdateService subjectCourseUpdateService)
+    public TableUpdateNotificationHandler(ITableUpdateQueue tableUpdateQueue, IDatabaseContext context)
     {
+        _tableUpdateQueue = tableUpdateQueue;
         _context = context;
-        _queueUpdateService = queueUpdateService;
-        _subjectCourseUpdateService = subjectCourseUpdateService;
     }
 
     public Task Handle(AssignmentCreated.Notification notification, CancellationToken cancellationToken)
     {
-        _subjectCourseUpdateService.UpdatePoints(notification.Assignment.SubjectCourseId);
+        _tableUpdateQueue.EnqueueCoursePointsUpdate(notification.Assignment.SubjectCourseId);
         return Task.CompletedTask;
     }
 
     public Task Handle(AssignmentPointsUpdated.Notification notification, CancellationToken cancellationToken)
     {
-        _subjectCourseUpdateService.UpdatePoints(notification.Assignment.SubjectCourseId);
+        _tableUpdateQueue.EnqueueCoursePointsUpdate(notification.Assignment.SubjectCourseId);
         return Task.CompletedTask;
     }
 
@@ -62,8 +56,8 @@ internal class TableUpdateNotificationHandler :
             notification.GroupAssignment.AssignmentId,
             cancellationToken);
 
-        _subjectCourseUpdateService.UpdatePoints(subjectCourse.Id);
-        _queueUpdateService.Update(subjectCourse.Id, notification.GroupAssignment.GroupId);
+        _tableUpdateQueue.EnqueueCoursePointsUpdate(subjectCourse.Id);
+        _tableUpdateQueue.EnqueueSubmissionsQueueUpdate(subjectCourse.Id, notification.GroupAssignment.GroupId);
     }
 
     public async Task Handle(StudyGroupUpdated.Notification notification, CancellationToken cancellationToken)
@@ -74,27 +68,27 @@ internal class TableUpdateNotificationHandler :
 
         foreach (SubjectCourse course in courses)
         {
-            _subjectCourseUpdateService.UpdatePoints(course.Id);
+            _tableUpdateQueue.EnqueueCoursePointsUpdate(course.Id);
         }
     }
 
     public Task Handle(SubjectCourseGroupCreated.Notification notification, CancellationToken cancellationToken)
     {
         (Guid subjectCourseId, Guid groupId) = notification.Group;
-        _queueUpdateService.Update(subjectCourseId, groupId);
+        _tableUpdateQueue.EnqueueSubmissionsQueueUpdate(subjectCourseId, groupId);
 
         return Task.CompletedTask;
     }
 
     public Task Handle(SubjectCourseGroupDeleted.Notification notification, CancellationToken cancellationToken)
     {
-        _queueUpdateService.Update(notification.SubjectCourseId, notification.GroupId);
+        _tableUpdateQueue.EnqueueSubmissionsQueueUpdate(notification.SubjectCourseId, notification.GroupId);
         return Task.CompletedTask;
     }
 
     public Task Handle(DeadlinePolicyAdded.Notification notification, CancellationToken cancellationToken)
     {
-        _subjectCourseUpdateService.UpdatePoints(notification.SubjectCourseId);
+        _tableUpdateQueue.EnqueueCoursePointsUpdate(notification.SubjectCourseId);
         return Task.CompletedTask;
     }
 
@@ -104,7 +98,7 @@ internal class TableUpdateNotificationHandler :
             notification.Submission.AssignmentId,
             cancellationToken);
 
-        _subjectCourseUpdateService.UpdatePoints(subjectCourse.Id);
+        _tableUpdateQueue.EnqueueCoursePointsUpdate(subjectCourse.Id);
     }
 
     public async Task Handle(SubmissionStateUpdated.Notification notification, CancellationToken cancellationToken)
@@ -117,7 +111,7 @@ internal class TableUpdateNotificationHandler :
             notification.Submission.StudentId,
             cancellationToken);
 
-        _queueUpdateService.Update(subjectCourse.Id, group.Id);
+        _tableUpdateQueue.EnqueueSubmissionsQueueUpdate(subjectCourse.Id, group.Id);
     }
 
     public async Task Handle(SubmissionUpdated.Notification notification, CancellationToken cancellationToken)
@@ -130,8 +124,8 @@ internal class TableUpdateNotificationHandler :
             notification.Submission.StudentId,
             cancellationToken);
 
-        _subjectCourseUpdateService.UpdatePoints(subjectCourse.Id);
-        _queueUpdateService.Update(subjectCourse.Id, group.Id);
+        _tableUpdateQueue.EnqueueCoursePointsUpdate(subjectCourse.Id);
+        _tableUpdateQueue.EnqueueSubmissionsQueueUpdate(subjectCourse.Id, group.Id);
     }
 
     public async Task Handle(StudentTransferred.Notification notification, CancellationToken cancellationToken)
@@ -154,12 +148,12 @@ internal class TableUpdateNotificationHandler :
 
         foreach (Guid subjectCourse in subjectCourses)
         {
-            _subjectCourseUpdateService.UpdatePoints(subjectCourse);
+            _tableUpdateQueue.EnqueueCoursePointsUpdate(subjectCourse);
         }
 
         foreach (var pair in pairs)
         {
-            _queueUpdateService.Update(pair.Id, pair.GroupId);
+            _tableUpdateQueue.EnqueueSubmissionsQueueUpdate(pair.Id, pair.GroupId);
         }
     }
 }

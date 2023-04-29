@@ -26,6 +26,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\core\Application\ITMO.Dev.ASAP.Application.Handlers\ITMO.Dev.ASAP.Application.Handlers.csproj" />
+        <ProjectReference Include="..\..\src\core\Application\ITMO.Dev.ASAP.Application.Google\ITMO.Dev.ASAP.Application.Google.csproj" />
         <ProjectReference Include="..\..\src\core\Infrastructure\ITMO.Dev.ASAP.DataAccess\ITMO.Dev.ASAP.DataAccess.csproj" />
         <ProjectReference Include="..\..\src\core\Infrastructure\ITMO.Dev.ASAP.Mapping\ITMO.Dev.ASAP.Mapping.csproj" />
         <ProjectReference Include="..\..\src\core\Infrastructure\ITMO.Dev.ASAP.Seeding\ITMO.Dev.ASAP.Seeding.csproj" />
