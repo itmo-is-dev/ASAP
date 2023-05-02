@@ -3,6 +3,7 @@ using System;
 using ITMO.Dev.ASAP.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ITMO.Dev.ASAP.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230427200143_RenamedDeadlinePolicyToDeadlinePenalties")]
+    partial class RenamedDeadlinePolicyToDeadlinePenalties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,7 +49,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasIndex("SubjectCourseId");
 
-                    b.ToTable("DeadlinePenalties", (string)null);
+                    b.ToTable("DeadlinePenalties");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("DeadlinePenalty");
                 });
@@ -60,7 +62,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DeadlinePolicies", (string)null);
+                    b.ToTable("DeadlinePolicies");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Study.Assignment", b =>
@@ -96,7 +98,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                     b.HasIndex("ShortName", "SubjectCourseId")
                         .IsUnique();
 
-                    b.ToTable("Assignments", (string)null);
+                    b.ToTable("Assignments");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Study.GroupAssignment", b =>
@@ -114,7 +116,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasIndex("AssignmentId");
 
-                    b.ToTable("GroupAssignments", (string)null);
+                    b.ToTable("GroupAssignments");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Study.StudentGroup", b =>
@@ -129,7 +131,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("StudentGroups", (string)null);
+                    b.ToTable("StudentGroups");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Study.Subject", b =>
@@ -144,7 +146,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subjects", (string)null);
+                    b.ToTable("Subjects");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Study.SubjectCourse", b =>
@@ -167,7 +169,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("SubjectCourses", (string)null);
+                    b.ToTable("SubjectCourses");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Study.SubjectCourseGroup", b =>
@@ -182,7 +184,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasIndex("StudentGroupId");
 
-                    b.ToTable("SubjectCourseGroups", (string)null);
+                    b.ToTable("SubjectCourseGroups");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.SubjectCourseAssociations.SubjectCourseAssociation", b =>
@@ -203,7 +205,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                     b.HasIndex("SubjectCourseId", "Discriminator")
                         .IsUnique();
 
-                    b.ToTable("SubjectCourseAssociations", (string)null);
+                    b.ToTable("SubjectCourseAssociations");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("SubjectCourseAssociation");
                 });
@@ -248,7 +250,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasIndex("GroupAssignmentGroupId", "GroupAssignmentAssignmentId");
 
-                    b.ToTable("Submissions", (string)null);
+                    b.ToTable("Submissions");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.UserAssociations.UserAssociation", b =>
@@ -269,7 +271,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                     b.HasIndex("UserId", "Discriminator")
                         .IsUnique();
 
-                    b.ToTable("UserAssociations", (string)null);
+                    b.ToTable("UserAssociations");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("UserAssociation");
                 });
@@ -286,7 +288,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Mentors", (string)null);
+                    b.ToTable("Mentors");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Users.Student", b =>
@@ -301,7 +303,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Users.User", b =>
@@ -324,7 +326,7 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ITMO.Dev.ASAP.Core.Deadlines.DeadlinePenalties.AbsoluteDeadlinePenalty", b =>

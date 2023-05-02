@@ -1,6 +1,7 @@
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.ValueConverters;
-using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Domain.Submissions;
 using ITMO.Dev.ASAP.Domain.Submissions.States;
@@ -41,6 +42,8 @@ public class DatabaseContext : DbContext, IDatabaseContext
 
     public DbSet<UserAssociation> UserAssociations { get; protected init; } = null!;
 
+    public DbSet<DeadlinePenalty> DeadlinePenalties { get; protected init; } = null!;
+
     public DbSet<DeadlinePolicy> DeadlinePolicies { get; protected init; } = null!;
 
     public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken)
@@ -59,8 +62,6 @@ public class DatabaseContext : DbContext, IDatabaseContext
         }
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(IAssemblyMarker).Assembly);
-
-        modelBuilder.Entity<DeadlinePolicy>().ToTable("DeadlinePolicy");
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

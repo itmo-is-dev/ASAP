@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
 using ITMO.Dev.ASAP.Domain.Study;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +22,7 @@ internal class AddFractionDeadlinePolicyHandling : IRequestHandler<Command>
             .Include(x => x.DeadlinePolicies)
             .SingleAsync(x => x.Id.Equals(request.SubjectCourseId), cancellationToken);
 
-        var deadlinePolicy = new FractionDeadlinePolicy(request.SpanBeforeActivation, request.Fraction);
+        var deadlinePolicy = new FractionDeadlinePenalty(request.SpanBeforeActivation, request.Fraction);
         subjectCourse.AddDeadlinePolicy(deadlinePolicy);
 
         _context.SubjectCourses.Update(subjectCourse);

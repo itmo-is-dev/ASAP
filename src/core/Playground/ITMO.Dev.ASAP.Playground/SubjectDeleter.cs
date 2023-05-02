@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
-using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Domain.Submissions;
 using ITMO.Dev.ASAP.Domain.Users;
@@ -63,9 +63,9 @@ public class SubjectDeleter
             .Include(x => x.DeadlinePolicies)
             .ToListAsync();
 
-        IEnumerable<DeadlinePolicy> deadlinePolicies = courses.SelectMany(x => x.DeadlinePolicies);
+        IEnumerable<DeadlinePenalty> deadlinePenalties = courses.SelectMany(x => x.DeadlinePolicies);
 
-        _context.DeadlinePolicies.RemoveRange(deadlinePolicies);
+        _context.DeadlinePenalties.RemoveRange(deadlinePenalties);
         await _context.SaveChangesAsync(default);
 
         _context.SubjectCourses.RemoveRange(courses);

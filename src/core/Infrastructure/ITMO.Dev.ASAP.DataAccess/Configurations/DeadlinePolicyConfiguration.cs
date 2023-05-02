@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+﻿using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,12 +8,8 @@ public class DeadlinePolicyConfiguration : IEntityTypeConfiguration<DeadlinePoli
 {
     public void Configure(EntityTypeBuilder<DeadlinePolicy> builder)
     {
-        builder.Property<Guid>("Id");
-        builder.HasKey("Id");
-
-        builder.HasDiscriminator<string>("Discriminator")
-            .HasValue<AbsoluteDeadlinePolicy>(nameof(AbsoluteDeadlinePolicy))
-            .HasValue<FractionDeadlinePolicy>(nameof(FractionDeadlinePolicy))
-            .HasValue<CappingDeadlinePolicy>(nameof(CappingDeadlinePolicy));
+        builder
+            .Navigation(dp => dp.DeadlinePenalties)
+            .HasField("_deadlinePenalties");
     }
 }

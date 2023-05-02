@@ -1,16 +1,15 @@
 using Bogus;
-using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
+using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
+using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Seeding.Options;
-using Subject = ITMO.Dev.ASAP.Domain.Study.Subject;
-using SubjectCourse = ITMO.Dev.ASAP.Domain.Study.SubjectCourse;
-using User = ITMO.Dev.ASAP.Domain.Users.User;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators;
 
 public class SubjectCourseGenerator : EntityGeneratorBase<SubjectCourse>
 {
-    private readonly IEntityGenerator<DeadlinePolicy> _deadlinePolicyGenerator;
+    private readonly IEntityGenerator<DeadlinePenalty> _deadlinePolicyGenerator;
     private readonly Faker _faker;
     private readonly IEntityGenerator<Subject> _subjectGenerator;
     private readonly IEntityGenerator<User> _userGenerator;
@@ -20,7 +19,7 @@ public class SubjectCourseGenerator : EntityGeneratorBase<SubjectCourse>
         IEntityGenerator<User> userGenerator,
         IEntityGenerator<Subject> subjectGenerator,
         Faker faker,
-        IEntityGenerator<DeadlinePolicy> deadlinePolicyGenerator)
+        IEntityGenerator<DeadlinePenalty> deadlinePolicyGenerator)
         : base(options)
     {
         _userGenerator = userGenerator;
@@ -35,7 +34,7 @@ public class SubjectCourseGenerator : EntityGeneratorBase<SubjectCourse>
 
         int deadlineCount = _faker.Random.Int(0, _deadlinePolicyGenerator.GeneratedEntities.Count);
 
-        IEnumerable<DeadlinePolicy> deadlines = Enumerable.Range(0, deadlineCount)
+        IEnumerable<DeadlinePenalty> deadlines = Enumerable.Range(0, deadlineCount)
             .Select(_ => _faker.Random.Int(0, _deadlinePolicyGenerator.GeneratedEntities.Count - 1))
             .Select(i => _deadlinePolicyGenerator.GeneratedEntities[i])
             .Distinct();
@@ -60,7 +59,7 @@ public class SubjectCourseGenerator : EntityGeneratorBase<SubjectCourse>
             subjectCourse.AddMentor(user);
         }
 
-        foreach (DeadlinePolicy deadline in deadlines)
+        foreach (DeadlinePenalty deadline in deadlines)
         {
             subjectCourse.AddDeadlinePolicy(deadline);
         }
