@@ -8,6 +8,17 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("""
+                update "DeadlinePolicy"
+                set "Discriminator" =
+                    case "Discriminator"
+                    when 'AbsoluteDeadlinePolicy' then 'AbsoluteDeadlinePenalty'
+                    when 'FractionDeadlinePolicy' then 'FractionDeadlinePenalty'
+                    when 'CappingDeadlinePolicy' then 'CappingDeadlinePenalty'
+                    else 'DeadlinePenalty'
+                    end
+            """);
+
             migrationBuilder.RenameTable(
                 name: "DeadlinePolicy",
                 newName: "DeadlinePenalties");
@@ -85,6 +96,17 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
             migrationBuilder.RenameTable(
                 name: "DeadlinePenalties",
                 newName: "DeadlinePolicy");
+
+            migrationBuilder.Sql("""
+                update "DeadlinePolicy"
+                set "Discriminator" =
+                    case "Discriminator"
+                    when 'AbsoluteDeadlinePenalty' then 'AbsoluteDeadlinePolicy'
+                    when 'FractionDeadlinePenalty' then 'FractionDeadlinePolicy'
+                    when 'CappingDeadlinePenalty' then 'CappingDeadlinePolicy'
+                    else 'DeadlinePolicy'
+                    end
+            """);
         }
     }
 }
