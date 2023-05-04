@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Domain.Submissions.States;
 using ITMO.Dev.ASAP.Domain.Tools;
@@ -151,7 +151,7 @@ public partial class Submission : IEntity<Guid>
             return null;
 
         Points points = Points.Value;
-        DeadlinePolicy? deadlinePolicy = GetEffectiveDeadlinePolicy();
+        DeadlinePenalty? deadlinePolicy = GetEffectiveDeadlinePolicy();
 
         if (deadlinePolicy is not null)
             points = deadlinePolicy.Apply(points);
@@ -177,7 +177,7 @@ public partial class Submission : IEntity<Guid>
         return penaltyPoints;
     }
 
-    private DeadlinePolicy? GetEffectiveDeadlinePolicy()
+    private DeadlinePenalty? GetEffectiveDeadlinePolicy()
     {
         DateOnly deadline = GroupAssignment.Deadline;
 
@@ -186,7 +186,7 @@ public partial class Submission : IEntity<Guid>
 
         var submissionDeadlineOffset = TimeSpan.FromDays(SubmissionDateOnly.DayNumber - deadline.DayNumber);
 
-        DeadlinePolicy? activeDeadlinePolicy = GroupAssignment
+        DeadlinePenalty? activeDeadlinePolicy = GroupAssignment
             .Assignment
             .SubjectCourse
             .DeadlinePolicies

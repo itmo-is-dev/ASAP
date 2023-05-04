@@ -55,6 +55,13 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
                 table: "SubjectCourseAssociations",
                 columns: new[] { "SubjectCourseId", "Discriminator" },
                 unique: true);
+
+            migrationBuilder.Sql("""
+            insert into "SubjectCourseAssociations" ("SubjectCourseId", "SpreadsheetId", "Discriminator")
+            select "Id", "SpreadsheetId", 'GoogleTableSubjectCourseAssociation' from "GoogleSubjectCourse" as sca
+            """);
+
+            migrationBuilder.DropTable(name: "GoogleSubjectCourse");
         }
     }
 }

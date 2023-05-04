@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
 using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
 using ITMO.Dev.ASAP.Domain.Users;
 using RichEntity.Annotations;
@@ -9,7 +9,7 @@ namespace ITMO.Dev.ASAP.Domain.Study;
 public partial class SubjectCourse : IEntity<Guid>
 {
     private readonly HashSet<Assignment> _assignments;
-    private readonly HashSet<DeadlinePolicy> _deadlinePolicies;
+    private readonly HashSet<DeadlinePenalty> _deadlinePolicies;
     private readonly HashSet<SubjectCourseGroup> _groups;
     private readonly HashSet<Mentor> _mentors;
 
@@ -27,7 +27,7 @@ public partial class SubjectCourse : IEntity<Guid>
         // TODO: change when deadline policy customization is implemented
         _deadlinePolicies = Enumerable
             .Range(0, 5)
-            .Select<int, DeadlinePolicy>(i => new FractionDeadlinePolicy(TimeSpan.FromDays(7) * i, 1 - (0.2 * (i + 1))))
+            .Select<int, DeadlinePenalty>(i => new FractionDeadlinePenalty(TimeSpan.FromDays(7) * i, 1 - (0.2 * (i + 1))))
             .ToHashSet();
     }
 
@@ -43,7 +43,7 @@ public partial class SubjectCourse : IEntity<Guid>
 
     public virtual IReadOnlyCollection<Mentor> Mentors => _mentors;
 
-    public virtual IReadOnlyCollection<DeadlinePolicy> DeadlinePolicies => _deadlinePolicies;
+    public virtual IReadOnlyCollection<DeadlinePenalty> DeadlinePolicies => _deadlinePolicies;
 
     public override string ToString()
     {
@@ -118,7 +118,7 @@ public partial class SubjectCourse : IEntity<Guid>
             throw new DomainInvalidOperationException($"Mentor {mentor} is not a mentor of this subject course");
     }
 
-    public void AddDeadlinePolicy(DeadlinePolicy policy)
+    public void AddDeadlinePolicy(DeadlinePenalty policy)
     {
         ArgumentNullException.ThrowIfNull(policy);
 
@@ -126,7 +126,7 @@ public partial class SubjectCourse : IEntity<Guid>
             throw new DomainInvalidOperationException($"Deadline span {policy} already exists");
     }
 
-    public void RemoveDeadlinePolicy(DeadlinePolicy policy)
+    public void RemoveDeadlinePolicy(DeadlinePenalty policy)
     {
         ArgumentNullException.ThrowIfNull(policy);
 

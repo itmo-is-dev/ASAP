@@ -1,17 +1,11 @@
-using ITMO.Dev.ASAP.Domain.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Submissions;
+using ITMO.Dev.ASAP.Domain.UserAssociations;
+using ITMO.Dev.ASAP.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Assignment = ITMO.Dev.ASAP.Domain.Study.Assignment;
-using GroupAssignment = ITMO.Dev.ASAP.Domain.Study.GroupAssignment;
-using Mentor = ITMO.Dev.ASAP.Domain.Users.Mentor;
-using Student = ITMO.Dev.ASAP.Domain.Users.Student;
-using StudentGroup = ITMO.Dev.ASAP.Domain.Study.StudentGroup;
-using Subject = ITMO.Dev.ASAP.Domain.Study.Subject;
-using SubjectCourse = ITMO.Dev.ASAP.Domain.Study.SubjectCourse;
-using SubjectCourseGroup = ITMO.Dev.ASAP.Domain.Study.SubjectCourseGroup;
-using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
-using User = ITMO.Dev.ASAP.Domain.Users.User;
-using UserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.UserAssociation;
 
 namespace ITMO.Dev.ASAP.DataAccess.Abstractions;
 
@@ -39,7 +33,9 @@ public interface IDatabaseContext
 
     DbSet<UserAssociation> UserAssociations { get; }
 
-    DbSet<DeadlinePolicy> DeadlinePolicies { get; }
+    DbSet<DeadlinePenalty> DeadlinePenalties { get; }
+
+    DbSet<DeadlinePolicy> DeadlinePolicies { get;  }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 
