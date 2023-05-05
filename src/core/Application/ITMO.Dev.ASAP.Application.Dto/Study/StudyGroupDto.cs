@@ -11,10 +11,4 @@ public class StudyGroupDto
     public Guid Id { get; set; }
 
     public string Name { get; set; }
-
-    public void Deconstruct(out Guid id, out string name)
-    {
-        id = Id;
-        name = Name;
-    }
 }

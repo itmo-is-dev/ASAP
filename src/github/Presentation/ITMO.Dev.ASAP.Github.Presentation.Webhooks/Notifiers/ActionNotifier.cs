@@ -37,21 +37,6 @@ public class ActionNotifier : IActionNotifier
             message);
     }
 
-    public async Task SendCommitComment(WebhookEvent webhookEvent, string sha, string message)
-    {
-        ParseWebhookEvent(webhookEvent, out Repository repository, out InstallationLite installation);
-
-        GitHubClient installationClient = _installationClientFactory.GetClient(installation.Id);
-
-        _logger.LogInformation(
-            "Sending comment to organization = {Organization}, repository = {Repository}, commit = {CommitSha}",
-            repository.Organization,
-            repository.Name,
-            sha);
-
-        await installationClient.Repository.Comment.Create(repository.Id, sha, new NewCommitComment(message));
-    }
-
     public async Task ReactInComments(WebhookEvent webhookEvent, long commentId, bool isSuccessful)
     {
         ParseWebhookEvent(webhookEvent, out Repository repository, out InstallationLite installation);

@@ -16,7 +16,7 @@ public class SubjectCourseServiceTest : TestBase
 {
     private readonly ISubjectCourseService _service;
 
-    public SubjectCourseServiceTest()
+    public SubjectCourseServiceTest() : base()
     {
         var githubUserService = new Mock<IGithubUserService>();
 

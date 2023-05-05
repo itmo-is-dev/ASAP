@@ -20,7 +20,7 @@ public class UpdateGroupAssignmentDeadlineTest : TestBase
     private readonly IPublisher _publisher = new Mock<IPublisher>().Object;
     private readonly GroupAssignment _groupAssignment;
 
-    public UpdateGroupAssignmentDeadlineTest()
+    public UpdateGroupAssignmentDeadlineTest() : base()
     {
         _groupAssignment = Context.GroupAssignments.First();
     }
