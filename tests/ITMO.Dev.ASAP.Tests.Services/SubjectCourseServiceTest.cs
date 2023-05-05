@@ -44,7 +44,7 @@ public class SubjectCourseServiceTest : TestBase
     }
 
     [Fact]
-    public async Task CalculatePointsAsync_Check_UniqueAssignmentIds()
+    public async Task CalculatePointsAsync_Shoud_ReturnUniqueAssignmentIds()
     {
         SubjectCourse course = await Context.SubjectCourses
             .Where(x => x.Assignments

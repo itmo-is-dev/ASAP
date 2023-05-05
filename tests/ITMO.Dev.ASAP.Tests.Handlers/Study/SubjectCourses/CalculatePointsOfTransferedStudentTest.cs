@@ -14,7 +14,7 @@ namespace ITMO.Dev.ASAP.Tests.Handlers.Study.SubjectCourses;
 public class CalculatePointsOfTransferedStudentTest : TestBase
 {
     [Fact]
-    public async Task TransferStudent_CreateNewSubmission_RateSubmission_CalculatePoints()
+    public async Task TransferStudent_CalculateSubmissions_Should_BeEqual()
     {
         Assignment assignment = await Context.Assignments
             .Select(x => x)
