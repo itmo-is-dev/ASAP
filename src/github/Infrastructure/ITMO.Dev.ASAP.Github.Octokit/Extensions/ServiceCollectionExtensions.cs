@@ -16,7 +16,7 @@ namespace ITMO.Dev.ASAP.Github.Octokit.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddGithubServices(
+    public static IServiceCollection AddGithubOctokitIntegration(
         this IServiceCollection services,
         IConfiguration configuration)
     {

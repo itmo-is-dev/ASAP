@@ -186,6 +186,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Google.Presen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Google.Application.Mapping", "src\google\Application\ITMO.Dev.ASAP.Google.Application.Mapping\ITMO.Dev.ASAP.Google.Application.Mapping.csproj", "{DFCC6600-B5B2-4B4A-9556-BA5738C02266}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Github", "src\github\ITMO.Dev.ASAP.Github\ITMO.Dev.ASAP.Github.csproj", "{0C75B628-31A7-4040-860C-1BB663A8D139}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -444,6 +446,10 @@ Global
 		{DFCC6600-B5B2-4B4A-9556-BA5738C02266}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFCC6600-B5B2-4B4A-9556-BA5738C02266}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFCC6600-B5B2-4B4A-9556-BA5738C02266}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C75B628-31A7-4040-860C-1BB663A8D139}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C75B628-31A7-4040-860C-1BB663A8D139}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C75B628-31A7-4040-860C-1BB663A8D139}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C75B628-31A7-4040-860C-1BB663A8D139}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -532,6 +538,7 @@ Global
 		{0134E769-DCD4-45B6-B603-F9FB67164DA7} = {07315498-2FD7-4226-B8EE-64BD71FD2466}
 		{527BD0BC-8C88-4FDD-852E-208DF587F9EF} = {07315498-2FD7-4226-B8EE-64BD71FD2466}
 		{DFCC6600-B5B2-4B4A-9556-BA5738C02266} = {EA240BA9-2596-42AD-9FAA-55DF281F8BDA}
+		{0C75B628-31A7-4040-860C-1BB663A8D139} = {6EDB1061-C85C-4FB4-B529-A130B63B69A4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CD5C67DB-70F8-4C47-A3F4-7C94BECE1657}

@@ -5,11 +5,7 @@ using ITMO.Dev.ASAP.Application.Handlers.Extensions;
 using ITMO.Dev.ASAP.Configuration;
 using ITMO.Dev.ASAP.Controllers;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
-using ITMO.Dev.ASAP.Github.Application.Handlers.Extensions;
-using ITMO.Dev.ASAP.Github.DataAccess.Extensions;
-using ITMO.Dev.ASAP.Github.Octokit.Extensions;
-using ITMO.Dev.ASAP.Github.Presentation.Services.Extensions;
-using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Extensions;
+using ITMO.Dev.ASAP.Github;
 using ITMO.Dev.ASAP.Google;
 using ITMO.Dev.ASAP.Identity.Extensions;
 using ITMO.Dev.ASAP.Presentation.Rpc.Extensions;
@@ -52,21 +48,13 @@ internal static class ServiceCollectionExtensions
                 .UseNpgsql(applicationDatabaseConnectionString)
                 .UseLazyLoadingProxies());
 
-        serviceCollection
-            .AddGithubPresentation()
-            .AddGithubPresentationServices()
-            .AddGithubServices(configuration)
-            .AddGithubApplicationHandlers()
-            .AddGithubDatabaseContext(o => o
-                .UseNpgsql(applicationDatabaseConnectionString)
-                .UseLazyLoadingProxies());
-
         serviceCollection.AddIdentityConfiguration(
             identityConfigurationSection,
             x => x.UseNpgsql(
                 webApiConfiguration.PostgresConfiguration.ToConnectionString(webApiConfiguration.DbNamesConfiguration
                     .IdentityDbName)));
 
+        serviceCollection.AddAsapGithub(configuration, applicationDatabaseConnectionString);
         serviceCollection.AddAsapGoogle(configuration, applicationDatabaseConnectionString);
 
         if (isDevelopmentEnvironment && webApiConfiguration.TestEnvironmentConfiguration is not null)

@@ -3,7 +3,7 @@ using ITMO.Dev.ASAP.Configuration;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
 using ITMO.Dev.ASAP.DeveloperEnvironment;
 using ITMO.Dev.ASAP.Extensions;
-using ITMO.Dev.ASAP.Github.DataAccess.Extensions;
+using ITMO.Dev.ASAP.Github;
 using ITMO.Dev.ASAP.Helpers;
 using System.Security.Claims;
 
@@ -49,7 +49,7 @@ internal class Program
             await authorizationService.CreateRoleIfNotExistsAsync(AsapIdentityRoleNames.MentorRoleName);
             await authorizationService.CreateRoleIfNotExistsAsync(AsapIdentityRoleNames.ModeratorRoleName);
 
-            await scope.ServiceProvider.UseGithubDatabaseContext();
+            await scope.UseAsapGithubAsync();
             await scope.ServiceProvider.UseDatabaseContext();
 
             await SeedingHelper.SeedAdmins(scope.ServiceProvider, app.Configuration);
