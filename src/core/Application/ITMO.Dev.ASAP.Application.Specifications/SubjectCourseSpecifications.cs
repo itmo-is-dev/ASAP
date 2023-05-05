@@ -12,7 +12,4 @@ public static class SubjectCourseSpecifications
             .Select(x => x.StudentGroup)
             .SelectMany(x => x.Students);
     }
-
-    public static IQueryable<bool> IsMentor(this IQueryable<SubjectCourse> queryable, Guid mentorId)
-        => queryable.SelectMany(x => x.Mentors).Select(x => x.UserId.Equals(mentorId));
 }

@@ -10,8 +10,4 @@
 
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="Submissions\Models" />
-    </ItemGroup>
-
 </Project>

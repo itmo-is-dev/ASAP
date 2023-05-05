@@ -11,10 +11,4 @@ public class QueryParameter<T>
     public T Type { get; set; }
 
     public string Pattern { get; set; }
-
-    public void Deconstruct(out T type, out string pattern)
-    {
-        type = Type;
-        pattern = Pattern;
-    }
 }
