@@ -49,8 +49,9 @@ public class SubjectCourseService : ISubjectCourseService
             .ToListAsync(cancellationToken);
 
         IEnumerable<StudentAssignment> studentAssignmentPoints = assignments
-            .SelectMany(x => x.GroupAssignments)
-            .SelectMany(ga => ga.Group.Students.Select(s => new StudentAssignment(s, ga)));
+            .SelectMany(
+                assignment => assignment.GroupAssignments.SelectMany(x => x.Group.Students),
+                (assignment, student) => new StudentAssignment(student, assignment));
 
         List<StudentPointsDto> studentPoints = await studentAssignmentPoints
             .GroupBy(x => x.Student)
