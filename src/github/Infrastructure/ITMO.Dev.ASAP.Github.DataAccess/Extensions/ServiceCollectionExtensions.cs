@@ -15,9 +15,9 @@ public static class ServiceCollectionExtensions
         return collection;
     }
 
-    public static Task UseGithubDatabaseContext(this IServiceProvider provider)
+    public static Task UseGithubDatabaseContext(this IServiceScope provider)
     {
-        GithubDatabaseContext context = provider.GetRequiredService<GithubDatabaseContext>();
+        GithubDatabaseContext context = provider.ServiceProvider.GetRequiredService<GithubDatabaseContext>();
         return context.Database.MigrateAsync();
     }
 }

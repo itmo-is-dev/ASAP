@@ -1,4 +1,3 @@
-using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Domain.Models;
 using ITMO.Dev.ASAP.Domain.Submissions;
 using ITMO.Dev.ASAP.Domain.Users;
@@ -9,16 +8,9 @@ namespace ITMO.Dev.ASAP.Domain.Study;
 
 public partial class StudentAssignment : IEntity
 {
-    public StudentAssignment(Student student, GroupAssignment assignment)
-        : this(assignment.GroupId, assignment.AssignmentId, student.UserId)
+    public StudentAssignment(Student student, Assignment assignment)
+        : this(assignment.Id, student.UserId)
     {
-        if (assignment.Group.Students.Contains(student) is false)
-        {
-            string studentString = student.ToString();
-            string groupString = assignment.Group.ToString();
-            throw StudentAssignmentException.StudentGroupAssignmentMismatch(studentString, groupString);
-        }
-
         Student = student;
         Assignment = assignment;
     }
@@ -27,13 +19,14 @@ public partial class StudentAssignment : IEntity
     public Student Student { get; }
 
     [KeyProperty]
-    public GroupAssignment Assignment { get; }
+    public Assignment Assignment { get; }
 
     public StudentAssignmentPoints? Points => CalculatePoints();
 
     private StudentAssignmentPoints? CalculatePoints()
     {
-        IEnumerable<Submission> submissions = Assignment.Submissions
+        IEnumerable<Submission> submissions = Assignment.GroupAssignments
+            .SelectMany(x => x.Submissions)
             .Where(x => x.Student.Equals(Student))
             .Where(x => x.State.IsTerminalEffectiveState);
 
@@ -51,7 +44,7 @@ public partial class StudentAssignment : IEntity
 
         return new StudentAssignmentPoints(
             Student,
-            Assignment.Assignment,
+            Assignment,
             isBanned,
             points ?? ValueObject.Points.None,
             submission.SubmissionDateOnly);
