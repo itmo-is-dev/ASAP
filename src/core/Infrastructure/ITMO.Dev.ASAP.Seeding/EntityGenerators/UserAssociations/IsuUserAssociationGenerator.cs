@@ -42,7 +42,7 @@ public class IsuUserAssociationGenerator : EntityGeneratorBase<IsuUserAssociatio
         }
 
         int id = _faker.Random.Int(MinIsuNumber, MaxIsuNumber);
-        var association = new IsuUserAssociation(_faker.Random.Guid(), user, id);
+        var association = IsuUserAssociation.CreateAndAttach(_faker.Random.Guid(), user, id);
 
         return association;
     }
