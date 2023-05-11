@@ -1,8 +1,8 @@
 ﻿using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Notifications;
 using ITMO.Dev.ASAP.Github.Application.DataAccess;
-using ITMO.Dev.ASAP.Github.Common.Exceptions.Entities;
 using ITMO.Dev.ASAP.Github.Domain.Assignments;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace ITMO.Dev.ASAP.Github.Application.Handlers.Assignments;
 
@@ -10,21 +10,33 @@ public class AssignmentCreatedHandler : INotificationHandler<AssignmentCreated.N
 {
     private readonly IDatabaseContext _context;
 
-    public AssignmentCreatedHandler(IDatabaseContext context)
+    private readonly ILogger<AssignmentCreatedHandler> _logger;
+
+    public AssignmentCreatedHandler(IDatabaseContext context, ILogger<AssignmentCreatedHandler> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task Handle(AssignmentCreated.Notification notification, CancellationToken cancellationToken)
     {
+        var assignment = new GithubAssignment(notification.Assignment.Id, notification.Assignment.ShortName);
+
         if (await _context.Assignments.FindAsync(notification.Assignment.Id) is not null)
         {
-            throw GithubAssignmentException.AssignmentAlreadyExists(notification.Assignment.Id, notification.Assignment.Title);
+            _logger.Log(
+                LogLevel.Warning,
+                "Updating github assignment that already exists, id: {Id}, name: {ShortName}",
+                notification.Assignment.Id,
+                notification.Assignment.ShortName);
+
+            _context.Assignments.Update(assignment);
+        }
+        else
+        {
+            _context.Assignments.Add(assignment);
         }
 
-        var assignment = new GithubAssignment(notification.Assignment.Id, notification.Assignment.SubjectCourseId, notification.Assignment.ShortName);
-
-        await _context.Assignments.AddAsync(assignment, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
     }
 }
