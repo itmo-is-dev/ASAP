@@ -22,7 +22,7 @@ public class AssignmentCreatedHandler : INotificationHandler<AssignmentCreated.N
             throw GithubAssignmentException.AssignmentAlreadyExists(notification.Assignment.Id, notification.Assignment.Title);
         }
 
-        var assignment = new GithubAssignment(notification.Assignment.Id, notification.Assignment.ShortName);
+        var assignment = new GithubAssignment(notification.Assignment.Id, notification.Assignment.SubjectCourseId, notification.Assignment.ShortName);
 
         await _context.Assignments.AddAsync(assignment, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
