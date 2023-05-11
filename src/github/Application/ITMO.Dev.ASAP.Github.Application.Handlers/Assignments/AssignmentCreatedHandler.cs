@@ -20,7 +20,7 @@ public class AssignmentCreatedHandler : INotificationHandler<AssignmentCreated.N
 
     public async Task Handle(AssignmentCreated.Notification notification, CancellationToken cancellationToken)
     {
-        var assignment = new GithubAssignment(notification.Assignment.Id, notification.Assignment.ShortName);
+        var assignment = new GithubAssignment(notification.Assignment.Id, notification.Assignment.SubjectCourseId, notification.Assignment.ShortName);
 
         if (await _context.Assignments.FindAsync(notification.Assignment.Id) is not null)
         {
