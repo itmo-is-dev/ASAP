@@ -10,9 +10,15 @@ public class EntityNotFoundException : AsapGithubException
     public static EntityNotFoundException SubjectCourse(string organizationName)
         => new EntityNotFoundException($"Subject course for {organizationName} was not found");
 
+    public static EntityNotFoundException SubjectCourse()
+        => new EntityNotFoundException($"Subject course was not found");
+
     public static EntityNotFoundException Submission()
         => new EntityNotFoundException("Could not find submission");
 
     public static EntityNotFoundException Assignment()
         => new EntityNotFoundException("Could not find assignment");
+
+    public static EntityNotFoundException User()
+        => new EntityNotFoundException("Could not find user");
 }

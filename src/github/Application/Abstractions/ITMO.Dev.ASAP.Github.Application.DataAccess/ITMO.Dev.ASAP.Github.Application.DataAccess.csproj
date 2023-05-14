@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
     
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore"/>
+        <PackageReference Include="SourceKit.Generators.Builder" />
+        <PackageReference Include="System.Linq.Async" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\ITMO.Dev.ASAP.Github.Common\ITMO.Dev.ASAP.Github.Common.csproj"/>
-        <ProjectReference Include="..\..\..\ITMO.Dev.ASAP.Github.Domain\ITMO.Dev.ASAP.Github.Domain.csproj"/>
+        <ProjectReference Include="..\..\..\ITMO.Dev.ASAP.Github.Common\ITMO.Dev.ASAP.Github.Common.csproj" />
+        <ProjectReference Include="..\..\..\ITMO.Dev.ASAP.Github.Domain\ITMO.Dev.ASAP.Github.Domain.csproj" />
     </ItemGroup>
 
 </Project>

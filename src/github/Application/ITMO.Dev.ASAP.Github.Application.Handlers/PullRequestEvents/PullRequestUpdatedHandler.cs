@@ -15,29 +15,26 @@ namespace ITMO.Dev.ASAP.Github.Application.Handlers.PullRequestEvents;
 
 internal class PullRequestUpdatedHandler : IRequestHandler<Command>
 {
-    private readonly IDatabaseContext _context;
     private readonly IAsapSubmissionWorkflowService _submissionWorkflowService;
     private readonly IPullRequestEventNotifier _notifier;
+    private readonly IPersistenceContext _context;
 
     public PullRequestUpdatedHandler(
-        IDatabaseContext context,
         IAsapSubmissionWorkflowService submissionWorkflowService,
-        IPullRequestEventNotifier notifier)
+        IPullRequestEventNotifier notifier,
+        IPersistenceContext context)
     {
-        _context = context;
         _submissionWorkflowService = submissionWorkflowService;
         _notifier = notifier;
+        _context = context;
     }
 
     public async Task Handle(Command request, CancellationToken cancellationToken)
     {
-        GithubUser issuer = await _context.Users
-            .GetForUsernameAsync(request.PullRequest.Sender, cancellationToken);
+        GithubUser issuer = await _context.Users.GetForUsernameAsync(request.PullRequest.Sender, cancellationToken);
+        GithubUser user = await _context.Users.GetForUsernameAsync(request.PullRequest.Repository, cancellationToken);
 
-        GithubUser user = await _context.Users
-            .GetForUsernameAsync(request.PullRequest.Repository, cancellationToken);
-
-        GithubAssignment assignment = await _context
+        GithubAssignment assignment = await _context.Assignments
             .GetAssignmentForPullRequestAsync(request.PullRequest, cancellationToken);
 
         SubmissionUpdateResult result = await _submissionWorkflowService.SubmissionUpdatedAsync(
@@ -59,7 +56,7 @@ internal class PullRequestUpdatedHandler : IRequestHandler<Command>
                 request.PullRequest.PullRequestNumber);
 
             _context.Submissions.Add(submission);
-            await _context.SaveChangesAsync(default);
+            await _context.CommitAsync(default);
 
             string message = UserCommandProcessingMessage.SubmissionCreated(result.Submission.ToDisplayString());
             await _notifier.SendCommentToPullRequest(message);

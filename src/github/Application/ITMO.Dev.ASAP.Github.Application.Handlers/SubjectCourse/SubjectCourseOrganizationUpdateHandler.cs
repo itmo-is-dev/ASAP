@@ -1,49 +1,47 @@
 using ITMO.Dev.ASAP.Github.Application.Contracts.SubjectCourses.Commands;
 using ITMO.Dev.ASAP.Github.Application.DataAccess;
-using ITMO.Dev.ASAP.Github.Application.DataAccess.Extensions;
+using ITMO.Dev.ASAP.Github.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Models;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Services;
-using ITMO.Dev.ASAP.Github.Application.Specifications;
 using ITMO.Dev.ASAP.Github.Domain.SubjectCourses;
 using ITMO.Dev.ASAP.Github.Domain.Users;
 using ITMO.Dev.ASAP.Presentation.Contracts.Services;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Octokit;
 
 namespace ITMO.Dev.ASAP.Github.Application.Handlers.SubjectCourse;
 
-internal class SubjectCourseOrganizationUpdateHandler
-    : IRequestHandler<UpdateSubjectCourseOrganizations.Command>,
-        IRequestHandler<UpdateSubjectCourseOrganization.Command>
+internal class SubjectCourseOrganizationUpdateHandler :
+    IRequestHandler<UpdateSubjectCourseOrganizations.Command>,
+    IRequestHandler<UpdateSubjectCourseOrganization.Command>
 {
     private readonly ILogger<SubjectCourseOrganizationUpdateHandler> _logger;
-    private readonly IDatabaseContext _context;
     private readonly IAsapSubjectCourseService _asapSubjectCourseService;
     private readonly IGithubOrganizationService _githubOrganizationService;
     private readonly IGithubRepositoryService _githubRepositoryService;
+    private readonly IPersistenceContext _context;
 
     public SubjectCourseOrganizationUpdateHandler(
         ILogger<SubjectCourseOrganizationUpdateHandler> logger,
-        IDatabaseContext context,
         IAsapSubjectCourseService asapSubjectCourseService,
         IGithubOrganizationService githubOrganizationService,
-        IGithubRepositoryService githubRepositoryService)
+        IGithubRepositoryService githubRepositoryService,
+        IPersistenceContext context)
     {
         _logger = logger;
-        _context = context;
         _asapSubjectCourseService = asapSubjectCourseService;
         _githubOrganizationService = githubOrganizationService;
         _githubRepositoryService = githubRepositoryService;
+        _context = context;
     }
 
     public async Task Handle(UpdateSubjectCourseOrganizations.Command request, CancellationToken cancellationToken)
     {
-        IReadOnlyCollection<GithubSubjectCourse> subjectCourses = await _context.SubjectCourses
-            .ToListAsync(cancellationToken);
+        IAsyncEnumerable<GithubSubjectCourse> subjectCourses = _context.SubjectCourses
+            .QueryAsync(GithubSubjectCourseQuery.Build(_ => _), cancellationToken);
 
-        foreach (GithubSubjectCourse subjectCourse in subjectCourses)
+        await foreach (GithubSubjectCourse subjectCourse in subjectCourses.WithCancellation(cancellationToken))
         {
             await UpdateOrganizationAsync(subjectCourse, cancellationToken);
         }
@@ -51,8 +49,11 @@ internal class SubjectCourseOrganizationUpdateHandler
 
     public async Task Handle(UpdateSubjectCourseOrganization.Command request, CancellationToken cancellationToken)
     {
+        var query = GithubSubjectCourseQuery.Build(x => x.WithId(request.SubjectCourseId).WithLimit(2));
+
         GithubSubjectCourse subjectCourse = await _context.SubjectCourses
-            .GetByIdAsync(request.SubjectCourseId, cancellationToken);
+            .QueryAsync(query, cancellationToken)
+            .SingleAsync(cancellationToken);
 
         await UpdateOrganizationAsync(subjectCourse, cancellationToken);
     }
@@ -62,8 +63,10 @@ internal class SubjectCourseOrganizationUpdateHandler
         IReadOnlyCollection<Guid> studentIds = await _asapSubjectCourseService
             .GetSubjectCourseStudentIds(subjectCourse.Id, cancellationToken);
 
+        var githubUserQuery = GithubUserQuery.Build(x => x.WithIds(studentIds));
+
         IReadOnlyCollection<GithubUser> githubUsers = await _context.Users
-            .WithIds(studentIds)
+            .QueryAsync(githubUserQuery, cancellationToken)
             .ToListAsync(cancellationToken);
 
         string[] usernames = githubUsers.Select(a => a.Username).ToArray();

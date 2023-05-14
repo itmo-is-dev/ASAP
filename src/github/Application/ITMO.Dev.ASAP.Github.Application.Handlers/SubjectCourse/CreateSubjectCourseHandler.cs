@@ -11,10 +11,10 @@ namespace ITMO.Dev.ASAP.Github.Application.Handlers.SubjectCourse;
 
 internal class CreateSubjectCourseHandler : IRequestHandler<Command, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly IAsapSubjectCourseService _asapSubjectCourseService;
 
-    public CreateSubjectCourseHandler(IDatabaseContext context, IAsapSubjectCourseService asapSubjectCourseService)
+    public CreateSubjectCourseHandler(IPersistenceContext context, IAsapSubjectCourseService asapSubjectCourseService)
     {
         _context = context;
         _asapSubjectCourseService = asapSubjectCourseService;
@@ -35,7 +35,7 @@ internal class CreateSubjectCourseHandler : IRequestHandler<Command, Response>
             request.MentorTeamName);
 
         _context.SubjectCourses.Add(githubSubjectCourse);
-        await _context.SaveChangesAsync(default);
+        await _context.CommitAsync(default);
 
         GithubSubjectCourseDto dto = githubSubjectCourse.ToDto();
 
