@@ -28,7 +28,7 @@ public class GithubSubjectCourseRepositoryTests : IAsyncLifetime
     public async Task Add_ShouldAddDatabaseRecordCorrectly()
     {
         // Arrange
-        var unit = new UnitOfWork(_database.Connection);
+        using var unit = new UnitOfWork(_database.Connection);
         var repository = new GithubSubjectCourseRepository(_database.Connection, unit);
         GithubSubjectCourse subjectCourse = _faker.GithubSubjectCourse();
 
@@ -51,7 +51,7 @@ public class GithubSubjectCourseRepositoryTests : IAsyncLifetime
     public async Task Update_ShouldUpdateDatabaseRecordCorrectly()
     {
         // Arrange
-        var unit = new UnitOfWork(_database.Connection);
+        using var unit = new UnitOfWork(_database.Connection);
         var repository = new GithubSubjectCourseRepository(_database.Connection, unit);
         GithubSubjectCourse subjectCourse = _faker.GithubSubjectCourse();
 
@@ -79,7 +79,7 @@ public class GithubSubjectCourseRepositoryTests : IAsyncLifetime
     public async Task QueryAsync_ShouldReturnCorrectRecords()
     {
         // Arrange
-        var unit = new UnitOfWork(_database.Connection);
+        using var unit = new UnitOfWork(_database.Connection);
         var repository = new GithubSubjectCourseRepository(_database.Connection, unit);
 
         GithubSubjectCourse[] courses =

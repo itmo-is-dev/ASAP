@@ -28,7 +28,7 @@ public class GithubAssignmentRepositoryTests : IAsyncLifetime
     public async Task Add_ShouldAddDatabaseRecordCorrectly()
     {
         // Arrange
-        var unit = new UnitOfWork(_database.Connection);
+        using var unit = new UnitOfWork(_database.Connection);
         var repository = new GithubAssignmentRepository(_database.Connection, unit);
         GithubAssignment assignment = _faker.GithubAssignment();
 
@@ -51,7 +51,7 @@ public class GithubAssignmentRepositoryTests : IAsyncLifetime
     public async Task QueryAsync_ShouldReturnCorrectRecords()
     {
         // Arrange
-        var unit = new UnitOfWork(_database.Connection);
+        using var unit = new UnitOfWork(_database.Connection);
         var repository = new GithubAssignmentRepository(_database.Connection, unit);
 
         Guid subjectCourseId = _faker.Random.Guid();
