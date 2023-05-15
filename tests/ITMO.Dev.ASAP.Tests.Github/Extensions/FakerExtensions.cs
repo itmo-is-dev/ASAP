@@ -41,6 +41,6 @@ public static class FakerExtensions
 
     public static GithubUser GithubUser(this Faker faker)
     {
-        return new GithubUser(faker.Random.Guid(), faker.Person.UserName);
+        return new GithubUser(faker.Random.Guid(), faker.Internet.UserName());
     }
 }
