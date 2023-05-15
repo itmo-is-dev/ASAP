@@ -31,8 +31,12 @@ internal class UpdateGithubUserHandler : IRequestHandler<Command, Response>
 
     public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
     {
+        var query = GithubUserQuery.Build(x => x
+            .WithUsername(request.GithubUsername)
+            .WithLimit(1));
+
         bool alreadyExists = await _context.Users
-            .QueryAsync(GithubUserQuery.Build(x => x.WithUsername(request.GithubUsername)), cancellationToken)
+            .QueryAsync(query, cancellationToken)
             .AnyAsync(cancellationToken);
 
         if (alreadyExists)
