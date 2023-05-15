@@ -10,10 +10,11 @@ public static class SubjectCourseSpecifications
 {
     public static IAsyncEnumerable<GithubSubjectCourse> ForOrganizationName(
         this IGithubSubjectCourseRepository repository,
-        string organizationName)
+        string organizationName,
+        CancellationToken cancellationToken)
     {
         var query = GithubSubjectCourseQuery.Build(x => x.WithOrganizationName(organizationName));
-        return repository.QueryAsync(query, default);
+        return repository.QueryAsync(query, cancellationToken);
     }
 
     public static async Task<GithubSubjectCourse> GetByIdAsync(

@@ -45,7 +45,7 @@ internal class SyncGithubMentorsHandler :
     public async Task Handle(SyncGithubMentors.Command request, CancellationToken cancellationToken)
     {
         GithubSubjectCourse? subjectCourse = await _context.SubjectCourses
-            .ForOrganizationName(request.OrganizationName)
+            .ForOrganizationName(request.OrganizationName, cancellationToken)
             .SingleOrDefaultAsync(cancellationToken);
 
         if (subjectCourse is null)
