@@ -56,15 +56,16 @@ internal sealed class UnitOfWork : IUnitOfWork, IDisposable
         catch
         {
             transaction.Rollback();
-        }
-        finally
-        {
-            transaction.Dispose();
 
+            // flushing remaining queue work if transaction failed
             while (count is not 0 && _work.TryDequeue(out _))
             {
                 count--;
             }
+        }
+        finally
+        {
+            transaction.Dispose();
 
             _semaphore.Release();
         }
