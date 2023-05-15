@@ -44,7 +44,6 @@ public static class ServiceCollectionExtensions
             .ConfigureRunner(x => x
                 .AddPostgres()
                 .WithGlobalConnectionString(connectionStringFactory)
-                .WithMigrationsIn(typeof(IAssemblyMarker).Assembly))
-            .AddLogging(x => x.AddFluentMigratorConsole());
+                .WithMigrationsIn(typeof(IAssemblyMarker).Assembly));
     }
 }
