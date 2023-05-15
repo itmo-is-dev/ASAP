@@ -24,11 +24,16 @@ internal sealed class UnitOfWork : IUnitOfWork, IDisposable
         _work.Enqueue(work);
     }
 
-    public async Task CommitAsync(CancellationToken cancellationToken)
+    public Task CommitAsync(CancellationToken cancellationToken)
+    {
+        return CommitAsync(IsolationLevel.ReadCommitted, cancellationToken);
+    }
+
+    public async Task CommitAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
     {
         await _semaphore.WaitAsync(cancellationToken);
 
-        IDbTransaction transaction = _connection.Connection.BeginTransaction(IsolationLevel.ReadCommitted);
+        IDbTransaction transaction = _connection.Connection.BeginTransaction(isolationLevel);
         int count = _work.Count;
 
         try

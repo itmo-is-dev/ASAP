@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Github.Application.DataAccess;
 using ITMO.Dev.ASAP.Github.Application.DataAccess.Repositories;
+using System.Data;
 
 namespace ITMO.Dev.ASAP.Github.DataAccess;
 
@@ -28,6 +29,11 @@ internal class GithubPersistenceContext : IPersistenceContext
     public IGithubUserRepository Users { get; }
 
     public IGithubSubjectCourseRepository SubjectCourses { get; }
+
+    public Task CommitAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
+    {
+        return _unitOfWork.CommitAsync(isolationLevel, cancellationToken);
+    }
 
     public Task CommitAsync(CancellationToken cancellationToken)
     {
