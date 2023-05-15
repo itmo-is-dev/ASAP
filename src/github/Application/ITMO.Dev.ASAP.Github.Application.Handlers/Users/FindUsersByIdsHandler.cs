@@ -22,7 +22,7 @@ internal class FindUsersByIdsHandler : IRequestHandler<Query, Response>
         var query = GithubUserQuery.Build(x => x.WithIds(request.Ids));
 
         IAsyncEnumerable<GithubUser> users = _context.Users.QueryAsync(query, cancellationToken);
-        List<GithubUserDto> dto = await users.Select(x => x.ToDto()).ToListAsync(cancellationToken: cancellationToken);
+        List<GithubUserDto> dto = await users.Select(x => x.ToDto()).ToListAsync(cancellationToken);
 
         return new Response(dto);
     }
