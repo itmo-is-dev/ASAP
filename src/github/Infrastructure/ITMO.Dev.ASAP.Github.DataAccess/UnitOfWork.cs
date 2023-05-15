@@ -5,7 +5,7 @@ using System.Data;
 
 namespace ITMO.Dev.ASAP.Github.DataAccess;
 
-internal class UnitOfWork : IUnitOfWork, IDisposable
+internal sealed class UnitOfWork : IUnitOfWork, IDisposable
 {
     private readonly ConcurrentQueue<Work> _work;
     private readonly GithubDbConnection _connection;
