@@ -59,4 +59,17 @@ internal class GithubAssignmentRepository : IGithubAssignmentRepository
 
         _unitOfWork.Enqueue(sql, model);
     }
+
+    public void Update(GithubAssignment assignment)
+    {
+        const string sql = """
+        update "GithubAssignments"
+        set "SubjectCourseId" = @SubjectCourseId, "BranchName" = @BranchName
+        where "Id" = @Id
+        """;
+
+        var model = new GithubAssignmentModel(assignment.Id, assignment.SubjectCourseId, assignment.BranchName);
+
+        _unitOfWork.Enqueue(sql, model);
+    }
 }

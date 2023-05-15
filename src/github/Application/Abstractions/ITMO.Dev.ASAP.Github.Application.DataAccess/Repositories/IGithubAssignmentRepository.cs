@@ -8,4 +8,6 @@ public interface IGithubAssignmentRepository
     IAsyncEnumerable<GithubAssignment> QueryAsync(GithubAssignmentQuery query, CancellationToken cancellationToken);
 
     void Add(GithubAssignment assignment);
+
+    void Update(GithubAssignment assignment);
 }
