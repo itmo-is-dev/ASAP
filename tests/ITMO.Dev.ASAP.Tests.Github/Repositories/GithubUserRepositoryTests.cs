@@ -27,7 +27,7 @@ public class GithubUserRepositoryTests : IAsyncLifetime
     public async Task AddRange_ShouldAddManyRecords()
     {
         // Arrange
-        var unit = new UnitOfWork(_database.Connection);
+        using var unit = new UnitOfWork(_database.Connection);
         var repository = new GithubUserRepository(_database.Connection, unit);
 
         GithubUser[] users = Enumerable.Range(0, 2).Select(_ => _faker.GithubUser()).ToArray();
