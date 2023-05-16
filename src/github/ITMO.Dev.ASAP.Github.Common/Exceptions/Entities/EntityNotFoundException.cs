@@ -5,14 +5,32 @@ public class EntityNotFoundException : AsapGithubException
     private EntityNotFoundException(string? message) : base(message) { }
 
     public static EntityNotFoundException Create<TKey, TEntity>(TKey key)
-        => new EntityNotFoundException($"Entity of type {typeof(TEntity).Name} with id {key} not found");
+    {
+        return new EntityNotFoundException($"Entity of type {typeof(TEntity).Name} with id {key} not found");
+    }
 
     public static EntityNotFoundException SubjectCourse(string organizationName)
-        => new EntityNotFoundException($"Subject course for {organizationName} was not found");
+    {
+        return new EntityNotFoundException($"Subject course for {organizationName} was not found");
+    }
+
+    public static EntityNotFoundException SubjectCourse()
+    {
+        return new EntityNotFoundException($"Subject course was not found");
+    }
 
     public static EntityNotFoundException Submission()
-        => new EntityNotFoundException("Could not find submission");
+    {
+        return new EntityNotFoundException("Could not find submission");
+    }
 
     public static EntityNotFoundException Assignment()
-        => new EntityNotFoundException("Could not find assignment");
+    {
+        return new EntityNotFoundException("Could not find assignment");
+    }
+
+    public static EntityNotFoundException User()
+    {
+        return new EntityNotFoundException("Could not find user");
+    }
 }

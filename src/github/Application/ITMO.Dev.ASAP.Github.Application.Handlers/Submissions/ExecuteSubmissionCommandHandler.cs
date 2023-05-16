@@ -13,29 +13,29 @@ namespace ITMO.Dev.ASAP.Github.Application.Handlers.Submissions;
 internal class ExecuteSubmissionCommandHandler : IRequestHandler<Command>
 {
     private readonly IAsapSubmissionService _asapSubmissionService;
-    private readonly IDatabaseContext _context;
     private readonly ILogger<ExecuteSubmissionCommandHandler> _logger;
     private readonly IPullRequestCommentEventNotifier _notifier;
+    private readonly IPersistenceContext _context;
 
     public ExecuteSubmissionCommandHandler(
         IAsapSubmissionService asapSubmissionService,
-        IDatabaseContext context,
         ILogger<ExecuteSubmissionCommandHandler> logger,
-        IPullRequestCommentEventNotifier notifier)
+        IPullRequestCommentEventNotifier notifier,
+        IPersistenceContext context)
     {
         _asapSubmissionService = asapSubmissionService;
-        _context = context;
         _logger = logger;
         _notifier = notifier;
+        _context = context;
     }
 
     public async Task Handle(Command request, CancellationToken cancellationToken)
     {
         var visitor = new PullRequestContextCommandVisitor(
             _asapSubmissionService,
-            _context,
             request.PullRequest,
-            _notifier);
+            _notifier,
+            _context);
 
         try
         {

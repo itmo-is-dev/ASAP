@@ -9,9 +9,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+        <PackageReference Include="Dapper" />
+        <PackageReference Include="FluentMigrator" />
+        <PackageReference Include="FluentMigrator.Runner" />
+        <PackageReference Include="FluentMigrator.Runner.Postgres" />
+        <PackageReference Include="Npgsql" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Tests.Github" />
     </ItemGroup>
 
 </Project>

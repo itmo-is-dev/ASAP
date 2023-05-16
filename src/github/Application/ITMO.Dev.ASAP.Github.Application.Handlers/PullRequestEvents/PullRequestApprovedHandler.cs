@@ -13,25 +13,24 @@ namespace ITMO.Dev.ASAP.Github.Application.Handlers.PullRequestEvents;
 internal class PullRequestApprovedHandler : IRequestHandler<Command>
 {
     private readonly IAsapSubmissionWorkflowService _submissionWorkflowService;
-    private readonly IDatabaseContext _context;
     private readonly IPullRequestEventNotifier _notifier;
+    private readonly IPersistenceContext _context;
 
     public PullRequestApprovedHandler(
         IAsapSubmissionWorkflowService submissionWorkflowService,
-        IDatabaseContext context,
-        IPullRequestEventNotifier notifier)
+        IPullRequestEventNotifier notifier,
+        IPersistenceContext context)
     {
         _submissionWorkflowService = submissionWorkflowService;
-        _context = context;
         _notifier = notifier;
+        _context = context;
     }
 
     public async Task Handle(Command request, CancellationToken cancellationToken)
     {
-        GithubUser issuer = await _context.Users
-            .GetForUsernameAsync(request.PullRequest.Sender, cancellationToken);
+        GithubUser issuer = await _context.Users.GetForUsernameAsync(request.PullRequest.Sender, cancellationToken);
 
-        GithubSubmission submission = await _context
+        GithubSubmission submission = await _context.Submissions
             .GetSubmissionForPullRequestAsync(request.PullRequest, cancellationToken);
 
         SubmissionActionMessageDto result = await _submissionWorkflowService.SubmissionApprovedAsync(
