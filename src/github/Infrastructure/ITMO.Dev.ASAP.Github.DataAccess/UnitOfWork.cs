@@ -1,7 +1,9 @@
 using Dapper;
 using ITMO.Dev.ASAP.Github.Application.DataAccess;
+using ITMO.Dev.ASAP.Github.DataAccess.Extensions;
 using System.Collections.Concurrent;
 using System.Data;
+using IsolationLevel = System.Data.IsolationLevel;
 
 namespace ITMO.Dev.ASAP.Github.DataAccess;
 
@@ -32,8 +34,11 @@ internal sealed class UnitOfWork : IUnitOfWork, IDisposable
     public async Task CommitAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken)
     {
         await _semaphore.WaitAsync(cancellationToken);
+        await _connection.Connection.TryOpenAsync(cancellationToken);
 
-        IDbTransaction transaction = _connection.Connection.BeginTransaction(isolationLevel);
+        IDbTransaction transaction = await _connection.Connection
+            .BeginTransactionAsync(isolationLevel, cancellationToken);
+
         int count = _work.Count;
 
         try
