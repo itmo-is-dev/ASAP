@@ -67,6 +67,8 @@ public class DatabaseFixture : IAsyncLifetime
         };
 
         _respawn = await Respawner.CreateAsync(_connection, options);
+
+        await _connection.CloseAsync();
     }
 
     public async Task DisposeAsync()

@@ -1,13 +1,13 @@
-using System.Data;
+using System.Data.Common;
 
 namespace ITMO.Dev.ASAP.Github.DataAccess;
 
 public class GithubDbConnection
 {
-    public GithubDbConnection(IDbConnection connection)
+    public GithubDbConnection(DbConnection connection)
     {
         Connection = connection;
     }
 
-    public IDbConnection Connection { get; }
+    public DbConnection Connection { get; }
 }
