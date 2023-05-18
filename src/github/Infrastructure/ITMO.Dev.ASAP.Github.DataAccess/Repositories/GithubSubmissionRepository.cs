@@ -34,7 +34,7 @@ internal class GithubSubmissionRepository : IGithubSubmissionRepository
             and (cardinality(@RepositoryNames) = 0 or gs."Repository" = any(@RepositoryNames))
             and (cardinality(@PullRequestNumbers) = 0 or gs."PullRequestNumber" = any(@PullRequestNumbers))
             and (cardinality(@OrganizationNames) = 0 or gs."Organization" = any(@OrganizationNames))
-            and (cardinality(@AssignmentBranchNames) or ga."BranchName" = any(@AssignmentBranchNames))
+            and (cardinality(@AssignmentBranchNames) = 0 or ga."BranchName" = any(@AssignmentBranchNames))
         """;
 
         string sql = baseSql;
