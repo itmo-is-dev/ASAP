@@ -1,10 +1,15 @@
 using ITMO.Dev.ASAP.Application.Dto.Submissions;
 using ITMO.Dev.ASAP.Common.Resources;
 using ITMO.Dev.ASAP.Github.Application.DataAccess;
+using ITMO.Dev.ASAP.Github.Application.DataAccess.Queries;
+using ITMO.Dev.ASAP.Github.Application.Dto.PullRequests;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Extensions;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Notifications;
 using ITMO.Dev.ASAP.Github.Application.Specifications;
+using ITMO.Dev.ASAP.Github.Common.Exceptions.Entities;
+using ITMO.Dev.ASAP.Github.Common.Extensions;
 using ITMO.Dev.ASAP.Github.Domain.Assignments;
+using ITMO.Dev.ASAP.Github.Domain.SubjectCourses;
 using ITMO.Dev.ASAP.Github.Domain.Submissions;
 using ITMO.Dev.ASAP.Github.Domain.Users;
 using ITMO.Dev.ASAP.Presentation.Contracts.Services;
@@ -34,8 +39,18 @@ internal class PullRequestUpdatedHandler : IRequestHandler<Command>
         GithubUser issuer = await _context.Users.GetForUsernameAsync(request.PullRequest.Sender, cancellationToken);
         GithubUser user = await _context.Users.GetForUsernameAsync(request.PullRequest.Repository, cancellationToken);
 
-        GithubAssignment assignment = await _context.Assignments
-            .GetAssignmentForPullRequestAsync(request.PullRequest, cancellationToken);
+        GithubAssignment? assignment = await _context.Assignments
+            .FindAssignmentForPullRequestAsync(request.PullRequest, cancellationToken);
+
+        if (assignment is null)
+        {
+            string message = await GetSubjectCourseAssignmentsString(request.PullRequest, cancellationToken);
+
+            throw EntityNotFoundException.AssignmentWasNotFound(
+                request.PullRequest.BranchName,
+                request.PullRequest.Organization,
+                message);
+        }
 
         SubmissionUpdateResult result = await _submissionWorkflowService.SubmissionUpdatedAsync(
             issuer.Id,
@@ -65,5 +80,29 @@ internal class PullRequestUpdatedHandler : IRequestHandler<Command>
         {
             await _notifier.NotifySubmissionUpdate(result.Submission);
         }
+    }
+
+    private async Task<string> GetSubjectCourseAssignmentsString(
+        PullRequestDto pullRequest,
+        CancellationToken cancellationToken)
+    {
+        GithubSubjectCourse? subjectCourse = await _context.SubjectCourses
+            .ForOrganizationName(pullRequest.Organization, cancellationToken)
+            .SingleOrDefaultAsync(cancellationToken: cancellationToken);
+
+        if (subjectCourse is null)
+        {
+            throw EntityNotFoundException.SubjectCourse().TaggedWithNotFound();
+        }
+
+        List<GithubAssignment> assignments = await _context.Assignments
+            .QueryAsync(GithubAssignmentQuery.Build(x => x.WithSubjectCourseId(subjectCourse.Id)), cancellationToken)
+            .ToListAsync(cancellationToken);
+
+        IOrderedEnumerable<string> branchNames = assignments
+            .Select(x => x.BranchName)
+            .Order();
+
+        return string.Join(", ", branchNames);
     }
 }
