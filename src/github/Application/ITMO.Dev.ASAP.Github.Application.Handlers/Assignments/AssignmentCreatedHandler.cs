@@ -10,7 +10,6 @@ namespace ITMO.Dev.ASAP.Github.Application.Handlers.Assignments;
 public class AssignmentCreatedHandler : INotificationHandler<AssignmentCreated.Notification>
 {
     private readonly IPersistenceContext _context;
-
     private readonly ILogger<AssignmentCreatedHandler> _logger;
 
     public AssignmentCreatedHandler(IPersistenceContext context, ILogger<AssignmentCreatedHandler> logger)
@@ -21,13 +20,19 @@ public class AssignmentCreatedHandler : INotificationHandler<AssignmentCreated.N
 
     public async Task Handle(AssignmentCreated.Notification notification, CancellationToken cancellationToken)
     {
-        var assignment = new GithubAssignment(notification.Assignment.Id, notification.Assignment.SubjectCourseId, notification.Assignment.ShortName);
+        Guid assignmentId = notification.Assignment.Id;
+        string assignmentShortName = notification.Assignment.ShortName;
 
-        var query = GithubAssignmentQuery.Build(x => x.WithId(notification.Assignment.Id));
-        if (await _context.Assignments.QueryAsync(query, cancellationToken).FirstOrDefaultAsync(cancellationToken) is not null)
+        var query = GithubAssignmentQuery.Build(x => x.WithId(assignmentId));
+        GithubAssignment? assignment = await _context.Assignments
+            .QueryAsync(query, cancellationToken)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (assignment is not null)
         {
-            Guid assignmentId = notification.Assignment.Id;
-            string assignmentShortName = notification.Assignment.ShortName;
+            assignment.SubjectCourseId = notification.Assignment.SubjectCourseId;
+            assignment.BranchName = assignmentShortName;
+
             _logger.Log(
                 LogLevel.Warning,
                 "Updating github assignment that already exists, id: {AssignmentId}, name: {AssignmentShortName}",
@@ -38,6 +43,7 @@ public class AssignmentCreatedHandler : INotificationHandler<AssignmentCreated.N
         }
         else
         {
+            assignment = new GithubAssignment(assignmentId, notification.Assignment.SubjectCourseId, assignmentShortName);
             _context.Assignments.Add(assignment);
         }
 
