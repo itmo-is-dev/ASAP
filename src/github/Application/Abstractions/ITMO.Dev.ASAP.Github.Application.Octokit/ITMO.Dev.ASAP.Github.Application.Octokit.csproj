@@ -8,6 +8,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\..\core\Application\ITMO.Dev.ASAP.Application.Dto\ITMO.Dev.ASAP.Application.Dto.csproj" />
         <ProjectReference Include="..\..\..\..\core\Domain\ITMO.Dev.ASAP.Common\ITMO.Dev.ASAP.Common.csproj" />
+        <ProjectReference Include="..\..\..\ITMO.Dev.ASAP.Github.Common\ITMO.Dev.ASAP.Github.Common.csproj" />
         <ProjectReference Include="..\..\ITMO.Dev.ASAP.Github.Application.Dto\ITMO.Dev.ASAP.Github.Application.Dto.csproj" />
     </ItemGroup>
 

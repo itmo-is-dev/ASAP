@@ -1,3 +1,5 @@
+using ITMO.Dev.ASAP.Github.Common.Resources;
+
 namespace ITMO.Dev.ASAP.Github.Common.Exceptions.Entities;
 
 public class EntityNotFoundException : AsapGithubException
@@ -32,5 +34,17 @@ public class EntityNotFoundException : AsapGithubException
     public static EntityNotFoundException User()
     {
         return new EntityNotFoundException("Could not find user");
+    }
+
+    public static EntityNotFoundException AssignmentWasNotFound(
+        string branchName,
+        string subjectCourseTitle,
+        string subjectCourseAssignments)
+    {
+        return new EntityNotFoundException(string.Format(
+            GithubUserMessages.AssignmentNotFound,
+            branchName,
+            subjectCourseTitle,
+            subjectCourseAssignments));
     }
 }

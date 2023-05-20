@@ -2,13 +2,19 @@
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
 @inject NavigationManager NavigationManager
 @inject IPrincipalService PrincipalService
+@implements IAsyncDisposable
 
 @code {
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
+    {
+        NavigationManager.NavigateTo("/");
+        return Task.CompletedTask;
+    }
+
+    public async ValueTask DisposeAsync()
     {
         await PrincipalService.LogoutAsync(default);
-        NavigationManager.NavigateTo("/");
     }
 
 }
