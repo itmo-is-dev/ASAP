@@ -21,9 +21,9 @@ public static class PullRequestEventNotifierExtensions
         this IPullRequestEventNotifier pullRequestEventNotifier,
         Exception exception)
     {
-        if (exception is DomainException domainException)
+        if (exception is DomainException or ApplicationException)
         {
-            await pullRequestEventNotifier.SendCommentToPullRequest(domainException.Message);
+            await pullRequestEventNotifier.SendCommentToPullRequest(exception.Message);
         }
         else
         {
