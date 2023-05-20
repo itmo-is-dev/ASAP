@@ -21,4 +21,4 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Run deploy script
-        run: YaCloud/start_prod.py
+        run: ./deployment/start_prod.sh
