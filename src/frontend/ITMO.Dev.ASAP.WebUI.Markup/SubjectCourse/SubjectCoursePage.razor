@@ -27,15 +27,17 @@
          Height="Height.Is100"
          Overflow="Overflow.Hidden">
 
-        <Div Flex="Flex.Row.JustifyContent.Between">
+        <Div Flex="Flex.JustifyContent.Between"
+             Class="subject-course-header">
+
             <AssociationsComponent
                 Associations="_course.Associations"
                 SubjectCourse="_course"/>
 
             @if (CurrentUser.HasModeratorAccess())
             {
-                <Div Flex="Flex.Column"
-                     Padding="Padding.Is2.FromTop.Is2.FromEnd">
+                <Div Flex="Flex.Column.AlignContent.Center"
+                     Padding="Padding.Is1.FromStart.Is1.FromEnd">
 
                     <ForceSyncPoints
                         SubjectCourseId="_course.Id"/>
@@ -57,16 +59,24 @@
 
         <Tabs SelectedTab="@_selectedTab" Padding="Padding.Is2.FromStart">
             <Items>
-                <AssignmentsTabComponent
-                    OnSelectedTabChanged="OnSelectedTabChanged"
-                    OnClicked="@(() => _createAssignmentModal?.ShowAsync() ?? Task.CompletedTask)"/>
+                <Div Flex="Flex.Row"
+                     Style="overflow-x: scroll; overflow-y: hidden">
 
-                <GroupsTabComponent
-                    OnSelectedTabChanged="OnSelectedTabChanged"
-                    OnClicked="ShowAddSubjectCourseGroupsAsync"/>
+                    <AssignmentsTabComponent
+                        OnSelectedTabChanged="OnSelectedTabChanged"
+                        OnClicked="@(() => _createAssignmentModal?.ShowAsync() ?? Task.CompletedTask)"/>
 
-                <SubmissionQueueTabComponent
-                    OnSelectedTabChanged="OnSelectedTabChanged"/>
+                    @if (CurrentUser.HasModeratorAccess())
+                    {
+                        <GroupsTabComponent
+                            OnSelectedTabChanged="OnSelectedTabChanged"
+                            OnClicked="ShowAddSubjectCourseGroupsAsync"/>
+                    }
+
+                    <SubmissionQueueTabComponent
+                        OnSelectedTabChanged="OnSelectedTabChanged"/>
+
+                </Div>
             </Items>
 
             <Content>
