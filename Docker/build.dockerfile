@@ -7,7 +7,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0.203 AS build
 WORKDIR /source
 COPY ./src ./src
 COPY ./*.sln .
-COPY ./*.props .
+COPY ./*.props ./
 COPY ./.editorconfig .
 
 RUN dotnet restore "src/ITMO.Dev.ASAP/ITMO.Dev.ASAP.csproj"
