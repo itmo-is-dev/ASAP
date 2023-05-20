@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <NoWarn>$(NoWarn);1701;1702;IL2121;CA1707;SA1633;SA1309;SA1101;SA1518;SA1502</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoBogus"/>
+        <PackageReference Include="FluentAssertions"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="Npgsql"/>
+        <PackageReference Include="Respawn"/>
+        <PackageReference Include="Testcontainers.PostgreSql"/>
+        <PackageReference Include="xunit"/>
+        <PackageReference Include="xunit.runner.visualstudio" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" PrivateAssets="all"/>
+        <PackageReference Include="coverlet.collector" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" PrivateAssets="all"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\github\Infrastructure\ITMO.Dev.ASAP.Github.DataAccess\ITMO.Dev.ASAP.Github.DataAccess.csproj"/>
+    </ItemGroup>
+
+</Project>

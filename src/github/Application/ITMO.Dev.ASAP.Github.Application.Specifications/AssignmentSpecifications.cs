@@ -1,38 +1,43 @@
-using ITMO.Dev.ASAP.Github.Application.DataAccess;
+using ITMO.Dev.ASAP.Github.Application.DataAccess.Queries;
+using ITMO.Dev.ASAP.Github.Application.DataAccess.Repositories;
 using ITMO.Dev.ASAP.Github.Application.Dto.PullRequests;
 using ITMO.Dev.ASAP.Github.Common.Exceptions.Entities;
 using ITMO.Dev.ASAP.Github.Common.Extensions;
 using ITMO.Dev.ASAP.Github.Domain.Assignments;
-using ITMO.Dev.ASAP.Github.Domain.SubjectCourses;
-using Microsoft.EntityFrameworkCore;
 
 namespace ITMO.Dev.ASAP.Github.Application.Specifications;
 
 public static class AssignmentSpecifications
 {
-    public static IQueryable<GithubAssignment> ForBranchName(this IQueryable<GithubAssignment> queryable, string name)
-        => queryable.Where(x => x.BranchName.Equals(name));
-
-    public static IQueryable<GithubAssignment> ForSubjectCourses(
-        this IQueryable<GithubAssignment> queryable,
-        IQueryable<GithubSubjectCourse> subjectCourses)
-    {
-        return queryable.Where(ga => subjectCourses.Any(c => c.Id.Equals(ga.SubjectCourseId)));
-    }
-
     public static async Task<GithubAssignment> GetAssignmentForPullRequestAsync(
-        this IDatabaseContext context,
+        this IGithubAssignmentRepository repository,
         PullRequestDto pullRequest,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
-        IQueryable<GithubSubjectCourse> subjectCourses = context.SubjectCourses
-            .ForOrganizationName(pullRequest.Organization);
+        var query = GithubAssignmentQuery.Build(x => x
+            .WithSubjectCourseOrganizationName(pullRequest.Organization)
+            .WithBranchName(pullRequest.BranchName));
 
-        GithubAssignment? assignment = await context.Assignments
-            .ForSubjectCourses(subjectCourses)
-            .ForBranchName(pullRequest.BranchName)
+        GithubAssignment? assignment = await repository
+            .QueryAsync(query, cancellationToken)
             .SingleOrDefaultAsync(cancellationToken);
 
         return assignment ?? throw EntityNotFoundException.Assignment().TaggedWithNotFound();
+    }
+
+    public static async Task<GithubAssignment?> FindAssignmentForPullRequestAsync(
+        this IGithubAssignmentRepository repository,
+        PullRequestDto pullRequest,
+        CancellationToken cancellationToken = default)
+    {
+        var query = GithubAssignmentQuery.Build(x => x
+            .WithSubjectCourseOrganizationName(pullRequest.Organization)
+            .WithBranchName(pullRequest.BranchName));
+
+        GithubAssignment? assignment = await repository
+            .QueryAsync(query, cancellationToken)
+            .SingleOrDefaultAsync(cancellationToken);
+
+        return assignment;
     }
 }

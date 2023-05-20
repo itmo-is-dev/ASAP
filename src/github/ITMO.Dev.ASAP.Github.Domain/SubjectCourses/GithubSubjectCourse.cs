@@ -16,9 +16,9 @@ public partial class GithubSubjectCourse : IEntity<Guid>
         MentorTeamName = mentorTeamName;
     }
 
-    public string OrganizationName { get; protected set; }
+    public string OrganizationName { get; }
 
-    public string TemplateRepositoryName { get; protected set; }
+    public string TemplateRepositoryName { get; }
 
     public string MentorTeamName { get; set; }
 }

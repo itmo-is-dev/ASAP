@@ -28,7 +28,7 @@ internal class UpdateUserUniversityIdHandler : IRequestHandler<Command>
 
         if (association is null)
         {
-            association = new IsuUserAssociation(Guid.NewGuid(), user, request.UniversityId);
+            association = IsuUserAssociation.CreateAndAttach(Guid.NewGuid(), user, request.UniversityId);
             _context.UserAssociations.Add(association);
         }
         else

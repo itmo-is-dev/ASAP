@@ -4,7 +4,6 @@ using ITMO.Dev.ASAP.Github.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Github.Octokit.Extensions;
 using ITMO.Dev.ASAP.Github.Presentation.Services.Extensions;
 using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,9 +21,7 @@ public static class ServiceCollectionExtensions
 
         collection.AddGithubOctokitIntegration(configuration);
 
-        collection.AddGithubDatabaseContext(x => x
-            .UseNpgsql(databaseConnectionString)
-            .UseLazyLoadingProxies());
+        collection.AddGithubDatabaseContext(databaseConnectionString);
 
         collection
             .AddGithubPresentation()
