@@ -24,6 +24,7 @@ public class AssignmentCreatedHandler : INotificationHandler<AssignmentCreated.N
         string assignmentShortName = notification.Assignment.ShortName;
 
         var query = GithubAssignmentQuery.Build(x => x.WithId(assignmentId));
+
         GithubAssignment? assignment = await _context.Assignments
             .QueryAsync(query, cancellationToken)
             .FirstOrDefaultAsync(cancellationToken);
@@ -43,7 +44,8 @@ public class AssignmentCreatedHandler : INotificationHandler<AssignmentCreated.N
         }
         else
         {
-            assignment = new GithubAssignment(assignmentId, notification.Assignment.SubjectCourseId, assignmentShortName);
+            assignment =
+                new GithubAssignment(assignmentId, notification.Assignment.SubjectCourseId, assignmentShortName);
             _context.Assignments.Add(assignment);
         }
 
