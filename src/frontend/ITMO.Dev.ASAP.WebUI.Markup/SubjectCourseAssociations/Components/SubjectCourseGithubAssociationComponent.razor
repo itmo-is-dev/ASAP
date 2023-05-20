@@ -15,19 +15,26 @@
         Organization
     </Anchor>
 
-    <Div Flex="Flex.Row.AlignContent.Center.JustifyContent.Start" Style="gap: 10px">
+    <Div Flex="Flex.Row" Style="gap: 10px">
         <Div Flex="Flex.Column.AlignContent.Center.JustifyContent.Center">
             Mentors team name
         </Div>
 
-        <TextEdit @bind-Text="_mentorTeamName"
-                  Style="min-width: 100px; width: 20%"
-                  Disabled="@(HasManagingAccess is false)"/>
+        <Div Flex="Flex.Row"
+             Class="mentor-team-name-value">
 
-        <CreateButton Disabled="@(MentorTeamUpdateButtonEnabled is false)"
-                      Clicked="UpdateMentorsTeamClicked">
-            Update
-        </CreateButton>
+            <TextEdit @bind-Text="_mentorTeamName"
+                      Style="min-width: 150px"
+                      Disabled="@(HasManagingAccess is false)"
+                      Margin="Margin.Is1.FromEnd"
+                      Class="mentor-team-name-input"/>
+
+            <CreateButton Disabled="@(MentorTeamUpdateButtonEnabled is false)"
+                          Clicked="UpdateMentorsTeamClicked">
+                Update
+            </CreateButton>
+
+        </Div>
     </Div>
 
     <ConfirmationComponent @ref="_mentorTeamUpdateConfirmation"

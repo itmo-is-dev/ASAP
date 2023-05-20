@@ -21,10 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="wwwroot\" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\..\core\Presentation\ITMO.Dev.ASAP.WebApi.Sdk\ITMO.Dev.ASAP.WebApi.Sdk.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.WebUI.Abstractions\ITMO.Dev.ASAP.WebUI.Abstractions.csproj" />
     </ItemGroup>

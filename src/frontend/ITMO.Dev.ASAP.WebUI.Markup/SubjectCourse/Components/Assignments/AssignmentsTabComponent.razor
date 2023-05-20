@@ -1,15 +1,24 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
+@inject ICurrentUser CurrentUser
+
 <DropdownTabTitleComponent OnClick="OnSelectedTabChanged" Name="@Key">
     <ButtonContent>
         Assignments
     </ButtonContent>
+
     <DropdownContent>
-        <DropdownItem>
-            <CreateButton Clicked="OnClicked"
-                          Background="Background.Transparent"
-                          TextColor="TextColor.Body"
-                          FitContent="false"/>
-        </DropdownItem>
+        @if (CurrentUser.HasModeratorAccess())
+        {
+            <DropdownItem>
+                <CreateButton Clicked="OnClicked"
+                              Background="Background.Transparent"
+                              TextColor="TextColor.Body"
+                              FitContent="false"/>
+            </DropdownItem>
+        }
     </DropdownContent>
+
 </DropdownTabTitleComponent>
 
 @code {
