@@ -8,9 +8,10 @@ public partial class GithubAssignment : IEntity<Guid>
     {
         SubjectCourseId = subjectCourseId;
         BranchName = branchName;
+        SubjectCourseId = subjectCourseId;
     }
 
-    public Guid SubjectCourseId { get; protected init; }
+    public Guid SubjectCourseId { get; set; }
 
-    public string BranchName { get; protected init; }
+    public string BranchName { get; set; }
 }

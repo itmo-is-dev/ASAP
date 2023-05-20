@@ -3,7 +3,7 @@ using MediatR;
 
 namespace ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Notifications;
 
-internal static class AssignmentCreated
+public static class AssignmentCreated
 {
     public record Notification(AssignmentDto Assignment) : INotification;
 }
