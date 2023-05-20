@@ -4,7 +4,6 @@ using ITMO.Dev.ASAP.Github.Application.DataAccess;
 using ITMO.Dev.ASAP.Github.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Github.Application.Handlers.Assignments;
 using ITMO.Dev.ASAP.Github.Domain.Assignments;
-using ITMO.Dev.ASAP.Tests.Github.Fixtures;
 using ITMO.Dev.ASAP.Tests.Github.Tools;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -12,16 +11,15 @@ using Xunit;
 
 namespace ITMO.Dev.ASAP.Tests.Github.Handlers;
 
-[Collection(nameof(DatabaseCollectionFixture))]
 public class GithubAssignmentCreatedHandlerTest
 {
     private readonly Mock<IPersistenceContext> _persistenceContext = new Mock<IPersistenceContext>();
     private readonly Mock<ILogger<AssignmentCreatedHandler>> _logger = new Mock<ILogger<AssignmentCreatedHandler>>();
     private readonly DeterministicFaker _faker;
 
-    public GithubAssignmentCreatedHandlerTest(DeterministicFaker faker)
+    public GithubAssignmentCreatedHandlerTest()
     {
-        _faker = faker;
+        _faker = new DeterministicFaker();
     }
 
     [Fact]
