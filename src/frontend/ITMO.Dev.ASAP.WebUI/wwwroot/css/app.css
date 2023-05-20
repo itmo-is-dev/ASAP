@@ -227,10 +227,6 @@ a, .btn-link {
     .mentor-team-name-value {
         flex-grow: 1;
     }
-    
-    .mentor-team-name-input {
-        
-    }
 }
 
 @media (min-width: 768px) {
