@@ -6,6 +6,7 @@ public partial class GithubAssignment : IEntity<Guid>
 {
     public GithubAssignment(Guid id, Guid subjectCourseId, string branchName) : this(id)
     {
+        SubjectCourseId = subjectCourseId;
         BranchName = branchName;
         SubjectCourseId = subjectCourseId;
     }
