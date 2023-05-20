@@ -218,3 +218,27 @@ a, .btn-link {
     overflow-y: scroll;
     scrollbar-width: auto;
 }
+
+@media (max-width: 767px) {
+    .subject-course-header {
+        flex-direction: column;
+    }
+    
+    .mentor-team-name-value {
+        flex-grow: 1;
+    }
+    
+    .mentor-team-name-input {
+        
+    }
+}
+
+@media (min-width: 768px) {
+    .subject-course-header {
+        flex-direction: row;
+    }
+
+    .mentor-team-name-input {
+        width: 20%;
+    }
+}
