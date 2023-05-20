@@ -14,7 +14,7 @@ name=$1
 port=$2
 env=$3
 
-docker build -t "$name" - < Docker/build.dockerfile &&
+docker build -t "$name" -f Docker/build.dockerfile . &&
 docker stop "$name" &&
 echo stopped "$name" container &&
 docker container rm "$name" &&
