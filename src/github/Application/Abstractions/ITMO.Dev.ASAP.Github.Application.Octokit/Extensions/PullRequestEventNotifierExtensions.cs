@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Application.Dto.Submissions;
-using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Notifications;
+using ITMO.Dev.ASAP.Github.Common.Exceptions;
 
 namespace ITMO.Dev.ASAP.Github.Application.Octokit.Extensions;
 
@@ -21,7 +21,7 @@ public static class PullRequestEventNotifierExtensions
         this IPullRequestEventNotifier pullRequestEventNotifier,
         Exception exception)
     {
-        if (exception is DomainException or ApplicationException)
+        if (exception is AsapGithubException)
         {
             await pullRequestEventNotifier.SendCommentToPullRequest(exception.Message);
         }
