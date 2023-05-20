@@ -32,7 +32,7 @@ internal static class YandexTokenProvider
             stringBuilder.AppendLine($"HTTP Status code: {resp.StatusCode:D)}");
             string body = await resp.Content.ReadAsStringAsync();
 
-            if (!string.IsNullOrWhiteSpace(body))
+            if (string.IsNullOrWhiteSpace(body) is false)
             {
                 stringBuilder.AppendLine("HTTP Response:");
                 stringBuilder.AppendLine(body);
@@ -50,18 +50,20 @@ internal static class YandexTokenProvider
             stringBuilder.AppendLine("Unable to parse IAM service account token from Yandex Compute Cloud.");
             stringBuilder.AppendLine("Cannot parse JSON. Original response:");
             stringBuilder.AppendLine(content);
+
             throw new StartupException(stringBuilder.ToString());
         }
 
-        if (!jsonContent.TryGetValue("access_token", StringComparison.Ordinal, out JToken? accessToken))
+        if (jsonContent.TryGetValue("access_token", StringComparison.Ordinal, out JToken? accessToken))
         {
-            var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("Unable to parse IAM service account token from Yandex Compute Cloud.");
-            stringBuilder.AppendLine("Cannot find access token in original response:");
-            stringBuilder.AppendLine(content);
-            throw new StartupException(stringBuilder.ToString());
+            return accessToken.ToString();
         }
 
-        return accessToken.ToString();
+        var parseStringBuilder = new StringBuilder();
+        parseStringBuilder.AppendLine("Unable to parse IAM service account token from Yandex Compute Cloud.");
+        parseStringBuilder.AppendLine("Cannot find access token in original response:");
+        parseStringBuilder.AppendLine(content);
+
+        throw new StartupException(parseStringBuilder.ToString());
     }
 }

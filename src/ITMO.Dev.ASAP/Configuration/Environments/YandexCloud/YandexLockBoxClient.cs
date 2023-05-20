@@ -43,9 +43,10 @@ internal class YandexLockBoxClient
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("Unable to receive secrets from Yandex LockBox.");
             stringBuilder.AppendLine($"HTTP Status code: {resp.StatusCode:D)}");
+
             string body = await resp.Content.ReadAsStringAsync();
 
-            if (!string.IsNullOrWhiteSpace(body))
+            if (string.IsNullOrWhiteSpace(body) is false)
             {
                 stringBuilder.AppendLine("HTTP Response:");
                 stringBuilder.AppendLine(body);

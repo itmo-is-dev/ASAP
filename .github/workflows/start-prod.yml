@@ -21,4 +21,4 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Run deploy script
-        run: ./deployment/start_prod.sh
+        run: ./deployment/run_prod.sh
