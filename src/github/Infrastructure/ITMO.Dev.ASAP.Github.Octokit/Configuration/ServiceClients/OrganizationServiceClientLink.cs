@@ -17,11 +17,6 @@ public class OrganizationServiceClientLink : ILink<ServiceClientCommand>
         const string enabledPath = $"{sectionPath}:Enabled";
         const string namePath = $"{sectionPath}:Name";
 
-        IConfigurationSection? section = request.Configuration.GetSection(sectionPath);
-
-        if (section is null)
-            return next(request, context);
-
         bool enabled = request.Configuration.GetSection(enabledPath).Get<bool>();
 
         if (enabled is false)
