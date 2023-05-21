@@ -30,9 +30,6 @@ public class GithubOctokitConfiguration : IValidateOptions<GithubOctokitConfigur
             message.AppendLine("Configure Github:Octokit:AppId");
         }
 
-        if (message.Length is 0)
-            return ValidateOptionsResult.Success;
-
-        return ValidateOptionsResult.Fail(message.ToString());
+        return message.Length is 0 ? ValidateOptionsResult.Success : ValidateOptionsResult.Fail(message.ToString());
     }
 }
