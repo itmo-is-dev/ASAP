@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace ITMO.Dev.ASAP.Github.Caching.Tools;
 
-public class GithubMemoryCache : IGithubMemoryCache
+public sealed class GithubMemoryCache : IGithubMemoryCache
 {
     private readonly IMemoryCache _cache;
     private readonly MemoryCacheEntryOptions _entryOptions;
