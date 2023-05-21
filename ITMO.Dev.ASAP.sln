@@ -190,6 +190,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Github", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Tests.Github", "tests\ITMO.Dev.ASAP.Tests.Github\ITMO.Dev.ASAP.Tests.Github.csproj", "{A8C24A53-EED1-4CE6-9EF0-BCB041F59953}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Github.Caching", "src\github\Infrastructure\ITMO.Dev.ASAP.Github.Caching\ITMO.Dev.ASAP.Github.Caching.csproj", "{0A8FD854-5FE2-4006-A183-4E0B848DE35D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -456,6 +458,10 @@ Global
 		{A8C24A53-EED1-4CE6-9EF0-BCB041F59953}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8C24A53-EED1-4CE6-9EF0-BCB041F59953}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8C24A53-EED1-4CE6-9EF0-BCB041F59953}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A8FD854-5FE2-4006-A183-4E0B848DE35D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A8FD854-5FE2-4006-A183-4E0B848DE35D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A8FD854-5FE2-4006-A183-4E0B848DE35D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A8FD854-5FE2-4006-A183-4E0B848DE35D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -546,6 +552,7 @@ Global
 		{DFCC6600-B5B2-4B4A-9556-BA5738C02266} = {EA240BA9-2596-42AD-9FAA-55DF281F8BDA}
 		{0C75B628-31A7-4040-860C-1BB663A8D139} = {6EDB1061-C85C-4FB4-B529-A130B63B69A4}
 		{A8C24A53-EED1-4CE6-9EF0-BCB041F59953} = {D6F2860A-2B15-465E-B1BB-B8B3AE829A9C}
+		{0A8FD854-5FE2-4006-A183-4E0B848DE35D} = {3A268EF1-6843-44CA-9434-C82E467A7515}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CD5C67DB-70F8-4C47-A3F4-7C94BECE1657}

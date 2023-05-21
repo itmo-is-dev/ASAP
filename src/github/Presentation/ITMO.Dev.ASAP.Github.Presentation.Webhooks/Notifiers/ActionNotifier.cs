@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Github.Application.Octokit.Client;
+using ITMO.Dev.ASAP.Github.Application.Octokit.Clients;
 using Microsoft.Extensions.Logging;
 using Octokit;
 using Octokit.Webhooks;
@@ -9,10 +9,10 @@ namespace ITMO.Dev.ASAP.Github.Presentation.Webhooks.Notifiers;
 
 public class ActionNotifier : IActionNotifier
 {
-    private readonly IInstallationClientFactory _installationClientFactory;
+    private readonly IGithubClientProvider _installationClientFactory;
     private readonly ILogger<ActionNotifier> _logger;
 
-    public ActionNotifier(IInstallationClientFactory installationClientFactory, ILogger<ActionNotifier> logger)
+    public ActionNotifier(IGithubClientProvider installationClientFactory, ILogger<ActionNotifier> logger)
     {
         _installationClientFactory = installationClientFactory;
         _logger = logger;
@@ -22,7 +22,8 @@ public class ActionNotifier : IActionNotifier
     {
         ParseWebhookEvent(webhookEvent, out Repository repository, out InstallationLite installation);
 
-        GitHubClient installationClient = _installationClientFactory.GetClient(installation.Id);
+        IGitHubClient installationClient = await _installationClientFactory
+            .GetClientForInstallationAsync(installation.Id, default);
 
         _logger.LogInformation(
             "Sending comment to organization = {Organization}, repository = {Repository}, issue = {Issue}",
@@ -41,7 +42,8 @@ public class ActionNotifier : IActionNotifier
     {
         ParseWebhookEvent(webhookEvent, out Repository repository, out InstallationLite installation);
 
-        GitHubClient installationClient = _installationClientFactory.GetClient(installation.Id);
+        IGitHubClient installationClient = await _installationClientFactory
+            .GetClientForInstallationAsync(installation.Id, default);
 
         _logger.LogInformation(
             "Sending comment to organization = {Organization}, repository = {Repository}, comment id = {CommentId}",

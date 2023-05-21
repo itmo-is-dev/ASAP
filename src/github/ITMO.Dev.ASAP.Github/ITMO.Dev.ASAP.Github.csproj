@@ -14,6 +14,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Application\ITMO.Dev.ASAP.Github.Application.Handlers\ITMO.Dev.ASAP.Github.Application.Handlers.csproj" />
         <ProjectReference Include="..\Application\ITMO.Dev.ASAP.Github.Application\ITMO.Dev.ASAP.Github.Application.csproj" />
+        <ProjectReference Include="..\Infrastructure\ITMO.Dev.ASAP.Github.Caching\ITMO.Dev.ASAP.Github.Caching.csproj" />
         <ProjectReference Include="..\Infrastructure\ITMO.Dev.ASAP.Github.DataAccess\ITMO.Dev.ASAP.Github.DataAccess.csproj" />
         <ProjectReference Include="..\Presentation\ITMO.Dev.ASAP.Github.Presentation.Services\ITMO.Dev.ASAP.Github.Presentation.Services.csproj" />
     </ItemGroup>

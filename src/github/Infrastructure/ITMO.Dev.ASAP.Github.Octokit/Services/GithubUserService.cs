@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Github.Application.Octokit.Client;
+using ITMO.Dev.ASAP.Github.Application.Octokit.Clients;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Services;
 using Octokit;
 
@@ -6,16 +6,16 @@ namespace ITMO.Dev.ASAP.Github.Octokit.Services;
 
 public class GithubUserService : IGithubUserService
 {
-    private readonly IServiceOrganizationGithubClientProvider _clientProvider;
+    private readonly IGithubClientProvider _clientProvider;
 
-    public GithubUserService(IServiceOrganizationGithubClientProvider clientProvider)
+    public GithubUserService(IGithubClientProvider clientProvider)
     {
         _clientProvider = clientProvider;
     }
 
     public async Task<bool> IsUserExistsAsync(string username, CancellationToken cancellationToken)
     {
-        GitHubClient client = await _clientProvider.GetClient();
+        IGitHubClient client = await _clientProvider.GetClientAsync(cancellationToken);
 
         try
         {

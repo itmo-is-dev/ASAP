@@ -1,12 +1,12 @@
 using GitHubJwt;
-using ITMO.Dev.ASAP.Github.Application.Octokit.Client;
-using ITMO.Dev.ASAP.Github.Application.Octokit.Configurations;
+using ITMO.Dev.ASAP.Github.Application.Octokit.Clients;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Services;
-using ITMO.Dev.ASAP.Github.Octokit.Caching;
-using ITMO.Dev.ASAP.Github.Octokit.Client;
+using ITMO.Dev.ASAP.Github.Octokit.Clients;
+using ITMO.Dev.ASAP.Github.Octokit.Configuration;
+using ITMO.Dev.ASAP.Github.Octokit.Configuration.ServiceClients;
 using ITMO.Dev.ASAP.Github.Octokit.CredentialStores;
 using ITMO.Dev.ASAP.Github.Octokit.Services;
-using Microsoft.Extensions.Caching.Memory;
+using ITMO.Dev.ASAP.Github.Octokit.Tools;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -17,60 +17,41 @@ namespace ITMO.Dev.ASAP.Github.Octokit.Extensions;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddGithubOctokitIntegration(
-        this IServiceCollection services,
+        this IServiceCollection collection,
         IConfiguration configuration)
     {
-        services.Configure<CacheConfiguration>(configuration.GetSection(nameof(CacheConfiguration)));
+        IConfigurationSection section = configuration.GetSection("Github:Octokit");
+        collection.Configure<GithubOctokitConfiguration>(section);
+        collection.AddSingleton<IValidateOptions<GithubOctokitConfiguration>, GithubOctokitConfiguration>();
 
-        services.Configure<GithubIntegrationConfiguration>(
-            configuration.GetSection(nameof(GithubIntegrationConfiguration)));
+        collection.AddGithubClients(configuration);
+        collection.AddGithubServices();
 
-        services.AddClientFactory();
-        services.AddGithubServices();
-
-        return services;
+        return collection;
     }
 
-    private static IServiceCollection AddClientFactory(this IServiceCollection services)
+    private static IServiceCollection AddGithubClients(this IServiceCollection collection, IConfiguration configuration)
     {
-        services.AddSingleton(provider =>
+        collection.AddSingleton(provider =>
         {
-            IOptions<GithubIntegrationConfiguration> configuration = provider
-                .GetRequiredService<IOptions<GithubIntegrationConfiguration>>();
+            IOptions<GithubOctokitConfiguration> octokitConfiguration = provider
+                .GetRequiredService<IOptions<GithubOctokitConfiguration>>();
 
-            var privateKeySource = new FullStringPrivateKeySource(configuration.Value.GithubAppConfiguration.PrivateKey);
+            var privateKeySource = new FullStringPrivateKeySource(octokitConfiguration.Value.PrivateKey);
 
             var jwtFactoryOptions = new GitHubJwtFactoryOptions
             {
                 // The GitHub App Id
-                AppIntegrationId = configuration.Value.GithubAppConfiguration.AppIntegrationId,
+                AppIntegrationId = octokitConfiguration.Value.AppId,
 
                 // 10 minutes is the maximum time allowed
-                ExpirationSeconds = configuration.Value.GithubAppConfiguration.JwtExpirationSeconds,
+                ExpirationSeconds = octokitConfiguration.Value.JwtExpirationSeconds,
             };
 
             return new GitHubJwtFactory(privateKeySource, jwtFactoryOptions);
         });
 
-        services.AddSingleton<IAsapMemoryCache, AsapMemoryCache>(provider =>
-        {
-            IOptions<CacheConfiguration> configuration = provider.GetRequiredService<IOptions<CacheConfiguration>>();
-
-            var memoryCacheOptions = new MemoryCacheOptions
-            {
-                SizeLimit = configuration.Value.SizeLimit,
-                ExpirationScanFrequency = configuration.Value.Expiration,
-            };
-
-            MemoryCacheEntryOptions memoryCacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSize(configuration.Value.CacheEntryConfiguration.EntrySize)
-                .SetAbsoluteExpiration(configuration.Value.CacheEntryConfiguration.AbsoluteExpiration)
-                .SetSlidingExpiration(configuration.Value.CacheEntryConfiguration.SlidingExpiration);
-
-            return new AsapMemoryCache(memoryCacheOptions, memoryCacheEntryOptions);
-        });
-
-        services.AddSingleton<IGitHubClient>(serviceProvider =>
+        collection.AddSingleton<IGitHubClient>(serviceProvider =>
         {
             GitHubJwtFactory githubJwtFactory = serviceProvider.GetService<GitHubJwtFactory>()!;
 
@@ -79,11 +60,18 @@ public static class ServiceCollectionExtensions
                 new GithubAppCredentialStore(githubJwtFactory));
         });
 
-        services.AddSingleton<IInstallationClientFactory, InstallationClientFactory>();
-        services.AddSingleton<IOrganizationGithubClientProvider, OrganizationGithubClientProvider>();
-        services.AddSingleton<IServiceOrganizationGithubClientProvider, ServiceOrganizationGithubClientProvider>();
+        FluentChaining.IChain<ServiceClientCommand> serviceClientChain = FluentChaining.FluentChaining
+            .CreateChain<ServiceClientCommand>(start => start
+                .Then<InstallationServiceClientLink>()
+                .Then<OrganizationServiceClientLink>()
+                .Then<UserServiceClientLink>()
+                .FinishWith(() => throw new InvalidOperationException("Please configure Github:Octokit:Service")));
 
-        return services;
+        serviceClientChain.Process(new ServiceClientCommand(collection, configuration));
+
+        collection.AddSingleton<IGithubClientProvider, GithubClientProvider>();
+
+        return collection;
     }
 
     private static IServiceCollection AddGithubServices(this IServiceCollection services)
