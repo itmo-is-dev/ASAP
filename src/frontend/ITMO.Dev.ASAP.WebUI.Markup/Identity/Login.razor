@@ -1,6 +1,7 @@
 @page "/adminpanel/identity/login"
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
 @using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
 @layout EmptyLayout
 @inject IPrincipalService PrincipalService
 @inject NavigationManager NavigationManager
@@ -17,21 +18,33 @@
 
         <FocusTrap Active="true">
             <Field>
-                <TextEdit Placeholder="Username" @bind-Text="_username"/>
+                <TextEdit Placeholder="Username" 
+                          @bind-Text="_username" 
+                          @bind-Disabled="@_loggingIn"/>
             </Field>
 
             <Field>
-                <TextEdit Placeholder="Password" Role="@TextRole.Password" @bind-Text="_password"/>
+                <TextEdit Placeholder="Password" 
+                          Role="@TextRole.Password" 
+                          @bind-Text="_password" 
+                          @bind-Disabled="@_loggingIn"/>
             </Field>
         </FocusTrap>
 
         <Div Flex="Flex.JustifyContent.Center">
-            <Button Color="Color.Primary"
-                    Clicked="OnLoginButtonClickedAsync"
-                    Type="@ButtonType.Submit"
-                    PreventDefaultOnSubmit>
-                Login
-            </Button>
+            @if (_loggingIn is false)
+            {
+                <Button Color="Color.Primary"
+                        Clicked="OnLoginButtonClickedAsync"
+                        Type="@ButtonType.Submit"
+                        PreventDefaultOnSubmit>
+                    Login
+                </Button>
+            }
+            else
+            {
+                <LoaderComponent Size="25px"/>
+            }
         </Div>
     </Form>
 </Div>
@@ -40,6 +53,8 @@
 
     private string? _username;
     private string? _password;
+
+    private bool _loggingIn;
 
     protected override void OnParametersSet()
     {
@@ -52,6 +67,8 @@
         if (_username is null || _password is null)
             return;
 
+        _loggingIn = true;
+
         await using var builder = SafeExecutor.Execute(() => PrincipalService.LoginAsync(_username, _password, default));
 
         builder.Title = "Login failed";
@@ -61,6 +78,8 @@
             NavigationManager.NavigateTo("/");
             return Task.CompletedTask;
         });
+
+        builder.OnFail(() => _loggingIn = false);
     }
 
 }
