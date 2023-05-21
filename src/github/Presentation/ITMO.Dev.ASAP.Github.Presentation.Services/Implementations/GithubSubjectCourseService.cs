@@ -5,7 +5,7 @@ using MediatR;
 
 namespace ITMO.Dev.ASAP.Github.Presentation.Services.Implementations;
 
-public class GithubSubjectCourseService : IGithubSubjectCourseService
+internal class GithubSubjectCourseService : IGithubSubjectCourseService
 {
     private readonly IMediator _mediator;
 

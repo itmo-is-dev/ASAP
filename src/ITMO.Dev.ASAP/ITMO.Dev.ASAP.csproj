@@ -46,9 +46,6 @@
       <Content Update="appsettings.Staging.json">
         <DependentUpon>appsettings.json</DependentUpon>
       </Content>
-      <Content Include="..\..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
     </ItemGroup>
 
 </Project>

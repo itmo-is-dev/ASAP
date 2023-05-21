@@ -11,6 +11,8 @@
     <PackageVersion Include="FluentMigrator.Runner" Version="3.3.2" />
     <PackageVersion Include="FluentMigrator.Runner.Postgres" Version="3.3.2" />
     <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="7.0.1" />
     <PackageVersion Include="Npgsql" Version="6.0.6" />
     <PackageVersion Include="Respawn" Version="6.0.0" />
     <PackageVersion Include="SourceKit.Generators.Builder" Version="1.0.1" />

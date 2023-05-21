@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Github.Application.Octokit.Client;
+using ITMO.Dev.ASAP.Github.Application.Octokit.Clients;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Models;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Services;
 using Microsoft.Extensions.Logging;
@@ -8,11 +8,11 @@ namespace ITMO.Dev.ASAP.Github.Octokit.Services;
 
 public class GithubRepositoryService : IGithubRepositoryService
 {
-    private readonly IOrganizationGithubClientProvider _clientProvider;
+    private readonly IGithubClientProvider _clientProvider;
     private readonly ILogger<GithubRepositoryService> _logger;
 
     public GithubRepositoryService(
-        IOrganizationGithubClientProvider clientProvider,
+        IGithubClientProvider clientProvider,
         ILogger<GithubRepositoryService> logger)
     {
         _clientProvider = clientProvider;
@@ -21,7 +21,7 @@ public class GithubRepositoryService : IGithubRepositoryService
 
     public async Task AddTeamPermission(string organization, string repositoryName, Team team, Permission permission)
     {
-        GitHubClient client = await _clientProvider.GetClient(organization);
+        IGitHubClient client = await _clientProvider.GetClientForOrganizationAsync(organization, default);
 
         _logger.LogInformation(
             "Adding permission {Permission} for {Team} in {OrganizationName}/{RepositoryName}",
@@ -39,7 +39,7 @@ public class GithubRepositoryService : IGithubRepositoryService
 
     public async Task CreateRepositoryFromTemplate(string organization, string newRepositoryName, string templateName)
     {
-        GitHubClient client = await _clientProvider.GetClient(organization);
+        IGitHubClient client = await _clientProvider.GetClientForOrganizationAsync(organization, default);
 
         var userRepositoryFromTemplate = new NewRepositoryFromTemplate(newRepositoryName)
         {
@@ -64,7 +64,7 @@ public class GithubRepositoryService : IGithubRepositoryService
         string username,
         Permission permission)
     {
-        GitHubClient client = await _clientProvider.GetClient(organization);
+        IGitHubClient client = await _clientProvider.GetClientForOrganizationAsync(organization, default);
 
         RepositoryInvitation invitation = await client.Repository.Collaborator.Invite(
             organization,

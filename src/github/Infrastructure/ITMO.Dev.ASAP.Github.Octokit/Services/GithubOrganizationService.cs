@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Github.Application.Octokit.Client;
+using ITMO.Dev.ASAP.Github.Application.Octokit.Clients;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Services;
 using ITMO.Dev.ASAP.Github.Common.Exceptions.Entities;
 using ITMO.Dev.ASAP.Github.Common.Extensions;
@@ -8,9 +8,9 @@ namespace ITMO.Dev.ASAP.Github.Octokit.Services;
 
 public class GithubOrganizationService : IGithubOrganizationService
 {
-    private readonly IOrganizationGithubClientProvider _clientProvider;
+    private readonly IGithubClientProvider _clientProvider;
 
-    public GithubOrganizationService(IOrganizationGithubClientProvider clientProvider)
+    public GithubOrganizationService(IGithubClientProvider clientProvider)
     {
         _clientProvider = clientProvider;
     }
@@ -21,7 +21,9 @@ public class GithubOrganizationService : IGithubOrganizationService
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        GitHubClient client = await _clientProvider.GetClient(organizationName);
+
+        IGitHubClient client = await _clientProvider
+            .GetClientForOrganizationAsync(organizationName, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
         IReadOnlyList<Team> teams = await client.Organization.Team.GetAll(organizationName);
@@ -42,7 +44,9 @@ public class GithubOrganizationService : IGithubOrganizationService
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        GitHubClient client = await _clientProvider.GetClient(organizationName);
+
+        IGitHubClient client = await _clientProvider
+            .GetClientForOrganizationAsync(organizationName, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
         IReadOnlyList<Repository> repositories = await client.Repository.GetAllForOrg(organizationName);
@@ -53,7 +57,9 @@ public class GithubOrganizationService : IGithubOrganizationService
     public async Task<Team> GetTeamAsync(string organizationName, string teamName, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        GitHubClient client = await _clientProvider.GetClient(organizationName);
+
+        IGitHubClient client = await _clientProvider
+            .GetClientForOrganizationAsync(organizationName, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
         IReadOnlyList<Team> teams = await client.Organization.Team.GetAll(organizationName);

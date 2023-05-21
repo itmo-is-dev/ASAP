@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Github.Application.Dto.PullRequests;
-using ITMO.Dev.ASAP.Github.Application.Octokit.Client;
+using ITMO.Dev.ASAP.Github.Application.Octokit.Clients;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Extensions;
 using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Notifiers;
 using Microsoft.Extensions.Logging;
@@ -17,7 +17,7 @@ namespace ITMO.Dev.ASAP.Github.Presentation.Webhooks.Processing;
 
 public class AsapWebhookEventProcessor : WebhookEventProcessor
 {
-    private readonly IOrganizationGithubClientProvider _clientProvider;
+    private readonly IGithubClientProvider _clientProvider;
     private readonly ILogger<AsapWebhookEventProcessor> _logger;
     private readonly EventNotifierProxy _notifierProxy;
 
@@ -27,7 +27,7 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
 
     public AsapWebhookEventProcessor(
         ILogger<AsapWebhookEventProcessor> logger,
-        IOrganizationGithubClientProvider clientProvider,
+        IGithubClientProvider clientProvider,
         PullRequestWebhookEventProcessor pullRequestWebhookEventProcessor,
         PullRequestReviewWebhookEventProcessor pullRequestReviewWebhookEventProcessor,
         IssueCommentWebhookProcessor issueCommentWebhookProcessor,
@@ -175,7 +175,8 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
         ArgumentNullException.ThrowIfNull(issueCommentEvent.Organization);
         ArgumentNullException.ThrowIfNull(issueCommentEvent.Repository);
 
-        GitHubClient gitHubClient = await _clientProvider.GetClient(issueCommentEvent.Organization.Login);
+        IGitHubClient gitHubClient = await _clientProvider
+            .GetClientForOrganizationAsync(issueCommentEvent.Organization.Login, default);
 
         PullRequest pullRequest = await gitHubClient.PullRequest
             .Get(issueCommentEvent.Repository.Id, (int)issueCommentEvent.Issue.Number);

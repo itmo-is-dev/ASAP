@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Github.Application.Extensions;
 using ITMO.Dev.ASAP.Github.Application.Handlers.Extensions;
+using ITMO.Dev.ASAP.Github.Caching.Extensions;
 using ITMO.Dev.ASAP.Github.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Github.Octokit.Extensions;
 using ITMO.Dev.ASAP.Github.Presentation.Services.Extensions;
@@ -16,16 +17,26 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration,
         string databaseConnectionString)
     {
-        collection.AddGithubApplication();
-        collection.AddGithubApplicationHandlers();
+        bool enabled = configuration.GetValue<bool>("Github:Enabled");
 
-        collection.AddGithubOctokitIntegration(configuration);
+        if (enabled)
+        {
+            collection.AddGithubApplication(configuration);
+            collection.AddGithubApplicationHandlers();
+            collection.AddGithubCaching(configuration);
 
-        collection.AddGithubDatabaseContext(databaseConnectionString);
+            collection.AddGithubOctokitIntegration(configuration);
 
-        collection
-            .AddGithubPresentation()
-            .AddGithubPresentationServices();
+            collection.AddGithubDatabaseContext(databaseConnectionString);
+
+            collection
+                .AddGithubPresentation(configuration)
+                .AddGithubPresentationServices();
+        }
+        else
+        {
+            collection.AddDummyGithubPresentationServices();
+        }
 
         return collection;
     }

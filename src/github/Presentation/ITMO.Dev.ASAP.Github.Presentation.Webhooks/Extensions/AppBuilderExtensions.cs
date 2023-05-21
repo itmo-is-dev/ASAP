@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.Github.Application.Octokit.Configurations;
+using ITMO.Dev.ASAP.Github.Presentation.Webhooks.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -12,10 +12,13 @@ public static class AppBuilderExtensions
     {
         app.UseEndpoints(endpoints =>
         {
-            IOptions<GithubIntegrationConfiguration> options = endpoints.ServiceProvider
-                .GetRequiredService<IOptions<GithubIntegrationConfiguration>>();
+            IOptions<GithubWebhooksConfiguration> options = endpoints.ServiceProvider
+                .GetRequiredService<IOptions<GithubWebhooksConfiguration>>();
 
-            endpoints.MapGitHubWebhooks(secret: options.Value.GithubAppConfiguration.GithubAppSecret);
+            if (options.Value.Enabled)
+            {
+                endpoints.MapGitHubWebhooks(secret: options.Value.Secret);
+            }
         });
 
         return app;
