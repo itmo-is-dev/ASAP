@@ -25,12 +25,13 @@ public class InstallationCredentialStore : ICredentialStore
     public Task<Credentials> GetCredentials()
     {
         // check if token has expired or is already refreshing in async task
-        if (!IsTokenExpired() || _tokenRefreshState.IsRefreshing())
+        if (IsTokenExpired() is false || _tokenRefreshState.IsRefreshing())
             return _task;
+
         lock (_lock)
         {
             // check if while waiting for lock token was already set refreshing
-            if (!_tokenRefreshState.TrySetStartRefreshing())
+            if (_tokenRefreshState.TrySetStartRefreshing() is false)
                 return _task;
 
             // check if it is not refreshing because it was successfully refreshed while we were waiting for lock
@@ -54,6 +55,7 @@ public class InstallationCredentialStore : ICredentialStore
         {
             AccessToken? token = await _gitHubAppClient.GitHubApps.CreateInstallationToken(_installationId);
             SetExpirationDate(token.ExpiresAt.AddMinutes(-1));
+
             return new Credentials(token.Token);
         }
         catch

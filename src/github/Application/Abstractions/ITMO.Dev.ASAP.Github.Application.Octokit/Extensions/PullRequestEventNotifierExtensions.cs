@@ -1,4 +1,5 @@
 using ITMO.Dev.ASAP.Application.Dto.Submissions;
+using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Github.Application.Octokit.Notifications;
 using ITMO.Dev.ASAP.Github.Common.Exceptions;
 
@@ -18,17 +19,17 @@ public static class PullRequestEventNotifierExtensions
     }
 
     public static async Task SendExceptionMessageSafe(
-        this IPullRequestEventNotifier pullRequestEventNotifier,
+        this IPullRequestEventNotifier notifier,
         Exception exception)
     {
-        if (exception is AsapGithubException)
+        string message = exception switch
         {
-            await pullRequestEventNotifier.SendCommentToPullRequest(exception.Message);
-        }
-        else
-        {
-            const string newMessage = "An internal error occurred while processing command. Contact support for details.";
-            await pullRequestEventNotifier.SendCommentToPullRequest(newMessage);
-        }
+            HttpTaggedException e => e.Wrapped.Message,
+            AsapGithubException e => e.Message,
+            DomainException e => e.Message,
+            _ => "An internal error occurred while processing command. Contact support for details.",
+        };
+
+        await notifier.SendCommentToPullRequest(message);
     }
 }

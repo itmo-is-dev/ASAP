@@ -43,7 +43,7 @@ internal class SubjectCourseOrganizationUpdateHandler :
 
         await foreach (GithubSubjectCourse subjectCourse in subjectCourses.WithCancellation(cancellationToken))
         {
-            await UpdateOrganizationAsync(subjectCourse, cancellationToken);
+            await UpdateOrganizationSafeAsync(subjectCourse, cancellationToken);
         }
     }
 
@@ -55,7 +55,25 @@ internal class SubjectCourseOrganizationUpdateHandler :
             .QueryAsync(query, cancellationToken)
             .SingleAsync(cancellationToken);
 
-        await UpdateOrganizationAsync(subjectCourse, cancellationToken);
+        await UpdateOrganizationSafeAsync(subjectCourse, cancellationToken);
+    }
+
+    private async Task UpdateOrganizationSafeAsync(
+        GithubSubjectCourse subjectCourse,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            await UpdateOrganizationAsync(subjectCourse, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(
+                e,
+                "Failed to update organization for SubjectCourseId = {SubjectCourseId}, Name = {Name}",
+                subjectCourse.Id,
+                subjectCourse.OrganizationName);
+        }
     }
 
     private async Task UpdateOrganizationAsync(GithubSubjectCourse subjectCourse, CancellationToken cancellationToken)
