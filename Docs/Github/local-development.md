@@ -28,9 +28,11 @@
 Отключите Webhook'и, их можно будет включить дальше, используя [ngrok](https://ngrok.com) для того чтобы получать 
 вебхуки на локальную машину
 
-<div style="display: flex;">
-<img src="local-development/create-bot-webhook-enabled.png"/>
-<img src="local-development/create-bot-webhook-disabled.png">
+<div align="center">
+  <div style="display: flex;flex-direction:row">
+    <img src="local-development/create-bot-webhook-enabled.png" style="width:50%"/>
+    <img src="local-development/create-bot-webhook-disabled.png" style="width:50%">
+  </div>  
 </div>
 
 Добавьте `Read and write` permission'ы для 
