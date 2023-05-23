@@ -1,6 +1,5 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.DeveloperEnvironment;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -8,9 +7,10 @@ namespace ITMO.Dev.ASAP.Controllers;
 
 [ApiController]
 [Route("api/internal/")]
-[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
 public class InternalController : ControllerBase
 {
+    private const string Scope = "Internal";
+
     private readonly DeveloperEnvironmentSeeder _developerEnvironmentSeeder;
 
     public InternalController(
@@ -20,6 +20,7 @@ public class InternalController : ControllerBase
     }
 
     [HttpPost("seed-test-data")]
+    [AuthorizeFeature(Scope, "Seed")]
     public async Task<IActionResult> SeedTestData([FromQuery] string environment)
     {
         var command = new DeveloperEnvironmentSeedingRequest(environment);

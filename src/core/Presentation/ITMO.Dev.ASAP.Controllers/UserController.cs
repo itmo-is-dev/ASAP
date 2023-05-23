@@ -1,23 +1,23 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Dto.Users;
+using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.Controllers.Extensions;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Users;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITMO.Dev.ASAP.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
 public class UserController : ControllerBase
 {
+    private const string Scope = "Users";
+
     private readonly IMediator _mediator;
 
     public UserController(IMediator mediator)
@@ -28,7 +28,8 @@ public class UserController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
-    public async Task<ActionResult<UserDto?>> FindUser(int? universityId, CancellationToken cancellationToken)
+    [AuthorizeFeature(Scope, nameof(FindByUniversityId))]
+    public async Task<ActionResult<UserDto?>> FindByUniversityId(int? universityId, CancellationToken cancellationToken)
     {
         UserDto? user;
 
@@ -45,6 +46,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("{userId:guid}/universityId/update")]
+    [AuthorizeFeature(Scope, nameof(UpdateUniversityId))]
     public async Task<IActionResult> UpdateUniversityId(Guid userId, int universityId)
     {
         IdentityUserDto caller = HttpContext.GetUser();
@@ -55,6 +57,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("{userId:guid}/change-name")]
+    [AuthorizeFeature(Scope, nameof(UpdateName))]
     public async Task<ActionResult> UpdateName(Guid userId, string firstName, string middleName, string lastName)
     {
         await _mediator.Send(new UpdateUserName.Command(userId, firstName, middleName, lastName));
@@ -63,7 +66,8 @@ public class UserController : ControllerBase
 
     [ProducesResponseType(200)]
     [HttpPost("identity-info")]
-    public async Task<ActionResult<GetUserIdentityInfosResponse>> GetUserIdentityInfosAsync(
+    [AuthorizeFeature(Scope, nameof(QueryIdentityInfo))]
+    public async Task<ActionResult<GetUserIdentityInfosResponse>> QueryIdentityInfo(
         [FromBody] QueryConfiguration<UserQueryParameter> queryConfiguration,
         int? page,
         CancellationToken cancellationToken)

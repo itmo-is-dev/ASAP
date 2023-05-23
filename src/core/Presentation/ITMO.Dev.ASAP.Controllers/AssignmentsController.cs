@@ -4,6 +4,7 @@ using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Study;
+using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.GroupAssignments;
 using MediatR;
@@ -17,6 +18,8 @@ namespace ITMO.Dev.ASAP.Controllers;
 [Authorize(Roles = AsapIdentityRoleNames.AtLeastMentor)]
 public class AssignmentsController : ControllerBase
 {
+    private const string Scope = "Assignments";
+
     private readonly IMediator _mediator;
 
     public AssignmentsController(IMediator mediator)
@@ -25,8 +28,8 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
-    public async Task<ActionResult<AssignmentDto>> CreateAssignment(CreateAssignmentRequest request)
+    [AuthorizeFeature(Scope, nameof(Create))]
+    public async Task<ActionResult<AssignmentDto>> Create(CreateAssignmentRequest request)
     {
         var command = new CreateAssignment.Command(
             request.SubjectCourseId,
@@ -41,8 +44,8 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpPatch("{id:guid}")]
-    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
-    public async Task<ActionResult<AssignmentDto>> UpdateAssignmentPoints(Guid id, double minPoints, double maxPoints)
+    [AuthorizeFeature(Scope, nameof(UpdatePoints))]
+    public async Task<ActionResult<AssignmentDto>> UpdatePoints(Guid id, double minPoints, double maxPoints)
     {
         var command = new UpdateAssignmentPoints.Command(id, minPoints, maxPoints);
 
@@ -52,7 +55,8 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<AssignmentDto>> GetAssignmentById(Guid id)
+    [AuthorizeFeature(Scope, nameof(GetById))]
+    public async Task<ActionResult<AssignmentDto>> GetById(Guid id)
     {
         var query = new GetAssignmentById.Query(id);
 
@@ -62,7 +66,8 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpGet("{assignmentId:guid}/groups")]
-    public async Task<ActionResult<IReadOnlyCollection<GroupAssignmentDto>>> Get(Guid assignmentId)
+    [AuthorizeFeature(Scope, nameof(GetGroups))]
+    public async Task<ActionResult<IReadOnlyCollection<GroupAssignmentDto>>> GetGroups(Guid assignmentId)
     {
         var query = new GetGroupAssignments.Query(assignmentId);
         GetGroupAssignments.Response response = await _mediator.Send(query);
@@ -72,7 +77,8 @@ public class AssignmentsController : ControllerBase
 
     [HttpPut("{assignmentId:guid}/groups/{groupId:guid}")]
     [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
-    public async Task<ActionResult<GroupAssignmentDto>> UpdateById(
+    [AuthorizeFeature(Scope, nameof(Update))]
+    public async Task<ActionResult<GroupAssignmentDto>> Update(
         Guid assignmentId,
         Guid groupId,
         UpdateGroupAssignmentRequest request)

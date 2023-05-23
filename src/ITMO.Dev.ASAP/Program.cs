@@ -38,6 +38,8 @@ internal class Program
         builder.Host.UseSerilogForAppLogs(builder.Configuration);
         builder.AddDeveloperEnvironment();
 
+        builder.Configuration.AddJsonFile("features.json");
+
         var webApiConfiguration = new WebApiConfiguration(builder.Configuration);
 
         IConfigurationSection identityConfigurationSection = builder.Configuration

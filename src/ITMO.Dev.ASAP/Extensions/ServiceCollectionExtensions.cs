@@ -2,6 +2,7 @@ using FluentSerialization.Extensions.NewtonsoftJson;
 using ITMO.Dev.ASAP.Application.Dto.Tools;
 using ITMO.Dev.ASAP.Application.Extensions;
 using ITMO.Dev.ASAP.Application.Handlers.Extensions;
+using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.Configuration;
 using ITMO.Dev.ASAP.Controllers;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
@@ -61,6 +62,8 @@ internal static class ServiceCollectionExtensions
             serviceCollection.AddEntityGeneratorsAndSeeding(webApiConfiguration.TestEnvironmentConfiguration);
 
         serviceCollection.AddRazorPages();
+
+        serviceCollection.AddFeatureAuthorization(configuration);
 
         return serviceCollection;
     }

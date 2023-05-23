@@ -1,7 +1,7 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Identity.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Identity;
+using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +13,8 @@ namespace ITMO.Dev.ASAP.Controllers;
 [Route("api/identity")]
 public class IdentityController : ControllerBase
 {
+    private const string Scope = "Identity";
+
     private readonly IMediator _mediator;
 
     public IdentityController(IMediator mediator)
@@ -31,8 +33,8 @@ public class IdentityController : ControllerBase
     }
 
     [HttpPut("users/{username}/role")]
-    [Authorize(Roles = AsapIdentityRoleNames.AtLeastModerator)]
-    public async Task<IActionResult> ChangeUserRoleAsync(string username, [FromQuery] string roleName)
+    [AuthorizeFeature(Scope, nameof(ChangeUserRole))]
+    public async Task<IActionResult> ChangeUserRole(string username, [FromQuery] string roleName)
     {
         var command = new ChangeUserRole.Command(username, roleName);
         await _mediator.Send(command);
@@ -41,8 +43,8 @@ public class IdentityController : ControllerBase
     }
 
     [HttpPost("user/{id:guid}/create")]
-    [Authorize(Roles = AsapIdentityRoleNames.AtLeastModerator)]
-    public async Task<IActionResult> CreateUserAccountAsync(Guid id, [FromBody] CreateUserAccountRequest request)
+    [AuthorizeFeature(Scope, nameof(CreateUserAccount))]
+    public async Task<IActionResult> CreateUserAccount(Guid id, [FromBody] CreateUserAccountRequest request)
     {
         var command = new CreateUserAccount.Command(id, request.Username, request.Password, request.RoleName);
         await _mediator.Send(command);
@@ -52,7 +54,8 @@ public class IdentityController : ControllerBase
 
     [HttpPut("username")]
     [Authorize]
-    public async Task<ActionResult<UpdateUsernameResponse>> UpdateUsernameAsync([FromBody] UpdateUsernameRequest request)
+    public async Task<ActionResult<UpdateUsernameResponse>> UpdateUsername(
+        [FromBody] UpdateUsernameRequest request)
     {
         var updateCommand = new UpdateUsername.Command(request.Username);
         UpdateUsername.Response response = await _mediator.Send(updateCommand);
@@ -62,7 +65,8 @@ public class IdentityController : ControllerBase
 
     [HttpPut("password")]
     [Authorize]
-    public async Task<ActionResult<UpdatePasswordResponse>> UpdatePasswordAsync([FromBody] UpdatePasswordRequest request)
+    public async Task<ActionResult<UpdatePasswordResponse>> UpdatePasswordAsync(
+        [FromBody] UpdatePasswordRequest request)
     {
         var updateCommand = new UpdatePassword.Command(request.CurrentPassword, request.NewPassword);
         UpdatePassword.Response response = await _mediator.Send(updateCommand);

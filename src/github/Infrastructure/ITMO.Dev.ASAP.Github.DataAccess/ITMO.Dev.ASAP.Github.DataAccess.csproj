@@ -13,6 +13,7 @@
         <PackageReference Include="FluentMigrator" />
         <PackageReference Include="FluentMigrator.Runner" />
         <PackageReference Include="FluentMigrator.Runner.Postgres" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
         <PackageReference Include="Npgsql" />
     </ItemGroup>
     

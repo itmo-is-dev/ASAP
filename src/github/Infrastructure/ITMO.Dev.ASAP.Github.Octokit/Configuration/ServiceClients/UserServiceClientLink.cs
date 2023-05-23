@@ -22,7 +22,10 @@ public class UserServiceClientLink : ILink<ServiceClientCommand>
         if (enabled is false)
             return next(request, context);
 
-        string name = request.Configuration.GetSection(namePath).Get<string>();
+        string? name = request.Configuration.GetSection(namePath).Get<string>();
+
+        if (name is null)
+            return next(request, context);
 
         request.ServiceCollection.AddSingleton<IServiceClientStrategy>(p =>
         {

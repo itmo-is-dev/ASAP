@@ -11,7 +11,7 @@ public class GithubOctokitConfiguration : IValidateOptions<GithubOctokitConfigur
 
     public int JwtExpirationSeconds { get; init; }
 
-    public ValidateOptionsResult Validate(string name, GithubOctokitConfiguration options)
+    public ValidateOptionsResult Validate(string? name, GithubOctokitConfiguration options)
     {
         return Validate(options);
     }
