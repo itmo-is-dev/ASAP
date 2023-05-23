@@ -1,3 +1,3 @@
 namespace ITMO.Dev.ASAP.Github.Presentation.Controllers;
 
-internal interface IAssemblyMarker { }
+internal interface IGithubControllerMarker { }

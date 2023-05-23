@@ -51,6 +51,7 @@
     <PackageVersion Include="MediatR.Contracts" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.Authorization" Version="7.0.5" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.5" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />
@@ -86,7 +87,7 @@
     <PackageVersion Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="7.0.4" />
     <PackageVersion Include="Microsoft.Extensions.Identity.Stores" Version="7.0.4" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageVersion Include="Moq" Version="4.18.4" />

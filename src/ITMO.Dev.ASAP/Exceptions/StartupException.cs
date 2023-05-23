@@ -2,9 +2,9 @@
 
 public class StartupException : Exception
 {
-    internal StartupException()
+    public StartupException()
         : base("Application is unable to startup") { }
 
-    internal StartupException(string message)
+    public StartupException(string message)
         : base(message) { }
 }

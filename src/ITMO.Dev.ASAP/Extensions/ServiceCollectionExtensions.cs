@@ -32,7 +32,7 @@ internal static class ServiceCollectionExtensions
             .AddNewtonsoftJson(x => ConfigurationBuilder
                 .Build(new DtoSerializationConfiguration())
                 .ApplyToSerializationSettings(x.SerializerSettings))
-            .AddApplicationPart(typeof(IControllerProjectMarker).Assembly)
+            .AddApplicationPart(typeof(ICoreControllerMarker).Assembly)
             .AddControllersAsServices();
 
         serviceCollection.AddRpcPresentation();

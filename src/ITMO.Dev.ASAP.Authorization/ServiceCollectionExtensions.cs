@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection collection,
         IConfiguration configuration)
     {
-        IConfigurationSection section = configuration.GetSection("Authorization");
+        IConfigurationSection section = configuration.GetSection(Constants.SectionKey);
         collection.Configure<AuthorizationConfiguration>(section);
 
         collection.AddSingleton<IAuthorizationPolicyProvider, AuthorizationFeaturePolicyProvider>();

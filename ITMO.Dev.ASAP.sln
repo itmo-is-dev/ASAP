@@ -196,6 +196,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{652800
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Authorization", "src\ITMO.Dev.ASAP.Authorization\ITMO.Dev.ASAP.Authorization.csproj", "{ADBA2A57-DEDF-4D48-890F-3C85718B15D0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.Tests.Controllers", "tests\ITMO.Dev.ASAP.Tests.Controllers\ITMO.Dev.ASAP.Tests.Controllers.csproj", "{794F9847-1C2E-43AE-A0A1-B18DA302F1AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -470,6 +472,10 @@ Global
 		{ADBA2A57-DEDF-4D48-890F-3C85718B15D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADBA2A57-DEDF-4D48-890F-3C85718B15D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADBA2A57-DEDF-4D48-890F-3C85718B15D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{794F9847-1C2E-43AE-A0A1-B18DA302F1AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{794F9847-1C2E-43AE-A0A1-B18DA302F1AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{794F9847-1C2E-43AE-A0A1-B18DA302F1AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{794F9847-1C2E-43AE-A0A1-B18DA302F1AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -563,6 +569,7 @@ Global
 		{0A8FD854-5FE2-4006-A183-4E0B848DE35D} = {3A268EF1-6843-44CA-9434-C82E467A7515}
 		{6528001A-2766-44F2-A137-C9480E9D9B40} = {4265F334-2F2B-4B59-A7B4-D62A83264C37}
 		{ADBA2A57-DEDF-4D48-890F-3C85718B15D0} = {6528001A-2766-44F2-A137-C9480E9D9B40}
+		{794F9847-1C2E-43AE-A0A1-B18DA302F1AD} = {D6F2860A-2B15-465E-B1BB-B8B3AE829A9C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CD5C67DB-70F8-4C47-A3F4-7C94BECE1657}

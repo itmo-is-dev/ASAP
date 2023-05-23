@@ -15,5 +15,9 @@
     <ItemGroup>
       <PackageReference Include="MediatR" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Tests.Controllers" />
+    </ItemGroup>
 
 </Project>
