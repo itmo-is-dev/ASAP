@@ -23,6 +23,7 @@ public class IdentityController : ControllerBase
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<ActionResult<LoginResponse>> LoginAsync([FromBody] LoginRequest request)
     {
         var query = new Login.Query(request.Username, request.Password);
@@ -75,6 +76,7 @@ public class IdentityController : ControllerBase
     }
 
     [HttpGet("password/options")]
+    [AllowAnonymous]
     public async Task<PasswordOptionsDto> GetPasswordOptionsAsync()
     {
         var query = new GetPasswordOptions.Query();

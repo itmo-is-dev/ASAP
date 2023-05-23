@@ -3,9 +3,8 @@ using FluentScanning;
 using ITMO.Dev.ASAP.Application.Extensions;
 using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.Authorization.Models;
-using ITMO.Dev.ASAP.Controllers;
-using ITMO.Dev.ASAP.Github.Presentation.Controllers;
 using ITMO.Dev.ASAP.Tests.Controllers.Fixtures;
+using ITMO.Dev.ASAP.Tests.Controllers.TheoryData;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using Xunit;
@@ -22,8 +21,7 @@ public class AuthorizeFeatureTest : TestBase, IClassFixture<AuthorizationFeature
     }
 
     [Theory]
-    [InlineData(typeof(ICoreControllerMarker))]
-    [InlineData(typeof(IGithubControllerMarker))]
+    [ClassData(typeof(ControllersClassesTestData))]
     public void FeatureScopesShouldBeDefined(AssemblyProvider assemblyProvider)
     {
         var scanner = new AssemblyScanner(assemblyProvider);

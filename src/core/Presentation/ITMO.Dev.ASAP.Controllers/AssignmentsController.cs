@@ -15,7 +15,6 @@ namespace ITMO.Dev.ASAP.Controllers;
 
 [Route("/api/[controller]")]
 [ApiController]
-[Authorize(Roles = AsapIdentityRoleNames.AtLeastMentor)]
 public class AssignmentsController : ControllerBase
 {
     private const string Scope = "Assignments";
