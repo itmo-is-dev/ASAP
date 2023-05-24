@@ -1,3 +1,3 @@
 namespace ITMO.Dev.ASAP.Authorization.Models;
 
-public class FeatureRoles : List<string> { }
+internal class FeatureRoles : List<string> { }
