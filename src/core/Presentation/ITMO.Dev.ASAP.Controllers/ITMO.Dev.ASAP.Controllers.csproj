@@ -8,4 +8,8 @@
         <ProjectReference Include="..\ITMO.Dev.ASAP.WebApi.Abstractions\ITMO.Dev.ASAP.WebApi.Abstractions.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Tests.Controllers" />
+    </ItemGroup>
+
 </Project>

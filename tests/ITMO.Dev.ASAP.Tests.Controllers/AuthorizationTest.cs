@@ -34,11 +34,10 @@ public class AuthorizationTest : TestBase
 
         foreach (TypeInfo controller in controllers)
         {
-            MethodInfo[] actions = controller
+            IEnumerable<MethodInfo> actions = controller
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public)
                 .Where(method => method.CustomAttributes.Any(attrib => attrib.AttributeType.IsAssignableTo(typeof(IRouteTemplateProvider))))
-                .Where(method => method.GetCustomAttribute<AllowAnonymousAttribute>() is null)
-                .ToArray();
+                .Where(method => method.GetCustomAttribute<AllowAnonymousAttribute>() is null);
 
             MethodInfo[] actionWithoutAuthorization = actions
                 .Where(action => action.CustomAttributes.All(attrib =>

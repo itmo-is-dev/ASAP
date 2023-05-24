@@ -4,7 +4,7 @@ using ITMO.Dev.ASAP.Application.Extensions;
 using ITMO.Dev.ASAP.Application.Handlers.Extensions;
 using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.Configuration;
-using ITMO.Dev.ASAP.Controllers;
+using ITMO.Dev.ASAP.Controllers.Extensions;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Github;
 using ITMO.Dev.ASAP.Google;
@@ -32,7 +32,7 @@ internal static class ServiceCollectionExtensions
             .AddNewtonsoftJson(x => ConfigurationBuilder
                 .Build(new DtoSerializationConfiguration())
                 .ApplyToSerializationSettings(x.SerializerSettings))
-            .AddApplicationPart(typeof(ICoreControllerMarker).Assembly)
+            .AddCoreControllersApplicationPart()
             .AddControllersAsServices();
 
         serviceCollection.AddRpcPresentation();
