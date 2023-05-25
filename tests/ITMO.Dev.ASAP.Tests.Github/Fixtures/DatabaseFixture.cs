@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Github.DataAccess;
 using ITMO.Dev.ASAP.Github.DataAccess.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Respawn;
@@ -49,8 +50,18 @@ public class DatabaseFixture : IAsyncLifetime
         _connection = new NpgsqlConnection(_container.GetConnectionString());
         await _connection.OpenAsync();
 
+        var configurationValues = new Dictionary<string, string?>
+        {
+            { "Github:Enabled", "true" },
+        };
+
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(configurationValues)
+            .Build();
+
         var collection = new ServiceCollection();
         collection.AddMigrations(_ => _container.GetConnectionString());
+        collection.AddSingleton<IConfiguration>(configuration);
 
         await using ServiceProvider provider = collection.BuildServiceProvider();
         await using AsyncServiceScope scope = provider.CreateAsyncScope();

@@ -1,3 +1,4 @@
+using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.Github.Application.Contracts.SubjectCourses.Commands;
 using ITMO.Dev.ASAP.Github.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Github;
@@ -10,6 +11,8 @@ namespace ITMO.Dev.ASAP.Github.Presentation.Controllers;
 [Route("api/[controller]")]
 public class SubjectCourseController : ControllerBase
 {
+    private const string Scope = "SubjectCourse";
+
     private readonly IMediator _mediator;
 
     public SubjectCourseController(IMediator mediator)
@@ -18,7 +21,8 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpPost("github")]
-    public async Task<ActionResult<GithubSubjectCourseDto>> CreateGithubSubjectCourseAsync(
+    [AuthorizeFeature(Scope, nameof(GithubCreate))]
+    public async Task<ActionResult<GithubSubjectCourseDto>> GithubCreate(
         [FromBody] CreateGithubSubjectCourseRequest request,
         CancellationToken cancellationToken)
     {
@@ -36,7 +40,8 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpPut("{subjectCourseId:guid}/github/mentor-team")]
-    public async Task<ActionResult> UpdateMentorsTeamNameAsync(
+    [AuthorizeFeature(Scope, nameof(GithubUpdateMentorsTeam))]
+    public async Task<ActionResult> GithubUpdateMentorsTeam(
         Guid subjectCourseId,
         [FromBody] UpdateMentorsTeamNameRequest request,
         CancellationToken cancellationToken)

@@ -1,22 +1,22 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Dto.Users;
+using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Students;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITMO.Dev.ASAP.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
 public class StudentController : ControllerBase
 {
+    private const string Scope = "Student";
+
     private readonly IMediator _mediator;
 
     public StudentController(IMediator mediator)
@@ -25,6 +25,7 @@ public class StudentController : ControllerBase
     }
 
     [HttpPost]
+    [AuthorizeFeature(Scope, nameof(Create))]
     public async Task<ActionResult<StudentDto>> Create(CreateStudentRequest request)
     {
         (string? firstName, string? middleName, string? lastName, Guid groupId) = request;
@@ -40,6 +41,7 @@ public class StudentController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [AuthorizeFeature(Scope, nameof(GetById))]
     public async Task<ActionResult<StudentDto>> GetById(Guid id)
     {
         GetStudentById.Response response = await _mediator.Send(new GetStudentById.Query(id));
@@ -47,6 +49,7 @@ public class StudentController : ControllerBase
     }
 
     [HttpPut("{id:guid}/dismiss")]
+    [AuthorizeFeature(Scope, nameof(DismissFromGroup))]
     public async Task<ActionResult> DismissFromGroup(Guid id)
     {
         var command = new DismissStudentFromGroup.Command(id);
@@ -56,7 +59,8 @@ public class StudentController : ControllerBase
     }
 
     [HttpPut("{id:guid}/group")]
-    public async Task<ActionResult<StudentDto>> TransferStudentAsync(Guid id, TransferStudentRequest request)
+    [AuthorizeFeature(Scope, nameof(Transfer))]
+    public async Task<ActionResult<StudentDto>> Transfer(Guid id, TransferStudentRequest request)
     {
         var command = new TransferStudent.Command(id, request.NewGroupId);
         TransferStudent.Response response = await _mediator.Send(command);
@@ -65,6 +69,7 @@ public class StudentController : ControllerBase
     }
 
     [HttpPost("query")]
+    [AuthorizeFeature(Scope, nameof(Query))]
     public async Task<ActionResult<IReadOnlyCollection<StudentDto>>> Query(
         QueryConfiguration<StudentQueryParameter> configuration)
     {
