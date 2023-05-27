@@ -14,6 +14,6 @@ public class PostgresConfiguration
 
     public string ToConnectionString(string dbname)
     {
-        return $"Host={Host};Port={Port};Database={dbname};Username={Username};Password={Password};Ssl Mode={SslMode};";
+        return $"Host={Host};Port={Port};Database={dbname};Username={Username};Password={Password};Ssl Mode={SslMode};Pooling=true";
     }
 }
