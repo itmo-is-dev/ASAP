@@ -12,6 +12,8 @@ internal class MentorUser : ICurrentUser
 
     public Guid Id { get; }
 
+    public bool CanManageStudents => false;
+
     public bool HasAccessToSubject(Subject subject)
     {
         return subject.Courses.SelectMany(x => x.Mentors).Any(x => x.UserId.Equals(Id));

@@ -1,11 +1,9 @@
 using ITMO.Dev.ASAP.Application.Contracts.Students.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Queries;
-using ITMO.Dev.ASAP.Application.Dto.Identity;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Authorization;
-using ITMO.Dev.ASAP.Controllers.Extensions;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Users;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -49,8 +47,7 @@ public class UserController : ControllerBase
     [AuthorizeFeature(Scope, nameof(UpdateUniversityId))]
     public async Task<IActionResult> UpdateUniversityId(Guid userId, int universityId)
     {
-        IdentityUserDto caller = HttpContext.GetUser();
-        var command = new UpdateUserUniversityId.Command(caller.Username, userId, universityId);
+        var command = new UpdateUserUniversityId.Command(userId, universityId);
         await _mediator.Send(command);
 
         return Ok();

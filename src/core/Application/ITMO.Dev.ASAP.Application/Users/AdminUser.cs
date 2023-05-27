@@ -12,6 +12,8 @@ internal class AdminUser : ICurrentUser
 
     public Guid Id { get; }
 
+    public bool CanManageStudents => true;
+
     public bool HasAccessToSubject(Subject subject)
     {
         return true;
