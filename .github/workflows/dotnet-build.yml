@@ -6,6 +6,9 @@ on:
     paths:
       - 'src/**'
       - 'tests/**'
+      
+  workflow_dispatch:
+
 jobs:
   build:
     name: Build & Test
