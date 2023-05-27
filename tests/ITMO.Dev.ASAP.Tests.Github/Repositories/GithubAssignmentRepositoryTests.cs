@@ -15,10 +15,10 @@ namespace ITMO.Dev.ASAP.Tests.Github.Repositories;
 [Collection(nameof(DatabaseCollectionFixture))]
 public class GithubAssignmentRepositoryTests : IAsyncLifetime
 {
-    private readonly DatabaseFixture _database;
+    private readonly GithubDatabaseFixture _database;
     private readonly DeterministicFaker _faker;
 
-    public GithubAssignmentRepositoryTests(DatabaseFixture database, DeterministicFaker faker)
+    public GithubAssignmentRepositoryTests(GithubDatabaseFixture database, DeterministicFaker faker)
     {
         _database = database;
         _faker = faker;
@@ -28,8 +28,8 @@ public class GithubAssignmentRepositoryTests : IAsyncLifetime
     public async Task Add_ShouldAddDatabaseRecordCorrectly()
     {
         // Arrange
-        using var unit = new UnitOfWork(_database.Connection);
-        var repository = new GithubAssignmentRepository(_database.Connection, unit);
+        using var unit = new UnitOfWork(_database.GithubConnection);
+        var repository = new GithubAssignmentRepository(_database.GithubConnection, unit);
         GithubAssignment assignment = _faker.GithubAssignment();
 
         // Act
@@ -41,7 +41,7 @@ public class GithubAssignmentRepositoryTests : IAsyncLifetime
         select "Id", "SubjectCourseId", "BranchName" from "GithubAssignments"
         """;
 
-        GithubAssignmentModel[] assignments = _database.RawConnection.Query<GithubAssignmentModel>(sql).ToArray();
+        GithubAssignmentModel[] assignments = _database.Connection.Query<GithubAssignmentModel>(sql).ToArray();
 
         GithubAssignmentModel assignmentModel = assignments.Should().ContainSingle().Subject;
         assignmentModel.Should().NotBeEquivalentTo(assignment);
@@ -51,8 +51,8 @@ public class GithubAssignmentRepositoryTests : IAsyncLifetime
     public async Task QueryAsync_ShouldReturnCorrectRecords()
     {
         // Arrange
-        using var unit = new UnitOfWork(_database.Connection);
-        var repository = new GithubAssignmentRepository(_database.Connection, unit);
+        using var unit = new UnitOfWork(_database.GithubConnection);
+        var repository = new GithubAssignmentRepository(_database.GithubConnection, unit);
 
         Guid subjectCourseId = _faker.Random.Guid();
         Guid subjectCourseId2 = _faker.Random.Guid();
@@ -63,9 +63,9 @@ public class GithubAssignmentRepositoryTests : IAsyncLifetime
         GithubSubjectCourseModel args2 = args with { Id = subjectCourseId2 };
         GithubSubjectCourseModel args3 = args with { Id = subjectCourseId3, OrganizationName = subjectCourseName };
 
-        await _database.RawConnection.ExecuteAsync(GithubSubjectCourseRepository.AddSql, args);
-        await _database.RawConnection.ExecuteAsync(GithubSubjectCourseRepository.AddSql, args2);
-        await _database.RawConnection.ExecuteAsync(GithubSubjectCourseRepository.AddSql, args3);
+        await _database.Connection.ExecuteAsync(GithubSubjectCourseRepository.AddSql, args);
+        await _database.Connection.ExecuteAsync(GithubSubjectCourseRepository.AddSql, args2);
+        await _database.Connection.ExecuteAsync(GithubSubjectCourseRepository.AddSql, args3);
 
         GithubAssignment[] seedAssignments =
         {

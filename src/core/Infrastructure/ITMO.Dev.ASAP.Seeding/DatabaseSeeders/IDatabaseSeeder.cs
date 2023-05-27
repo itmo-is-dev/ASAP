@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Application.DataAccess;
 
 namespace ITMO.Dev.ASAP.Seeding.DatabaseSeeders;
 

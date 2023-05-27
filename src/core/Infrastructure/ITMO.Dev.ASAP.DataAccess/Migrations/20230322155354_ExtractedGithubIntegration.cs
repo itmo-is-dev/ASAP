@@ -9,35 +9,87 @@ namespace ITMO.Dev.ASAP.DataAccess.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("""
-            insert into "GithubSubmissions"
-            ("Id", "AssignmentId", "UserId", "CreatedAt", "Organization", "Repository", "PullRequestNumber")
-            select "SubmissionId", "GroupAssignmentAssignmentId", "StudentUserId", "SubmissionDate", "Organization", "Repository", "PrNumber"
-            from "SubmissionAssociations" as sa
-            join "Submissions" S on S."Id" = sa."SubmissionId"
-            where sa."Discriminator" = 'GithubSubmissionAssociation'
+            do $$
+                begin 
+                    if exists
+                    (
+                        (SELECT 1
+                         FROM information_schema.tables 
+                         WHERE table_schema = 'public'
+                           AND table_name = 'GithubSubmissions')
+                    )
+                    then 
+                        insert into "GithubSubmissions"
+                        ("Id", "AssignmentId", "UserId", "CreatedAt", "Organization", "Repository", "PullRequestNumber")
+                        select "SubmissionId", "GroupAssignmentAssignmentId", "StudentUserId", "SubmissionDate", "Organization", "Repository", "PrNumber"
+                        from "SubmissionAssociations" as sa
+                        join "Submissions" S on S."Id" = sa."SubmissionId"
+                        where sa."Discriminator" = 'GithubSubmissionAssociation';
+                    end if;
+                end;
+            $$
             """);
 
             migrationBuilder.Sql("""
-            insert into "GithubUsers" as gu
-            ("Id", "Username")
-            select ua."UserId", ua."GithubUsername"
-            from "UserAssociations" as ua
-            where ua."Discriminator" = 'GithubUserAssociation'
+            do $$
+                begin 
+                    if exists
+                    (
+                        (SELECT 1
+                         FROM information_schema.tables 
+                         WHERE table_schema = 'public'
+                           AND table_name = 'GithubUsers')
+                    )
+                    then 
+                        insert into "GithubUsers" as gu
+                        ("Id", "Username")
+                        select ua."UserId", ua."GithubUsername"
+                        from "UserAssociations" as ua
+                        where ua."Discriminator" = 'GithubUserAssociation';
+                    end if;
+                end;
+            $$
             """);
 
             migrationBuilder.Sql("""
-            insert into "GithubSubjectCourses"
-            ("Id", "OrganizationName", "TemplateRepositoryName", "MentorTeamName")
-            select "SubjectCourseId", "GithubOrganizationName", "TemplateRepositoryName", coalesce("MentorTeamName", '')
-            from "SubjectCourseAssociations"
-            where "Discriminator" = 'GithubSubjectCourseAssociation'
+            do $$
+                begin 
+                    if exists
+                    (
+                        (SELECT 1
+                         FROM information_schema.tables 
+                         WHERE table_schema = 'public'
+                           AND table_name = 'GithubSubjectCourses')
+                    )
+                    then 
+                        insert into "GithubSubjectCourses"
+                        ("Id", "OrganizationName", "TemplateRepositoryName", "MentorTeamName")
+                        select "SubjectCourseId", "GithubOrganizationName", "TemplateRepositoryName", coalesce("MentorTeamName", '')
+                        from "SubjectCourseAssociations"
+                        where "Discriminator" = 'GithubSubjectCourseAssociation';
+                    end if;
+                end;
+            $$
             """);
 
             migrationBuilder.Sql("""
-            insert into "GithubAssignments"
-            ("Id", "BranchName", "SubjectCourseId")
-            select "Id", "ShortName", "SubjectCourseId"
-            from "Assignments"
+            do $$
+                begin 
+                    if exists
+                    (
+                        (SELECT 1
+                         FROM information_schema.tables 
+                         WHERE table_schema = 'public'
+                           AND table_name = 'GithubAssignments')
+                    )
+                    then 
+                        insert into "GithubAssignments"
+                        ("Id", "BranchName", "SubjectCourseId")
+                        select "Id", "ShortName", "SubjectCourseId"
+                        from "Assignments";
+                    end if;
+                end;
+            $$
             """);
 
             migrationBuilder.DropTable(

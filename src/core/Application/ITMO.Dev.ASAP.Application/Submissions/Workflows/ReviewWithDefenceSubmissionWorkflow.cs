@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
+using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Application.Dto.Submissions;
 using ITMO.Dev.ASAP.Common.Resources;
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using MediatR;
 
 namespace ITMO.Dev.ASAP.Application.Submissions.Workflows;

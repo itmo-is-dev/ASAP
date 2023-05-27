@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Tools;
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.DataAccess.Context;
 using ITMO.Dev.ASAP.DataAccess.Tools;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +19,9 @@ public static class RegistrationExtensions
         return collection;
     }
 
-    public static Task UseDatabaseContext(this IServiceProvider provider)
+    public static Task UseDatabaseContext(this IServiceScope scope)
     {
-        DatabaseContext context = provider.GetRequiredService<DatabaseContext>();
+        DatabaseContext context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
         return context.Database.MigrateAsync();
     }
 }

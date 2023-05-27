@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
 using ITMO.Dev.ASAP.Application.Abstractions.Submissions;
+using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
 using MediatR;

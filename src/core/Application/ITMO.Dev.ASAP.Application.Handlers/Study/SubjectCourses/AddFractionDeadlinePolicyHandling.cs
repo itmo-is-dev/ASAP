@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
 using ITMO.Dev.ASAP.Domain.Study;
 using MediatR;

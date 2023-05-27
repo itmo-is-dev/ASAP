@@ -5,6 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\shared\ITMO.Dev.ASAP.Extensions.DataAccess\ITMO.Dev.ASAP.Extensions.DataAccess.csproj" />
         <ProjectReference Include="..\..\Application\Abstractions\ITMO.Dev.ASAP.Github.Application.DataAccess\ITMO.Dev.ASAP.Github.Application.DataAccess.csproj" />
     </ItemGroup>
 

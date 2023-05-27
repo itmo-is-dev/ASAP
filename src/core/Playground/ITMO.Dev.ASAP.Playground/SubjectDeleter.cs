@@ -1,5 +1,5 @@
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
+using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Domain.Submissions;
@@ -23,7 +23,7 @@ public class SubjectDeleter
         await using IDbContextTransaction transaction = await _context.BeginTransactionAsync(default);
 
         List<Submission> submissions = await _context.Submissions
-            .Where(x => x.GroupAssignment.Assignment.SubjectCourse.Subject.Id.Equals(subjectId))
+            .Where(x => x.GroupAssignment.Assignment.SubjectCourse.SubjectId.Equals(subjectId))
             .ToListAsync();
 
         _context.Submissions.RemoveRange(submissions);
@@ -31,35 +31,35 @@ public class SubjectDeleter
         await _context.SaveChangesAsync(default);
 
         List<GroupAssignment> groupAssignments = await _context.GroupAssignments
-            .Where(x => x.Assignment.SubjectCourse.Subject.Id.Equals(subjectId))
+            .Where(x => x.Assignment.SubjectCourse.SubjectId.Equals(subjectId))
             .ToListAsync();
 
         _context.GroupAssignments.RemoveRange(groupAssignments);
         await _context.SaveChangesAsync(default);
 
         List<Assignment> assignments = await _context.Assignments
-            .Where(x => x.SubjectCourse.Subject.Id.Equals(subjectId))
+            .Where(x => x.SubjectCourse.SubjectId.Equals(subjectId))
             .ToListAsync();
 
         _context.Assignments.RemoveRange(assignments);
         await _context.SaveChangesAsync(default);
 
         List<SubjectCourseGroup> courseGroups = await _context.SubjectCourseGroups
-            .Where(x => x.SubjectCourse.Subject.Id.Equals(subjectId))
+            .Where(x => x.SubjectCourse.SubjectId.Equals(subjectId))
             .ToListAsync();
 
         _context.SubjectCourseGroups.RemoveRange(courseGroups);
         await _context.SaveChangesAsync(default);
 
         List<Mentor> mentors = await _context.Mentors
-            .Where(x => x.Course.Subject.Id.Equals(subjectId))
+            .Where(x => x.Course.SubjectId.Equals(subjectId))
             .ToListAsync();
 
         _context.Mentors.RemoveRange(mentors);
         await _context.SaveChangesAsync(default);
 
         List<SubjectCourse> courses = await _context.SubjectCourses
-            .Where(x => x.Subject.Id.Equals(subjectId))
+            .Where(x => x.SubjectId.Equals(subjectId))
             .Include(x => x.DeadlinePolicies)
             .ToListAsync();
 
@@ -71,7 +71,7 @@ public class SubjectDeleter
         _context.SubjectCourses.RemoveRange(courses);
         await _context.SaveChangesAsync(default);
 
-        Subject subject = await _context.Subjects.GetByIdAsync(subjectId);
+        Subject subject = await _context.Subjects.GetByIdAsync(subjectId, default);
 
         _context.Subjects.Remove(subject);
         await _context.SaveChangesAsync(default);

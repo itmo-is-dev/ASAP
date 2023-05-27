@@ -72,7 +72,7 @@ internal class Program
             await authorizationService.CreateRoleIfNotExistsAsync(AsapIdentityRoleNames.ModeratorRoleName);
 
             await scope.UseAsapGithubAsync();
-            await scope.ServiceProvider.UseDatabaseContext();
+            await scope.UseDatabaseContext();
 
             await SeedingHelper.SeedAdmins(scope.ServiceProvider, app.Configuration);
         }

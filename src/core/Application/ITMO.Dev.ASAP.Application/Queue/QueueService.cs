@@ -1,8 +1,8 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Queue;
+using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
 using ITMO.Dev.ASAP.Application.Extensions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
 using ITMO.Dev.ASAP.Domain.Queue;
 using ITMO.Dev.ASAP.Domain.Queue.Building;
 using ITMO.Dev.ASAP.Domain.Study;

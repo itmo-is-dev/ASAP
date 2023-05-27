@@ -1,7 +1,7 @@
 using Bogus;
 using FluentScanning;
 using FluentScanning.DependencyInjection;
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Seeding.DatabaseSeeders;
 using ITMO.Dev.ASAP.Seeding.EntityGenerators;
 using ITMO.Dev.ASAP.Seeding.Options;
@@ -49,12 +49,11 @@ public static class RegistrationExtensions
     }
 
     public static async Task UseDatabaseSeeders(
-        this IServiceProvider provider,
+        this IServiceScope scope,
         CancellationToken cancellationToken = default)
     {
-        using IServiceScope scope = provider.CreateScope();
-
         IDatabaseContext context = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+
         IEnumerable<IDatabaseSeeder> seeders = scope.ServiceProvider
             .GetServices<IDatabaseSeeder>()
             .OrderByDescending(x => x.Priority);

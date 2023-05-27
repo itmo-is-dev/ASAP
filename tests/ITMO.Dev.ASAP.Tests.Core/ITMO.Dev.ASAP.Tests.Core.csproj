@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <NoWarn>$(NoWarn);1701;1702;IL2121;CA1707;SA1633;SA1309;SA1101;SA1518;SA1502</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.visualstudio" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
+        <PackageReference Include="coverlet.collector" Version="3.2.0" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ITMO.Dev.ASAP.Tests\ITMO.Dev.ASAP.Tests.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Handlers\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="TestResults\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="TestResults\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="TestResults\**" />
+    </ItemGroup>
+
+</Project>

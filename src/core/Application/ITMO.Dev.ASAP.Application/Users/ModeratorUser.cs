@@ -1,4 +1,5 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Domain.Study;
 
 namespace ITMO.Dev.ASAP.Application.Users;
@@ -19,22 +20,17 @@ internal class ModeratorUser : ICurrentUser
 
     public bool CanManageStudents => true;
 
-    public bool HasAccessToSubject(Subject subject)
-    {
-        return true;
-    }
+    public bool CanUpdateAllDeadlines => true;
 
     public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
     {
         return true;
     }
 
-    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
+    public SubjectQuery.Builder FilterAvailableSubjects(SubjectQuery.Builder queryBuilder)
     {
-        return subjects;
+        return queryBuilder;
     }
-
-    public bool CanUpdateAllDeadlines => true;
 
     public bool CanCreateUserWithRole(string roleName)
     {

@@ -1,9 +1,9 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Common.Exceptions;
+using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Github.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
@@ -37,14 +37,20 @@ internal class GetSubjectCoursesBySubjectIdHandler : IRequestHandler<Query, Resp
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        Subject subject = await _context.Subjects
-            .Include(x => x.Courses)
-            .GetByIdAsync(request.SubjectId, cancellationToken);
+        var query = SubjectQuery.Build(x => _currentUser.FilterAvailableSubjects(x).WithId(request.SubjectId));
 
-        if (_currentUser.HasAccessToSubject(subject) is false)
+        Subject? subject = await _context.Subjects
+            .QueryAsync(query, cancellationToken)
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (subject is null)
             throw UserHasNotAccessException.AccessViolation(_currentUser.Id);
 
-        var availableSubjectCourses = subject.Courses
+        List<SubjectCourse> courses = await _context.SubjectCourses
+            .Where(x => x.SubjectId.Equals(subject.Id))
+            .ToListAsync(cancellationToken);
+
+        var availableSubjectCourses = courses
             .Where(_currentUser.HasAccessToSubjectCourse)
             .ToList();
 

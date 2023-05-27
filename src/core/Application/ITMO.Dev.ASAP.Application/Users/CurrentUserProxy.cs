@@ -1,4 +1,5 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Domain.Study;
 using System.Security.Claims;
@@ -13,22 +14,17 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
 
     public bool CanManageStudents => _user.CanManageStudents;
 
-    public bool HasAccessToSubject(Subject subject)
+    public bool CanUpdateAllDeadlines => _user.CanUpdateAllDeadlines;
+
+    public SubjectQuery.Builder FilterAvailableSubjects(SubjectQuery.Builder queryBuilder)
     {
-        return _user.HasAccessToSubject(subject);
+        return _user.FilterAvailableSubjects(queryBuilder);
     }
 
     public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
     {
         return _user.HasAccessToSubjectCourse(subjectCourse);
     }
-
-    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
-    {
-        return _user.FilterAvailableSubjects(subjects);
-    }
-
-    public bool CanUpdateAllDeadlines => _user.CanUpdateAllDeadlines;
 
     public bool CanCreateUserWithRole(string roleName)
     {

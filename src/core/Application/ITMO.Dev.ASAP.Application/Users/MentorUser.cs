@@ -1,4 +1,5 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Domain.Study;
 
 namespace ITMO.Dev.ASAP.Application.Users;
@@ -14,26 +15,17 @@ internal class MentorUser : ICurrentUser
 
     public bool CanManageStudents => false;
 
-    public bool HasAccessToSubject(Subject subject)
-    {
-        return subject.Courses.SelectMany(x => x.Mentors).Any(x => x.UserId.Equals(Id));
-    }
+    public bool CanUpdateAllDeadlines => false;
 
     public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
     {
         return subjectCourse.Mentors.Any(m => m.UserId == Id);
     }
 
-    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
+    public SubjectQuery.Builder FilterAvailableSubjects(SubjectQuery.Builder queryBuilder)
     {
-        return subjects
-            .SelectMany(x => x.Courses, (subject, course) => new { subject, course })
-            .SelectMany(x => x.course.Mentors, (tuple, mentor) => new { tuple.subject, mentor })
-            .Where(x => x.mentor.UserId.Equals(Id))
-            .Select(x => x.subject);
+        return queryBuilder.WithMentorId(Id);
     }
-
-    public bool CanUpdateAllDeadlines => false;
 
     public bool CanCreateUserWithRole(string roleName)
     {
