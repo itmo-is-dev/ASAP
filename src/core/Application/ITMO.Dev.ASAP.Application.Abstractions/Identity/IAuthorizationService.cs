@@ -6,8 +6,6 @@ public interface IAuthorizationService
 {
     Task<string> GetUserTokenAsync(string username, CancellationToken cancellationToken);
 
-    Task AuthorizeAdminAsync(string username, CancellationToken cancellationToken = default);
-
     Task CreateRoleIfNotExistsAsync(string roleName, CancellationToken cancellationToken = default);
 
     Task<IdentityUserDto> CreateUserAsync(

@@ -13,6 +13,8 @@ internal class AnonymousUser : ICurrentUser
 
     public bool CanUpdateAllDeadlines => false;
 
+    public bool CanManageStudents => false;
+
     public bool CanCreateUserWithRole(string roleName)
         => throw UserHasNotAccessException.AnonymousUserHasNotAccess();
 

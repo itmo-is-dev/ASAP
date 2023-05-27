@@ -1,4 +1,5 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
 using ITMO.Dev.ASAP.Domain.UserAssociations;
@@ -10,18 +11,21 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Users;
 
 internal class UpdateUserUniversityIdHandler : IRequestHandler<Command>
 {
-    private readonly IAuthorizationService _authorizationService;
     private readonly IDatabaseContext _context;
+    private readonly ICurrentUser _currentUser;
 
-    public UpdateUserUniversityIdHandler(IDatabaseContext context, IAuthorizationService authorizationService)
+    public UpdateUserUniversityIdHandler(
+        IDatabaseContext context,
+        ICurrentUser currentUser)
     {
         _context = context;
-        _authorizationService = authorizationService;
+        _currentUser = currentUser;
     }
 
     public async Task Handle(Command request, CancellationToken cancellationToken)
     {
-        await _authorizationService.AuthorizeAdminAsync(request.CallerUsername, cancellationToken);
+        if (_currentUser.CanManageStudents is false)
+            throw UserHasNotAccessException.AccessViolation(_currentUser.Id);
 
         User user = await _context.Users.GetByIdAsync(request.UserId, cancellationToken);
         IsuUserAssociation? association = user.FindAssociation<IsuUserAssociation>();

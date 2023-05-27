@@ -1,7 +1,6 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Application.Dto.Identity;
-using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Identity.Entities;
 using ITMO.Dev.ASAP.Identity.Extensions;
 using ITMO.Dev.ASAP.Identity.Tools;
@@ -28,16 +27,6 @@ internal class AuthorizationService : IAuthorizationService
         _userManager = userManager;
         _configuration = configuration;
         _roleManager = roleManager;
-    }
-
-    public async Task AuthorizeAdminAsync(string username, CancellationToken cancellationToken = default)
-    {
-        AsapIdentityUser? user = await _userManager.FindByNameAsync(username);
-
-        if (user is not null && await _userManager.IsInRoleAsync(user, AsapIdentityRoleNames.AdminRoleName))
-            return;
-
-        throw new UnauthorizedException("User is not admin");
     }
 
     public async Task CreateRoleIfNotExistsAsync(string roleName, CancellationToken cancellationToken = default)
