@@ -2,6 +2,7 @@ using FluentMigrator.Runner;
 using ITMO.Dev.ASAP.Github.Application.DataAccess;
 using ITMO.Dev.ASAP.Github.Application.DataAccess.Repositories;
 using ITMO.Dev.ASAP.Github.DataAccess.Repositories;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
@@ -30,6 +31,11 @@ public static class ServiceCollectionExtensions
 
     public static Task UseGithubDatabaseContext(this IServiceScope provider)
     {
+        IConfiguration configuration = provider.ServiceProvider.GetRequiredService<IConfiguration>();
+
+        if (configuration.GetSection("Github:Enabled").Get<bool>() is not true)
+            return Task.CompletedTask;
+
         IMigrationRunner runner = provider.ServiceProvider.GetRequiredService<IMigrationRunner>();
         runner.MigrateUp();
 

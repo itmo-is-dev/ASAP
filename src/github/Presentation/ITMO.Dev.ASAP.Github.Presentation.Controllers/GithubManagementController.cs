@@ -1,16 +1,16 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.Github.Application.Contracts.SubjectCourses.Commands;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITMO.Dev.ASAP.Github.Presentation.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
 public class GithubManagementController : ControllerBase
 {
+    private const string Scope = "Github";
+
     private readonly IMediator _mediator;
 
     public GithubManagementController(IMediator mediator)
@@ -21,7 +21,8 @@ public class GithubManagementController : ControllerBase
     public CancellationToken CancellationToken => HttpContext.RequestAborted;
 
     [HttpPost("force-update")]
-    public async Task<IActionResult> ForceOrganizationUpdateAsync([FromQuery] Guid? subjectCourseId)
+    [AuthorizeFeature(Scope, nameof(ForceOrganizationUpdate))]
+    public async Task<IActionResult> ForceOrganizationUpdate([FromQuery] Guid? subjectCourseId)
     {
         IRequest request = subjectCourseId is null
             ? new UpdateSubjectCourseOrganizations.Command()
@@ -33,7 +34,8 @@ public class GithubManagementController : ControllerBase
     }
 
     [HttpPost("force-mentor-sync")]
-    public async Task<ActionResult> ForceMentorsSync(string organizationName)
+    [AuthorizeFeature(Scope, nameof(ForceMentorSync))]
+    public async Task<ActionResult> ForceMentorSync(string organizationName)
     {
         var command = new SyncGithubMentors.Command(organizationName);
 

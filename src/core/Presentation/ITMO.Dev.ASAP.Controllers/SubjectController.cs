@@ -1,12 +1,11 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Subjects.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Subjects.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
+using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Subjects;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITMO.Dev.ASAP.Controllers;
@@ -15,6 +14,8 @@ namespace ITMO.Dev.ASAP.Controllers;
 [ApiController]
 public class SubjectController : ControllerBase
 {
+    private const string Scope = "Subjects";
+
     private readonly IMediator _mediator;
 
     public SubjectController(IMediator mediator)
@@ -23,7 +24,7 @@ public class SubjectController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
+    [AuthorizeFeature(Scope, nameof(Create))]
     public async Task<ActionResult<SubjectDto>> Create(CreateSubjectRequest request)
     {
         var command = new CreateSubject.Command(request.Name);
@@ -33,8 +34,8 @@ public class SubjectController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = AsapIdentityRoleNames.AtLeastMentor)]
-    public async Task<ActionResult<IReadOnlyCollection<SubjectDto>>> Get()
+    [AuthorizeFeature(Scope, nameof(GetAll))]
+    public async Task<ActionResult<IReadOnlyCollection<SubjectDto>>> GetAll()
     {
         var query = new GetSubjects.Query();
         GetSubjects.Response response = await _mediator.Send(query);
@@ -43,7 +44,7 @@ public class SubjectController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = AsapIdentityRoleNames.AtLeastMentor)]
+    [AuthorizeFeature(Scope, nameof(GetById))]
     public async Task<ActionResult<SubjectDto>> GetById(Guid id)
     {
         var query = new GetSubjectById.Query(id);
@@ -53,7 +54,7 @@ public class SubjectController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
+    [AuthorizeFeature(Scope, nameof(Update))]
     public async Task<ActionResult<SubjectDto>> Update(Guid id, UpdateSubjectRequest request)
     {
         var command = new UpdateSubject.Command(id, request.Name);
@@ -63,7 +64,7 @@ public class SubjectController : ControllerBase
     }
 
     [HttpGet("{id:guid}/courses")]
-    [Authorize(Roles = AsapIdentityRoleNames.AtLeastMentor)]
+    [AuthorizeFeature(Scope, nameof(GetSubjectCourses))]
     public async Task<ActionResult<IReadOnlyCollection<SubjectCourseDto>>> GetSubjectCourses(Guid id)
     {
         var request = new GetSubjectCoursesBySubjectId.Query(id);

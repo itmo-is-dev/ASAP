@@ -33,7 +33,7 @@ public class PrefixLoggerProxy : ILogger
         return _logger.IsEnabled(logLevel);
     }
 
-    public IDisposable BeginScope<TState>(TState state)
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
     {
         return _logger.BeginScope(state);
     }

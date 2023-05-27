@@ -1,4 +1,3 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Abstractions.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries;
@@ -10,18 +9,19 @@ using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
 using ITMO.Dev.ASAP.Application.Dto.Users;
+using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.SubjectCourses;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITMO.Dev.ASAP.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = AsapIdentityRoleNames.AtLeastMentor)]
 public class SubjectCourseController : ControllerBase
 {
+    private const string Scope = "SubjectCourse";
+
     private readonly IMediator _mediator;
     private readonly ISubjectCourseUpdateService _subjectCourseUpdateService;
 
@@ -34,6 +34,7 @@ public class SubjectCourseController : ControllerBase
     public CancellationToken CancellationToken => HttpContext.RequestAborted;
 
     [HttpGet("{id:guid}")]
+    [AuthorizeFeature(Scope, nameof(GetById))]
     public async Task<ActionResult<SubjectCourseDto>> GetById(Guid id)
     {
         var query = new GetSubjectCourseById.Query(id);
@@ -43,7 +44,7 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
+    [AuthorizeFeature(Scope, nameof(Update))]
     public async Task<ActionResult<SubjectCourseDto>> Update(Guid id, UpdateSubjectCourseRequest request)
     {
         var command = new UpdateSubjectCourse.Command(id, request.Name);
@@ -53,7 +54,8 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpGet("{id:guid}/students")]
-    public async Task<ActionResult<IReadOnlyCollection<StudentDto>>> GetStudentsAsync(Guid id)
+    [AuthorizeFeature(Scope, nameof(GetStudents))]
+    public async Task<ActionResult<IReadOnlyCollection<StudentDto>>> GetStudents(Guid id)
     {
         var query = new GetStudentsBySubjectCourseId.Query(id);
         GetStudentsBySubjectCourseId.Response response = await _mediator.Send(query, CancellationToken);
@@ -62,7 +64,8 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpGet("{id:guid}/assignments")]
-    public async Task<ActionResult<IReadOnlyCollection<AssignmentDto>>> GetAssignmentsBySubjectCourseId(Guid id)
+    [AuthorizeFeature(Scope, nameof(GetAssignments))]
+    public async Task<ActionResult<IReadOnlyCollection<AssignmentDto>>> GetAssignments(Guid id)
     {
         var query = new GetAssignmentsBySubjectCourse.Query(id);
         GetAssignmentsBySubjectCourse.Response response = await _mediator.Send(query, CancellationToken);
@@ -71,7 +74,8 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpGet("{id:guid}/groups")]
-    public async Task<ActionResult<IReadOnlyCollection<SubjectCourseGroupDto>>> GetSubjectCourseGroups(Guid id)
+    [AuthorizeFeature(Scope, nameof(GetGroups))]
+    public async Task<ActionResult<IReadOnlyCollection<SubjectCourseGroupDto>>> GetGroups(Guid id)
     {
         var query = new GetSubjectCourseGroupsBySubjectCourseId.Query(id);
         GetSubjectCourseGroupsBySubjectCourseId.Response result = await _mediator.Send(query, CancellationToken);
@@ -80,7 +84,8 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpGet("{subjectCourseId:guid}/groups/{studyGroupId:guid}/queue")]
-    public async Task<ActionResult<SubmissionsQueueDto>> GetStudyGroupQueueAsync(
+    [AuthorizeFeature(Scope, nameof(GetStudyGroupQueue))]
+    public async Task<ActionResult<SubmissionsQueueDto>> GetStudyGroupQueue(
         Guid subjectCourseId,
         Guid studyGroupId,
         CancellationToken cancellationToken)
@@ -92,7 +97,7 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpPost("{id:guid}/deadline/fraction")]
-    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
+    [AuthorizeFeature(Scope, nameof(AddDeadline))]
     public async Task<ActionResult> AddDeadline(Guid id, AddFractionPolicyRequest request)
     {
         (TimeSpan spanBeforeActivation, double fraction) = request;
@@ -104,8 +109,8 @@ public class SubjectCourseController : ControllerBase
     }
 
     [HttpPost("{id:guid}/points/force-sync")]
-    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
-    public IActionResult ForceSyncSubjectCoursePoints(Guid id)
+    [AuthorizeFeature(Scope, nameof(ForceSyncPoints))]
+    public IActionResult ForceSyncPoints(Guid id)
     {
         _subjectCourseUpdateService.UpdatePoints(id);
         return Ok();

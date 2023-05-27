@@ -1,0 +1,197 @@
+{
+  "Authorization": {
+    "FeatureScopes": {
+      "Assignments": {
+        "Create": [
+          "admin"
+        ],
+        "UpdatePoints": [
+          "admin"
+        ],
+        "GetById": [
+          "admin",
+          "moderator",
+          "mentor"
+        ],
+        "GetGroups": [
+          "admin",
+          "moderator",
+          "mentor"
+        ],
+        "Update": [
+          "admin"
+        ]
+      },
+      "Github": {
+        "ForceOrganizationUpdate": [
+          "admin"
+        ],
+        "ForceMentorSync": [
+          "admin"
+        ]
+      },
+      "Identity": {
+        "ChangeUserRole": [
+          "admin",
+          "moderator"
+        ],
+        "CreateUserAccount": [
+          "admin",
+          "moderator"
+        ]
+      },
+      "Internal": {
+        "Seed": [
+          "admin"
+        ]
+      },
+      "Student": {
+        "Create": [
+          "admin"
+        ],
+        "GetById": [
+          "admin"
+        ],
+        "DismissFromGroup": [
+          "admin"
+        ],
+        "Transfer": [
+          "admin"
+        ],
+        "Query": [
+          "admin"
+        ]
+      },
+      "StudyGroup": {
+        "Create": [
+          "admin"
+        ],
+        "GetAll": [
+          "admin",
+          "moderator",
+          "mentor"
+        ],
+        "GetById": [
+          "admin",
+          "moderator",
+          "mentor"
+        ],
+        "BulkGetByIds": [
+          "admin",
+          "moderator",
+          "mentor"
+        ],
+        "Update": [
+          "admin"
+        ],
+        "GetStudents": [
+          "admin"
+        ],
+        "GetAssignments": [
+          "admin"
+        ],
+        "FindByName": [
+          "admin"
+        ],
+        "Query": [
+          "admin"
+        ]
+      },
+      "Subjects": {
+        "GetAll": [
+          "admin",
+          "moderator",
+          "mentor"
+        ],
+        "Create": [
+          "admin"
+        ],
+        "GetById": [
+          "admin",
+          "moderator",
+          "mentor"
+        ],
+        "Update": [
+          "admin"
+        ],
+        "GetSubjectCourses": [
+          "admin",
+          "moderator",
+          "mentor"
+        ]
+      },
+      "SubjectCourse": {
+        "GetById": [
+          "admin",
+          "moderator",
+          "mentor"
+        ],
+        "Update": [
+          "admin"
+        ],
+        "GetStudents": [
+          "admin",
+          "moderator",
+          "mentor"
+        ],
+        "GetAssignments": [
+          "admin",
+          "moderator",
+          "mentor"
+        ],
+        "GetGroups": [
+          "admin",
+          "moderator",
+          "mentor"
+        ],
+        "GetStudyGroupQueue": [
+          "admin",
+          "moderator",
+          "mentor"
+        ],
+        "AddDeadline": [
+          "admin"
+        ],
+        "ForceSyncPoints": [
+          "admin"
+        ],
+        "GithubCreate" : [
+          "admin"
+        ],
+        "GithubUpdateMentorsTeam" : [
+          "admin",
+          "moderator",
+          "mentor"
+        ]
+      },
+      "SubjectCourseGroups": {
+        "Create": [
+          "admin"
+        ],
+        "BulkCreate": [
+          "admin"
+        ],
+        "Delete": [
+          "admin"
+        ]
+      },
+      "Users": {
+        "FindByUniversityId": [
+          "admin"
+        ],
+        "UpdateUniversityId": [
+          "admin"
+        ],
+        "UpdateName": [
+          "admin"
+        ],
+        "QueryIdentityInfo": [
+          "admin  "
+        ],
+        "GithubUpdateUsername" : [
+          "admin"
+        ]
+      }
+    }
+  }
+}
