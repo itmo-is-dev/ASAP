@@ -6,6 +6,8 @@ public interface ICurrentUser
 {
     Guid Id { get; }
 
+    bool CanManageStudents { get; }
+
     bool HasAccessToSubject(Subject subject);
 
     bool HasAccessToSubjectCourse(SubjectCourse subjectCourse);

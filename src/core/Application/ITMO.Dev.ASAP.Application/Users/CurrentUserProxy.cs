@@ -11,6 +11,8 @@ public class CurrentUserProxy : ICurrentUser, ICurrentUserManager
 
     public Guid Id => _user.Id;
 
+    public bool CanManageStudents => _user.CanManageStudents;
+
     public bool HasAccessToSubject(Subject subject)
     {
         return _user.HasAccessToSubject(subject);
