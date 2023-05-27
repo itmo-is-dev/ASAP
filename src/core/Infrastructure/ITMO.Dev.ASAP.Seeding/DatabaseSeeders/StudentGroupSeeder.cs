@@ -1,4 +1,4 @@
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Seeding.EntityGenerators;
 using StudentGroup = ITMO.Dev.ASAP.Domain.Study.StudentGroup;
 

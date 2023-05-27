@@ -266,9 +266,8 @@ dotnet_style_prefer_simplified_interpolation = true:suggestion
 dotnet_diagnostic.ide0072.severity = warning
 
 # IDE0073
-file_header_template = 
+file_header_template = # IDE0075
 
-# IDE0075
 dotnet_diagnostic.ide0075.severity = suggestion
 dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
 

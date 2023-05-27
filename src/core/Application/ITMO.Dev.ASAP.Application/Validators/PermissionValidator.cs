@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
+using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace ITMO.Dev.ASAP.Application.Validators;

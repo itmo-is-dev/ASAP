@@ -1,6 +1,6 @@
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Seeding.EntityGenerators;
-using User = ITMO.Dev.ASAP.Domain.Users.User;
 
 namespace ITMO.Dev.ASAP.DeveloperEnvironment;
 

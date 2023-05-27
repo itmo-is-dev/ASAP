@@ -13,10 +13,10 @@ public partial class SubjectCourse : IEntity<Guid>
     private readonly HashSet<SubjectCourseGroup> _groups;
     private readonly HashSet<Mentor> _mentors;
 
-    public SubjectCourse(Guid id, Subject subject, string title, SubmissionStateWorkflowType? workflowType)
+    private SubjectCourse(Guid id, Subject subject, string title, SubmissionStateWorkflowType? workflowType)
         : this(id)
     {
-        Subject = subject;
+        SubjectId = subject.Id;
         Title = title;
         WorkflowType = workflowType;
 
@@ -27,11 +27,31 @@ public partial class SubjectCourse : IEntity<Guid>
         // TODO: change when deadline policy customization is implemented
         _deadlinePolicies = Enumerable
             .Range(0, 5)
-            .Select<int, DeadlinePenalty>(i => new FractionDeadlinePenalty(TimeSpan.FromDays(7) * i, 1 - (0.2 * (i + 1))))
+            .Select<int, DeadlinePenalty>(i
+                => new FractionDeadlinePenalty(TimeSpan.FromDays(7) * i, 1 - (0.2 * (i + 1))))
             .ToHashSet();
     }
 
-    public virtual Subject Subject { get; protected init; }
+    public class SubjectCourseBuilder
+    {
+        private readonly Guid _id;
+        private readonly string _title;
+        private readonly SubmissionStateWorkflowType? _workflowType;
+
+        public SubjectCourseBuilder(Guid id, string title, SubmissionStateWorkflowType? workflowType)
+        {
+            _id = id;
+            _title = title;
+            _workflowType = workflowType;
+        }
+
+        public SubjectCourse Build(Subject subject)
+        {
+            return new SubjectCourse(_id, subject, _title, _workflowType);
+        }
+    }
+
+    public Guid SubjectId { get; protected init; }
 
     public string Title { get; set; }
 

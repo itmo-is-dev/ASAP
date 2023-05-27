@@ -22,4 +22,4 @@ jobs:
       - name: Build
         run: dotnet build ITMO.Dev.ASAP.sln --configuration Release --no-restore
       - name: Test
-        run: dotnet test ITMO.Dev.ASAP.sln --no-restore --verbosity normal
+        run: dotnet test ITMO.Dev.ASAP.sln --no-restore

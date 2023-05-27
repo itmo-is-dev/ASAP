@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
+using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Domain.Study;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Queries.HasAccessToSubjectCourse;

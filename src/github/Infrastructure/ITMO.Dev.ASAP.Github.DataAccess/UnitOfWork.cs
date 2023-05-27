@@ -1,6 +1,6 @@
 using Dapper;
+using ITMO.Dev.ASAP.Extensions.DataAccess;
 using ITMO.Dev.ASAP.Github.Application.DataAccess;
-using ITMO.Dev.ASAP.Github.DataAccess.Extensions;
 using System.Collections.Concurrent;
 using System.Data;
 using IsolationLevel = System.Data.IsolationLevel;

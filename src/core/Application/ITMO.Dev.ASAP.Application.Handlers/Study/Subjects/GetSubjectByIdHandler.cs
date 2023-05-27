@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Common.Exceptions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
+using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
@@ -23,14 +23,20 @@ internal class GetSubjectByIdHandler : IRequestHandler<Query, Response>
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        Subject subject = await _context.Subjects
-            .Include(x => x.Courses)
-            .GetByIdAsync(request.Id, cancellationToken);
+        var query = SubjectQuery.Build(x => _currentUser.FilterAvailableSubjects(x).WithId(request.Id));
 
-        if (_currentUser.HasAccessToSubject(subject) is false)
+        Subject? subject = await _context.Subjects
+            .QueryAsync(query, cancellationToken)
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (subject is null)
             throw UserHasNotAccessException.AccessViolation(_currentUser.Id);
 
-        return subject.Courses.Any(_currentUser.HasAccessToSubjectCourse)
+        List<SubjectCourse> courses = await _context.SubjectCourses
+            .Where(x => x.SubjectId.Equals(subject.Id))
+            .ToListAsync(cancellationToken);
+
+        return courses.Any(_currentUser.HasAccessToSubjectCourse)
             ? new Response(subject.ToDto())
             : throw UserHasNotAccessException.EmptyAvailableList(_currentUser.Id);
     }

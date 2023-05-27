@@ -1,75 +1,11 @@
 using Bogus;
-using ITMO.Dev.ASAP.Application.Abstractions.Identity;
-using ITMO.Dev.ASAP.DataAccess.Context;
-using ITMO.Dev.ASAP.DataAccess.Extensions;
-using ITMO.Dev.ASAP.Domain.Study;
-using ITMO.Dev.ASAP.Domain.Submissions;
-using ITMO.Dev.ASAP.Domain.Users;
-using ITMO.Dev.ASAP.Seeding.Extensions;
-using ITMO.Dev.ASAP.Seeding.Options;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
 
 namespace ITMO.Dev.ASAP.Tests;
 
-public class TestBase : IDisposable
+public class TestBase
 {
     public TestBase()
     {
-        var collection = new ServiceCollection();
-        var id = Guid.NewGuid();
-
         Randomizer.Seed = new Random(101);
-
-        collection.AddDatabaseContext(x => x.UseLazyLoadingProxies().UseSqlite($"Data Source={id}.db"));
-
-        collection.AddEntityGenerators(x =>
-        {
-            x.ConfigureEntityGenerator<Submission>(xx => xx.Count = 1000);
-            x.ConfigureEntityGenerator<SubjectCourse>(xx => xx.Count = 1);
-
-            x.ConfigureEntityGenerator<Student>(xx => xx.Count = 50);
-            x.ConfigureEntityGenerator<User>(xx => xx.Count = 100);
-
-            ConfigureSeeding(x);
-        });
-
-        collection.AddDatabaseSeeders();
-
-        collection.AddMediatR(x => x.RegisterServicesFromAssemblyContaining(typeof(TestBase)));
-
-        IdentityServiceMock = new Mock<IAuthorizationService>();
-        collection.AddScoped(_ => IdentityServiceMock.Object);
-
-        // TODO: Do not call virtual methods in constructor
-#pragma warning disable CA2214
-
-        // ReSharper disable once VirtualMemberCallInConstructor
-        ConfigureServices(collection);
-#pragma warning restore CA2214
-
-        Provider = collection.BuildServiceProvider();
-
-        Context = Provider.GetRequiredService<DatabaseContext>();
-        Context.Database.EnsureCreated();
-
-        Provider.UseDatabaseSeeders().GetAwaiter().GetResult();
     }
-
-    protected DatabaseContext Context { get; }
-
-    protected IServiceProvider Provider { get; }
-
-    protected Mock<IAuthorizationService> IdentityServiceMock { get; }
-
-    public void Dispose()
-    {
-        Context.Database.EnsureDeleted();
-        Context.Dispose();
-    }
-
-    protected virtual void ConfigureServices(IServiceCollection collection) { }
-
-    protected virtual void ConfigureSeeding(EntityGenerationOptions options) { }
 }

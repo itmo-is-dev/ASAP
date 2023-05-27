@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.Application.Specifications\ITMO.Dev.ASAP.Application.Specifications.csproj" />
         <ProjectReference Include="..\..\Infrastructure\ITMO.Dev.ASAP.DataAccess\ITMO.Dev.ASAP.DataAccess.csproj" />
     </ItemGroup>
 

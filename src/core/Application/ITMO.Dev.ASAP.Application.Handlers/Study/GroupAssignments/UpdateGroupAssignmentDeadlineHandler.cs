@@ -1,9 +1,9 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Notifications;
+using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Mapping.Mappings;

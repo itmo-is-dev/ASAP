@@ -8,8 +8,8 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Study.Queues;
 
 internal class GetSubmissionsQueueHandler : IRequestHandler<Query, Response>
 {
-    private readonly IQueueService _queueService;
     private readonly IMemoryCache _cache;
+    private readonly IQueueService _queueService;
 
     public GetSubmissionsQueueHandler(IQueueService queueService, IMemoryCache cache)
     {
@@ -22,9 +22,7 @@ internal class GetSubmissionsQueueHandler : IRequestHandler<Query, Response>
         string cacheKey = string.Concat(request.SubjectCourseId, request.GroupId);
 
         if (_cache.TryGetValue(cacheKey, out SubmissionsQueueDto submissionsQueue))
-        {
             return new Response(submissionsQueue);
-        }
 
         submissionsQueue = await _queueService.GetSubmissionsQueueAsync(
             request.SubjectCourseId,
