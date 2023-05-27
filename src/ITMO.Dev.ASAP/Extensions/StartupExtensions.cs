@@ -21,6 +21,11 @@ internal static class StartupExtensions
             .UseStaticFiles()
             .UseRouting();
 
+        if (app.Configuration.GetSection("Sentry:Enabled").Get<bool>())
+        {
+            app.UseSentryTracing();
+        }
+
         app.MapRazorPages();
 
         app

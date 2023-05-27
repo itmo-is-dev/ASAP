@@ -8,6 +8,10 @@ public static class ConfigureHostBuilderExtensions
     {
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(configuration)
+            .WriteTo.Sentry(options =>
+            {
+                configuration.GetSection("Sentry").Bind(options);
+            })
             .CreateLogger();
 
         return hostBuilder.UseSerilog();

@@ -46,8 +46,11 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
         PullRequestEvent pullRequestEvent,
         PullRequestAction action)
     {
-        string serialized = JsonConvert.SerializeObject(pullRequestEvent);
-        _logger.LogInformation("Received github webhook pull request event, payload = {Payload}", serialized);
+        if (_logger.IsEnabled(LogLevel.Trace))
+        {
+            string serialized = JsonConvert.SerializeObject(pullRequestEvent);
+            _logger.LogTrace("Received github webhook pull request event, payload = {Payload}", serialized);
+        }
 
         PullRequestDto pullRequest = CreateDescriptor(pullRequestEvent);
         ILogger repositoryLogger = _logger.ToPullRequestLogger(pullRequest);
@@ -73,8 +76,11 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
         PullRequestReviewEvent pullRequestReviewEvent,
         PullRequestReviewAction action)
     {
-        string serialized = JsonConvert.SerializeObject(pullRequestReviewEvent);
-        _logger.LogInformation("Received github webhook review event, payload = {Payload}", serialized);
+        if (_logger.IsEnabled(LogLevel.Trace))
+        {
+            string serialized = JsonConvert.SerializeObject(pullRequestReviewEvent);
+            _logger.LogTrace("Received github webhook review event, payload = {Payload}", serialized);
+        }
 
         PullRequestDto pullRequest = CreateDescriptor(pullRequestReviewEvent);
         ILogger repositoryLogger = _logger.ToPullRequestLogger(pullRequest);
@@ -100,8 +106,11 @@ public class AsapWebhookEventProcessor : WebhookEventProcessor
         IssueCommentEvent issueCommentEvent,
         IssueCommentAction action)
     {
-        string serialized = JsonConvert.SerializeObject(issueCommentEvent);
-        _logger.LogInformation("Received github webhook issue comment event, payload = {Payload}", serialized);
+        if (_logger.IsEnabled(LogLevel.Trace))
+        {
+            string serialized = JsonConvert.SerializeObject(issueCommentEvent);
+            _logger.LogTrace("Received github webhook issue comment event, payload = {Payload}", serialized);
+        }
 
         PullRequestDto pullRequest = await GetPullRequestDescriptor(issueCommentEvent);
         ILogger repositoryLogger = _logger.ToPullRequestLogger(pullRequest);
