@@ -21,9 +21,9 @@ jobs:
         run: |
           REPO=${{ github.repository }}
           PR_NUMBER=${{ github.event.pull_request.number }}
-          BRANCH="refs/pull/${{ PR_NUMBER }}/merge"
+          BRANCH="refs/pull/$PR_NUMBER/merge"
           gh extension install actions/gh-actions-cache
           gh actions-cache delete allure-history -R $REPO -B $BRANCH --confirm
-          rm -rf ${{ github.workspace }}/allure-history/${{ PR_NUMBER }}
+          rm -rf ${{ github.workspace }}/allure-history/$PR_NUMBER
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
