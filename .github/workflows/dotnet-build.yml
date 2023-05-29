@@ -43,7 +43,7 @@ jobs:
         run: dotnet test ITMO.Dev.ASAP.sln -c Release --no-restore --no-build -l trx --results-directory ./allure-results
 
       - name: Cache history
-        uses: itmo-is-dev/cache-always@v3.3.1
+        uses: itmo-is-dev/cache-always@v3.3.3
         with:
           path: "${{ github.workspace }}/allure-history"
           key: allure-history
