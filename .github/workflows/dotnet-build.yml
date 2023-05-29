@@ -47,8 +47,6 @@ jobs:
         with:
           path: "${{ github.workspace }}/allure-history"
           key: allure-history
-          restore-keys: |
-            allure-history
 
       - name: Prune history cache
         run: |
