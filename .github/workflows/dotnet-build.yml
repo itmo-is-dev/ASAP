@@ -15,11 +15,7 @@ jobs:
   build:
     name: Build & Test
     runs-on: ubuntu-latest
-    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
-    permissions:
-      pages: write         # to deploy to Pages
-      id-token: write      # to verify the deployment originates from an appropriate source
-      pull-requests: write # to post link into Pull Request with allure report
+    permissions: write-all
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -48,12 +44,22 @@ jobs:
       - name: Test
         run: dotnet test ITMO.Dev.ASAP.sln -c Release --no-restore --no-build -l trx --results-directory ./allure-results
 
-      - name: Download history
-        uses: actions/download-artifact@v3
+      - name: Cache history
+        uses: itmo-is-dev/cache-always@v3.3.1
         with:
-          name: allure-history
           path: "${{ github.workspace }}/allure-history"
-        continue-on-error: true
+          key: allure-history
+          restore-keys: |
+            allure-history
+
+      - name: Prune history cache
+        run: |
+          REPO=${{ github.repository }}
+          BRANCH="refs/pull/${{ github.event.pull_request.number }}/merge"
+          gh extension install actions/gh-actions-cache
+          gh actions-cache delete allure-history -R $REPO -B $BRANCH --confirm
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Allure Report
         uses: simple-elf/allure-report-action@master
@@ -62,12 +68,6 @@ jobs:
           allure_results: allure-results
           allure_history: allure-history
           keep_reports: 20
-
-      - name: Store history
-        uses: actions/upload-artifact@v3
-        with:
-          name: allure-history
-          path: "${{ github.workspace }}/allure-history"
 
       - name: Upload GitHub Pages artifact
         if: always()
