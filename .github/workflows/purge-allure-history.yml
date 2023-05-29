@@ -1,0 +1,29 @@
+name: Purge allure history
+concurrency: dotnet-build
+
+on:
+  pull_request:
+    types: [ closed ]
+
+jobs:
+  clean:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Cache latest history
+        uses: itmo-is-dev/cache-always@v3.3.3
+        with:
+          path: "${{ github.workspace }}/allure-history"
+          key: allure-history
+
+      - name: Prune history
+        run: |
+          REPO=${{ github.repository }}
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          BRANCH="refs/pull/${{ PR_NUMBER }}/merge"
+          gh extension install actions/gh-actions-cache
+          gh actions-cache delete allure-history -R $REPO -B $BRANCH --confirm
+          rm -rf ${{ github.workspace }}/allure-history/${{ PR_NUMBER }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
