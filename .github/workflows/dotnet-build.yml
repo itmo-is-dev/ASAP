@@ -1,4 +1,5 @@
 name: .NET
+concurrency: dotnet-build
 
 on:
   pull_request:
@@ -24,17 +25,12 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v2
-      - name: Get Allure history
-        uses: actions/checkout@v2
-        if: always()
-        continue-on-error: true
-        with:
-          ref: gh-pages
-          path: gh-pages
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 7.0.203
+
       - name: Cache nuget packages
         uses: actions/cache@v3
         with:
@@ -42,12 +38,23 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/*.Packages.props', '**/*.csproj') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
+
       - name: Install dependencies
         run: dotnet restore ITMO.Dev.ASAP.sln
+
       - name: Build
         run: dotnet build ITMO.Dev.ASAP.sln -c Release --no-restore
+
       - name: Test
         run: dotnet test ITMO.Dev.ASAP.sln -c Release --no-restore --no-build -l trx --results-directory ./allure-results
+
+      - name: Download history
+        uses: actions/download-artifact@v3
+        with:
+          name: allure-history
+          path: "${{ github.workspace }}/allure-history"
+        continue-on-error: true
+
       - name: Allure Report
         uses: simple-elf/allure-report-action@master
         if: always()
@@ -55,14 +62,23 @@ jobs:
           allure_results: allure-results
           allure_history: allure-history
           keep_reports: 20
+
+      - name: Store history
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-history
+          path: "${{ github.workspace }}/allure-history"
+
       - name: Upload GitHub Pages artifact
         if: always()
         uses: actions/upload-pages-artifact@v1.0.8
         with:
           path: "${{ github.workspace }}/allure-history"
+
       - name: Deploy Allure reports to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2.0.1
+
       - name: Post allure test run link
         uses: mshick/add-pr-comment@v2
         with:
