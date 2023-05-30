@@ -17,14 +17,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        
+      - name: Cache testing results
+        id: cache-tests
+        uses: actions/cache@v3
+        with:
+          path: ./allure-reports
+          key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}
+          restore-keys:
+            ${{ runner.os }}-test-results-
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
+        if: ${{ !steps.cache-tests.outputs.cache-hit }}
         with:
           dotnet-version: 7.0.203
 
       - name: Cache nuget packages
         uses: actions/cache@v3
+        if: ${{ !steps.cache-tests.outputs.cache-hit }}
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/*.Packages.props', '**/*.csproj') }}
@@ -32,12 +43,15 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Install dependencies
+        if: ${{ !steps.cache-tests.outputs.cache-hit }}
         run: dotnet restore ITMO.Dev.ASAP.sln
 
       - name: Build
+        if: ${{ !steps.cache-tests.outputs.cache-hit }}
         run: dotnet build ITMO.Dev.ASAP.sln -c Release --no-restore
 
       - name: Test
+        if: ${{ !steps.cache-tests.outputs.cache-hit }}
         run: dotnet test ITMO.Dev.ASAP.sln -c Release --no-restore --no-build -l trx --results-directory ./allure-results
 
   compile-allure:
@@ -85,7 +99,7 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.event.number }}/${{ github.run_number }}
     
     steps: 
       - name: Deploy Github Pages
@@ -98,4 +112,4 @@ jobs:
           refresh-message-position: true
           message: |
             Link to allure test run:  
-            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.event.number }}/${{ github.run_number }}
+            $url
