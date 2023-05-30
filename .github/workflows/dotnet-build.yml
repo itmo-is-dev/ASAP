@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        
+
       - name: Cache testing results
         id: cache-tests
         uses: actions/cache@v3
@@ -67,7 +67,7 @@ jobs:
         with:
           path: ./allure-results
           key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}-test-results
-        
+
       - name: Download cached pages
         uses: itmo-is-dev/cache-always@v3.3.3
         with:
@@ -91,14 +91,14 @@ jobs:
           allure_history: allure-history
           subfolder: ${{ github.event.number }}
           keep_reports: 20
-          
+
       - name: Upload files to Object Storage
         id: s3-upload
         uses: yc-actions/yc-obj-storage-upload@v1
         with:
           yc-sa-json-credentials: ${{ secrets.YC_KEY }}
           bucket: ${{ secrets.YC_BUCKET }}
-          root: allure-history
+          root: ./allure-history
 
       - name: Upload GitHub Pages artifact
         if: always()
@@ -116,7 +116,7 @@ jobs:
       name: github-pages
       url: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.event.number }}/${{ github.run_number }}
     
-    steps: 
+    steps:
       - name: Deploy Github Pages
         id: deployment
         uses: actions/deploy-pages@v2.0.1
