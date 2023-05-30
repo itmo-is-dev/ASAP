@@ -67,21 +67,12 @@ jobs:
         with:
           path: ./allure-results
           key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}-test-results
-
-      - name: Download cached pages
-        uses: itmo-is-dev/cache-always@v3.3.3
-        with:
-          path: "${{ github.workspace }}/allure-history"
-          key: allure-history
-
-      - name: Remove pages from cache
+          
+      - name: Download and extract history
         run: |
-          REPO=${{ github.repository }}
-          BRANCH="refs/pull/${{ github.event.pull_request.number }}/merge"
-          gh extension install actions/gh-actions-cache
-          gh actions-cache delete allure-history -R $REPO -B $BRANCH --confirm
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          curl https://asap-allure-reports.website.yandexcloud.net/ -o allure-history.tar
+          tar xvf allure-history.tar
+          rm -f allure-history.tar
 
       - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
