@@ -91,6 +91,14 @@ jobs:
           allure_history: allure-history
           subfolder: ${{ github.event.number }}
           keep_reports: 20
+          
+      - name: Upload files to Object Storage
+        id: s3-upload
+        uses: yc-actions/yc-obj-storage-upload@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_KEY }}
+          bucket: ${{ secrets.YC_BUCKET }}
+          root: "${{ github.workspace }}/allure-history"
 
       - name: Upload GitHub Pages artifact
         if: always()
