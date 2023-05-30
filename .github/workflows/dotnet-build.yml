@@ -22,7 +22,7 @@ jobs:
         id: cache-tests
         uses: actions/cache@v3
         with:
-          path: ./allure-reports
+          path: "./allure-reports"
           key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}-test-results
 
       - name: Setup .NET
