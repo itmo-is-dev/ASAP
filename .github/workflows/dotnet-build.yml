@@ -14,9 +14,7 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
     permissions: write-all
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - uses: actions/checkout@v2
 
@@ -42,13 +40,20 @@ jobs:
       - name: Test
         run: dotnet test ITMO.Dev.ASAP.sln -c Release --no-restore --no-build -l trx --results-directory ./allure-results
 
-      - name: Cache history
+  compile-allure:
+    name: Compile allure pages
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: build
+    
+    steps:
+      - name: Download cached pages
         uses: itmo-is-dev/cache-always@v3.3.3
         with:
           path: "${{ github.workspace }}/allure-history"
           key: allure-history
 
-      - name: Prune history cache
+      - name: Remove pages from cache
         run: |
           REPO=${{ github.repository }}
           BRANCH="refs/pull/${{ github.event.pull_request.number }}/merge"
@@ -57,7 +62,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Allure Report
+      - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
         if: always()
         with:
@@ -71,12 +76,23 @@ jobs:
         uses: actions/upload-pages-artifact@v1.0.8
         with:
           path: "${{ github.workspace }}/allure-history"
+  
+  deploy-pages:
+    name: Deploy test summary to GitHub Pages
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: compile-allure
 
-      - name: Deploy Allure reports to GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps: 
+      - name: Deploy Github Pages
         id: deployment
         uses: actions/deploy-pages@v2.0.1
 
-      - name: Post allure test run link
+      - name: Post report link to pull request
         uses: mshick/add-pr-comment@v2
         with:
           refresh-message-position: true
