@@ -61,6 +61,15 @@ jobs:
     needs: build
     
     steps:
+      - name: Cache testing results
+        id: cache-tests
+        uses: actions/cache@v3
+        with:
+          path: ./allure-reports
+          key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}
+          restore-keys:
+            ${{ runner.os }}-test-results-
+        
       - name: Download cached pages
         uses: itmo-is-dev/cache-always@v3.3.3
         with:
