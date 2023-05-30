@@ -57,6 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
     needs: build
+    concurrency: allure
     
     steps:
       - uses: actions/checkout@v2
@@ -67,7 +68,7 @@ jobs:
         with:
           path: ./allure-results
           key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}-test-results
-          
+
       - name: Download and extract history
         run: |
           curl https://asap-allure-reports.website.yandexcloud.net/ -o allure-history.tar
@@ -82,7 +83,7 @@ jobs:
           allure_history: allure-history
           subfolder: ${{ github.event.number }}
           keep_reports: 20
-          
+
       - name: Compress allure results
         run: |
           tar cvf ./allure-history.tar ./allure-history

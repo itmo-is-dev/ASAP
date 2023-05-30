@@ -1,5 +1,5 @@
 name: Purge allure history
-concurrency: dotnet-build
+concurrency: allure
 
 on:
   pull_request:
@@ -11,18 +11,25 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
-      - name: Cache latest history
-        uses: itmo-is-dev/cache-always@v3.3.3
-        with:
-          path: "${{ github.workspace }}/allure-history"
-          key: allure-history
-
-      - name: Prune history
+      - name: Download and extract history
         run: |
-          REPO=${{ github.repository }}
-          BRANCH="refs/pull/${{ github.event.pull_request.number }}/merge"
-          gh extension install actions/gh-actions-cache
-          gh actions-cache delete allure-history -R $REPO -B $BRANCH --confirm
+          curl https://asap-allure-reports.website.yandexcloud.net/ -o allure-history.tar
+          tar xvf allure-history.tar
+          rm -f allure-history.tar
+          
+      - name: Remove merged pull request report
+        run: |
           rm -rf ${{ github.workspace }}/allure-history/${{ github.event.pull_request.number }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Compress allure results
+        run: |
+          tar cvf ./allure-history.tar ./allure-history
+
+      - name: Upload files to Object Storage
+        id: s3-upload
+        uses: yc-actions/yc-obj-storage-upload@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_KEY }}
+          bucket: ${{ secrets.YC_BUCKET }}
+          root: .
+          include: allure-history.tar
