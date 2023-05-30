@@ -6,20 +6,128 @@ on:
     paths:
       - 'src/**'
       - 'tests/**'
+      - '.github/workflows/dotnet-build.yml'
+
 jobs:
   build:
     name: Build & Test
     runs-on: ubuntu-latest
+    outputs: 
+      cache-key: ${{ steps.create-cache-key.outputs.key }}
 
     steps:
       - uses: actions/checkout@v2
+        
+      - name: Create cache key
+        id: create-cache-key
+        run: |
+          echo key=${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}-test-results >> "$GITHUB_OUTPUT"
+
+      - name: Cache testing results
+        id: cache-tests
+        uses: actions/cache@v3
+        with:
+          path: ./allure-results
+          key: ${{ steps.create-cache-key.outputs.key }}
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
+        if: steps.cache-tests.outputs.cache-hit != 'true'
         with:
           dotnet-version: 7.0.203
+
+      - name: Cache nuget packages
+        uses: actions/cache@v3
+        if: steps.cache-tests.outputs.cache-hit != 'true'
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-${{ hashFiles('**/*.Packages.props', '**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - name: Install dependencies
+        if: steps.cache-tests.outputs.cache-hit != 'true'
         run: dotnet restore ITMO.Dev.ASAP.sln
+
       - name: Build
-        run: dotnet build ITMO.Dev.ASAP.sln --configuration Release --no-restore
+        if: steps.cache-tests.outputs.cache-hit != 'true'
+        run: dotnet build ITMO.Dev.ASAP.sln -c Release --no-restore
+
       - name: Test
-        run: dotnet test ITMO.Dev.ASAP.sln --no-restore
+        if: steps.cache-tests.outputs.cache-hit != 'true'
+        run: dotnet test ITMO.Dev.ASAP.sln -c Release --no-restore --no-build -l trx --results-directory ./allure-results
+
+  compile-allure:
+    name: Compile allure pages
+    runs-on: ubuntu-latest
+    needs: build
+    concurrency: allure
+    
+    steps:
+      - name: Cache testing results
+        id: cache-tests
+        uses: actions/cache@v3
+        with:
+          path: ./allure-results
+          key: ${{ needs.build.outputs.cache-key }}
+
+      - name: Download and extract history
+        run: |
+          curl https://asap-allure-reports.website.yandexcloud.net/ -o allure-history.tar
+          tar xvf allure-history.tar
+          rm -f allure-history.tar
+
+      - name: Generate Allure report
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        with:
+          allure_results: allure-results
+          allure_history: allure-history
+          subfolder: ${{ github.event.number }}
+          keep_reports: 20
+
+      - name: Compress allure results
+        run: |
+          tar cvf ./allure-history.tar ./allure-history
+
+      - name: Upload files to Object Storage
+        id: s3-upload
+        uses: yc-actions/yc-obj-storage-upload@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_KEY }}
+          bucket: ${{ secrets.YC_BUCKET }}
+          root: .
+          include: allure-history.tar
+
+      - name: Upload GitHub Pages artifact
+        if: always()
+        uses: actions/upload-pages-artifact@v1.0.8
+        with:
+          path: "${{ github.workspace }}/allure-history"
+  
+  deploy-pages:
+    name: Deploy test summary to GitHub Pages
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      deployments: write
+      pull-requests: write
+      id-token: write
+    needs: compile-allure
+
+    environment:
+      name: github-pages
+      url: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.event.number }}/${{ github.run_number }}
+    
+    steps:
+      - name: Deploy Github Pages
+        id: deployment
+        uses: actions/deploy-pages@v2.0.1
+
+      - name: Post report link to pull request
+        uses: mshick/add-pr-comment@v2
+        with:
+          refresh-message-position: true
+          message: |
+            Link to allure test run:  
+            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.event.number }}/${{ github.run_number }}

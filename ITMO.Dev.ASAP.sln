@@ -134,6 +134,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\start-prod.yml = .github\workflows\start-prod.yml
 		.github\workflows\sonar-cloud.yml = .github\workflows\sonar-cloud.yml
 		.github\workflows\dotnet-build.yml = .github\workflows\dotnet-build.yml
+		.github\workflows\purge-allure-history.yml = .github\workflows\purge-allure-history.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITMO.Dev.ASAP.WebUI.Abstractions", "src\frontend\ITMO.Dev.ASAP.WebUI.Abstractions\ITMO.Dev.ASAP.WebUI.Abstractions.csproj", "{0CCF0390-B26B-42AA-86F2-D56D165E99C2}"
