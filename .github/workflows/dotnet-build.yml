@@ -124,4 +124,4 @@ jobs:
           refresh-message-position: true
           message: |
             Link to allure test run:  
-            $url
+            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.event.number }}/${{ github.run_number }}
