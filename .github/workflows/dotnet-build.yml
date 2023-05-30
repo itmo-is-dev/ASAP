@@ -1,5 +1,4 @@
 name: .NET
-concurrency: dotnet-build
 
 on:
   pull_request:
