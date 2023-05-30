@@ -13,16 +13,23 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
     permissions: write-all
+    outputs: 
+      cache-key: ${{ steps.create-cache-key.outputs.key }}
 
     steps:
       - uses: actions/checkout@v2
+        
+      - name: Create cache key
+        id: create-cache-key
+        run: |
+          echo key=${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}-test-results >> "$GITHUB_OUTPUT"
 
       - name: Cache testing results
         id: cache-tests
         uses: actions/cache@v3
         with:
           path: ./allure-results
-          key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}-test-results
+          key: ${{ steps.create-cache-key.outputs.key }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
@@ -64,7 +71,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./allure-results
-          key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}-test-results
+          key: ${{ needs.build.outputs.cache-key }}
 
       - name: Download and extract history
         run: |
