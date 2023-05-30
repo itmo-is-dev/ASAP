@@ -98,7 +98,7 @@ jobs:
         with:
           yc-sa-json-credentials: ${{ secrets.YC_KEY }}
           bucket: ${{ secrets.YC_BUCKET }}
-          root: "${{ github.workspace }}/allure-history"
+          root: allure-history
 
       - name: Upload GitHub Pages artifact
         if: always()
