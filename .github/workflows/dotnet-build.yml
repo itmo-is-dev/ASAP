@@ -116,7 +116,6 @@ jobs:
       pages: write
       deployments: write
       pull-requests: write
-      id-token: read
     needs: compile-allure
 
     environment:
