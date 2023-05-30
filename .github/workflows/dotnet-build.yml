@@ -23,9 +23,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./allure-reports
-          key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}
-          restore-keys:
-            ${{ runner.os }}-test-results-
+          key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}-test-results
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
@@ -66,9 +64,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./allure-reports
-          key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}
-          restore-keys:
-            ${{ runner.os }}-test-results-
+          key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}-test-results
         
       - name: Download cached pages
         uses: itmo-is-dev/cache-always@v3.3.3
