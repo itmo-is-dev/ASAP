@@ -91,6 +91,10 @@ jobs:
           allure_history: allure-history
           subfolder: ${{ github.event.number }}
           keep_reports: 20
+          
+      - name: Compress allure results
+        run: |
+          tar cvf ./allure-history.tar ./allure-history
 
       - name: Upload files to Object Storage
         id: s3-upload
@@ -98,7 +102,8 @@ jobs:
         with:
           yc-sa-json-credentials: ${{ secrets.YC_KEY }}
           bucket: ${{ secrets.YC_BUCKET }}
-          root: ./allure-history
+          root: .
+          include: allure-history.tar
 
       - name: Upload GitHub Pages artifact
         if: always()
