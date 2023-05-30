@@ -12,8 +12,6 @@ jobs:
   build:
     name: Build & Test
     runs-on: ubuntu-latest
-    permissions:
-      actions: read
     outputs: 
       cache-key: ${{ steps.create-cache-key.outputs.key }}
 
@@ -62,8 +60,6 @@ jobs:
   compile-allure:
     name: Compile allure pages
     runs-on: ubuntu-latest
-    permissions:
-      actions: read
     needs: build
     concurrency: allure
     
@@ -116,6 +112,7 @@ jobs:
       pages: write
       deployments: write
       pull-requests: write
+      id-token: write
     needs: compile-allure
 
     environment:
