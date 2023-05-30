@@ -22,7 +22,7 @@ jobs:
         id: cache-tests
         uses: actions/cache@v3
         with:
-          path: "./allure-reports"
+          path: ./allure-results
           key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}-test-results
 
       - name: Setup .NET
@@ -65,7 +65,7 @@ jobs:
         id: cache-tests
         uses: actions/cache@v3
         with:
-          path: ./allure-reports
+          path: ./allure-results
           key: ${{ runner.os }}-${{ hashFiles('src/**', 'tests/**') }}-test-results
         
       - name: Download cached pages
