@@ -15,10 +15,10 @@ namespace ITMO.Dev.ASAP.Tests.Github.Repositories;
 [Collection(nameof(DatabaseCollectionFixture))]
 public class GithubSubjectCourseRepositoryTests : IAsyncLifetime
 {
-    private readonly DatabaseFixture _database;
+    private readonly GithubDatabaseFixture _database;
     private readonly DeterministicFaker _faker;
 
-    public GithubSubjectCourseRepositoryTests(DatabaseFixture database, DeterministicFaker faker)
+    public GithubSubjectCourseRepositoryTests(GithubDatabaseFixture database, DeterministicFaker faker)
     {
         _database = database;
         _faker = faker;
@@ -28,8 +28,8 @@ public class GithubSubjectCourseRepositoryTests : IAsyncLifetime
     public async Task Add_ShouldAddDatabaseRecordCorrectly()
     {
         // Arrange
-        using var unit = new UnitOfWork(_database.Connection);
-        var repository = new GithubSubjectCourseRepository(_database.Connection, unit);
+        using var unit = new UnitOfWork(_database.GithubConnection);
+        var repository = new GithubSubjectCourseRepository(_database.GithubConnection, unit);
         GithubSubjectCourse subjectCourse = _faker.GithubSubjectCourse();
 
         // Act
@@ -41,7 +41,7 @@ public class GithubSubjectCourseRepositoryTests : IAsyncLifetime
         select "Id", "OrganizationName", "TemplateRepositoryName", "MentorTeamName" from "GithubSubjectCourses"
         """;
 
-        GithubSubjectCourseModel[] subjectCourses = _database.RawConnection.Query<GithubSubjectCourseModel>(sql).ToArray();
+        GithubSubjectCourseModel[] subjectCourses = _database.Connection.Query<GithubSubjectCourseModel>(sql).ToArray();
 
         GithubSubjectCourseModel subjectCourseModel = subjectCourses.Should().ContainSingle().Subject;
         subjectCourseModel.Should().NotBeEquivalentTo(subjectCourse);
@@ -51,8 +51,8 @@ public class GithubSubjectCourseRepositoryTests : IAsyncLifetime
     public async Task Update_ShouldUpdateDatabaseRecordCorrectly()
     {
         // Arrange
-        using var unit = new UnitOfWork(_database.Connection);
-        var repository = new GithubSubjectCourseRepository(_database.Connection, unit);
+        using var unit = new UnitOfWork(_database.GithubConnection);
+        var repository = new GithubSubjectCourseRepository(_database.GithubConnection, unit);
         GithubSubjectCourse subjectCourse = _faker.GithubSubjectCourse();
 
         repository.Add(subjectCourse);
@@ -69,7 +69,7 @@ public class GithubSubjectCourseRepositoryTests : IAsyncLifetime
         select "Id", "OrganizationName", "TemplateRepositoryName", "MentorTeamName" from "GithubSubjectCourses"
         """;
 
-        GithubSubjectCourseModel[] subjectCourses = _database.RawConnection.Query<GithubSubjectCourseModel>(sql).ToArray();
+        GithubSubjectCourseModel[] subjectCourses = _database.Connection.Query<GithubSubjectCourseModel>(sql).ToArray();
 
         GithubSubjectCourseModel subjectCourseModel = subjectCourses.Should().ContainSingle().Subject;
         subjectCourseModel.Should().NotBeEquivalentTo(subjectCourse);
@@ -79,8 +79,8 @@ public class GithubSubjectCourseRepositoryTests : IAsyncLifetime
     public async Task QueryAsync_ShouldReturnCorrectRecords()
     {
         // Arrange
-        using var unit = new UnitOfWork(_database.Connection);
-        var repository = new GithubSubjectCourseRepository(_database.Connection, unit);
+        using var unit = new UnitOfWork(_database.GithubConnection);
+        var repository = new GithubSubjectCourseRepository(_database.GithubConnection, unit);
 
         GithubSubjectCourse[] courses =
         {

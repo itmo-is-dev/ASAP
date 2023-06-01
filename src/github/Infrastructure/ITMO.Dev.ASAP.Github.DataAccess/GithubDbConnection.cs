@@ -2,7 +2,7 @@ using System.Data.Common;
 
 namespace ITMO.Dev.ASAP.Github.DataAccess;
 
-public class GithubDbConnection : IDisposable
+public sealed class GithubDbConnection : IDisposable
 {
     public GithubDbConnection(DbConnection connection)
     {

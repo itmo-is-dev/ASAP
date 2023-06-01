@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Notifications;
+using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
-using ITMO.Dev.ASAP.DataAccess.Abstractions.Extensions;
+using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
 using ITMO.Dev.ASAP.Mapping.Mappings;
@@ -26,11 +26,12 @@ internal class CreateSubjectCourseHandler : IRequestHandler<Command, Response>
         Subject subject = await _context.Subjects.GetByIdAsync(request.SubjectId, cancellationToken);
         SubmissionStateWorkflowType workflowType = request.WorkflowType.AsValueObject();
 
-        var subjectCourse = new SubjectCourse(
+        var subjectCourseBuilder = new SubjectCourse.SubjectCourseBuilder(
             Guid.NewGuid(),
-            subject,
             request.Title,
             workflowType);
+
+        SubjectCourse subjectCourse = subject.AddCourse(subjectCourseBuilder);
 
         _context.SubjectCourses.Add(subjectCourse);
         await _context.SaveChangesAsync(cancellationToken);

@@ -14,6 +14,7 @@ using Chain = FluentChaining.FluentChaining;
 
 namespace ITMO.Dev.ASAP;
 
+#pragma warning disable CA1506
 internal class Program
 {
     public static async Task Main(string[] args)
@@ -35,6 +36,11 @@ internal class Program
 
     private static async Task RunApplication(WebApplicationBuilder builder)
     {
+        if (builder.Configuration.GetSection("Sentry:Enabled").Get<bool>())
+        {
+            builder.WebHost.UseSentry();
+        }
+
         builder.Host.UseSerilogForAppLogs(builder.Configuration);
         builder.AddDeveloperEnvironment();
 
@@ -72,7 +78,7 @@ internal class Program
             await authorizationService.CreateRoleIfNotExistsAsync(AsapIdentityRoleNames.ModeratorRoleName);
 
             await scope.UseAsapGithubAsync();
-            await scope.ServiceProvider.UseDatabaseContext();
+            await scope.UseDatabaseContext();
 
             await SeedingHelper.SeedAdmins(scope.ServiceProvider, app.Configuration);
         }

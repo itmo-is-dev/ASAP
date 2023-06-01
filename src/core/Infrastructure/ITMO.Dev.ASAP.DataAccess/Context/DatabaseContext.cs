@@ -1,4 +1,7 @@
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
+using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.DataAccess.Repositories;
+using ITMO.Dev.ASAP.DataAccess.Models;
+using ITMO.Dev.ASAP.DataAccess.Repositories;
 using ITMO.Dev.ASAP.DataAccess.ValueConverters;
 using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
 using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
@@ -18,7 +21,10 @@ namespace ITMO.Dev.ASAP.DataAccess.Context;
 public class DatabaseContext : DbContext, IDatabaseContext
 {
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
-        : base(options) { }
+        : base(options)
+    {
+        Subjects = new SubjectRepository(this);
+    }
 
     public DbSet<User> Users { get; protected init; } = null!;
 
@@ -32,7 +38,9 @@ public class DatabaseContext : DbContext, IDatabaseContext
 
     public DbSet<StudentGroup> StudentGroups { get; protected init; } = null!;
 
-    public DbSet<Subject> Subjects { get; protected init; } = null!;
+    public ISubjectRepository Subjects { get; }
+
+    public DbSet<SubjectModel> SubjectsSet { get; protected init; } = null!;
 
     public DbSet<SubjectCourse> SubjectCourses { get; protected init; } = null!;
 

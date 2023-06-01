@@ -16,6 +16,8 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+        <PackageReference Include="Sentry.AspNetCore" />
+        <PackageReference Include="Sentry.Serilog" />
         <PackageReference Include="Serilog" />
         <PackageReference Include="Serilog.AspNetCore" />
         <PackageReference Include="Serilog.Extensions.Hosting" />

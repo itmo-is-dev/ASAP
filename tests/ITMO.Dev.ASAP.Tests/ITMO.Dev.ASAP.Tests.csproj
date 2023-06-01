@@ -11,9 +11,11 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="Moq" />
+        <PackageReference Include="Respawn" />
         <PackageReference Include="Serilog.Extensions.Logging" />
         <PackageReference Include="Serilog.Sinks.Console" />
         <PackageReference Include="Serilog.Sinks.XUnit" />
+        <PackageReference Include="Testcontainers.PostgreSql" />
         <PackageReference Include="xunit" />
         <PackageReference Include="xunit.runner.visualstudio" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
         <PackageReference Include="coverlet.collector" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
@@ -25,6 +27,19 @@
         <ProjectReference Include="..\..\src\core\Infrastructure\ITMO.Dev.ASAP.DataAccess\ITMO.Dev.ASAP.DataAccess.csproj" />
         <ProjectReference Include="..\..\src\core\Infrastructure\ITMO.Dev.ASAP.Mapping\ITMO.Dev.ASAP.Mapping.csproj" />
         <ProjectReference Include="..\..\src\core\Infrastructure\ITMO.Dev.ASAP.Seeding\ITMO.Dev.ASAP.Seeding.csproj" />
+        <ProjectReference Include="..\..\src\shared\ITMO.Dev.ASAP.Extensions.DataAccess\ITMO.Dev.ASAP.Extensions.DataAccess.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="TestResults\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="TestResults\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="TestResults\**" />
     </ItemGroup>
 
 </Project>

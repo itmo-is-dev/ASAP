@@ -48,7 +48,8 @@ public class SubjectCourseGenerator : EntityGeneratorBase<SubjectCourse>
 
         const SubmissionStateWorkflowType reviewType = SubmissionStateWorkflowType.ReviewWithDefense;
 
-        var subjectCourse = new SubjectCourse(_faker.Random.Guid(), subject, subjectCourseName, reviewType);
+        var subjectCourseBuilder = new SubjectCourse.SubjectCourseBuilder(_faker.Random.Guid(), subjectCourseName, reviewType);
+        SubjectCourse subjectCourse = subject.AddCourse(subjectCourseBuilder);
 
         IEnumerable<User> users = _faker.Random
             .ListItems(_userGenerator.GeneratedEntities.ToList(), 2)
@@ -63,8 +64,6 @@ public class SubjectCourseGenerator : EntityGeneratorBase<SubjectCourse>
         {
             subjectCourse.AddDeadlinePolicy(deadline);
         }
-
-        subject.AddCourse(subjectCourse);
 
         return subjectCourse;
     }

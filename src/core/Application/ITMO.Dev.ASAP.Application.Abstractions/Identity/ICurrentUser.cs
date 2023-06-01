@@ -1,4 +1,5 @@
-﻿using ITMO.Dev.ASAP.Domain.Study;
+﻿using ITMO.Dev.ASAP.Application.DataAccess.Queries;
+using ITMO.Dev.ASAP.Domain.Study;
 
 namespace ITMO.Dev.ASAP.Application.Abstractions.Identity;
 
@@ -8,11 +9,9 @@ public interface ICurrentUser
 
     bool CanManageStudents { get; }
 
-    bool HasAccessToSubject(Subject subject);
-
     bool HasAccessToSubjectCourse(SubjectCourse subjectCourse);
 
-    IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects);
+    public SubjectQuery.Builder FilterAvailableSubjects(SubjectQuery.Builder queryBuilder);
 
     bool CanUpdateAllDeadlines { get; }
 

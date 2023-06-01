@@ -16,7 +16,7 @@
         <InternalsVisibleTo Include="ITMO.Dev.ASAP.Presentation.Rpc" />
         <InternalsVisibleTo Include="ITMO.Dev.ASAP" />
         <InternalsVisibleTo Include="ITMO.Dev.ASAP.Application.Handlers" />
-        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Tests.Handlers" />
+        <InternalsVisibleTo Include="ITMO.Dev.ASAP.Tests.Core" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Common.Exceptions;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Domain.Study;
 
@@ -15,18 +16,15 @@ internal class AnonymousUser : ICurrentUser
 
     public bool CanManageStudents => false;
 
+    public SubjectQuery.Builder FilterAvailableSubjects(SubjectQuery.Builder queryBuilder)
+        => throw UserHasNotAccessException.AnonymousUserHasNotAccess();
+
     public bool CanCreateUserWithRole(string roleName)
         => throw UserHasNotAccessException.AnonymousUserHasNotAccess();
 
     public bool CanChangeUserRole(string currentRoleName, string newRoleName)
         => throw UserHasNotAccessException.AnonymousUserHasNotAccess();
 
-    public bool HasAccessToSubject(Subject subject)
-        => throw UserHasNotAccessException.AnonymousUserHasNotAccess();
-
     public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
-        => throw UserHasNotAccessException.AnonymousUserHasNotAccess();
-
-    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
         => throw UserHasNotAccessException.AnonymousUserHasNotAccess();
 }

@@ -1,5 +1,5 @@
+using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Application.Specifications;
-using ITMO.Dev.ASAP.DataAccess.Abstractions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourses.Queries.GetSubjectCourseStudents;

@@ -1,4 +1,5 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Domain.Study;
 
 namespace ITMO.Dev.ASAP.Application.Users;
@@ -14,26 +15,21 @@ internal class AdminUser : ICurrentUser
 
     public bool CanManageStudents => true;
 
-    public bool HasAccessToSubject(Subject subject)
-    {
-        return true;
-    }
+    public bool CanUpdateAllDeadlines => true;
 
     public bool HasAccessToSubjectCourse(SubjectCourse subjectCourse)
     {
         return true;
     }
 
-    public bool CanUpdateAllDeadlines => true;
+    public SubjectQuery.Builder FilterAvailableSubjects(SubjectQuery.Builder queryBuilder)
+    {
+        return queryBuilder;
+    }
 
     public bool CanCreateUserWithRole(string roleName)
     {
         return true;
-    }
-
-    public IQueryable<Subject> FilterAvailableSubjects(IQueryable<Subject> subjects)
-    {
-        return subjects;
     }
 
     public bool CanChangeUserRole(string currentRoleName, string newRoleName)

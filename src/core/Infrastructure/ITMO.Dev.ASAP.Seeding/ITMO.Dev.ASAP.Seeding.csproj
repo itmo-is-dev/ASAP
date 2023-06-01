@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Application\ITMO.Dev.ASAP.DataAccess.Abstractions\ITMO.Dev.ASAP.DataAccess.Abstractions.csproj" />
+        <ProjectReference Include="..\..\Application\Abstractions\ITMO.Dev.ASAP.Application.DataAccess\ITMO.Dev.ASAP.Application.DataAccess.csproj" />
     </ItemGroup>
 
     <ItemGroup>

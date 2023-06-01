@@ -14,10 +14,10 @@ namespace ITMO.Dev.ASAP.Tests.Github.Repositories;
 [Collection(nameof(DatabaseCollectionFixture))]
 public class GithubUserRepositoryTests : IAsyncLifetime
 {
-    private readonly DatabaseFixture _database;
+    private readonly GithubDatabaseFixture _database;
     private readonly DeterministicFaker _faker;
 
-    public GithubUserRepositoryTests(DatabaseFixture database, DeterministicFaker faker)
+    public GithubUserRepositoryTests(GithubDatabaseFixture database, DeterministicFaker faker)
     {
         _database = database;
         _faker = faker;
@@ -27,8 +27,8 @@ public class GithubUserRepositoryTests : IAsyncLifetime
     public async Task AddRange_ShouldAddManyRecords()
     {
         // Arrange
-        using var unit = new UnitOfWork(_database.Connection);
-        var repository = new GithubUserRepository(_database.Connection, unit);
+        using var unit = new UnitOfWork(_database.GithubConnection);
+        var repository = new GithubUserRepository(_database.GithubConnection, unit);
 
         GithubUser[] users = Enumerable.Range(0, 2).Select(_ => _faker.GithubUser()).ToArray();
 
@@ -41,7 +41,7 @@ public class GithubUserRepositoryTests : IAsyncLifetime
         select "Id", "Username" from "GithubUsers"
         """;
 
-        IEnumerable<GithubUserModel> userModels = _database.RawConnection.Query<GithubUserModel>(sql);
+        IEnumerable<GithubUserModel> userModels = _database.Connection.Query<GithubUserModel>(sql);
 
         userModels.Should().BeEquivalentTo(users, x => x.ComparingByMembers<GithubUser>());
     }
