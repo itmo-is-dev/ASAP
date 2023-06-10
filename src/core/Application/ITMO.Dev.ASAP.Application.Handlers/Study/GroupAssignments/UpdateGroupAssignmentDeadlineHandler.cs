@@ -41,9 +41,10 @@ internal class UpdateGroupAssignmentDeadlineHandler : IRequestHandler<Command, R
         {
             Mentor? mentor = await _context.Mentors
                 .Where(mentor => mentor.UserId.Equals(_currentUser.Id))
-                .FirstOrDefaultAsync(cancellationToken);
+                .Where(mentor => mentor.CourseId.Equals(groupAssignment.Assignment.SubjectCourse.Id))
+                .SingleOrDefaultAsync(cancellationToken);
 
-            if (mentor?.Course.Equals(groupAssignment.Assignment.SubjectCourse) is not true)
+            if (mentor is null)
                 throw new AccessDeniedException();
         }
 
