@@ -27,7 +27,8 @@
             @if (_modalVisible)
             {
                 <ModalBody>
-                    <AssignmentComponent Assignment="Assignment"/>
+                    <AssignmentComponent Assignment="Assignment"
+                                         OnAssignmentChanged="OnAssignmentChanged"/>
                 </ModalBody>
             }
 
@@ -39,6 +40,9 @@
 
     [Parameter]
     public AssignmentDto? Assignment { get; set; }
+    
+    [Parameter]
+    public EventCallback<AssignmentDto> OnAssignmentChanged { get; set; }
 
     private Modal? _modal;
     private bool _modalVisible;

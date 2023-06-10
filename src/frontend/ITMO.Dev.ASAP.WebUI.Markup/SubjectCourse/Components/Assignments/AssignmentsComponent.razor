@@ -3,9 +3,11 @@
 @if (Assignments is not null)
 {
     <ListGroup Flush>
-        @foreach (var assignment in Assignments.OrderBy(x => x.Order))
+        @foreach ((AssignmentDto assignment, int i) in Assignments.Select((x, i) => (x, i)))
         {
-            <AssignmentInfoComponent Assignment="assignment"/>
+            int localI = i;
+            <AssignmentInfoComponent Assignment="assignment" 
+                                     OnAssignmentChanged="x => Assignments[localI] = x"/>
         }
     </ListGroup>
 }
@@ -17,6 +19,6 @@ else
 @code {
 
     [Parameter]
-    public ICollection<AssignmentDto>? Assignments { get; set; }
+    public IList<AssignmentDto>? Assignments { get; set; }
 
 }

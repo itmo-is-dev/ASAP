@@ -22,6 +22,7 @@ internal class GetAssignmentsBySubjectCourseHandler : IRequestHandler<Query, Res
         IReadOnlyCollection<Assignment> assignments = await _context
             .Assignments
             .Where(a => a.SubjectCourse.Id == request.SubjectCourseId)
+            .OrderBy(x => x.Order)
             .ToListAsync(cancellationToken);
 
         AssignmentDto[] dto = assignments
