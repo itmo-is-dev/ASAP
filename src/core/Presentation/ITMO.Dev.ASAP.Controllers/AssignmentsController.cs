@@ -76,8 +76,8 @@ public class AssignmentsController : ControllerBase
 
     [HttpPut("{assignmentId:guid}/groups/{groupId:guid}")]
     [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
-    [AuthorizeFeature(Scope, nameof(Update))]
-    public async Task<ActionResult<GroupAssignmentDto>> Update(
+    [AuthorizeFeature(Scope, nameof(UpdateGroupAssignment))]
+    public async Task<ActionResult<GroupAssignmentDto>> UpdateGroupAssignment(
         Guid assignmentId,
         Guid groupId,
         UpdateGroupAssignmentRequest request)
