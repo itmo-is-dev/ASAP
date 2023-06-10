@@ -16,7 +16,7 @@ public partial class SubjectCoursePage
 {
     private SubjectCourseDto? _course;
 
-    private ICollection<AssignmentDto>? _assignments;
+    private IList<AssignmentDto>? _assignments;
     private ICollection<ExtendedSubjectCourseGroupDto>? _subjectCourseGroups;
 
     private string? _selectedTab;

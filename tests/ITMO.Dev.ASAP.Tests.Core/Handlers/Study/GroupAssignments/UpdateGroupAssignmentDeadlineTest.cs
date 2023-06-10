@@ -45,8 +45,11 @@ public class UpdateGroupAssignmentDeadlineTest :
     [Fact]
     public async Task Handle_ByMentorOfNotThisCourse_ShouldThrow()
     {
+        IEnumerable<Guid> mentorIds = _groupAssignment.Assignment.SubjectCourse.Mentors
+            .Select(x => x.UserId);
+
         Mentor mentor = await _database.Context.Mentors
-            .FirstAsync(m => !m.Course.Equals(_groupAssignment.Assignment.SubjectCourse));
+            .FirstAsync(m => !mentorIds.Contains(m.UserId));
 
         var currentUser = new MentorUser(mentor.UserId);
         await Assert.ThrowsAsync<AccessDeniedException>(() => HandleByCurrentUser(currentUser));

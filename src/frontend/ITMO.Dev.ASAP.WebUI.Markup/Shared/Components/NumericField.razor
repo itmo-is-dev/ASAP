@@ -1,17 +1,24 @@
 @typeparam T where T : struct
 
-<Field>
-    <FieldLabel>@Label</FieldLabel>
-    <NumericEdit TValue="@T"
+<Field Margin="@Margin">
+    @if (Label is not null)
+    {
+        <FieldLabel>@Label</FieldLabel>
+    }
+
+    <NumericEdit @ref="_edit"
+                 TValue="@T"
                  Value="@(Value ?? default)"
                  ValueChanged="@ValueChanged"
                  Placeholder="@Placeholder"
-                 Min="@MinValue"
-                 Max="@MaxValue"
+                 FocusOut="EventCallback.Empty"
                  Step="@Step"/>
 </Field>
 
 @code {
+
+    private NumericEdit<T>? _edit;
+
     public T? Value { get; set; }
 
     [Parameter]
@@ -21,20 +28,46 @@
     public string? Placeholder { get; set; }
 
     [Parameter]
-    public T MinValue { get; set; }
+    public T? MinValue { get; set; }
 
     [Parameter]
-    public T MaxValue { get; set; }
-    
+    public T? MaxValue { get; set; }
+
     [Parameter]
     public decimal? Step { get; set; }
 
     [Parameter]
     public EventCallback OnStateChanged { get; set; }
+    
+    [Parameter]
+    public IFluentSpacing? Margin { get; set; }
+
+    [Parameter]
+    public T? Default { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        Value = Default;
+
+        if (_edit is null)
+            return;
+
+        if (MinValue is not null)
+        {
+            _edit.Min = MinValue.Value;
+        }
+
+        if (MaxValue is not null)
+        {
+            _edit.Max = MaxValue.Value;
+        }
+    }
 
     private async Task ValueChanged(T value)
     {
         Value = value;
         await OnStateChanged.InvokeAsync();
     }
+
+
 }
