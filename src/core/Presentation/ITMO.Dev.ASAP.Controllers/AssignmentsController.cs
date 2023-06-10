@@ -1,4 +1,3 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Commands;
@@ -8,7 +7,6 @@ using ITMO.Dev.ASAP.Authorization;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models;
 using ITMO.Dev.ASAP.WebApi.Abstractions.Models.GroupAssignments;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ITMO.Dev.ASAP.Controllers;
@@ -75,7 +73,6 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpPut("{assignmentId:guid}/groups/{groupId:guid}")]
-    [Authorize(Roles = AsapIdentityRoleNames.AdminRoleName)]
     [AuthorizeFeature(Scope, nameof(UpdateGroupAssignment))]
     public async Task<ActionResult<GroupAssignmentDto>> UpdateGroupAssignment(
         Guid assignmentId,
