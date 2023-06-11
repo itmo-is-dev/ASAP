@@ -126,6 +126,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{6E8685
 		Docker\build.dockerfile = Docker\build.dockerfile
 		Docker\build.dockerfile.dockerignore = Docker\build.dockerfile.dockerignore
 		Docker\.env = Docker\.env
+		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{F1CC24D7-1743-4961-816E-DD23BCF48BC7}"
