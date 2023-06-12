@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
         if (configuration.GetSection("Github:Invites:Enabled").Get<bool>())
         {
             collection
-                .AddSingleton(configuration.GetSection("Github:Invites:Delay").Get<GithubInviteBackgroundServiceConfiguration>()!)
+                .Configure<GithubInviteBackgroundServiceConfiguration>(configuration.GetSection("Github:Invites:Delay"))
                 .AddHostedService<GithubInviteBackgroundService>();
         }
 
