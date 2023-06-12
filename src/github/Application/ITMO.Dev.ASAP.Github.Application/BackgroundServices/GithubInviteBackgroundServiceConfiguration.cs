@@ -2,5 +2,9 @@
 
 public class GithubInviteBackgroundServiceConfiguration
 {
-    public TimeSpan Delay { get; set; }
+    public TimeSpan Delay => new TimeSpan(0, Hours, Minutes);
+
+    public int Hours { get; set; }
+
+    public int Minutes { get; set; }
 }
