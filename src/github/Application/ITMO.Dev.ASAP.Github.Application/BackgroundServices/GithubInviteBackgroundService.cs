@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace ITMO.Dev.ASAP.Github.Application.BackgroundServices;
 
@@ -14,11 +15,11 @@ public class GithubInviteBackgroundService : BackgroundService
 
     public GithubInviteBackgroundService(
         IServiceScopeFactory serviceProvider,
-        GithubInviteBackgroundServiceConfiguration config,
+        IOptions<GithubInviteBackgroundServiceConfiguration> config,
         ILogger<GithubInviteBackgroundService> logger)
     {
         _logger = logger;
-        _delayBetweenInviteIteration = config.Delay;
+        _delayBetweenInviteIteration = config.Value.Delay;
         _serviceProvider = serviceProvider;
     }
 
