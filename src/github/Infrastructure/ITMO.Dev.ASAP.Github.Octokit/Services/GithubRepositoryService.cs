@@ -66,6 +66,14 @@ public class GithubRepositoryService : IGithubRepositoryService
     {
         IGitHubClient client = await _clientProvider.GetClientForOrganizationAsync(organization, default);
 
+        bool isCollaborator = await client.Repository.Collaborator.IsCollaborator(
+            organization,
+            repositoryName,
+            username);
+
+        if (isCollaborator)
+            return AddPermissionResult.AlreadyCollaborator;
+
         RepositoryInvitation invitation = await client.Repository.Collaborator.Invite(
             organization,
             repositoryName,
@@ -74,14 +82,6 @@ public class GithubRepositoryService : IGithubRepositoryService
 
         if (invitation is null)
         {
-            bool isCollaborator = await client.Repository.Collaborator.IsCollaborator(
-                organization,
-                repositoryName,
-                username);
-
-            if (isCollaborator)
-                return AddPermissionResult.AlreadyCollaborator;
-
             _logger.LogInformation(
                 "Adding permission {Permission} for {Username} in {OrganizationName}/{RepositoryName}",
                 permission,
