@@ -8,16 +8,17 @@ namespace ITMO.Dev.ASAP.Github.Application.BackgroundServices;
 
 public class GithubInviteBackgroundService : BackgroundService
 {
-    private readonly TimeSpan _delayBetweenInviteIteration = TimeSpan.FromHours(6);
-
+    private readonly TimeSpan _delayBetweenInviteIteration;
     private readonly ILogger<GithubInviteBackgroundService> _logger;
     private readonly IServiceScopeFactory _serviceProvider;
 
     public GithubInviteBackgroundService(
         IServiceScopeFactory serviceProvider,
+        GithubInviteBackgroundServiceConfiguration config,
         ILogger<GithubInviteBackgroundService> logger)
     {
         _logger = logger;
+        _delayBetweenInviteIteration = config.Delay;
         _serviceProvider = serviceProvider;
     }
 
