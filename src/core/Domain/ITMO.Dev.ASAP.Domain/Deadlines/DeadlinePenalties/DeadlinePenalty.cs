@@ -9,18 +9,16 @@ public abstract class DeadlinePenalty : IEquatable<DeadlinePenalty>
         SpanBeforeActivation = spanBeforeActivation;
     }
 
-    protected DeadlinePenalty() { }
-
     public TimeSpan SpanBeforeActivation { get; protected init; }
 
-    public virtual bool Equals(DeadlinePenalty? other)
+    public bool Equals(DeadlinePenalty? other)
     {
         return other?.SpanBeforeActivation.Equals(SpanBeforeActivation) ?? false;
     }
 
     public abstract Points Apply(Points points);
 
-    public override bool Equals(object? obj)
+    public sealed override bool Equals(object? obj)
     {
         return Equals(obj as DeadlinePenalty);
     }

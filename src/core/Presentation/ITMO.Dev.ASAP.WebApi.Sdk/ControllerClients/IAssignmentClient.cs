@@ -15,10 +15,6 @@ public interface IAssignmentClient
         double maxPoints,
         CancellationToken cancellationToken = default);
 
-    Task<AssignmentDto> GetAssignmentAsync(
-        Guid id,
-        CancellationToken cancellationToken = default);
-
     Task<IReadOnlyCollection<GroupAssignmentDto>> GetGroupAssignmentsAsync(
         Guid assignmentId,
         CancellationToken cancellationToken = default);

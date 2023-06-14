@@ -1,19 +1,19 @@
-using ITMO.Dev.ASAP.Application.DataAccess;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.DataAccess.Contexts;
+using ITMO.Dev.ASAP.DataAccess.Models;
 using ITMO.Dev.ASAP.Seeding.EntityGenerators;
 
 namespace ITMO.Dev.ASAP.Seeding.DatabaseSeeders;
 
 public class AssignmentDatabaseSeeder : IDatabaseSeeder
 {
-    private readonly IEntityGenerator<Assignment> _generator;
+    private readonly IEntityGenerator<AssignmentModel> _generator;
 
-    public AssignmentDatabaseSeeder(IEntityGenerator<Assignment> generator)
+    public AssignmentDatabaseSeeder(IEntityGenerator<AssignmentModel> generator)
     {
         _generator = generator;
     }
 
-    public void Seed(IDatabaseContext context)
+    public void Seed(DatabaseContext context)
     {
         context.Assignments.AddRange(_generator.GeneratedEntities);
     }

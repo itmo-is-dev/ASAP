@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.Dto.Users;
-using User = ITMO.Dev.ASAP.Domain.Users.User;
+using ITMO.Dev.ASAP.Domain.Users;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 

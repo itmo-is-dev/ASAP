@@ -1,10 +1,10 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Application.Dto.Users;
+using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using static ITMO.Dev.ASAP.Application.Contracts.Users.Queries.FindCurrentUser;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Users;
@@ -12,9 +12,9 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Users;
 internal class FindCurrentUserHandler : IRequestHandler<Query, Response>
 {
     private readonly ICurrentUser _currentUser;
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
 
-    public FindCurrentUserHandler(ICurrentUser currentUser, IDatabaseContext context)
+    public FindCurrentUserHandler(ICurrentUser currentUser, IPersistenceContext context)
     {
         _currentUser = currentUser;
         _context = context;
@@ -22,9 +22,7 @@ internal class FindCurrentUserHandler : IRequestHandler<Query, Response>
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        User? user = await _context.Users
-            .FirstOrDefaultAsync(x => x.Id.Equals(_currentUser.Id), cancellationToken);
-
+        User? user = await _context.Users.FindByIdAsync(_currentUser.Id, cancellationToken);
         UserDto? dto = user?.ToDto();
 
         return new Response(dto);

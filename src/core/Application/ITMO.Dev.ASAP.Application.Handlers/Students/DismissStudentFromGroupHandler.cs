@@ -1,32 +1,36 @@
 using ITMO.Dev.ASAP.Application.DataAccess;
-using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Domain.Users;
+using ITMO.Dev.ASAP.Application.Specifications;
+using ITMO.Dev.ASAP.Domain.Groups;
+using ITMO.Dev.ASAP.Domain.Students;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using static ITMO.Dev.ASAP.Application.Contracts.Users.Commands.DismissStudentFromGroup;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Students;
 
 internal class DismissStudentFromGroupHandler : IRequestHandler<Command>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
 
-    public DismissStudentFromGroupHandler(IDatabaseContext context)
+    public DismissStudentFromGroupHandler(IPersistenceContext context)
     {
         _context = context;
     }
 
     public async Task Handle(Command request, CancellationToken cancellationToken)
     {
-        Student? student = await _context.Students
-            .SingleOrDefaultAsync(x => x.User.Id.Equals(request.StudentId), cancellationToken);
+        Student student = await _context.Students
+            .GetByIdAsync(request.StudentId, cancellationToken);
 
-        if (student is null)
-            throw EntityNotFoundException.For<Student>(request.StudentId);
+        if (student.Group is null)
+            return;
 
-        student.DismissFromStudyGroup();
+        StudentGroup group = await _context.StudentGroups.GetByIdAsync(student.Group.Id, cancellationToken);
+
+        student.DismissFromStudyGroup(group);
 
         _context.Students.Update(student);
+        _context.StudentGroups.Update(group);
+
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

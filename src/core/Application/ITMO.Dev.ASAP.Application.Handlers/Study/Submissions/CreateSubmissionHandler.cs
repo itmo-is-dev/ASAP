@@ -1,23 +1,28 @@
 using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Students;
+using ITMO.Dev.ASAP.Domain.Study.Assignments;
+using ITMO.Dev.ASAP.Domain.Study.GroupAssignments;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
 using ITMO.Dev.ASAP.Domain.Submissions;
 using ITMO.Dev.ASAP.Domain.Tools;
 using ITMO.Dev.ASAP.Domain.Users;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.Submissions.Commands.CreateSubmission;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Study.Submissions;
 
+#pragma warning disable CA1506
 internal class CreateSubmissionHandler : IRequestHandler<Command, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
 
-    public CreateSubmissionHandler(IDatabaseContext context)
+    public CreateSubmissionHandler(IPersistenceContext context)
     {
         _context = context;
     }
@@ -26,31 +31,26 @@ internal class CreateSubmissionHandler : IRequestHandler<Command, Response>
     {
         (Guid issuerId, Guid studentId, Guid assignmentId, string payload) = request;
 
-        Student? student = await _context.Assignments
-            .Where(x => x.Id.Equals(assignmentId))
-            .SelectMany(x => x.SubjectCourse.Groups)
-            .SelectMany(x => x.StudentGroup.Students)
-            .Where(x => x.UserId.Equals(issuerId))
+        var studentQuery = StudentQuery.Build(x => x.WithId(request.StudentId).WithAssignmentId(assignmentId));
+
+        Student? student = await _context.Students
+            .QueryAsync(studentQuery, cancellationToken)
             .SingleOrDefaultAsync(cancellationToken);
+
+        SubjectCourse subjectCourse = await _context.SubjectCourses
+            .GetByIdAsync(assignmentId, cancellationToken);
 
         // If issuer is not a student, check if it is mentor and find student corresponding to the repository
         if (student is null)
         {
-            IQueryable<SubjectCourse> subjectCourseQuery = _context.Assignments
-                .Where(x => x.Id.Equals(assignmentId))
-                .Select(x => x.SubjectCourse);
-
-            Mentor? mentor = await subjectCourseQuery
-                .SelectMany(x => x.Mentors)
-                .Where(x => x.UserId.Equals(issuerId))
-                .SingleOrDefaultAsync(cancellationToken);
+            Mentor? mentor = subjectCourse.Mentors.SingleOrDefault(x => x.UserId.Equals(issuerId));
 
             if (mentor is not null)
             {
-                student = await subjectCourseQuery
-                    .SelectMany(x => x.Groups)
-                    .SelectMany(x => x.StudentGroup.Students)
-                    .Where(x => x.UserId.Equals(studentId))
+                studentQuery = StudentQuery.Build(x => x.WithSubjectCourseId(subjectCourse.Id));
+
+                student = await _context.Students
+                    .QueryAsync(studentQuery, cancellationToken)
                     .SingleOrDefaultAsync(cancellationToken);
 
                 if (student is null)
@@ -58,37 +58,41 @@ internal class CreateSubmissionHandler : IRequestHandler<Command, Response>
             }
             else
             {
-                SubjectCourse? subjectCourse = await subjectCourseQuery.SingleOrDefaultAsync(cancellationToken);
-
-                if (subjectCourse is null)
-                    throw EntityNotFoundException.For<Assignment>(assignmentId);
-
                 throw EntityNotFoundException.UserNotFoundInSubjectCourse(studentId, subjectCourse.Title);
             }
         }
 
-        GroupAssignment groupAssignment = await _context.GroupAssignments
-            .WithAssignment(assignmentId)
-            .ForStudent(student.UserId)
-            .SingleAsync(cancellationToken);
+        if (student.Group is null)
+        {
+            throw new EntityNotFoundException($"Could not find group for student {studentId}");
+        }
 
-        int count = await _context.Submissions
-            .ForAssignment(assignmentId)
-            .ForUser(student.UserId)
-            .CountAsync(cancellationToken);
+        GroupAssignment groupAssignment = await _context.GroupAssignments
+            .GetByIdsAsync(student.Group.Id, assignmentId, cancellationToken);
+
+        var submissionCountQuery = SubmissionQuery.Build(x => x
+            .WithUserId(student.UserId)
+            .WithAssignmentId(assignmentId));
+
+        int count = await _context.Submissions.CountAsync(submissionCountQuery, cancellationToken);
 
         var submission = new Submission(
             Guid.NewGuid(),
             count + 1,
             student,
-            groupAssignment,
             Calendar.CurrentDateTime,
-            payload);
+            payload,
+            groupAssignment);
 
         _context.Submissions.Add(submission);
         await _context.SaveChangesAsync(cancellationToken);
 
-        SubmissionDto dto = submission.ToDto();
+        Assignment assignment = await _context.Assignments
+            .GetByIdAsync(submission.GroupAssignment.Assignment.Id, cancellationToken);
+
+        Points points = submission.CalculateEffectivePoints(assignment, subjectCourse.DeadlinePolicy).Points;
+
+        SubmissionDto dto = submission.ToDto(points);
 
         return new Response(dto);
     }

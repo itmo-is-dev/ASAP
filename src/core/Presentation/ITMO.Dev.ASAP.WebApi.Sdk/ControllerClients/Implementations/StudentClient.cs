@@ -30,12 +30,6 @@ internal class StudentClient : IStudentClient
         return await _handler.SendAsync<StudentDto>(message, cancellationToken);
     }
 
-    public async Task<StudentDto> GetAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        using var message = new HttpRequestMessage(HttpMethod.Get, $"api/Student/{id}");
-        return await _handler.SendAsync<StudentDto>(message, cancellationToken);
-    }
-
     public async Task DismissFromGroupAsync(Guid id, CancellationToken cancellationToken = default)
     {
         using var message = new HttpRequestMessage(HttpMethod.Put, $"api/Student/{id}/dismiss");

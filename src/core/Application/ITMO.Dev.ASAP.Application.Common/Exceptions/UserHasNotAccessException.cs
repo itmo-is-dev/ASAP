@@ -5,12 +5,6 @@ public class UserHasNotAccessException : ApplicationException
     private UserHasNotAccessException(string message)
         : base(message) { }
 
-    public static UserHasNotAccessException EmptyAvailableList(Guid userId)
-    {
-        return new UserHasNotAccessException(
-            $"User {userId} doesn't have any available information from the list");
-    }
-
     public static UserHasNotAccessException AccessViolation(Guid userId)
     {
         return new UserHasNotAccessException($"User {userId} has not access to this field");

@@ -4,24 +4,15 @@ namespace ITMO.Dev.ASAP.Domain.Study;
 
 public partial class SubjectCourseGroup : IEntity
 {
-    public SubjectCourseGroup(SubjectCourse subjectCourse, StudentGroup studentGroup)
-        : this(subjectCourseId: subjectCourse.Id, studentGroupId: studentGroup.Id)
+    public SubjectCourseGroup(Guid subjectCourseId, Guid studentGroupId)
     {
-        ArgumentNullException.ThrowIfNull(subjectCourse);
-        ArgumentNullException.ThrowIfNull(studentGroup);
-
-        SubjectCourse = subjectCourse;
-        StudentGroup = studentGroup;
+        SubjectCourseId = subjectCourseId;
+        StudentGroupId = studentGroupId;
     }
 
     [KeyProperty]
-    public virtual SubjectCourse SubjectCourse { get; protected init; }
+    public Guid SubjectCourseId { get; }
 
     [KeyProperty]
-    public virtual StudentGroup StudentGroup { get; protected init; }
-
-    public override string ToString()
-    {
-        return StudentGroup.ToString();
-    }
+    public Guid StudentGroupId { get; }
 }

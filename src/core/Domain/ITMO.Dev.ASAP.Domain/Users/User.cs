@@ -8,7 +8,12 @@ public partial class User : IEntity<Guid>
 {
     private readonly HashSet<UserAssociation> _associations;
 
-    public User(Guid id, string firstName, string middleName, string lastName) : this(id)
+    public User(
+        Guid id,
+        string firstName,
+        string middleName,
+        string lastName,
+        HashSet<UserAssociation> associations) : this(id)
     {
         ArgumentNullException.ThrowIfNull(firstName);
         ArgumentNullException.ThrowIfNull(middleName);
@@ -18,8 +23,15 @@ public partial class User : IEntity<Guid>
         MiddleName = middleName;
         LastName = lastName;
 
-        _associations = new HashSet<UserAssociation>();
+        _associations = associations;
     }
+
+    public User(
+        Guid id,
+        string firstName,
+        string middleName,
+        string lastName)
+        : this(id, firstName, middleName, lastName, new HashSet<UserAssociation>()) { }
 
     public string FirstName { get; set; }
 

@@ -3,6 +3,7 @@ using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
 using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
@@ -12,10 +13,10 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Study.SubjectCourses;
 
 internal class CreateSubjectCourseHandler : IRequestHandler<Command, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly IPublisher _publisher;
 
-    public CreateSubjectCourseHandler(IDatabaseContext context, IPublisher publisher)
+    public CreateSubjectCourseHandler(IPersistenceContext context, IPublisher publisher)
     {
         _context = context;
         _publisher = publisher;
@@ -26,7 +27,7 @@ internal class CreateSubjectCourseHandler : IRequestHandler<Command, Response>
         Subject subject = await _context.Subjects.GetByIdAsync(request.SubjectId, cancellationToken);
         SubmissionStateWorkflowType workflowType = request.WorkflowType.AsValueObject();
 
-        var subjectCourseBuilder = new SubjectCourse.SubjectCourseBuilder(
+        var subjectCourseBuilder = new SubjectCourseBuilder(
             Guid.NewGuid(),
             request.Title,
             workflowType);

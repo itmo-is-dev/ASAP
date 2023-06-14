@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Application.Dto.Tables;
 using ITMO.Dev.ASAP.Application.Dto.Users;
+using ITMO.Dev.ASAP.Domain.Students;
 using ITMO.Dev.ASAP.Domain.Submissions;
-using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Github.Application.Dto.Users;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using ITMO.Dev.ASAP.Mapping.Mappings;
@@ -32,10 +32,10 @@ public static class GithubUserServiceExtensions
 
     public static async Task<IReadOnlyList<QueueSubmissionDto>> MapToQueueSubmissionDto(
         this IGithubUserService service,
-        IReadOnlyCollection<Submission> submissions,
+        IReadOnlyCollection<RatedSubmission> submissions,
         CancellationToken cancellationToken)
     {
-        IEnumerable<Guid> userIds = submissions.Select(x => x.Student.UserId).Distinct();
+        IEnumerable<Guid> userIds = submissions.Select(x => x.Submission.Student.UserId).Distinct();
 
         IReadOnlyCollection<GithubUserDto> githubUsers = await service
             .FindByIdsAsync(userIds, cancellationToken);
@@ -43,10 +43,10 @@ public static class GithubUserServiceExtensions
         return submissions
             .GroupJoin(
                 githubUsers,
-                x => x.Student.UserId,
+                x => x.Submission.Student.UserId,
                 x => x.Id,
                 (s, u) => (submission: s, user: u.FirstOrDefault()))
-            .Select(x => x.submission.ToQueueDto(x.user?.Username))
+            .Select(x => x.submission.Submission.ToQueueDto(x.user?.Username, x.submission.Points))
             .ToArray();
     }
 

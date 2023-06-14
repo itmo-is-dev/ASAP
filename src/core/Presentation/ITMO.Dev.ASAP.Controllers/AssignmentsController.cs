@@ -1,6 +1,5 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Commands;
-using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Study;
@@ -49,17 +48,6 @@ public class AssignmentsController : ControllerBase
         var command = new UpdateAssignmentPoints.Command(id, minPoints, maxPoints);
 
         UpdateAssignmentPoints.Response response = await _mediator.Send(command);
-
-        return Ok(response.Assignment);
-    }
-
-    [HttpGet("{id:guid}")]
-    [AuthorizeFeature(Scope, nameof(GetById))]
-    public async Task<ActionResult<AssignmentDto>> GetById(Guid id)
-    {
-        var query = new GetAssignmentById.Query(id);
-
-        GetAssignmentById.Response response = await _mediator.Send(query);
 
         return Ok(response.Assignment);
     }

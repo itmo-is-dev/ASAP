@@ -1,19 +1,19 @@
-using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.DataAccess.Contexts;
+using ITMO.Dev.ASAP.DataAccess.Models.UserAssociations;
 using ITMO.Dev.ASAP.Seeding.EntityGenerators;
-using IsuUserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.IsuUserAssociation;
 
 namespace ITMO.Dev.ASAP.Seeding.DatabaseSeeders;
 
 public class IsuUserAssociationSeeder : IDatabaseSeeder
 {
-    private readonly IEntityGenerator<IsuUserAssociation> _generator;
+    private readonly IEntityGenerator<IsuUserAssociationModel> _generator;
 
-    public IsuUserAssociationSeeder(IEntityGenerator<IsuUserAssociation> generator)
+    public IsuUserAssociationSeeder(IEntityGenerator<IsuUserAssociationModel> generator)
     {
         _generator = generator;
     }
 
-    public void Seed(IDatabaseContext context)
+    public void Seed(DatabaseContext context)
     {
         context.UserAssociations.AddRange(_generator.GeneratedEntities);
     }

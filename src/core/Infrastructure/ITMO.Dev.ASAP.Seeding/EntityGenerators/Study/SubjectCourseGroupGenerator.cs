@@ -1,26 +1,24 @@
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.DataAccess.Models;
 using ITMO.Dev.ASAP.Seeding.Options;
-using StudentGroup = ITMO.Dev.ASAP.Domain.Study.StudentGroup;
-using SubjectCourseGroup = ITMO.Dev.ASAP.Domain.Study.SubjectCourseGroup;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators;
 
-public class SubjectCourseGroupGenerator : EntityGeneratorBase<SubjectCourseGroup>
+public class SubjectCourseGroupGenerator : EntityGeneratorBase<SubjectCourseGroupModel>
 {
-    private readonly IEntityGenerator<StudentGroup> _studentGroupGenerator;
-    private readonly IEntityGenerator<SubjectCourse> _subjectCourseGenerator;
+    private readonly IEntityGenerator<StudentGroupModel> _studentGroupGenerator;
+    private readonly IEntityGenerator<SubjectCourseModel> _subjectCourseGenerator;
 
     public SubjectCourseGroupGenerator(
-        EntityGeneratorOptions<SubjectCourseGroup> options,
-        IEntityGenerator<SubjectCourse> subjectCourseGenerator,
-        IEntityGenerator<StudentGroup> studentGroupGenerator)
+        EntityGeneratorOptions<SubjectCourseGroupModel> options,
+        IEntityGenerator<SubjectCourseModel> subjectCourseGenerator,
+        IEntityGenerator<StudentGroupModel> studentGroupGenerator)
         : base(options)
     {
         _subjectCourseGenerator = subjectCourseGenerator;
         _studentGroupGenerator = studentGroupGenerator;
     }
 
-    protected override SubjectCourseGroup Generate(int index)
+    protected override SubjectCourseGroupModel Generate(int index)
     {
         int studentGroupCount = _studentGroupGenerator.GeneratedEntities.Count;
         int studentGroupNumber = index % studentGroupCount;
@@ -34,9 +32,12 @@ public class SubjectCourseGroupGenerator : EntityGeneratorBase<SubjectCourseGrou
             throw new ArgumentOutOfRangeException(nameof(index), message);
         }
 
-        SubjectCourse subjectCourse = _subjectCourseGenerator.GeneratedEntities[subjectCourseGroupNumber];
-        StudentGroup studentGroup = _studentGroupGenerator.GeneratedEntities[studentGroupNumber];
+        SubjectCourseModel subjectCourse = _subjectCourseGenerator.GeneratedEntities[subjectCourseGroupNumber];
+        StudentGroupModel studentGroup = _studentGroupGenerator.GeneratedEntities[studentGroupNumber];
 
-        return subjectCourse.AddGroup(studentGroup);
+        var subjectCourseGroup = new SubjectCourseGroupModel(subjectCourse.Id, studentGroup.Id);
+        subjectCourse.SubjectCourseGroups.Add(subjectCourseGroup);
+
+        return subjectCourseGroup;
     }
 }

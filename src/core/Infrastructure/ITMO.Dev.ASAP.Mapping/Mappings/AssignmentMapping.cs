@@ -1,14 +1,14 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
-using Assignment = ITMO.Dev.ASAP.Domain.Study.Assignment;
+using ITMO.Dev.ASAP.Domain.Study.Assignments;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 
 public static class AssignmentMapping
 {
-    public static AssignmentDto ToDto(this Assignment assignment)
+    public static AssignmentDto ToDto(this Assignment assignment, Guid subjectCourseId)
     {
         return new AssignmentDto(
-            assignment.SubjectCourse.Id,
+            subjectCourseId,
             assignment.Id,
             assignment.Title,
             assignment.ShortName,

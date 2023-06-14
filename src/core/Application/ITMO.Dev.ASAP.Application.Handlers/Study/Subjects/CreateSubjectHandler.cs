@@ -8,9 +8,9 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Study.Subjects;
 
 internal class CreateSubjectHandler : IRequestHandler<Command, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
 
-    public CreateSubjectHandler(IDatabaseContext context)
+    public CreateSubjectHandler(IPersistenceContext context)
     {
         _context = context;
     }

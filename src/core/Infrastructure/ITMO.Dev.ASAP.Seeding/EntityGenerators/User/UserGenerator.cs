@@ -1,26 +1,28 @@
 using Bogus;
+using ITMO.Dev.ASAP.DataAccess.Models.UserAssociations;
+using ITMO.Dev.ASAP.DataAccess.Models.Users;
 using ITMO.Dev.ASAP.Seeding.Extensions;
 using ITMO.Dev.ASAP.Seeding.Options;
-using User = ITMO.Dev.ASAP.Domain.Users.User;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators;
 
-public class UserGenerator : EntityGeneratorBase<User>
+public class UserGenerator : EntityGeneratorBase<UserModel>
 {
     private readonly Faker _faker;
 
-    public UserGenerator(EntityGeneratorOptions<User> options, Faker faker)
+    public UserGenerator(EntityGeneratorOptions<UserModel> options, Faker faker)
         : base(options)
     {
         _faker = faker;
     }
 
-    protected override User Generate(int index)
+    protected override UserModel Generate(int index)
     {
-        return new User(
+        return new UserModel(
             _faker.Random.Guid(),
             _faker.Name.FirstName(),
             _faker.Name.MiddleName(),
-            _faker.Name.LastName());
+            _faker.Name.LastName(),
+            new List<UserAssociationModel>());
     }
 }

@@ -4,7 +4,7 @@ namespace ITMO.Dev.ASAP.Domain.UserAssociations;
 
 public partial class IsuUserAssociation : UserAssociation
 {
-    private IsuUserAssociation(Guid id, User user, int universityId) : base(id, user)
+    public IsuUserAssociation(Guid id, Guid userId, int universityId) : base(id, userId)
     {
         UniversityId = universityId;
     }
@@ -13,8 +13,8 @@ public partial class IsuUserAssociation : UserAssociation
 
     public static IsuUserAssociation CreateAndAttach(Guid id, User user, int universityId)
     {
-        IsuUserAssociation association = new(id, user, universityId);
-        association.AttachAssociation();
+        var association = new IsuUserAssociation(id, user.Id, universityId);
+        user.AddAssociation(association);
 
         return association;
     }

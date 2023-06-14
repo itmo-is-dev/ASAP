@@ -1,9 +1,9 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Application.DataAccess;
-using ITMO.Dev.ASAP.Application.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourseAssociations;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Application.Specifications;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
 using ITMO.Dev.ASAP.Github.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using ITMO.Dev.ASAP.Google.Application.Dto.SubjectCourses;
@@ -16,13 +16,13 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Study.SubjectCourses;
 
 internal class GetSubjectCourseByIdHandler : IRequestHandler<Query, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly ICurrentUser _currentUser;
     private readonly IGithubSubjectCourseService _githubSubjectCourseService;
     private readonly IGoogleSubjectCourseService _googleSubjectCourseService;
 
     public GetSubjectCourseByIdHandler(
-        IDatabaseContext context,
+        IPersistenceContext context,
         ICurrentUser currentUser,
         IGithubSubjectCourseService githubSubjectCourseService,
         IGoogleSubjectCourseService googleSubjectCourseService)

@@ -11,10 +11,10 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Study.Subjects;
 
 internal class GetSubjectsHandler : IRequestHandler<Query, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly ICurrentUser _currentUser;
 
-    public GetSubjectsHandler(IDatabaseContext context, ICurrentUser currentUser)
+    public GetSubjectsHandler(IPersistenceContext context, ICurrentUser currentUser)
     {
         _context = context;
         _currentUser = currentUser;
