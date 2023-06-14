@@ -6,7 +6,9 @@
           "admin"
         ],
         "UpdatePoints": [
-          "admin"
+          "admin",
+          "moderator",
+          "mentor"
         ],
         "GetById": [
           "admin",
@@ -18,8 +20,10 @@
           "moderator",
           "mentor"
         ],
-        "Update": [
-          "admin"
+        "UpdateGroupAssignment": [
+          "admin",
+          "moderator",
+          "mentor"
         ]
       },
       "Github": {

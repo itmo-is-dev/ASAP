@@ -7,6 +7,8 @@ on:
       - 'src/**'
       - 'tests/**'
       - '.github/workflows/dotnet-build.yml'
+      - '*.props'
+      - '*.sln*'
 
 jobs:
   build:

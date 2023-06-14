@@ -7,5 +7,4 @@ public static class AsapIdentityRoleNames
     public const string MentorRoleName = "Mentor";
 
     public const string AtLeastMentor = $"{AdminRoleName}, {ModeratorRoleName}, {MentorRoleName}";
-    public const string AtLeastModerator = $"{AdminRoleName}, {ModeratorRoleName}";
 }
