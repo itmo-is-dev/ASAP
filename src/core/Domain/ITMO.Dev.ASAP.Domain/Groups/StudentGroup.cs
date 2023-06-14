@@ -17,7 +17,7 @@ public partial class StudentGroup : IEntity<Guid>
 
     public string Name { get; set; }
 
-    public IReadOnlyCollection<Guid> Student => _studentIds;
+    public IReadOnlyCollection<Guid> Students => _studentIds;
 
     public StudentGroupInfo Info => new StudentGroupInfo(Id, Name);
 

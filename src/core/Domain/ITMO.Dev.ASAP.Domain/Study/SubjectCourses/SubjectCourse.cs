@@ -42,7 +42,7 @@ public partial class SubjectCourse : IEntity<Guid>
 
     public SubmissionStateWorkflowType? WorkflowType { get; set; }
 
-    public virtual IReadOnlyCollection<Mentor> Mentors => _mentors;
+    public IReadOnlyCollection<Mentor> Mentors => _mentors;
 
     public IReadOnlyCollection<StudentGroupInfo> Groups => _groups;
 
@@ -127,17 +127,6 @@ public partial class SubjectCourse : IEntity<Guid>
         var aggregateEvt = AggregateSubjectCourseEvent.Build(x => x.WithEvent(evt).WithEvents(events));
 
         return (aggregateEvt, assignment);
-    }
-
-    public Mentor AddMentor(User user)
-    {
-        if (_mentors.Any(x => x.UserId.Equals(user.Id)))
-            throw new DomainInvalidOperationException($"User {user} is already a mentor of this subject course");
-
-        var mentor = new Mentor(user.Id, Id);
-        _mentors.Add(mentor);
-
-        return mentor;
     }
 
     public ISubjectCourseEvent UpdateMentors(IReadOnlyCollection<User> users)

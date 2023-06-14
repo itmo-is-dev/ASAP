@@ -39,7 +39,7 @@ public partial class User : IEntity<Guid>
 
     public string LastName { get; set; }
 
-    public virtual IReadOnlyCollection<UserAssociation> Associations => _associations;
+    public IReadOnlyCollection<UserAssociation> Associations => _associations;
 
     public override string ToString()
     {
@@ -56,19 +56,6 @@ public partial class User : IEntity<Guid>
             throw new DomainInvalidOperationException($"User {this} already has {associationType} association");
 
         _associations.Add(association);
-    }
-
-    public void RemoveAssociation(UserAssociation association)
-    {
-        ArgumentNullException.ThrowIfNull(association);
-
-        if (!_associations.Remove(association))
-            throw new DomainInvalidOperationException($"User {this} could not remove association {association}");
-    }
-
-    public bool HasAssociation<T>() where T : UserAssociation
-    {
-        return Associations.Any(a => a is T);
     }
 
     public T? FindAssociation<T>() where T : UserAssociation
