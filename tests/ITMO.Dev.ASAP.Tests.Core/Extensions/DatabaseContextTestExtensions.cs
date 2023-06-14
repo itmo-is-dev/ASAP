@@ -1,22 +1,22 @@
 using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
+using ITMO.Dev.ASAP.Domain.Models;
 using ITMO.Dev.ASAP.Domain.Submissions;
-using ITMO.Dev.ASAP.Domain.Submissions.States;
 using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
-using Microsoft.EntityFrameworkCore;
 
 namespace ITMO.Dev.ASAP.Tests.Core.Extensions;
 
 public static class DatabaseContextTestExtensions
 {
-    public static Task<Submission> GetSubmissionAsync(
-        this IDatabaseContext context,
-        params ISubmissionState[] states)
+    public static async Task<Submission> GetSubmissionAsync(
+        this IPersistenceContext context,
+        params SubmissionStateKind[] states)
     {
-        return context.Submissions
-            .Where(submission => states.Any(x => x.Equals(submission.State)))
-            .Where(x =>
-                x.GroupAssignment.Assignment.SubjectCourse.WorkflowType ==
-                SubmissionStateWorkflowType.ReviewWithDefense)
-            .FirstAsync();
+        var query = SubmissionQuery.Build(x => x
+            .WithSubmissionStates(states)
+            .WithSubjectCourseWorkflow(SubmissionStateWorkflowType.ReviewWithDefense)
+            .WithLimit(1));
+
+        return await context.Submissions.QueryAsync(query, default).FirstAsync();
     }
 }

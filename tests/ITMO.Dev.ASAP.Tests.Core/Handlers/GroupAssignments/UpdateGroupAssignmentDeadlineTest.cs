@@ -1,9 +1,10 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Commands;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Application.Handlers.Study.GroupAssignments;
 using ITMO.Dev.ASAP.Application.Users;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.DataAccess.Models;
 using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using ITMO.Dev.ASAP.Seeding.Options;
@@ -13,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
-namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Study.GroupAssignments;
+namespace ITMO.Dev.ASAP.Tests.Core.Handlers.GroupAssignments;
 
 public class UpdateGroupAssignmentDeadlineTest :
     TestBase,
@@ -22,20 +23,24 @@ public class UpdateGroupAssignmentDeadlineTest :
 {
     private readonly DateOnly _newDeadline = DateOnly.MaxValue;
     private readonly IPublisher _publisher = new Mock<IPublisher>().Object;
-    private readonly GroupAssignment _groupAssignment;
+    private readonly GroupAssignmentModel _groupAssignment;
     private readonly UpdateGroupAssignmentDatabaseFixture _database;
 
     public UpdateGroupAssignmentDeadlineTest(UpdateGroupAssignmentDatabaseFixture database)
     {
         _database = database;
+
         _groupAssignment = database.Context.GroupAssignments.First();
     }
 
     [Fact]
     public async Task Handle_ByMentorOfThisCourse_ShouldUpdateDeadline()
     {
-        Mentor mentor = await _database.Context.Mentors
-            .FirstAsync(m => m.Course.Equals(_groupAssignment.Assignment.SubjectCourse));
+        var query = MentorQuery.Build(x => x.WithSubjectCourseId(_groupAssignment.Assignment.SubjectCourseId));
+
+        Mentor mentor = await _database.PersistenceContext.Mentors
+            .QueryAsync(query, default)
+            .FirstAsync();
 
         var currentUser = new MentorUser(mentor.UserId);
         UpdateGroupAssignmentDeadline.Response response = await HandleByCurrentUser(currentUser);
@@ -45,8 +50,19 @@ public class UpdateGroupAssignmentDeadlineTest :
     [Fact]
     public async Task Handle_ByMentorOfNotThisCourse_ShouldThrow()
     {
-        Mentor mentor = await _database.Context.Mentors
-            .FirstAsync(m => !m.Course.Equals(_groupAssignment.Assignment.SubjectCourse));
+        IEnumerable<Guid> mentorIds = _groupAssignment.Assignment.SubjectCourse.Mentors
+            .Select(x => x.UserId);
+
+        var mentorId = await _database.Context.Mentors
+            .Where(x => mentorIds.Contains(x.UserId) == false)
+            .Select(x => new { x.UserId, x.SubjectCourseId })
+            .FirstAsync();
+
+        var query = MentorQuery.Build(x => x.WithUserId(mentorId.UserId).WithSubjectCourseId(mentorId.SubjectCourseId));
+
+        Mentor mentor = await _database.PersistenceContext.Mentors
+            .QueryAsync(query, default)
+            .FirstAsync();
 
         var currentUser = new MentorUser(mentor.UserId);
         await Assert.ThrowsAsync<AccessDeniedException>(() => HandleByCurrentUser(currentUser));
@@ -75,10 +91,10 @@ public class UpdateGroupAssignmentDeadlineTest :
 
     private async Task<UpdateGroupAssignmentDeadline.Response> HandleByCurrentUser(ICurrentUser currentUser)
     {
-        var handler = new UpdateGroupAssignmentDeadlineHandler(_database.Context, _publisher, currentUser);
+        var handler = new UpdateGroupAssignmentDeadlineHandler(_database.PersistenceContext, _publisher, currentUser);
 
         var command = new UpdateGroupAssignmentDeadline.Command(
-            _groupAssignment.GroupId,
+            _groupAssignment.StudentGroupId,
             _groupAssignment.AssignmentId,
             _newDeadline);
 
@@ -90,7 +106,7 @@ public class UpdateGroupAssignmentDeadlineTest :
     {
         protected override void ConfigureSeeding(EntityGenerationOptions options)
         {
-            options.ConfigureEntityGenerator<SubjectCourse>(x => x.Count = 2);
+            options.ConfigureEntityGenerator<SubjectCourseModel>(x => x.Count = 2);
         }
     }
 }

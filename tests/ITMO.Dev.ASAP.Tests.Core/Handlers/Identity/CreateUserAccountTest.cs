@@ -35,7 +35,11 @@ public class CreateUserAccountTest : CoreTestBase, IAsyncDisposeLifetime
         var admin = new AdminUser(Guid.Empty);
 
         var command = new CreateUserAccount.Command(userId, username, password, roleName);
-        var handler = new CreateUserAccountHandler(_database.Context, admin, AuthorizationServiceMock.Object);
+
+        var handler = new CreateUserAccountHandler(
+            _database.PersistenceContext,
+            admin,
+            AuthorizationServiceMock.Object);
 
         await handler.Handle(command, default);
     }
@@ -56,7 +60,11 @@ public class CreateUserAccountTest : CoreTestBase, IAsyncDisposeLifetime
         var admin = new MentorUser(Guid.Empty);
 
         var command = new CreateUserAccount.Command(userId, username, password, roleName);
-        var handler = new CreateUserAccountHandler(_database.Context, admin, AuthorizationServiceMock.Object);
+
+        var handler = new CreateUserAccountHandler(
+            _database.PersistenceContext,
+            admin,
+            AuthorizationServiceMock.Object);
 
         await Assert.ThrowsAsync<AccessDeniedException>(() =>
             handler.Handle(command, default));
@@ -78,7 +86,11 @@ public class CreateUserAccountTest : CoreTestBase, IAsyncDisposeLifetime
         var admin = new ModeratorUser(Guid.Empty);
 
         var command = new CreateUserAccount.Command(userId, username, password, roleName);
-        var handler = new CreateUserAccountHandler(_database.Context, admin, AuthorizationServiceMock.Object);
+
+        var handler = new CreateUserAccountHandler(
+            _database.PersistenceContext,
+            admin,
+            AuthorizationServiceMock.Object);
 
         if (throwExpected)
         {

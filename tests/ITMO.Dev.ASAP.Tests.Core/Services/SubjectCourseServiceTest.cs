@@ -4,7 +4,7 @@ using ITMO.Dev.ASAP.Application.Abstractions.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
 using ITMO.Dev.ASAP.Application.SubjectCourses;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.DataAccess.Models;
 using ITMO.Dev.ASAP.Github.Application.Dto.Users;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using ITMO.Dev.ASAP.Tests.Core.Fixtures;
@@ -30,13 +30,16 @@ public class SubjectCourseServiceTest : TestBase, IAsyncDisposeLifetime
             .Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid id, CancellationToken _) => new GithubUserDto(id, id.ToString()));
 
-        _service = new SubjectCourseService(_database.Context, new UserFullNameFormatter(), githubUserService.Object);
+        _service = new SubjectCourseService(
+            _database.PersistenceContext,
+            new UserFullNameFormatter(),
+            githubUserService.Object);
     }
 
     [Fact]
     public async Task CalculatePointsAsync_Should_ReturnPoints()
     {
-        SubjectCourse course = await _database.Context.SubjectCourses
+        SubjectCourseModel course = await _database.Context.SubjectCourses
             .Where(x => x.Assignments
                 .SelectMany(xx => xx.GroupAssignments)
                 .SelectMany(xx => xx.Submissions)
@@ -51,7 +54,7 @@ public class SubjectCourseServiceTest : TestBase, IAsyncDisposeLifetime
     [Fact]
     public async Task CalculatePointsAsync_Should_ReturnUniqueAssignmentIds()
     {
-        SubjectCourse course = await _database.Context.SubjectCourses
+        SubjectCourseModel course = await _database.Context.SubjectCourses
             .Where(x => x.Assignments
                 .SelectMany(xx => xx.GroupAssignments)
                 .SelectMany(xx => xx.Submissions)

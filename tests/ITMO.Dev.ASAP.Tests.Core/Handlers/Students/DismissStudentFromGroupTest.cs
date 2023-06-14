@@ -20,12 +20,12 @@ public class DismissStudentFromGroupTest : TestBase, IAsyncDisposeLifetime
     public async Task Handle_Should_NotThrow()
     {
         Guid studentId = await _database.Context.Students
-            .Where(x => x.Group != null)
+            .Where(x => x.StudentGroup != null)
             .Select(x => x.UserId)
             .FirstAsync();
 
         var command = new DismissStudentFromGroup.Command(studentId);
-        var handler = new DismissStudentFromGroupHandler(_database.Context);
+        var handler = new DismissStudentFromGroupHandler(_database.PersistenceContext);
 
         await handler.Handle(command, default);
     }

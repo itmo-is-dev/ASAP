@@ -33,7 +33,7 @@ public class CreateStudentTest : TestBase, IAsyncDisposeLifetime
             .ReturnsAsync((Guid id, CancellationToken _) => new GithubUserDto(id, "123"));
 
         var command = new CreateStudent.Command("A", "B", "C", groupId);
-        var handler = new CreateStudentHandler(_database.Context, githubUserService.Object);
+        var handler = new CreateStudentHandler(_database.PersistenceContext, githubUserService.Object);
 
         CreateStudent.Response response = await handler.Handle(command, default);
 

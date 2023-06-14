@@ -1,15 +1,18 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Formatters;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
+using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Application.SubjectCourses;
-using ITMO.Dev.ASAP.Domain.Study;
-using ITMO.Dev.ASAP.Domain.Users;
+using ITMO.Dev.ASAP.DataAccess.Models;
+using ITMO.Dev.ASAP.DataAccess.Models.Users;
+using ITMO.Dev.ASAP.Domain.Groups;
+using ITMO.Dev.ASAP.Domain.Students;
 using ITMO.Dev.ASAP.Github.Application.Dto.Users;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using ITMO.Dev.ASAP.Tests.Core.Fixtures;
 using Moq;
 using Xunit;
 
-namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Study.SubjectCourses;
+namespace ITMO.Dev.ASAP.Tests.Core.Handlers.SubjectCourses;
 
 #pragma warning disable CA1506
 [Collection(nameof(CoreDatabaseCollectionFixture))]
@@ -25,43 +28,53 @@ public class CalculatePointsOfTransferredStudentTest : TestBase, IAsyncDisposeLi
     [Fact]
     public async Task TransferStudent_CalculateSubmissions_Should_BeEqual()
     {
-        Assignment assignment = await _database.Context.Assignments
+        AssignmentModel assignmentModel = await _database.Context.Assignments
             .Select(x => x)
             .ToAsyncEnumerable()
             .Where(x =>
                 x.GroupAssignments.Count > 1
-                && x.GroupAssignments.Any(xx => xx.Submissions.Any(xxx => xxx.IsRated)))
+                && x.GroupAssignments.Any(xx => xx.Submissions.Any(xxx => xxx.Rating != null)))
             .FirstAsync();
 
-        Student student = assignment.GroupAssignments
+        StudentModel studentModel = assignmentModel.GroupAssignments
             .SelectMany(x => x.Submissions)
-            .First(x => x.IsRated)
+            .First(x => x.Rating != null)
             .Student;
 
-        StudentGroup newGroup = assignment.GroupAssignments
-            .Select(x => x.Group)
-            .First(xx => xx.Students.Contains(student) is false);
+        StudentGroupModel newGroupModel = assignmentModel.GroupAssignments
+            .Select(x => x.StudentGroup)
+            .First(xx => xx.Students.Contains(studentModel) is false);
 
         var githubUserService = new Mock<IGithubUserService>();
         githubUserService.Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Guid id, CancellationToken _) => new GithubUserDto(id, "amogus"));
 
         var subjectCourseService = new SubjectCourseService(
-            _database.Context,
+            _database.PersistenceContext,
             new UserFullNameFormatter(),
             githubUserService.Object);
 
         SubjectCoursePointsDto pointsDto = await subjectCourseService
-            .CalculatePointsAsync(assignment.SubjectCourse.Id, CancellationToken.None);
+            .CalculatePointsAsync(assignmentModel.SubjectCourse.Id, CancellationToken.None);
 
         int ratedSubmissionCountBefore = pointsDto.StudentsPoints
-            .First(x => x.Student.User.Id == student.UserId)
+            .First(x => x.Student.User.Id == studentModel.UserId)
             .Points.Count;
 
-        student.TransferToAnotherGroup(newGroup);
+        Student student = await _database.PersistenceContext.Students
+            .GetByIdAsync(studentModel.UserId, default);
+
+        StudentGroup? oldGroup = student.Group is null
+            ? null
+            : await _database.PersistenceContext.StudentGroups.GetByIdAsync(student.Group.Id, default);
+
+        StudentGroup newGroup = await _database.PersistenceContext.StudentGroups
+            .GetByIdAsync(newGroupModel.Id, default);
+
+        student.TransferToAnotherGroup(oldGroup, newGroup);
 
         pointsDto = await subjectCourseService
-            .CalculatePointsAsync(assignment.SubjectCourse.Id, CancellationToken.None);
+            .CalculatePointsAsync(assignmentModel.SubjectCourse.Id, CancellationToken.None);
 
         int ratedSubmissionCountAfter = pointsDto.StudentsPoints
             .First(x => x.Student.User.Id == student.UserId)

@@ -1,8 +1,9 @@
 using FluentAssertions;
-using ITMO.Dev.ASAP.Application.Tools;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
+using ITMO.Dev.ASAP.Application.Queue;
+using ITMO.Dev.ASAP.DataAccess.Models;
 using ITMO.Dev.ASAP.Domain.Queue;
 using ITMO.Dev.ASAP.Domain.Queue.Building;
-using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Domain.Submissions;
 using ITMO.Dev.ASAP.Tests.Core.Fixtures;
 using Microsoft.EntityFrameworkCore;
@@ -23,21 +24,23 @@ public class QueueFilterTest : TestBase, IAsyncDisposeLifetime
     [Fact]
     public async Task DefaultQueue_Should_NotThrow()
     {
-        SubjectCourse subjectCourse = await _database.Context.SubjectCourses.FirstAsync();
+        SubjectCourseModel subjectCourse = await _database.Context.SubjectCourses.FirstAsync();
 
-        StudentGroup group = subjectCourse.Groups
+        StudentGroupModel group = subjectCourse.SubjectCourseGroups
             .Select(x => x.StudentGroup)
             .First(group => subjectCourse.Assignments
                 .SelectMany(x => x.GroupAssignments)
                 .SelectMany(x => x.Submissions)
-                .Any(x => x.Student.Group?.Equals(group) ?? false));
+                .Any(x => x.Student.StudentGroup?.Equals(group) ?? false));
 
-        SubmissionQueue queue = new DefaultQueueBuilder(group, subjectCourse.Id).Build();
+        SubmissionQueue queue = new DefaultQueueBuilder(group.Id, subjectCourse.Id).Build();
 
-        IEnumerable<Submission> submissions = await queue.UpdateSubmissions(
-            _database.Context.Submissions,
-            new QueryExecutor(),
-            default);
+        var visitor = new FilterCriteriaVisitor(new SubmissionQuery.Builder());
+        queue.AcceptFilterCriteriaVisitor(visitor);
+
+        Submission[] submissions = await _database.PersistenceContext.Submissions
+            .QueryAsync(visitor.Builder.Build(), default)
+            .ToArrayAsync();
 
         submissions.Should().NotBeEmpty();
     }

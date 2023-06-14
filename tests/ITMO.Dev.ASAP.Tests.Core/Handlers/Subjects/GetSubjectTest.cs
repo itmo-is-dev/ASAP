@@ -7,7 +7,7 @@ using ITMO.Dev.ASAP.Tests.Core.Fixtures;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Study.Subjects;
+namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Subjects;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
 public class GetSubjectTest : TestBase, IAsyncDisposeLifetime
@@ -29,7 +29,7 @@ public class GetSubjectTest : TestBase, IAsyncDisposeLifetime
         var adminUser = new AdminUser(mentorId);
 
         var query = new GetSubjects.Query();
-        var handler = new GetSubjectsHandler(_database.Context, adminUser);
+        var handler = new GetSubjectsHandler(_database.PersistenceContext, adminUser);
 
         GetSubjects.Response response = await handler.Handle(query, CancellationToken.None);
 
@@ -42,7 +42,7 @@ public class GetSubjectTest : TestBase, IAsyncDisposeLifetime
         var anonymousUser = new AnonymousUser();
 
         var query = new GetSubjects.Query();
-        var handler = new GetSubjectsHandler(_database.Context, anonymousUser);
+        var handler = new GetSubjectsHandler(_database.PersistenceContext, anonymousUser);
 
         await Assert.ThrowsAsync<UserHasNotAccessException>(() => handler.Handle(query, default));
     }
