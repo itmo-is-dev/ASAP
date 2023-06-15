@@ -10,20 +10,15 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.SubjectCourses;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class AddFractionDeadlinePolicyTests : CoreTestBase
+public class AddFractionDeadlinePolicyTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public AddFractionDeadlinePolicyTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public AddFractionDeadlinePolicyTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldAddDeadlinePolicyCorrectly()
     {
         // Arrange
-        SubjectCourseModel subjectCourse = await _database.Context.SubjectCourses
+        SubjectCourseModel subjectCourse = await Context.SubjectCourses
             .OrderBy(x => x.Id)
             .Where(x => x.DeadlinePenalties.Count != 0)
             .FirstAsync();
@@ -37,19 +32,19 @@ public class AddFractionDeadlinePolicyTests : CoreTestBase
         const double fraction = 0.5;
 
         var command = new AddFractionDeadlinePolicy.Command(subjectCourse.Id, span, fraction);
-        var handler = new AddFractionDeadlinePolicyHandler(_database.PersistenceContext);
+        var handler = new AddFractionDeadlinePolicyHandler(PersistenceContext);
 
         // Act
         await handler.Handle(command, default);
 
         // Assert
-        DeadlinePenaltyModel penalty = await _database.Context.DeadlinePenalties
+        DeadlinePenaltyModel penalty = await Context.DeadlinePenalties
             .Where(x => x.SubjectCourseId.Equals(subjectCourse.Id))
             .OrderByDescending(x => x.SpanBeforeActivation)
             .FirstAsync();
 
         penalty.Should()
-            .BeOfType<FractionDeadlinePenaltyModel>()
+            .BeAssignableTo<FractionDeadlinePenaltyModel>()
             .Which.Fraction.Should()
             .Be(fraction);
     }

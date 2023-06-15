@@ -9,25 +9,20 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.StudyGroups;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class CreateStudyGroupTests : CoreTestBase
+public class CreateStudyGroupTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public CreateStudyGroupTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public CreateStudyGroupTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldCreateGroup()
     {
         // Arrange
-        string name = _database.Faker.Commerce.ProductName();
+        string name = Fixture.Faker.Commerce.ProductName();
 
         var publisher = new Mock<IPublisher>();
 
         var command = new CreateStudyGroup.Command(name);
-        var handler = new CreateStudyGroupHandler(_database.PersistenceContext, publisher.Object);
+        var handler = new CreateStudyGroupHandler(PersistenceContext, publisher.Object);
 
         // Act
         CreateStudyGroup.Response response = await handler.Handle(command, default);

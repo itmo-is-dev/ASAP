@@ -13,31 +13,29 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Submissions;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class ActivateSubmissionTests : CoreTestBase
+public class ActivateSubmissionTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public ActivateSubmissionTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public ActivateSubmissionTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldSetSubmissionStateActive()
     {
         // Arrange
-        SubmissionModel submission = await _database.Context.Submissions
+        SubmissionModel submission = await Context.Submissions
             .OrderBy(x => x.Id)
             .Where(x => x.State == SubmissionStateKind.Inactive)
             .FirstAsync();
 
         var command = new ActivateSubmission.Command(submission.Id);
-        var handler = new ActivateSubmissionHandler(_database.PersistenceContext, Mock.Of<IPublisher>());
+        var handler = new ActivateSubmissionHandler(PersistenceContext, Mock.Of<IPublisher>());
 
         // Act
         await handler.Handle(command, default);
 
         // Assert
+        Context.ChangeTracker.Clear();
+        submission = await Context.Submissions.SingleAsync(x => x.Id.Equals(submission.Id));
+
         submission.State.Should().Be(SubmissionStateKind.Active);
     }
 
@@ -45,7 +43,7 @@ public class ActivateSubmissionTests : CoreTestBase
     public async Task HandleAsync_ShouldPublishUpdatedSubmissionWithoutCancellation()
     {
         // Arrange
-        SubmissionModel submission = await _database.Context.Submissions
+        SubmissionModel submission = await Context.Submissions
             .OrderBy(x => x.Id)
             .Where(x => x.State == SubmissionStateKind.Inactive)
             .FirstAsync();
@@ -53,7 +51,7 @@ public class ActivateSubmissionTests : CoreTestBase
         var publisher = new Mock<IPublisher>();
 
         var command = new ActivateSubmission.Command(submission.Id);
-        var handler = new ActivateSubmissionHandler(_database.PersistenceContext, publisher.Object);
+        var handler = new ActivateSubmissionHandler(PersistenceContext, publisher.Object);
 
         using var cts = new CancellationTokenSource(TimeSpan.FromHours(10));
 

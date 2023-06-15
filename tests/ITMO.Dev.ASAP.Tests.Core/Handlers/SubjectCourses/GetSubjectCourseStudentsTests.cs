@@ -8,20 +8,15 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.SubjectCourses;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class GetSubjectCourseStudentsTests : CoreTestBase
+public class GetSubjectCourseStudentsTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public GetSubjectCourseStudentsTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public GetSubjectCourseStudentsTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldReturnSubjectCourseStudents()
     {
         // Arrange
-        var subjectCourse = await _database.Context.SubjectCourses
+        var subjectCourse = await Context.SubjectCourses
             .OrderBy(x => x.Id)
             .Select(subjectCourse => new
             {
@@ -34,7 +29,7 @@ public class GetSubjectCourseStudentsTests : CoreTestBase
             .FirstAsync();
 
         var query = new GetSubjectCourseStudents.Query(subjectCourse.id);
-        var handler = new GetSubjectCourseStudentsHandler(_database.PersistenceContext);
+        var handler = new GetSubjectCourseStudentsHandler(PersistenceContext);
 
         // Act
         GetSubjectCourseStudents.Response response = await handler.Handle(query, default);

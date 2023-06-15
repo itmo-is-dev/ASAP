@@ -10,25 +10,20 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.SubjectCourses;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class UpdateMentorsTests : CoreTestBase
+public class UpdateMentorsTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public UpdateMentorsTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public UpdateMentorsTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldUpdateMentorsCorrectly()
     {
         // Arrange
-        SubjectCourseModel subjectCourse = await _database.Context.SubjectCourses
+        SubjectCourseModel subjectCourse = await Context.SubjectCourses
             .OrderBy(x => x.Id)
             .Where(x => x.Mentors.Count != 0)
             .FirstAsync();
 
-        UserModel user = await _database.Context.Users
+        UserModel user = await Context.Users
             .OrderBy(x => x.Id)
             .Where(u => subjectCourse.Mentors.Select(x => x.UserId).Contains(u.Id) == false)
             .FirstAsync();
@@ -42,12 +37,15 @@ public class UpdateMentorsTests : CoreTestBase
             .ToArray();
 
         var command = new UpdateMentors.Command(subjectCourse.Id, userIds);
-        var handler = new UpdateMentorsHandler(_database.PersistenceContext);
+        var handler = new UpdateMentorsHandler(PersistenceContext);
 
         // Act
         await handler.Handle(command, default);
 
         // Assert
+        Context.ChangeTracker.Clear();
+        subjectCourse = await Context.SubjectCourses.SingleAsync(x => x.Id.Equals(subjectCourse.Id));
+
         subjectCourse.Mentors.Should().NotContain(x => x.UserId.Equals(removedMentor.UserId));
         subjectCourse.Mentors.Should().Contain(x => x.UserId.Equals(user.Id));
     }

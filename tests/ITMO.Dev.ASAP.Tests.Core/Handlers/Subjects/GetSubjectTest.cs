@@ -10,26 +10,21 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Subjects;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class GetSubjectTest : TestBase, IAsyncDisposeLifetime
+public class GetSubjectTest : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public GetSubjectTest(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public GetSubjectTest(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
-    public async Task Handle_By_Admin_Should_NotEmpty()
+    public async Task Handle_ShouldNotEmpty_WhenIssuedByAdmin()
     {
-        Guid mentorId = await _database.Context.Mentors
+        Guid mentorId = await Context.Mentors
             .Select(x => x.UserId)
             .FirstAsync();
 
         var adminUser = new AdminUser(mentorId);
 
         var query = new GetSubjects.Query();
-        var handler = new GetSubjectsHandler(_database.PersistenceContext, adminUser);
+        var handler = new GetSubjectsHandler(PersistenceContext, adminUser);
 
         GetSubjects.Response response = await handler.Handle(query, CancellationToken.None);
 
@@ -37,18 +32,13 @@ public class GetSubjectTest : TestBase, IAsyncDisposeLifetime
     }
 
     [Fact]
-    public async Task Handle_By_Anonymous_ShouldThrow()
+    public async Task Handle_ShouldThrow_WhenIssuedByAnonymous()
     {
         var anonymousUser = new AnonymousUser();
 
         var query = new GetSubjects.Query();
-        var handler = new GetSubjectsHandler(_database.PersistenceContext, anonymousUser);
+        var handler = new GetSubjectsHandler(PersistenceContext, anonymousUser);
 
         await Assert.ThrowsAsync<UserHasNotAccessException>(() => handler.Handle(query, default));
-    }
-
-    public Task DisposeAsync()
-    {
-        return _database.ResetAsync();
     }
 }

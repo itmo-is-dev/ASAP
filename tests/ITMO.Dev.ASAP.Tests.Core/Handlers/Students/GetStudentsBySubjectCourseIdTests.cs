@@ -13,24 +13,19 @@ using SubjectCourse = ITMO.Dev.ASAP.Domain.Study.SubjectCourses.SubjectCourse;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Students;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class GetStudentsBySubjectCourseIdTests : TestBase, IAsyncDisposeLifetime
+public class GetStudentsBySubjectCourseIdTests : CoreDatabaseTestBase, IAsyncDisposeLifetime
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public GetStudentsBySubjectCourseIdTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public GetStudentsBySubjectCourseIdTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task Handle_Should_NoThrow()
     {
-        Guid subjectCourseId = await _database.Context.SubjectCourses
+        Guid subjectCourseId = await Context.SubjectCourses
             .Where(sc => sc.SubjectCourseGroups.Any(g => g.StudentGroup.Students.Any()))
             .Select(x => x.Id)
             .FirstAsync();
 
-        SubjectCourse subjectCourse = await _database.PersistenceContext.SubjectCourses
+        SubjectCourse subjectCourse = await PersistenceContext.SubjectCourses
             .GetByIdAsync(subjectCourseId, default);
 
         var githubUserService = new Mock<IGithubUserService>();
@@ -40,15 +35,10 @@ public class GetStudentsBySubjectCourseIdTests : TestBase, IAsyncDisposeLifetime
             .ReturnsAsync(new List<GithubUserDto>());
 
         var query = new GetStudentsBySubjectCourseId.Query(subjectCourse.Id);
-        var handler = new GetStudentsBySubjectCourseIdHandler(_database.PersistenceContext, githubUserService.Object);
+        var handler = new GetStudentsBySubjectCourseIdHandler(PersistenceContext, githubUserService.Object);
 
         GetStudentsBySubjectCourseId.Response handle = await handler.Handle(query, CancellationToken.None);
 
         handle.Students.Should().NotBeEmpty();
-    }
-
-    public Task DisposeAsync()
-    {
-        return _database.ResetAsync();
     }
 }

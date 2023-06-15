@@ -24,6 +24,11 @@ public class SubmissionRepository : ISubmissionRepository
     {
         IQueryable<SubmissionModel> queryable = ApplyQuery(_context.Submissions, query);
 
+        queryable = queryable
+            .Include(x => x.Student)
+            .ThenInclude(x => x.User)
+            .ThenInclude(x => x.Associations);
+
         var finalQueryable = queryable.Select(submission => new
         {
             submission,

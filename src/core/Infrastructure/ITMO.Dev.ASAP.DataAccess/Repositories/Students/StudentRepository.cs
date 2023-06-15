@@ -79,6 +79,10 @@ public class StudentRepository : RepositoryBase<Student, StudentModel>, IStudent
                 || EF.Functions.ILike(student.User.LastName, query.FullNamePattern));
         }
 
+        queryable = queryable
+            .Include(x => x.User)
+            .ThenInclude(x => x.Associations);
+
         return queryable.AsAsyncEnumerable().Select(StudentMapper.MapTo);
     }
 

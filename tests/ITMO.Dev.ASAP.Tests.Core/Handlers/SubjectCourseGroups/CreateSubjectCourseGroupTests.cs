@@ -11,39 +11,34 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.SubjectCourseGroups;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class CreateSubjectCourseGroupTests : CoreTestBase
+public class CreateSubjectCourseGroupTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public CreateSubjectCourseGroupTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public CreateSubjectCourseGroupTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldCreateSubjectCourseGroupCorrectly()
     {
         // Arrange
-        SubjectCourseModel subjectCourse = await _database.Context.SubjectCourses
+        SubjectCourseModel subjectCourse = await Context.SubjectCourses
             .OrderBy(x => x.Id)
             .Where(x => x.Assignments.Count != 0)
             .FirstAsync();
 
-        var studentGroup = new StudentGroupModel(_database.Faker.Random.Guid(), _database.Faker.Commerce.ProductName());
+        var studentGroup = new StudentGroupModel(Fixture.Faker.Random.Guid(), Fixture.Faker.Commerce.ProductName());
 
-        _database.Context.StudentGroups.Add(studentGroup);
-        await _database.Context.SaveChangesAsync();
+        Context.StudentGroups.Add(studentGroup);
+        await Context.SaveChangesAsync();
 
         var publisher = new Mock<IPublisher>();
 
         var command = new CreateSubjectCourseGroup.Command(subjectCourse.Id, studentGroup.Id);
-        var handler = new CreateSubjectCourseGroupHandler(_database.PersistenceContext, publisher.Object);
+        var handler = new CreateSubjectCourseGroupHandler(PersistenceContext, publisher.Object);
 
         // Act
         await handler.Handle(command, default);
 
-        subjectCourse = await _database.Context.SubjectCourses
-            .SingleAsync(x => x.Id.Equals(subjectCourse.Id));
+        Context.ChangeTracker.Clear();
+        subjectCourse = await Context.SubjectCourses.SingleAsync(x => x.Id.Equals(subjectCourse.Id));
 
         // Assert
         int studentGroupAssignmentCount = subjectCourse.Assignments

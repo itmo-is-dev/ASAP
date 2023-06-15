@@ -10,27 +10,21 @@ using ITMO.Dev.ASAP.Domain.Models;
 using ITMO.Dev.ASAP.Tests.Core.Fixtures;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Submissions;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class DeleteSubmissionTests : CoreTestBase
+public class DeleteSubmissionTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public DeleteSubmissionTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public DeleteSubmissionTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldSetSubmissionStateDeleted_WhenIssuedByMentor()
     {
         // Arrange
-        SubmissionModel submission = await _database.Context.Submissions
+        SubmissionModel submission = await Context.Submissions
             .OrderBy(x => x.Id)
             .Where(x => x.State == SubmissionStateKind.Active)
             .FirstAsync();
@@ -40,14 +34,17 @@ public class DeleteSubmissionTests : CoreTestBase
         var command = new DeleteSubmission.Command(issuerId, submission.Id);
 
         var handler = new DeleteSubmissionHandler(
-            _database.Scope.ServiceProvider.GetRequiredService<IPermissionValidator>(),
-            _database.PersistenceContext,
+            GetRequiredService<IPermissionValidator>(),
+            PersistenceContext,
             Mock.Of<IPublisher>());
 
         // Act
         await handler.Handle(command, default);
 
         // Assert
+        Context.ChangeTracker.Clear();
+        submission = await Context.Submissions.SingleAsync(x => x.Id.Equals(submission.Id));
+
         submission.State.Should().Be(SubmissionStateKind.Deleted);
     }
 
@@ -55,14 +52,14 @@ public class DeleteSubmissionTests : CoreTestBase
     public async Task HandleAsync_ShouldThrow_WhenIssuedNotByMentor()
     {
         // Arrange
-        SubmissionModel submission = await _database.Context.Submissions
+        SubmissionModel submission = await Context.Submissions
             .OrderBy(x => x.Id)
             .Where(x => x.State == SubmissionStateKind.Active)
             .FirstAsync();
 
         IEnumerable<Guid> mentorIds = submission.GroupAssignment.Assignment.SubjectCourse.Mentors.Select(x => x.UserId);
 
-        UserModel user = await _database.Context.Users
+        UserModel user = await Context.Users
             .OrderBy(x => x.Id)
             .Where(u => mentorIds.Contains(u.Id) == false)
             .FirstAsync();
@@ -70,8 +67,8 @@ public class DeleteSubmissionTests : CoreTestBase
         var command = new DeleteSubmission.Command(user.Id, submission.Id);
 
         var handler = new DeleteSubmissionHandler(
-            _database.Scope.ServiceProvider.GetRequiredService<IPermissionValidator>(),
-            _database.PersistenceContext,
+            GetRequiredService<IPermissionValidator>(),
+            PersistenceContext,
             Mock.Of<IPublisher>());
 
         // Act
@@ -85,7 +82,7 @@ public class DeleteSubmissionTests : CoreTestBase
     public async Task HandleAsync_ShouldPublishUpdatedSubmissionWithoutCancellation()
     {
         // Arrange
-        SubmissionModel submission = await _database.Context.Submissions
+        SubmissionModel submission = await Context.Submissions
             .OrderBy(x => x.Id)
             .Where(x => x.State == SubmissionStateKind.Active)
             .FirstAsync();
@@ -96,7 +93,7 @@ public class DeleteSubmissionTests : CoreTestBase
 
         var handler = new DeleteSubmissionHandler(
             Mock.Of<IPermissionValidator>(),
-            _database.PersistenceContext,
+            PersistenceContext,
             publisher.Object);
 
         using var cts = new CancellationTokenSource(TimeSpan.FromHours(10));

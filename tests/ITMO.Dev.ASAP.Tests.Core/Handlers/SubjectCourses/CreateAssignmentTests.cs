@@ -11,20 +11,15 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.SubjectCourses;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class CreateAssignmentTests : CoreTestBase
+public class CreateAssignmentTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public CreateAssignmentTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public CreateAssignmentTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldCreateAssignmentCorrectly()
     {
         // Arrange
-        SubjectCourseModel subjectCourse = await _database.Context.SubjectCourses
+        SubjectCourseModel subjectCourse = await Context.SubjectCourses
             .OrderBy(x => x.Id)
             .FirstAsync();
 
@@ -32,19 +27,19 @@ public class CreateAssignmentTests : CoreTestBase
 
         var command = new CreateAssignment.Command(
             subjectCourse.Id,
-            _database.Faker.Commerce.ProductName(),
-            _database.Faker.Commerce.ProductName(),
-            _database.Faker.Random.Int(10, 20),
-            _database.Faker.Random.Double(0, 10),
-            _database.Faker.Random.Double(10, 20));
+            Fixture.Faker.Commerce.ProductName(),
+            Fixture.Faker.Commerce.ProductName(),
+            Fixture.Faker.Random.Int(10, 20),
+            Fixture.Faker.Random.Double(0, 10),
+            Fixture.Faker.Random.Double(10, 20));
 
-        var handler = new CreateAssignmentHandler(_database.PersistenceContext, publisher.Object);
+        var handler = new CreateAssignmentHandler(PersistenceContext, publisher.Object);
 
         // Act
         CreateAssignment.Response response = await handler.Handle(command, default);
 
         // Assert
-        int assignmentExists = await _database.Context.Assignments
+        int assignmentExists = await Context.Assignments
             .CountAsync(x => x.Id.Equals(response.Assignment.Id));
 
         assignmentExists.Should().Be(1);

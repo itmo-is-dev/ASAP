@@ -11,27 +11,23 @@ using Xunit.Abstractions;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Users;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class FindUserByUniversityIdTests : CoreTestBase
+public class FindUserByUniversityIdTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public FindUserByUniversityIdTests(CoreDatabaseFixture database, ITestOutputHelper output) : base(output)
-    {
-        _database = database;
-    }
+    public FindUserByUniversityIdTests(CoreDatabaseFixture database, ITestOutputHelper output)
+        : base(database, output) { }
 
     [Fact]
     public async Task HandleAsync_ShouldReturnCorrectUser_WhenUniversityIdExists()
     {
         // Arrange
-        var user = await _database.Context.UserAssociations
+        var user = await Context.UserAssociations
             .OfType<IsuUserAssociationModel>()
             .Select(x => new { x.UserId, x.UniversityId })
             .OrderBy(x => x.UserId)
             .FirstAsync();
 
         var query = new FindUserByUniversityId.Query(user.UniversityId);
-        var handler = new FindUserByUniversityIdHandler(_database.PersistenceContext);
+        var handler = new FindUserByUniversityIdHandler(PersistenceContext);
 
         // Act
         FindUserByUniversityId.Response response = await handler.Handle(query, default);
@@ -45,7 +41,7 @@ public class FindUserByUniversityIdTests : CoreTestBase
     {
         // Arrange
         var query = new FindUserByUniversityId.Query(int.MinValue);
-        var handler = new FindUserByUniversityIdHandler(_database.PersistenceContext);
+        var handler = new FindUserByUniversityIdHandler(PersistenceContext);
 
         // Act
         FindUserByUniversityId.Response response = await handler.Handle(query, default);

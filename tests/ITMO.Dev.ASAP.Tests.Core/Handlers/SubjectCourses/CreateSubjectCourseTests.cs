@@ -13,35 +13,30 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.SubjectCourses;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class CreateSubjectCourseTests : CoreTestBase
+public class CreateSubjectCourseTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public CreateSubjectCourseTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public CreateSubjectCourseTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldCreateSubjectCourse()
     {
         // Arrange
-        SubjectModel subject = await _database.Context.Subjects
+        SubjectModel subject = await Context.Subjects
             .OrderBy(x => x.Id)
             .FirstAsync();
 
         var command = new CreateSubjectCourse.Command(
             subject.Id,
-            _database.Faker.Commerce.ProductName(),
+            Fixture.Faker.Commerce.ProductName(),
             SubmissionStateWorkflowTypeDto.ReviewWithDefense);
 
-        var handler = new CreateSubjectCourseHandler(_database.PersistenceContext, Mock.Of<IPublisher>());
+        var handler = new CreateSubjectCourseHandler(PersistenceContext, Mock.Of<IPublisher>());
 
         // Act
         CreateSubjectCourse.Response response = await handler.Handle(command, default);
 
         // Assert
-        int subjectCourseCount = await _database.Context.SubjectCourses
+        int subjectCourseCount = await Context.SubjectCourses
             .Where(x => x.Id.Equals(response.SubjectCourse.Id))
             .CountAsync();
 
@@ -52,7 +47,7 @@ public class CreateSubjectCourseTests : CoreTestBase
     public async Task HandleAsync_ShouldPublishSubjectCourseWithoutCancellation()
     {
         // Arrange
-        SubjectModel subject = await _database.Context.Subjects
+        SubjectModel subject = await Context.Subjects
             .OrderBy(x => x.Id)
             .FirstAsync();
 
@@ -60,10 +55,10 @@ public class CreateSubjectCourseTests : CoreTestBase
 
         var command = new CreateSubjectCourse.Command(
             subject.Id,
-            _database.Faker.Commerce.ProductName(),
+            Fixture.Faker.Commerce.ProductName(),
             SubmissionStateWorkflowTypeDto.ReviewWithDefense);
 
-        var handler = new CreateSubjectCourseHandler(_database.PersistenceContext, publisher.Object);
+        var handler = new CreateSubjectCourseHandler(PersistenceContext, publisher.Object);
 
         using var cts = new CancellationTokenSource(TimeSpan.FromHours(10));
 

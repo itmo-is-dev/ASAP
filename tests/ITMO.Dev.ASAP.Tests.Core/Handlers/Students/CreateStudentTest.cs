@@ -11,19 +11,14 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Students;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class CreateStudentTest : TestBase, IAsyncDisposeLifetime
+public class CreateStudentTest : CoreDatabaseTestBase, IAsyncDisposeLifetime
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public CreateStudentTest(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public CreateStudentTest(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task Handle_Should_NotThrow()
     {
-        Guid groupId = await _database.Context.StudentGroups
+        Guid groupId = await Context.StudentGroups
             .Select(x => x.Id)
             .FirstAsync();
 
@@ -33,15 +28,10 @@ public class CreateStudentTest : TestBase, IAsyncDisposeLifetime
             .ReturnsAsync((Guid id, CancellationToken _) => new GithubUserDto(id, "123"));
 
         var command = new CreateStudent.Command("A", "B", "C", groupId);
-        var handler = new CreateStudentHandler(_database.PersistenceContext, githubUserService.Object);
+        var handler = new CreateStudentHandler(PersistenceContext, githubUserService.Object);
 
         CreateStudent.Response response = await handler.Handle(command, default);
 
         response.Student.Should().NotBeNull();
-    }
-
-    public Task DisposeAsync()
-    {
-        return _database.ResetAsync();
     }
 }

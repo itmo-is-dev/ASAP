@@ -9,20 +9,15 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Users;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class UpdateUserNameTests : CoreTestBase
+public class UpdateUserNameTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public UpdateUserNameTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public UpdateUserNameTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldUpdateUserNameCorrectly()
     {
         // Arrange
-        UserModel user = await _database.Context.Users
+        UserModel user = await Context.Users
             .OrderBy(x => x.Id)
             .FirstAsync();
 
@@ -31,12 +26,15 @@ public class UpdateUserNameTests : CoreTestBase
         string newLastName = user.LastName + "_new";
 
         var command = new UpdateUserName.Command(user.Id, newFirstName, newMiddleName, newLastName);
-        var handler = new UpdateUserNameHandler(_database.PersistenceContext);
+        var handler = new UpdateUserNameHandler(PersistenceContext);
 
         // Act
         await handler.Handle(command, default);
 
         // Assert
+        Context.ChangeTracker.Clear();
+        user = await Context.Users.SingleAsync(x => x.Id.Equals(user.Id));
+
         user.FirstName.Should().Be(newFirstName);
         user.MiddleName.Should().Be(newMiddleName);
         user.LastName.Should().Be(newLastName);

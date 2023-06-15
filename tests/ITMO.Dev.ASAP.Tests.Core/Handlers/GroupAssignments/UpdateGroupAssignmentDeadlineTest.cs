@@ -17,28 +17,21 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.GroupAssignments;
 
 public class UpdateGroupAssignmentDeadlineTest :
-    TestBase,
-    IClassFixture<UpdateGroupAssignmentDeadlineTest.UpdateGroupAssignmentDatabaseFixture>,
-    IAsyncDisposeLifetime
+    CoreDatabaseTestBase,
+    IClassFixture<UpdateGroupAssignmentDeadlineTest.UpdateGroupAssignmentDatabaseFixture>
 {
     private readonly DateOnly _newDeadline = DateOnly.MaxValue;
     private readonly IPublisher _publisher = new Mock<IPublisher>().Object;
-    private readonly GroupAssignmentModel _groupAssignment;
-    private readonly UpdateGroupAssignmentDatabaseFixture _database;
 
-    public UpdateGroupAssignmentDeadlineTest(UpdateGroupAssignmentDatabaseFixture database)
-    {
-        _database = database;
-
-        _groupAssignment = database.Context.GroupAssignments.First();
-    }
+    public UpdateGroupAssignmentDeadlineTest(UpdateGroupAssignmentDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task Handle_ByMentorOfThisCourse_ShouldUpdateDeadline()
     {
-        var query = MentorQuery.Build(x => x.WithSubjectCourseId(_groupAssignment.Assignment.SubjectCourseId));
+        GroupAssignmentModel groupAssignment = await GetGroupAssignment();
+        var query = MentorQuery.Build(x => x.WithSubjectCourseId(groupAssignment.Assignment.SubjectCourseId));
 
-        Mentor mentor = await _database.PersistenceContext.Mentors
+        Mentor mentor = await PersistenceContext.Mentors
             .QueryAsync(query, default)
             .FirstAsync();
 
@@ -50,17 +43,19 @@ public class UpdateGroupAssignmentDeadlineTest :
     [Fact]
     public async Task Handle_ByMentorOfNotThisCourse_ShouldThrow()
     {
-        IEnumerable<Guid> mentorIds = _groupAssignment.Assignment.SubjectCourse.Mentors
+        GroupAssignmentModel groupAssignment = await GetGroupAssignment();
+
+        IEnumerable<Guid> mentorIds = groupAssignment.Assignment.SubjectCourse.Mentors
             .Select(x => x.UserId);
 
-        var mentorId = await _database.Context.Mentors
+        var mentorId = await Context.Mentors
             .Where(x => mentorIds.Contains(x.UserId) == false)
             .Select(x => new { x.UserId, x.SubjectCourseId })
             .FirstAsync();
 
         var query = MentorQuery.Build(x => x.WithUserId(mentorId.UserId).WithSubjectCourseId(mentorId.SubjectCourseId));
 
-        Mentor mentor = await _database.PersistenceContext.Mentors
+        Mentor mentor = await PersistenceContext.Mentors
             .QueryAsync(query, default)
             .FirstAsync();
 
@@ -84,18 +79,19 @@ public class UpdateGroupAssignmentDeadlineTest :
         Assert.Equal(_newDeadline.AsDateTime(), response.GroupAssignment.Deadline);
     }
 
-    public Task DisposeAsync()
+    private Task<GroupAssignmentModel> GetGroupAssignment()
     {
-        return _database.ResetAsync();
+        return Context.GroupAssignments.FirstAsync();
     }
 
     private async Task<UpdateGroupAssignmentDeadline.Response> HandleByCurrentUser(ICurrentUser currentUser)
     {
-        var handler = new UpdateGroupAssignmentDeadlineHandler(_database.PersistenceContext, _publisher, currentUser);
+        GroupAssignmentModel groupAssignment = await GetGroupAssignment();
+        var handler = new UpdateGroupAssignmentDeadlineHandler(PersistenceContext, _publisher, currentUser);
 
         var command = new UpdateGroupAssignmentDeadline.Command(
-            _groupAssignment.StudentGroupId,
-            _groupAssignment.AssignmentId,
+            groupAssignment.StudentGroupId,
+            groupAssignment.AssignmentId,
             _newDeadline);
 
         return await handler.Handle(command, default);

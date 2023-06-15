@@ -14,6 +14,8 @@ public class DatabaseContext : DbContext
 {
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
+    protected DatabaseContext(DbContextOptions options) : base(options) { }
+
     public DbSet<UserModel> Users { get; protected init; } = null!;
 
     public DbSet<StudentModel> Students { get; protected init; } = null!;

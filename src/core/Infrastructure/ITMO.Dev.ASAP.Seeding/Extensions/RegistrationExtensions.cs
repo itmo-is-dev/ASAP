@@ -48,11 +48,11 @@ public static class RegistrationExtensions
         return collection;
     }
 
-    public static async Task UseDatabaseSeeders(
+    public static async Task UseDatabaseSeeders<TContext>(
         this IServiceScope scope,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) where TContext : DatabaseContext
     {
-        DatabaseContext context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+        DatabaseContext context = scope.ServiceProvider.GetRequiredService<TContext>();
 
         IEnumerable<IDatabaseSeeder> seeders = scope.ServiceProvider
             .GetServices<IDatabaseSeeder>()

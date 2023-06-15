@@ -41,7 +41,7 @@ public class SubjectCourseRepositoryEventVisitor : ISubjectCourseEventVisitor
         EntityEntry<SubjectCourseGroupModel> entry = RepositoryTools.GetEntry(
             _context,
             x => x.SubjectCourseId.Equals(evt.SubjectCourse.Id) && x.StudentGroupId.Equals(evt.StudentGroupId),
-            () => new SubjectCourseGroupModel(evt.StudentGroupId, evt.SubjectCourse.Id));
+            () => new SubjectCourseGroupModel(evt.SubjectCourse.Id, evt.StudentGroupId));
 
         entry.State = EntityState.Deleted;
 

@@ -16,19 +16,14 @@ namespace ITMO.Dev.ASAP.Tests.Core.Handlers.SubjectCourses;
 
 #pragma warning disable CA1506
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class CalculatePointsOfTransferredStudentTest : TestBase, IAsyncDisposeLifetime
+public class CalculatePointsOfTransferredStudentTest : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public CalculatePointsOfTransferredStudentTest(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public CalculatePointsOfTransferredStudentTest(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task TransferStudent_CalculateSubmissions_Should_BeEqual()
     {
-        AssignmentModel assignmentModel = await _database.Context.Assignments
+        AssignmentModel assignmentModel = await Context.Assignments
             .Select(x => x)
             .ToAsyncEnumerable()
             .Where(x =>
@@ -50,7 +45,7 @@ public class CalculatePointsOfTransferredStudentTest : TestBase, IAsyncDisposeLi
             .ReturnsAsync((Guid id, CancellationToken _) => new GithubUserDto(id, "amogus"));
 
         var subjectCourseService = new SubjectCourseService(
-            _database.PersistenceContext,
+            PersistenceContext,
             new UserFullNameFormatter(),
             githubUserService.Object);
 
@@ -61,14 +56,14 @@ public class CalculatePointsOfTransferredStudentTest : TestBase, IAsyncDisposeLi
             .First(x => x.Student.User.Id == studentModel.UserId)
             .Points.Count;
 
-        Student student = await _database.PersistenceContext.Students
+        Student student = await PersistenceContext.Students
             .GetByIdAsync(studentModel.UserId, default);
 
         StudentGroup? oldGroup = student.Group is null
             ? null
-            : await _database.PersistenceContext.StudentGroups.GetByIdAsync(student.Group.Id, default);
+            : await PersistenceContext.StudentGroups.GetByIdAsync(student.Group.Id, default);
 
-        StudentGroup newGroup = await _database.PersistenceContext.StudentGroups
+        StudentGroup newGroup = await PersistenceContext.StudentGroups
             .GetByIdAsync(newGroupModel.Id, default);
 
         student.TransferToAnotherGroup(oldGroup, newGroup);
@@ -81,10 +76,5 @@ public class CalculatePointsOfTransferredStudentTest : TestBase, IAsyncDisposeLi
             .Points.Count;
 
         Assert.Equal(ratedSubmissionCountBefore, ratedSubmissionCountAfter);
-    }
-
-    public Task DisposeAsync()
-    {
-        return _database.ResetAsync();
     }
 }
