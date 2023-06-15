@@ -8,31 +8,26 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Users;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class CreateUserTests : CoreTestBase
+public class CreateUserTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public CreateUserTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public CreateUserTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldCreateUser()
     {
         // Arrange
         var command = new CreateUser.Command(
-            _database.Faker.Name.FirstName(),
-            _database.Faker.Internet.UserName(),
-            _database.Faker.Name.LastName());
+            Fixture.Faker.Name.FirstName(),
+            Fixture.Faker.Internet.UserName(),
+            Fixture.Faker.Name.LastName());
 
-        var handler = new CreateUserHandler(_database.PersistenceContext);
+        var handler = new CreateUserHandler(PersistenceContext);
 
         // Act
         CreateUser.Response response = await handler.Handle(command, default);
 
         // Assert
-        int userCount = await _database.Context.Users
+        int userCount = await Context.Users
             .Where(x => x.Id.Equals(response.User.Id))
             .CountAsync();
 

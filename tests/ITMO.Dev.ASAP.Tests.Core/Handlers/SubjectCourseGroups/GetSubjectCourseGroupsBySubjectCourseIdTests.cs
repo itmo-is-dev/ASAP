@@ -9,26 +9,21 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.SubjectCourseGroups;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class GetSubjectCourseGroupsBySubjectCourseIdTests : CoreTestBase
+public class GetSubjectCourseGroupsBySubjectCourseIdTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public GetSubjectCourseGroupsBySubjectCourseIdTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public GetSubjectCourseGroupsBySubjectCourseIdTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldReturnSubjectCourseGroups()
     {
         // Arrange
-        SubjectCourseModel subjectCourse = await _database.Context.SubjectCourses
+        SubjectCourseModel subjectCourse = await Context.SubjectCourses
             .OrderBy(x => x.Id)
             .Where(x => x.SubjectCourseGroups.Count != 0)
             .FirstAsync();
 
         var query = new GetSubjectCourseGroupsBySubjectCourseId.Query(subjectCourse.Id);
-        var handler = new GetSubjectCourseGroupsBySubjectCourseIdHandler(_database.PersistenceContext);
+        var handler = new GetSubjectCourseGroupsBySubjectCourseIdHandler(PersistenceContext);
 
         // Act
         GetSubjectCourseGroupsBySubjectCourseId.Response response = await handler.Handle(query, default);

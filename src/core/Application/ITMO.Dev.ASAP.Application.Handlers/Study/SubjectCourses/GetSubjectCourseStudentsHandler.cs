@@ -17,11 +17,10 @@ internal class GetSubjectCourseStudentsHandler : IRequestHandler<Query, Response
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        IReadOnlyCollection<Student> students = await _context.Students
-            .GetStudentsBySubjectCourseIdAsync(request.SubjectCourseIds, cancellationToken)
-            .ToArrayAsync(cancellationToken);
+        IAsyncEnumerable<Student> students = _context.Students
+            .GetStudentsBySubjectCourseIdAsync(request.SubjectCourseIds, cancellationToken);
 
-        Guid[] ids = students.Select(x => x.UserId).ToArray();
+        Guid[] ids = await students.Select(x => x.UserId).ToArrayAsync(cancellationToken);
 
         return new Response(ids);
     }

@@ -12,20 +12,15 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.StudyGroups;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class TransferStudentTest : CoreTestBase
+public class TransferStudentTest : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public TransferStudentTest(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public TransferStudentTest(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldTransferStudentCorrectly()
     {
         // Arrange
-        List<StudentGroupModel> groups = await _database.Context.StudentGroups
+        List<StudentGroupModel> groups = await Context.StudentGroups
             .OrderBy(x => x.Id)
             .Where(x => x.Students.Count != 0)
             .Take(2)
@@ -45,7 +40,7 @@ public class TransferStudentTest : CoreTestBase
         var command = new TransferStudent.Command(studentId, group.Id);
 
         var handler = new TransferStudentHandler(
-            _database.PersistenceContext,
+            PersistenceContext,
             publisher.Object,
             githubUserServiceMock.Object);
 

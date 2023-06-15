@@ -10,25 +10,20 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Users;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class GetUserByIdTests : CoreTestBase
+public class GetUserByIdTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public GetUserByIdTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public GetUserByIdTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldReturnUserDto_WhenUserExists()
     {
         // Arrange
-        UserModel user = await _database.Context.Users
+        UserModel user = await Context.Users
             .OrderBy(x => x.Id)
             .FirstAsync();
 
         var query = new GetUserById.Query(user.Id);
-        var handler = new GetUserByIdHandler(_database.PersistenceContext);
+        var handler = new GetUserByIdHandler(PersistenceContext);
 
         // Act
         Func<Task<GetUserById.Response>> action = () => handler.Handle(query, default);
@@ -42,7 +37,7 @@ public class GetUserByIdTests : CoreTestBase
     {
         // Arrange
         var query = new GetUserById.Query(Guid.Empty);
-        var handler = new GetUserByIdHandler(_database.PersistenceContext);
+        var handler = new GetUserByIdHandler(PersistenceContext);
 
         // Act
         Func<Task<GetUserById.Response>> action = () => handler.Handle(query, default);

@@ -12,19 +12,14 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Queue;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class QueueFilterTest : TestBase, IAsyncDisposeLifetime
+public class QueueFilterTest : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public QueueFilterTest(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public QueueFilterTest(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task DefaultQueue_Should_NotThrow()
     {
-        SubjectCourseModel subjectCourse = await _database.Context.SubjectCourses.FirstAsync();
+        SubjectCourseModel subjectCourse = await Context.SubjectCourses.FirstAsync();
 
         StudentGroupModel group = subjectCourse.SubjectCourseGroups
             .Select(x => x.StudentGroup)
@@ -38,15 +33,10 @@ public class QueueFilterTest : TestBase, IAsyncDisposeLifetime
         var visitor = new FilterCriteriaVisitor(new SubmissionQuery.Builder());
         queue.AcceptFilterCriteriaVisitor(visitor);
 
-        Submission[] submissions = await _database.PersistenceContext.Submissions
+        Submission[] submissions = await PersistenceContext.Submissions
             .QueryAsync(visitor.Builder.Build(), default)
             .ToArrayAsync();
 
         submissions.Should().NotBeEmpty();
-    }
-
-    public Task DisposeAsync()
-    {
-        return _database.ResetAsync();
     }
 }

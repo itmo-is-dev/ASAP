@@ -92,6 +92,7 @@ public partial class SubjectCourse : IEntity<Guid>
         foreach (StudentGroup studentGroup in groupsToAdd)
         {
             var subjectCourseGroup = new SubjectCourseGroup(subjectCourseId: Id, studentGroupId: studentGroup.Id);
+            subjectCourseGroups.Add(subjectCourseGroup);
 
             IEnumerable<GroupAssignmentCreatedEvent> assignmentEvents = _assignments
                 .Select(x => x.AddGroup(studentGroup.Info, DateOnly.FromDateTime(DateTime.UnixEpoch)))

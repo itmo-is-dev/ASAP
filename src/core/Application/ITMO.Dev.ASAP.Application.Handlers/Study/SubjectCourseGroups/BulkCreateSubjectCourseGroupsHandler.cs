@@ -47,7 +47,7 @@ internal class BulkCreateSubjectCourseGroupsHandler : IRequestHandler<Command, R
         IEnumerable<SubjectCourseGroupCreated.Notification> notifications = dtos
             .Select(g => new SubjectCourseGroupCreated.Notification(g));
 
-        IEnumerable<Task> tasks = notifications.Select(x => _publisher.PublishAsync(x, cancellationToken));
+        IEnumerable<Task> tasks = notifications.Select(x => _publisher.Publish(x, default));
         await Task.WhenAll(tasks);
 
         return new Response(dtos);

@@ -10,30 +10,25 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.StudyGroups;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class UpdateStudyGroupTests : CoreTestBase
+public class UpdateStudyGroupTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public UpdateStudyGroupTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public UpdateStudyGroupTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldUpdateGroupCorrectly()
     {
         // Arrange
-        Guid groupId = await _database.Context.StudentGroups
+        Guid groupId = await Context.StudentGroups
             .OrderBy(x => x.Id)
             .Select(x => x.Id)
             .FirstAsync();
 
-        string name = _database.Faker.Commerce.ProductName();
+        string name = Fixture.Faker.Commerce.ProductName();
 
         var publisher = new Mock<IPublisher>();
 
         var command = new UpdateStudyGroup.Command(groupId, name);
-        var handler = new UpdateStudyGroupHandler(_database.PersistenceContext, publisher.Object);
+        var handler = new UpdateStudyGroupHandler(PersistenceContext, publisher.Object);
 
         // Act
         UpdateStudyGroup.Response response = await handler.Handle(command, default);

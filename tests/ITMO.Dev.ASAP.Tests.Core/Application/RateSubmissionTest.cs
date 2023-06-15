@@ -9,29 +9,19 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Application;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class RateSubmissionTest : TestBase, IAsyncDisposeLifetime
+public class RateSubmissionTest : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public RateSubmissionTest(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public RateSubmissionTest(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task UpdateSubmission_Should_NoThrow()
     {
-        Submission first = await _database.PersistenceContext.GetSubmissionAsync(SubmissionStateKind.Active);
+        Submission first = await PersistenceContext.GetSubmissionAsync(SubmissionStateKind.Active);
 
         first.Rate(new Fraction(0.5), Points.None);
         first.State.Kind.Should().Be(SubmissionStateKind.Completed);
 
         first.UpdatePoints(new Fraction(0.5), Points.None);
         first.State.Kind.Should().Be(SubmissionStateKind.Completed);
-    }
-
-    public Task DisposeAsync()
-    {
-        return _database.ResetAsync();
     }
 }

@@ -12,6 +12,7 @@ using ITMO.Dev.ASAP.Identity.Extensions;
 using ITMO.Dev.ASAP.Presentation.Rpc.Extensions;
 using ITMO.Dev.ASAP.Presentation.Services.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using ConfigurationBuilder = FluentSerialization.ConfigurationBuilder;
 
 namespace ITMO.Dev.ASAP.Extensions;
@@ -47,7 +48,7 @@ internal static class ServiceCollectionExtensions
             .AddHandlers(configuration)
             .AddDatabaseContext(o => o
                 .UseNpgsql(applicationDatabaseConnectionString)
-                .UseLazyLoadingProxies());
+                .UseLoggerFactory(LoggerFactory.Create(x => x.AddSerilog().SetMinimumLevel(LogLevel.Trace))));
 
         serviceCollection.AddIdentityConfiguration(
             identityConfigurationSection,

@@ -9,26 +9,21 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Assignments;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class GetAssignmentsBySubjectCourseTests : CoreTestBase
+public class GetAssignmentsBySubjectCourseTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public GetAssignmentsBySubjectCourseTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public GetAssignmentsBySubjectCourseTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldReturnCorrectNumberOfAssignments()
     {
         // Arrange
-        SubjectCourseModel subjectCourse = await _database.Context.SubjectCourses
+        SubjectCourseModel subjectCourse = await Context.SubjectCourses
             .OrderBy(x => x.Id)
             .Where(x => x.Assignments.Count != 0)
             .FirstAsync();
 
         var query = new GetAssignmentsBySubjectCourse.Query(subjectCourse.Id);
-        var handler = new GetAssignmentsBySubjectCourseHandler(_database.PersistenceContext);
+        var handler = new GetAssignmentsBySubjectCourseHandler(PersistenceContext);
 
         // Act
         GetAssignmentsBySubjectCourse.Response response = await handler.Handle(query, default);

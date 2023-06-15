@@ -1,6 +1,4 @@
-using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Application.Extensions;
-using ITMO.Dev.ASAP.DataAccess.Contexts;
 using ITMO.Dev.ASAP.DataAccess.Extensions;
 using ITMO.Dev.ASAP.DataAccess.Models;
 using ITMO.Dev.ASAP.DataAccess.Models.Users;
@@ -9,25 +7,37 @@ using ITMO.Dev.ASAP.Seeding.Options;
 using ITMO.Dev.ASAP.Tests.Fixtures;
 using ITMO.Dev.ASAP.Tests.Tools;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Respawn;
 using Respawn.Graph;
 using Serilog;
-using System.Data.Common;
 
 namespace ITMO.Dev.ASAP.Tests.Core.Fixtures;
 
 public class CoreDatabaseFixture : DatabaseFixture
 {
+    public AsyncServiceScope CreateAsyncScope()
+    {
+        return Provider.CreateAsyncScope();
+    }
+
     protected override void ConfigureServices(IServiceCollection collection)
     {
-        collection.AddDatabaseContext((p, x) => x
-            .UseLazyLoadingProxies()
-            .UseNpgsql(Container.GetConnectionString())
+        collection.AddDatabaseContext(x => x
+            .UseNpgsql(Container.GetConnectionString() + ";Include Error Detail = true;")
             .EnableSensitiveDataLogging()
             .EnableDetailedErrors()
-            .UseLoggerFactory(LoggerFactory.Create(b => b.AddSerilog(new StaticLogger()))));
+            .UseLoggerFactory(LoggerFactory.Create(b => b.AddSerilog(new StaticLogger()).AddConsole())));
+
+        collection.AddDbContext<TestDatabaseContext>(builder => builder
+            .UseNpgsql(Container.GetConnectionString() + ";Include Error Detail = true;")
+            .UseLazyLoadingProxies()
+            .EnableSensitiveDataLogging()
+            .EnableDetailedErrors()
+            .UseLoggerFactory(LoggerFactory.Create(b => b.AddSerilog(new StaticLogger()).AddConsole()))
+            .ConfigureWarnings(x => x.Ignore(CoreEventId.NavigationBaseIncludeIgnored)));
 
         collection.AddApplicationConfiguration();
 
@@ -44,39 +54,12 @@ public class CoreDatabaseFixture : DatabaseFixture
         collection.AddDatabaseSeeders();
     }
 
-    public DatabaseContext Context { get; private set; } = null!;
-
-    public IPersistenceContext PersistenceContext { get; private set; } = null!;
-
-    public AsyncServiceScope Scope { get; private set; }
-
-    public override async Task DisposeAsync()
-    {
-        await base.DisposeAsync();
-        await Scope.DisposeAsync();
-    }
-
-    public override async Task ResetAsync()
-    {
-        await base.ResetAsync();
-        Context.ChangeTracker.Clear();
-        await Scope.UseDatabaseSeeders();
-    }
-
     protected virtual void ConfigureSeeding(EntityGenerationOptions options) { }
 
     protected override async ValueTask UseProviderAsync(IServiceProvider provider)
     {
-        Scope = provider.CreateAsyncScope();
-
-        // Caching to local variable to avoid redundant boxing
-        IServiceScope scope = Scope;
-
-        await scope.UseDatabaseContext();
-        await scope.UseDatabaseSeeders();
-
-        Context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-        PersistenceContext = scope.ServiceProvider.GetRequiredService<IPersistenceContext>();
+        await using AsyncServiceScope asyncScope = provider.CreateAsyncScope();
+        await asyncScope.UseDatabaseContext();
     }
 
     protected override RespawnerOptions GetRespawnOptions()
@@ -87,10 +70,5 @@ public class CoreDatabaseFixture : DatabaseFixture
             DbAdapter = DbAdapter.Postgres,
             TablesToIgnore = new[] { new Table("__EFMigrationsHistory") },
         };
-    }
-
-    protected override DbConnection CreateConnection()
-    {
-        return Context.Database.GetDbConnection();
     }
 }

@@ -8,27 +8,22 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.StudyGroups;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class BulkGetStudyGroupsTests : CoreTestBase
+public class BulkGetStudyGroupsTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public BulkGetStudyGroupsTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public BulkGetStudyGroupsTests(CoreDatabaseFixture fixture) : base(fixture) { }
 
     [Fact]
     public async Task HandleAsync_ShouldReturnGroups()
     {
         // Arrange
-        List<Guid> ids = await _database.Context.StudentGroups
+        List<Guid> ids = await Context.StudentGroups
             .OrderBy(x => x.Id)
-            .Take(_database.Faker.Random.Int(10, 20))
+            .Take(Fixture.Faker.Random.Int(10, 20))
             .Select(x => x.Id)
             .ToListAsync();
 
         var query = new BulkGetStudyGroups.Query(ids);
-        var handler = new BulkGetStudentGroupsHandler(_database.PersistenceContext);
+        var handler = new BulkGetStudentGroupsHandler(PersistenceContext);
 
         // Act
         BulkGetStudyGroups.Response response = await handler.Handle(query, default);

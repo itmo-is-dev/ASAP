@@ -10,27 +10,21 @@ using ITMO.Dev.ASAP.Domain.Models;
 using ITMO.Dev.ASAP.Tests.Core.Fixtures;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Submissions;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class BanSubmissionTests : CoreTestBase
+public class BanSubmissionTests : CoreDatabaseTestBase
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public BanSubmissionTests(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public BanSubmissionTests(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task HandleAsync_ShouldSetSubmissionStateBanned_WhenIssuedByMentor()
     {
         // Arrange
-        SubmissionModel submission = await _database.Context.Submissions
+        SubmissionModel submission = await Context.Submissions
             .OrderBy(x => x.Id)
             .Where(x => x.State == SubmissionStateKind.Active)
             .FirstAsync();
@@ -44,14 +38,17 @@ public class BanSubmissionTests : CoreTestBase
             submission.Code);
 
         var handler = new BanSubmissionHandler(
-            _database.Scope.ServiceProvider.GetRequiredService<IPermissionValidator>(),
-            _database.PersistenceContext,
+            GetRequiredService<IPermissionValidator>(),
+            PersistenceContext,
             Mock.Of<IPublisher>());
 
         // Act
         await handler.Handle(command, default);
 
         // Assert
+        Context.ChangeTracker.Clear();
+        submission = await Context.Submissions.SingleAsync(x => x.Id.Equals(submission.Id));
+
         submission.State.Should().Be(SubmissionStateKind.Banned);
     }
 
@@ -59,14 +56,14 @@ public class BanSubmissionTests : CoreTestBase
     public async Task HandleAsync_ShouldThrow_WhenIssuedNotByMentor()
     {
         // Arrange
-        SubmissionModel submission = await _database.Context.Submissions
+        SubmissionModel submission = await Context.Submissions
             .OrderBy(x => x.Id)
             .Where(x => x.State == SubmissionStateKind.Active)
             .FirstAsync();
 
         IEnumerable<Guid> mentorIds = submission.GroupAssignment.Assignment.SubjectCourse.Mentors.Select(x => x.UserId);
 
-        UserModel user = await _database.Context.Users
+        UserModel user = await Context.Users
             .OrderBy(x => x.Id)
             .Where(u => mentorIds.Contains(u.Id) == false)
             .FirstAsync();
@@ -78,8 +75,8 @@ public class BanSubmissionTests : CoreTestBase
             submission.Code);
 
         var handler = new BanSubmissionHandler(
-            _database.Scope.ServiceProvider.GetRequiredService<IPermissionValidator>(),
-            _database.PersistenceContext,
+            GetRequiredService<IPermissionValidator>(),
+            PersistenceContext,
             Mock.Of<IPublisher>());
 
         // Act
@@ -93,7 +90,7 @@ public class BanSubmissionTests : CoreTestBase
     public async Task HandleAsync_ShouldPublishUpdatedSubmissionWithoutCancellation()
     {
         // Arrange
-        SubmissionModel submission = await _database.Context.Submissions
+        SubmissionModel submission = await Context.Submissions
             .OrderBy(x => x.Id)
             .Where(x => x.State == SubmissionStateKind.Active)
             .FirstAsync();
@@ -108,7 +105,7 @@ public class BanSubmissionTests : CoreTestBase
 
         var handler = new BanSubmissionHandler(
             Mock.Of<IPermissionValidator>(),
-            _database.PersistenceContext,
+            PersistenceContext,
             publisher.Object);
 
         using var cts = new CancellationTokenSource(TimeSpan.FromHours(10));
