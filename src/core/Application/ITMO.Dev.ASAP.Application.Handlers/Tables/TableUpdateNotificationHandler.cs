@@ -71,10 +71,11 @@ internal class TableUpdateNotificationHandler :
     {
         var query = SubjectCourseQuery.Build(x => x.WithStudentGroupId(notification.Group.Id));
 
-        IAsyncEnumerable<SubjectCourse> courses = _context.SubjectCourses
-            .QueryAsync(query, cancellationToken);
+        SubjectCourse[] courses = await _context.SubjectCourses
+            .QueryAsync(query, cancellationToken)
+            .ToArrayAsync(cancellationToken);
 
-        await foreach (SubjectCourse course in courses.WithCancellation(cancellationToken))
+        foreach (SubjectCourse course in courses)
         {
             _subjectCourseUpdateService.UpdatePoints(course.Id);
         }

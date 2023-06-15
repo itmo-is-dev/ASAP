@@ -25,6 +25,7 @@ public class AddFractionDeadlinePolicyTests : CoreTestBase
         // Arrange
         SubjectCourseModel subjectCourse = await _database.Context.SubjectCourses
             .OrderBy(x => x.Id)
+            .Where(x => x.DeadlinePenalties.Count != 0)
             .FirstAsync();
 
         TimeSpan span = subjectCourse.DeadlinePenalties
