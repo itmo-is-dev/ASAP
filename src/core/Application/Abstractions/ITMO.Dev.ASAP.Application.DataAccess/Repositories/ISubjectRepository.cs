@@ -9,9 +9,5 @@ public interface ISubjectRepository
 
     void Add(Subject subject);
 
-    void AddRange(IEnumerable<Subject> subjects);
-
     void Update(Subject subject);
-
-    void Remove(Subject subject);
 }

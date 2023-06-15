@@ -4,17 +4,16 @@ using ITMO.Dev.ASAP.Application.Queries.Requests;
 
 namespace ITMO.Dev.ASAP.Application.Queries.BaseLinks;
 
-public abstract class QueryLinkBase<TEntity, TParameter> :
-    ILink<EntityQueryRequest<TEntity, TParameter>, IQueryable<TEntity>>
+public abstract class QueryLinkBase<TBuilder, TParameter> : ILink<EntityQueryRequest<TBuilder, TParameter>, TBuilder>
 {
-    public IQueryable<TEntity> Process(
-        EntityQueryRequest<TEntity, TParameter> request,
+    public TBuilder Process(
+        EntityQueryRequest<TBuilder, TParameter> request,
         SynchronousContext context,
-        LinkDelegate<EntityQueryRequest<TEntity, TParameter>, SynchronousContext, IQueryable<TEntity>> next)
+        LinkDelegate<EntityQueryRequest<TBuilder, TParameter>, SynchronousContext, TBuilder> next)
     {
-        IQueryable<TEntity>? result = TryApply(request.Query, request.Parameter);
+        TBuilder? result = TryApply(request.QueryBuilder, request.Parameter);
         return result ?? next.Invoke(request, context);
     }
 
-    protected abstract IQueryable<TEntity>? TryApply(IQueryable<TEntity> query, QueryParameter<TParameter> parameter);
+    protected abstract TBuilder? TryApply(TBuilder queryBuilder, QueryParameter<TParameter> parameter);
 }

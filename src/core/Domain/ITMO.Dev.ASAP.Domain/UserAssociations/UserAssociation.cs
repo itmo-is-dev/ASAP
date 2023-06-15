@@ -1,19 +1,13 @@
-using ITMO.Dev.ASAP.Domain.Users;
 using RichEntity.Annotations;
 
 namespace ITMO.Dev.ASAP.Domain.UserAssociations;
 
 public abstract partial class UserAssociation : IEntity<Guid>
 {
-    protected UserAssociation(Guid id, User user) : this(id)
+    protected UserAssociation(Guid id, Guid userId) : this(id)
     {
-        User = user;
+        UserId = userId;
     }
 
-    public virtual User User { get; protected init; }
-
-    protected void AttachAssociation()
-    {
-        User.AddAssociation(this);
-    }
+    public Guid UserId { get; }
 }

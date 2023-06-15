@@ -1,7 +1,9 @@
+using Bogus;
 using ITMO.Dev.ASAP.Extensions.DataAccess;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Respawn;
+using Serilog;
 using System.Data;
 using System.Data.Common;
 using Testcontainers.PostgreSql;
@@ -19,6 +21,11 @@ public abstract class DatabaseFixture : IAsyncLifetime
 
     protected DatabaseFixture()
     {
+        Faker = new Faker
+        {
+            Random = new Randomizer(420),
+        };
+
         Container = new PostgreSqlBuilder()
             .WithUsername(User)
             .WithPassword(Password)
@@ -29,6 +36,8 @@ public abstract class DatabaseFixture : IAsyncLifetime
         Provider = null!;
         _respawn = null!;
     }
+
+    public Faker Faker { get; }
 
     public DbConnection Connection { get; private set; }
 
@@ -58,6 +67,8 @@ public abstract class DatabaseFixture : IAsyncLifetime
         await Container.StartAsync();
 
         var collection = new ServiceCollection();
+        collection.AddLogging(x => x.AddSerilog());
+
         ConfigureServices(collection);
 
         Provider = collection.BuildServiceProvider();

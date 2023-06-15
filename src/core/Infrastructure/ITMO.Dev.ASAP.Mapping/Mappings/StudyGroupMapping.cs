@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
-using StudentGroup = ITMO.Dev.ASAP.Domain.Study.StudentGroup;
+using ITMO.Dev.ASAP.Domain.Groups;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 

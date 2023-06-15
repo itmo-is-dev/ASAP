@@ -1,21 +1,24 @@
 using ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourseGroups.Notifications;
 using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
-using ITMO.Dev.ASAP.Common.Exceptions;
+using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses.Events;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.SubjectCourseGroups.Commands.BulkCreateSubjectCourseGroups;
+using StudentGroup = ITMO.Dev.ASAP.Domain.Groups.StudentGroup;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Study.SubjectCourseGroups;
 
 internal class BulkCreateSubjectCourseGroupsHandler : IRequestHandler<Command, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly IPublisher _publisher;
 
-    public BulkCreateSubjectCourseGroupsHandler(IDatabaseContext context, IPublisher publisher)
+    public BulkCreateSubjectCourseGroupsHandler(IPersistenceContext context, IPublisher publisher)
     {
         _context = context;
         _publisher = publisher;
@@ -23,43 +26,30 @@ internal class BulkCreateSubjectCourseGroupsHandler : IRequestHandler<Command, R
 
     public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
     {
-        List<SubjectCourseGroup> existingGroups = await _context.SubjectCourseGroups
-            .Where(x => x.SubjectCourseId.Equals(request.SubjectCourseId))
-            .Where(x => request.GroupIds.Contains(x.StudentGroupId))
-            .ToListAsync(cancellationToken);
+        SubjectCourse course = await _context.SubjectCourses
+            .GetByIdAsync(request.SubjectCourseId, cancellationToken);
 
-        IEnumerable<Guid> existingGroupIds = existingGroups.Select(x => x.StudentGroupId);
-        IEnumerable<Guid> groupsToCreateIds = request.GroupIds.Except(existingGroupIds);
+        IEnumerable<Guid> groupsToCreateIds = request.GroupIds.Except(course.Groups.Select(x => x.Id));
 
-        var values = await _context.SubjectCourses
-            .Include(x => x.Assignments)
-            .ThenInclude(x => x.GroupAssignments)
-            .Where(x => x.Id.Equals(request.SubjectCourseId))
-            .Select(sc => new
-            {
-                Course = sc,
-                Groups = _context.StudentGroups.Where(g => groupsToCreateIds.Contains(g.Id)).ToArray(),
-            })
-            .SingleOrDefaultAsync(cancellationToken);
+        var studentGroupsQuery = StudentGroupQuery.Build(x => x.WithIds(groupsToCreateIds));
 
-        if (values is null)
-            throw EntityNotFoundException.For<SubjectCourse>(request.SubjectCourseId);
+        StudentGroup[] studentGroups = await _context.StudentGroups
+            .QueryAsync(studentGroupsQuery, cancellationToken)
+            .ToArrayAsync(cancellationToken);
 
-        SubjectCourseGroup[] subjectCourseGroups = values.Groups
-            .Select(x => values.Course.AddGroup(x))
-            .ToArray();
+        (IReadOnlyCollection<SubjectCourseGroup> groups, ISubjectCourseEvent evt) = course.AddGroups(studentGroups);
 
-        _context.SubjectCourses.Update(values.Course);
+        await _context.SubjectCourses.ApplyAsync(evt, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        SubjectCourseGroupDto[] groups = subjectCourseGroups.Select(x => x.ToDto()).ToArray();
+        SubjectCourseGroupDto[] dtos = groups.Select(x => x.ToDto()).ToArray();
 
-        IEnumerable<SubjectCourseGroupCreated.Notification> notifications = groups
+        IEnumerable<SubjectCourseGroupCreated.Notification> notifications = dtos
             .Select(g => new SubjectCourseGroupCreated.Notification(g));
 
         IEnumerable<Task> tasks = notifications.Select(x => _publisher.PublishAsync(x, cancellationToken));
         await Task.WhenAll(tasks);
 
-        return new Response(groups);
+        return new Response(dtos);
     }
 }

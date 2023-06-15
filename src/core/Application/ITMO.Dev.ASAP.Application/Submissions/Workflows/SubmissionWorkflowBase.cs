@@ -2,40 +2,45 @@ using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
 using ITMO.Dev.ASAP.Application.Abstractions.Submissions;
 using ITMO.Dev.ASAP.Application.Contracts.Study.Submissions.Notifications;
 using ITMO.Dev.ASAP.Application.DataAccess;
-using ITMO.Dev.ASAP.Application.DataAccess.Extensions;
+using ITMO.Dev.ASAP.Application.DataAccess.Models;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Submissions;
 using ITMO.Dev.ASAP.Application.Factories;
 using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Common.Resources;
-using ITMO.Dev.ASAP.Domain.Study;
-using ITMO.Dev.ASAP.Domain.Submissions.States;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Models;
+using ITMO.Dev.ASAP.Domain.Students;
+using ITMO.Dev.ASAP.Domain.Study.Assignments;
+using ITMO.Dev.ASAP.Domain.Study.GroupAssignments;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
+using ITMO.Dev.ASAP.Domain.Submissions;
 using ITMO.Dev.ASAP.Domain.Tools;
 using ITMO.Dev.ASAP.Domain.ValueObject;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Student = ITMO.Dev.ASAP.Domain.Users.Student;
-using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
 
 namespace ITMO.Dev.ASAP.Application.Submissions.Workflows;
 
+#pragma warning disable CA1506
 public abstract class SubmissionWorkflowBase : ISubmissionWorkflow
 {
-    private readonly IDatabaseContext _context;
     private readonly IPublisher _publisher;
 
     protected SubmissionWorkflowBase(
         IPermissionValidator permissionValidator,
-        IDatabaseContext context,
+        IPersistenceContext context,
         IPublisher publisher)
     {
         PermissionValidator = permissionValidator;
-        _context = context;
+        Context = context;
         _publisher = publisher;
     }
 
     protected IPermissionValidator PermissionValidator { get; }
+
+    protected IPersistenceContext Context { get; }
 
     public abstract Task<SubmissionActionMessageDto> SubmissionApprovedAsync(
         Guid issuerId,
@@ -54,7 +59,18 @@ public abstract class SubmissionWorkflowBase : ISubmissionWorkflow
             cancellationToken,
             static x => x.Rate(0, 0));
 
-        SubmissionRateDto submissionRateDto = SubmissionRateDtoFactory.CreateFromSubmission(submission);
+        SubjectCourse subjectCourse = await Context.SubjectCourses
+            .GetByAssignmentId(submission.GroupAssignment.Id.AssignmentId, cancellationToken);
+
+        Assignment assignment = await Context.Assignments
+            .GetByIdAsync(submission.GroupAssignment.Id.AssignmentId, cancellationToken);
+
+        GroupAssignment groupAssignment = await Context.GroupAssignments
+            .GetByIdsAsync(submission.GroupAssignment.Id, cancellationToken);
+
+        SubmissionRateDto submissionRateDto = SubmissionRateDtoFactory
+            .CreateFromSubmission(submission, subjectCourse, assignment, groupAssignment);
+
         string message = UserCommandProcessingMessage.SubmissionMarkAsNotAccepted(submission.Code);
 
         message = $"{message}\n{submissionRateDto.ToDisplayString()}";
@@ -85,11 +101,22 @@ public abstract class SubmissionWorkflowBase : ISubmissionWorkflow
             cancellationToken,
             static x =>
             {
-                if (x.Points is null)
+                if (x.Rating is null)
                     x.Rate(Fraction.FromDenormalizedValue(100), 0);
             });
 
-        SubmissionRateDto submissionRateDto = SubmissionRateDtoFactory.CreateFromSubmission(submission);
+        SubjectCourse subjectCourse = await Context.SubjectCourses
+            .GetByAssignmentId(submission.GroupAssignment.Id.AssignmentId, cancellationToken);
+
+        Assignment assignment = await Context.Assignments
+            .GetByIdAsync(submission.GroupAssignment.Id.AssignmentId, cancellationToken);
+
+        GroupAssignment groupAssignment = await Context.GroupAssignments
+            .GetByIdsAsync(submission.GroupAssignment.Id, cancellationToken);
+
+        SubmissionRateDto submissionRateDto = SubmissionRateDtoFactory
+            .CreateFromSubmission(submission, subjectCourse, assignment, groupAssignment);
+
         string message = UserCommandProcessingMessage.SubmissionRated(submissionRateDto.ToDisplayString());
 
         return new SubmissionActionMessageDto(message);
@@ -140,24 +167,26 @@ public abstract class SubmissionWorkflowBase : ISubmissionWorkflow
         string payload,
         CancellationToken cancellationToken)
     {
-        ISubmissionState[] acceptedStates =
+        SubmissionStateKind[] acceptedStates =
         {
-            new ActiveSubmissionState(),
-            new ReviewedSubmissionState(),
+            SubmissionStateKind.Active,
+            SubmissionStateKind.Reviewed,
         };
 
-        Submission? submission = await _context.Submissions
-            .ForUser(userId)
-            .ForAssignment(assignmentId)
-            .Where(submission => acceptedStates.Any(x => x.Equals(submission.State)))
-            .OrderByDescending(x => x.Code)
+        var submissionsQuery = SubmissionQuery.Build(x => x
+            .WithUserId(userId)
+            .WithAssignmentId(assignmentId)
+            .WithSubmissionStates(acceptedStates)
+            .WithOrderByCode(OrderDirection.Descending)
+            .WithLimit(1));
+
+        Submission? submission = await Context.Submissions
+            .QueryAsync(submissionsQuery, cancellationToken)
             .FirstOrDefaultAsync(cancellationToken);
 
-        bool triggeredByMentor = await _context.Assignments
-            .Where(x => x.Id.Equals(assignmentId))
-            .SelectMany(x => x.SubjectCourse.Mentors)
-            .AnyAsync(x => x.UserId.Equals(issuerId), cancellationToken);
+        SubjectCourse subjectCourse = await Context.SubjectCourses.GetByAssignmentId(assignmentId, cancellationToken);
 
+        bool triggeredByMentor = subjectCourse.Mentors.Any(x => x.UserId.Equals(issuerId));
         bool triggeredByAnotherUser = issuerId.Equals(userId) is false;
 
         if (submission is null || submission.IsRated)
@@ -168,59 +197,86 @@ public abstract class SubmissionWorkflowBase : ISubmissionWorkflow
                 throw new UnauthorizedException(message);
             }
 
-            int code = await _context.Submissions
-                .ForUser(userId)
-                .ForAssignment(assignmentId)
-                .CountAsync(cancellationToken);
+            var submissionCodeQuery = SubmissionQuery.Build(x => x
+                .WithUserId(userId)
+                .WithAssignmentId(assignmentId));
 
-            Student student = await _context.Students.GetByIdAsync(userId, cancellationToken);
+            int code = await Context.Submissions.CountAsync(submissionCodeQuery, cancellationToken);
 
-            GroupAssignment? assignment = await _context.GroupAssignments
-                .ForStudent(userId)
+            Student student = await Context.Students.GetByIdAsync(userId, cancellationToken);
+
+            if (student.Group is null)
+                throw new EntityNotFoundException("Assignment not found");
+
+            SubjectCourseAssignment? subjectCourseAssignment = subjectCourse.Assignments
                 .Where(x => x.AssignmentId.Equals(assignmentId))
-                .SingleOrDefaultAsync(cancellationToken);
+                .SingleOrDefault(x => x.Groups.Any(g => g.Id.Equals(student.Group.Id)));
 
-            if (assignment is null)
+            if (subjectCourseAssignment is null)
                 throw EntityNotFoundException.For<Assignment>(assignmentId);
+
+            var groupAssignmentId = new GroupAssignmentId(student.Group.Id, subjectCourseAssignment.AssignmentId);
+
+            GroupAssignment groupAssignment = await Context.GroupAssignments
+                .GetByIdsAsync(groupAssignmentId, cancellationToken);
 
             submission = new Submission(
                 Guid.NewGuid(),
                 code + 1,
                 student,
-                assignment,
                 Calendar.CurrentDateTime,
-                payload);
+                payload,
+                groupAssignment);
 
-            _context.Submissions.Add(submission);
-            await _context.SaveChangesAsync(cancellationToken);
+            Context.Submissions.Add(submission);
+            await Context.SaveChangesAsync(cancellationToken);
 
-            await NotifySubmissionUpdated(submission, cancellationToken);
+            Assignment assignment = await Context.Assignments
+                .GetByIdAsync(submission.GroupAssignment.Id.AssignmentId, cancellationToken);
 
-            SubmissionRateDto rateDto = SubmissionRateDtoFactory.CreateFromSubmission(submission);
+            SubmissionRateDto submissionRateDto = SubmissionRateDtoFactory
+                .CreateFromSubmission(submission, subjectCourse, assignment, groupAssignment);
 
-            return new SubmissionUpdateResult(rateDto, true);
+            return new SubmissionUpdateResult(submissionRateDto, true);
         }
 
         if (triggeredByMentor is false)
         {
             submission.UpdateDate(Calendar.CurrentDateTime);
 
-            _context.Submissions.Update(submission);
-            await _context.SaveChangesAsync(cancellationToken);
+            Context.Submissions.Update(submission);
+            await Context.SaveChangesAsync(cancellationToken);
 
-            await NotifySubmissionUpdated(submission, cancellationToken);
+            Assignment assignment = await Context.Assignments
+                .GetByIdAsync(submission.GroupAssignment.Id.AssignmentId, cancellationToken);
+
+            await NotifySubmissionUpdated(submission, assignment, subjectCourse.DeadlinePolicy, cancellationToken);
 
             if (triggeredByAnotherUser)
                 throw new UnauthorizedException("Submission updated by another user");
 
-            SubmissionRateDto submissionDto = SubmissionRateDtoFactory.CreateFromSubmission(submission);
+            GroupAssignment groupAssignment = await Context.GroupAssignments
+                .GetByIdsAsync(submission.GroupAssignment.Id, cancellationToken);
 
-            return new SubmissionUpdateResult(submissionDto, false);
+            SubmissionRateDto submissionRateDto = SubmissionRateDtoFactory
+                .CreateFromSubmission(submission, subjectCourse, assignment, groupAssignment);
+
+            return new SubmissionUpdateResult(submissionRateDto, false);
         }
 
         // TODO: Proper mentor update handling
-        SubmissionRateDto dto = SubmissionRateDtoFactory.CreateFromSubmission(submission);
-        return new SubmissionUpdateResult(dto, false);
+        {
+            Assignment assignment = await Context.Assignments
+                .GetByIdAsync(submission.GroupAssignment.Id.AssignmentId, cancellationToken);
+
+            GroupAssignment groupAssignment = await Context.GroupAssignments
+                .GetByIdsAsync(submission.GroupAssignment.Id, cancellationToken);
+
+            SubmissionRateDto submissionRateDto = SubmissionRateDtoFactory
+                .CreateFromSubmission(submission, subjectCourse, assignment, groupAssignment);
+
+            return new SubmissionUpdateResult(submissionRateDto, false);
+        }
     }
 
     protected async Task<Submission> ExecuteSubmissionCommandAsync(
@@ -228,20 +284,32 @@ public abstract class SubmissionWorkflowBase : ISubmissionWorkflow
         CancellationToken cancellationToken,
         Action<Submission> action)
     {
-        Submission submission = await _context.Submissions.GetByIdAsync(submissionId, cancellationToken);
+        Submission submission = await Context.Submissions.GetByIdAsync(submissionId, cancellationToken);
         action(submission);
 
-        _context.Submissions.Update(submission);
-        await _context.SaveChangesAsync(cancellationToken);
+        Context.Submissions.Update(submission);
+        await Context.SaveChangesAsync(cancellationToken);
 
-        await NotifySubmissionUpdated(submission, cancellationToken);
+        Assignment assignment = await Context.Assignments
+            .GetByIdAsync(submission.GroupAssignment.Assignment.Id, cancellationToken);
+
+        SubjectCourse subjectCourse = await Context.SubjectCourses
+            .GetByAssignmentId(submission.GroupAssignment.Assignment.Id, cancellationToken);
+
+        await NotifySubmissionUpdated(submission, assignment, subjectCourse.DeadlinePolicy, cancellationToken);
 
         return submission;
     }
 
-    protected async Task NotifySubmissionUpdated(Submission submission, CancellationToken cancellationToken)
+    protected async Task NotifySubmissionUpdated(
+        Submission submission,
+        Assignment assignment,
+        DeadlinePolicy deadlinePolicy,
+        CancellationToken cancellationToken)
     {
-        var notification = new SubmissionUpdated.Notification(submission.ToDto());
+        Points points = submission.CalculateEffectivePoints(assignment, deadlinePolicy).Points;
+        var notification = new SubmissionUpdated.Notification(submission.ToDto(points));
+
         await _publisher.Publish(notification, cancellationToken);
     }
 }

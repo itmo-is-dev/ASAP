@@ -1,21 +1,21 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Application.DataAccess;
-using ITMO.Dev.ASAP.Application.DataAccess.Extensions;
+using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Domain.UserAssociations;
+using ITMO.Dev.ASAP.Domain.Users;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Users.Commands.UpdateUserUniversityId;
-using User = ITMO.Dev.ASAP.Domain.Users.User;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Users;
 
 internal class UpdateUserUniversityIdHandler : IRequestHandler<Command>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly ICurrentUser _currentUser;
 
     public UpdateUserUniversityIdHandler(
-        IDatabaseContext context,
+        IPersistenceContext context,
         ICurrentUser currentUser)
     {
         _context = context;
@@ -41,14 +41,6 @@ internal class UpdateUserUniversityIdHandler : IRequestHandler<Command>
             _context.UserAssociations.Update(association);
         }
 
-        try
-        {
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

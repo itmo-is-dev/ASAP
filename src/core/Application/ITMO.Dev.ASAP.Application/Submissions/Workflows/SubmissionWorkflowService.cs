@@ -1,23 +1,21 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
 using ITMO.Dev.ASAP.Application.Abstractions.Submissions;
 using ITMO.Dev.ASAP.Application.DataAccess;
-using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Application.Specifications;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
 using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
 
 namespace ITMO.Dev.ASAP.Application.Submissions.Workflows;
 
 public class SubmissionWorkflowService : ISubmissionWorkflowService
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly IPermissionValidator _permissionValidator;
     private readonly IPublisher _publisher;
 
     public SubmissionWorkflowService(
-        IDatabaseContext context,
+        IPersistenceContext context,
         IPermissionValidator permissionValidator,
         IPublisher publisher)
     {
@@ -30,13 +28,8 @@ public class SubmissionWorkflowService : ISubmissionWorkflowService
         Guid submissionId,
         CancellationToken cancellationToken)
     {
-        SubjectCourse? subjectCourse = await _context.Submissions
-            .Where(x => x.Id.Equals(submissionId))
-            .Select(x => x.GroupAssignment.Assignment.SubjectCourse)
-            .SingleOrDefaultAsync(cancellationToken);
-
-        if (subjectCourse is null)
-            throw EntityNotFoundException.For<Submission>(submissionId);
+        SubjectCourse subjectCourse = await _context.SubjectCourses
+            .GetBySubmissionIdAsync(submissionId, cancellationToken);
 
         return GetSubmissionWorkflow(subjectCourse);
     }
@@ -45,14 +38,7 @@ public class SubmissionWorkflowService : ISubmissionWorkflowService
         Guid assignmentId,
         CancellationToken cancellationToken)
     {
-        SubjectCourse? subjectCourse = await _context.Assignments
-            .Where(x => x.Id.Equals(assignmentId))
-            .Select(x => x.SubjectCourse)
-            .SingleOrDefaultAsync(cancellationToken);
-
-        if (subjectCourse is null)
-            throw EntityNotFoundException.For<Assignment>(assignmentId);
-
+        SubjectCourse subjectCourse = await _context.SubjectCourses.GetByAssignmentId(assignmentId, cancellationToken);
         return GetSubmissionWorkflow(subjectCourse);
     }
 

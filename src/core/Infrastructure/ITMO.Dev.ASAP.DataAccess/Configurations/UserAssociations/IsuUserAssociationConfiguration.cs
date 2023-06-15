@@ -1,12 +1,12 @@
+using ITMO.Dev.ASAP.DataAccess.Models.UserAssociations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using IsuUserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.IsuUserAssociation;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations.UserAssociations;
 
-public class IsuUserAssociationConfiguration : IEntityTypeConfiguration<IsuUserAssociation>
+public class IsuUserAssociationConfiguration : IEntityTypeConfiguration<IsuUserAssociationModel>
 {
-    public void Configure(EntityTypeBuilder<IsuUserAssociation> builder)
+    public void Configure(EntityTypeBuilder<IsuUserAssociationModel> builder)
     {
         builder.HasIndex(x => x.UniversityId).IsUnique();
     }

@@ -1,17 +1,27 @@
+using ITMO.Dev.ASAP.DataAccess.Models.UserAssociations;
+using ITMO.Dev.ASAP.Domain.UserAssociations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using IsuUserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.IsuUserAssociation;
-using UserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.UserAssociation;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations.UserAssociations;
 
-public class UserAssociationConfiguration : IEntityTypeConfiguration<UserAssociation>
+public class UserAssociationConfiguration : IEntityTypeConfiguration<UserAssociationModel>
 {
-    public void Configure(EntityTypeBuilder<UserAssociation> builder)
-    {
-        builder.HasDiscriminator<string>("Discriminator")
-            .HasValue<IsuUserAssociation>(nameof(IsuUserAssociation));
+    private const string DiscriminatorColumnName = "Discriminator";
 
-        builder.HasIndex("UserId", "Discriminator").IsUnique();
+    public void Configure(EntityTypeBuilder<UserAssociationModel> builder)
+    {
+        builder
+            .HasOne(x => x.User)
+            .WithMany(x => x.Associations)
+            .HasForeignKey(x => x.UserId)
+            .HasPrincipalKey(x => x.Id);
+
+        builder.HasDiscriminator<string>(DiscriminatorColumnName)
+            .HasValue<IsuUserAssociationModel>(nameof(IsuUserAssociation));
+
+        builder
+            .HasIndex(nameof(UserAssociationModel.UserId), DiscriminatorColumnName)
+            .IsUnique();
     }
 }

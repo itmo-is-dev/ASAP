@@ -9,9 +9,9 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Users;
 
 internal class CreateUserHandler : IRequestHandler<Command, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
 
-    public CreateUserHandler(IDatabaseContext context)
+    public CreateUserHandler(IPersistenceContext context)
     {
         _context = context;
     }

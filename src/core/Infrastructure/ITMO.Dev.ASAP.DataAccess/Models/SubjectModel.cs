@@ -1,8 +1,15 @@
+using RichEntity.Annotations;
+
 namespace ITMO.Dev.ASAP.DataAccess.Models;
 
-public class SubjectModel
+public partial class SubjectModel : IEntity<Guid>
 {
-    public virtual Guid Id { get; set; }
+    public SubjectModel(Guid id, string title) : this(id)
+    {
+        Title = title;
+    }
 
-    public virtual string Title { get; set; } = string.Empty;
+    public string Title { get; set; }
+
+    public virtual ICollection<SubjectCourseModel> SubjectCourses { get; init; }
 }

@@ -4,23 +4,23 @@ using ITMO.Dev.ASAP.Application.Queries.Requests;
 
 namespace ITMO.Dev.ASAP.Application.Queries.Adapters;
 
-public class EntityQueryAdapter<TEntity, TParameter> : IEntityQuery<TEntity, TParameter>
+public class EntityQueryAdapter<TBuilder, TParameter> : IEntityQuery<TBuilder, TParameter>
 {
-    private readonly IChain<EntityQueryRequest<TEntity, TParameter>, IQueryable<TEntity>> _chain;
+    private readonly IChain<EntityQueryRequest<TBuilder, TParameter>, TBuilder> _chain;
 
-    public EntityQueryAdapter(IChain<EntityQueryRequest<TEntity, TParameter>, IQueryable<TEntity>> chain)
+    public EntityQueryAdapter(IChain<EntityQueryRequest<TBuilder, TParameter>, TBuilder> chain)
     {
         _chain = chain;
     }
 
-    public IQueryable<TEntity> Apply(IQueryable<TEntity> query, QueryConfiguration<TParameter> configuration)
+    public TBuilder Apply(TBuilder queryBuilder, QueryConfiguration<TParameter> configuration)
     {
         foreach (QueryParameter<TParameter> parameter in configuration.Parameters)
         {
-            var request = new EntityQueryRequest<TEntity, TParameter>(query, parameter);
-            query = _chain.Process(request);
+            var request = new EntityQueryRequest<TBuilder, TParameter>(queryBuilder, parameter);
+            queryBuilder = _chain.Process(request);
         }
 
-        return query;
+        return queryBuilder;
     }
 }

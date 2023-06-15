@@ -1,33 +1,17 @@
-using ITMO.Dev.ASAP.Application.Abstractions.Tools;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Queries.BaseLinks;
-using IsuUserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.IsuUserAssociation;
-using Student = ITMO.Dev.ASAP.Domain.Users.Student;
 
 namespace ITMO.Dev.ASAP.Application.Queries.Students;
 
-public class StudentIsuQueryLink : QueryLinkBase<Student, StudentQueryParameter>
+public class StudentIsuQueryLink : QueryLinkBase<StudentQuery.Builder, StudentQueryParameter>
 {
-    private readonly IPatternMatcher<Student> _matcher;
-
-    public StudentIsuQueryLink(IPatternMatcher<Student> matcher)
-    {
-        _matcher = matcher;
-    }
-
-    protected override IQueryable<Student>? TryApply(
-        IQueryable<Student> query,
+    protected override StudentQuery.Builder? TryApply(
+        StudentQuery.Builder queryBuilder,
         QueryParameter<StudentQueryParameter> parameter)
     {
-        if (parameter.Type is not StudentQueryParameter.Isu)
-            return null;
-
-        // Possible NRE if there is no Isu User Association.
-#pragma warning disable CS8602
-        return query.Where(
-            _matcher.Match(
-                x => x.User.Associations.OfType<IsuUserAssociation>().FirstOrDefault().UniversityId.ToString(),
-                parameter.Pattern));
-#pragma warning restore CS8602
+        return parameter.Type is not StudentQueryParameter.Isu
+            ? null
+            : queryBuilder.WithUniversityIdPattern(parameter.Pattern);
     }
 }

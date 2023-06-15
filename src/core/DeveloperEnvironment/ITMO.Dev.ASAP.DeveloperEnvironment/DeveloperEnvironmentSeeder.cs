@@ -1,5 +1,5 @@
-using ITMO.Dev.ASAP.Application.DataAccess;
-using ITMO.Dev.ASAP.Domain.Users;
+using ITMO.Dev.ASAP.DataAccess.Contexts;
+using ITMO.Dev.ASAP.DataAccess.Models.Users;
 using ITMO.Dev.ASAP.Seeding.EntityGenerators;
 
 namespace ITMO.Dev.ASAP.DeveloperEnvironment;
@@ -8,12 +8,12 @@ public class DeveloperEnvironmentSeeder
 {
     private const string ExceptedEnvironment = "Testing";
 
-    private readonly IDatabaseContext _context;
-    private readonly IEntityGenerator<User> _userGenerator;
+    private readonly IEntityGenerator<UserModel> _userGenerator;
+    private readonly DatabaseContext _context;
 
     public DeveloperEnvironmentSeeder(
-        IDatabaseContext context,
-        IEntityGenerator<User> userGenerator)
+        DatabaseContext context,
+        IEntityGenerator<UserModel> userGenerator)
     {
         _context = context;
         _userGenerator = userGenerator;
@@ -35,7 +35,7 @@ public class DeveloperEnvironmentSeeder
 
     private void AddUsers()
     {
-        IReadOnlyList<User> users = _userGenerator.GeneratedEntities;
-        _context.Users.AttachRange(users);
+        IReadOnlyList<UserModel> users = _userGenerator.GeneratedEntities;
+        _context.Users.AddRange(users);
     }
 }

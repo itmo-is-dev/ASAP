@@ -8,7 +8,12 @@ public partial class User : IEntity<Guid>
 {
     private readonly HashSet<UserAssociation> _associations;
 
-    public User(Guid id, string firstName, string middleName, string lastName) : this(id)
+    public User(
+        Guid id,
+        string firstName,
+        string middleName,
+        string lastName,
+        HashSet<UserAssociation> associations) : this(id)
     {
         ArgumentNullException.ThrowIfNull(firstName);
         ArgumentNullException.ThrowIfNull(middleName);
@@ -18,8 +23,15 @@ public partial class User : IEntity<Guid>
         MiddleName = middleName;
         LastName = lastName;
 
-        _associations = new HashSet<UserAssociation>();
+        _associations = associations;
     }
+
+    public User(
+        Guid id,
+        string firstName,
+        string middleName,
+        string lastName)
+        : this(id, firstName, middleName, lastName, new HashSet<UserAssociation>()) { }
 
     public string FirstName { get; set; }
 
@@ -27,7 +39,7 @@ public partial class User : IEntity<Guid>
 
     public string LastName { get; set; }
 
-    public virtual IReadOnlyCollection<UserAssociation> Associations => _associations;
+    public IReadOnlyCollection<UserAssociation> Associations => _associations;
 
     public override string ToString()
     {
@@ -44,19 +56,6 @@ public partial class User : IEntity<Guid>
             throw new DomainInvalidOperationException($"User {this} already has {associationType} association");
 
         _associations.Add(association);
-    }
-
-    public void RemoveAssociation(UserAssociation association)
-    {
-        ArgumentNullException.ThrowIfNull(association);
-
-        if (!_associations.Remove(association))
-            throw new DomainInvalidOperationException($"User {this} could not remove association {association}");
-    }
-
-    public bool HasAssociation<T>() where T : UserAssociation
-    {
-        return Associations.Any(a => a is T);
     }
 
     public T? FindAssociation<T>() where T : UserAssociation

@@ -1,25 +1,25 @@
 using Bogus;
-using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.DataAccess.Models;
+using ITMO.Dev.ASAP.DataAccess.Models.DeadlinePenalties;
+using ITMO.Dev.ASAP.DataAccess.Models.Users;
 using ITMO.Dev.ASAP.Domain.SubmissionStateWorkflows;
-using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Seeding.Options;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators;
 
-public class SubjectCourseGenerator : EntityGeneratorBase<SubjectCourse>
+public class SubjectCourseGenerator : EntityGeneratorBase<SubjectCourseModel>
 {
-    private readonly IEntityGenerator<DeadlinePenalty> _deadlinePolicyGenerator;
+    private readonly IEntityGenerator<DeadlinePenaltyModel> _deadlinePolicyGenerator;
     private readonly Faker _faker;
-    private readonly IEntityGenerator<Subject> _subjectGenerator;
-    private readonly IEntityGenerator<User> _userGenerator;
+    private readonly IEntityGenerator<SubjectModel> _subjectGenerator;
+    private readonly IEntityGenerator<UserModel> _userGenerator;
 
     public SubjectCourseGenerator(
-        EntityGeneratorOptions<SubjectCourse> options,
-        IEntityGenerator<User> userGenerator,
-        IEntityGenerator<Subject> subjectGenerator,
+        EntityGeneratorOptions<SubjectCourseModel> options,
+        IEntityGenerator<UserModel> userGenerator,
+        IEntityGenerator<SubjectModel> subjectGenerator,
         Faker faker,
-        IEntityGenerator<DeadlinePenalty> deadlinePolicyGenerator)
+        IEntityGenerator<DeadlinePenaltyModel> deadlinePolicyGenerator)
         : base(options)
     {
         _userGenerator = userGenerator;
@@ -28,13 +28,13 @@ public class SubjectCourseGenerator : EntityGeneratorBase<SubjectCourse>
         _deadlinePolicyGenerator = deadlinePolicyGenerator;
     }
 
-    protected override SubjectCourse Generate(int index)
+    protected override SubjectCourseModel Generate(int index)
     {
         int subjectCount = _subjectGenerator.GeneratedEntities.Count;
 
         int deadlineCount = _faker.Random.Int(0, _deadlinePolicyGenerator.GeneratedEntities.Count);
 
-        IEnumerable<DeadlinePenalty> deadlines = Enumerable.Range(0, deadlineCount)
+        IEnumerable<DeadlinePenaltyModel> deadlines = Enumerable.Range(0, deadlineCount)
             .Select(_ => _faker.Random.Int(0, _deadlinePolicyGenerator.GeneratedEntities.Count - 1))
             .Select(i => _deadlinePolicyGenerator.GeneratedEntities[i])
             .Distinct();
@@ -42,27 +42,41 @@ public class SubjectCourseGenerator : EntityGeneratorBase<SubjectCourse>
         if (index >= subjectCount)
             throw new IndexOutOfRangeException("The subject index is greater than the number of subjects.");
 
-        Subject subject = _subjectGenerator.GeneratedEntities[index];
+        SubjectModel subject = _subjectGenerator.GeneratedEntities[index];
 
         string? subjectCourseName = _faker.Commerce.ProductName();
 
         const SubmissionStateWorkflowType reviewType = SubmissionStateWorkflowType.ReviewWithDefense;
 
-        var subjectCourseBuilder = new SubjectCourse.SubjectCourseBuilder(_faker.Random.Guid(), subjectCourseName, reviewType);
-        SubjectCourse subjectCourse = subject.AddCourse(subjectCourseBuilder);
+        var subjectCourse = new SubjectCourseModel(_faker.Random.Guid(), subject.Id, subjectCourseName, reviewType)
+        {
+            Assignments = new List<AssignmentModel>(),
+            DeadlinePenalties = new List<DeadlinePenaltyModel>(),
+            Mentors = new List<MentorModel>(),
+            SubjectCourseGroups = new List<SubjectCourseGroupModel>(),
+        };
 
-        IEnumerable<User> users = _faker.Random
+        subject.SubjectCourses.Add(subjectCourse);
+
+        IEnumerable<UserModel> users = _faker.Random
             .ListItems(_userGenerator.GeneratedEntities.ToList(), 2)
             .Distinct();
 
-        foreach (User user in users)
+        foreach (UserModel user in users)
         {
-            subjectCourse.AddMentor(user);
+            var mentor = new MentorModel(user.Id, subjectCourse.Id)
+            {
+                User = user,
+                SubjectCourse = subjectCourse,
+            };
+
+            subjectCourse.Mentors.Add(mentor);
         }
 
-        foreach (DeadlinePenalty deadline in deadlines)
+        foreach (DeadlinePenaltyModel deadline in deadlines)
         {
-            subjectCourse.AddDeadlinePolicy(deadline);
+            subjectCourse.DeadlinePenalties.Add(deadline);
+            deadline.SubjectCourseId = subjectCourse.Id;
         }
 
         return subjectCourse;

@@ -2,24 +2,27 @@ using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Notifications;
 using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Study;
-using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Domain.Study;
-using ITMO.Dev.ASAP.Domain.Users;
+using ITMO.Dev.ASAP.Application.Specifications;
+using ITMO.Dev.ASAP.Domain.Study.GroupAssignments;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Commands.UpdateGroupAssignmentDeadline;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Study.GroupAssignments;
 
 internal class UpdateGroupAssignmentDeadlineHandler : IRequestHandler<Command, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly IPublisher _publisher;
     private readonly ICurrentUser _currentUser;
 
-    public UpdateGroupAssignmentDeadlineHandler(IDatabaseContext context, IPublisher publisher, ICurrentUser currentUser)
+    public UpdateGroupAssignmentDeadlineHandler(
+        IPersistenceContext context,
+        IPublisher publisher,
+        ICurrentUser currentUser)
     {
         _context = context;
         _publisher = publisher;
@@ -28,23 +31,23 @@ internal class UpdateGroupAssignmentDeadlineHandler : IRequestHandler<Command, R
 
     public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
     {
-        GroupAssignment? groupAssignment = await _context
-            .GroupAssignments
-            .Where(groupAssignment => groupAssignment.GroupId.Equals(request.GroupId))
-            .Where(groupAssignment => groupAssignment.AssignmentId.Equals(request.AssignmentId))
-            .FirstOrDefaultAsync(cancellationToken);
+        GroupAssignment groupAssignment = await _context.GroupAssignments
+            .GetByIdsAsync(request.GroupId, request.AssignmentId, cancellationToken);
 
-        if (groupAssignment is null)
-            throw new EntityNotFoundException("GroupAssignment not found");
+        SubjectCourse subjectCourse = await _context.SubjectCourses
+            .GetByAssignmentId(groupAssignment.Id.AssignmentId, cancellationToken);
 
         if (_currentUser.CanUpdateAllDeadlines is false)
         {
-            Mentor? mentor = await _context.Mentors
-                .Where(mentor => mentor.UserId.Equals(_currentUser.Id))
-                .Where(mentor => mentor.CourseId.Equals(groupAssignment.Assignment.SubjectCourse.Id))
-                .SingleOrDefaultAsync(cancellationToken);
+            var mentorQuery = MentorQuery.Build(x => x
+                .WithUserId(_currentUser.Id)
+                .WithSubjectCourseId(subjectCourse.Id));
 
-            if (mentor is null)
+            bool isMentor = await _context.Mentors
+                .QueryAsync(mentorQuery, cancellationToken)
+                .AnyAsync(cancellationToken);
+
+            if (isMentor is false)
                 throw new AccessDeniedException();
         }
 

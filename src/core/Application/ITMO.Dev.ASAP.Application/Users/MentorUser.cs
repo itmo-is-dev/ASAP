@@ -1,6 +1,6 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.DataAccess.Queries;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
 
 namespace ITMO.Dev.ASAP.Application.Users;
 

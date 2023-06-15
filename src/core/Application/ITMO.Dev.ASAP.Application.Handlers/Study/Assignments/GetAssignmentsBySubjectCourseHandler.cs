@@ -1,33 +1,32 @@
 using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Study;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Study.Assignments;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries.GetAssignmentsBySubjectCourse;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Study.Assignments;
 
 internal class GetAssignmentsBySubjectCourseHandler : IRequestHandler<Query, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
 
-    public GetAssignmentsBySubjectCourseHandler(IDatabaseContext context)
+    public GetAssignmentsBySubjectCourseHandler(IPersistenceContext context)
     {
         _context = context;
     }
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        IReadOnlyCollection<Assignment> assignments = await _context
-            .Assignments
-            .Where(a => a.SubjectCourse.Id == request.SubjectCourseId)
-            .OrderBy(x => x.Order)
-            .ToListAsync(cancellationToken);
+        var query = AssignmentQuery.Build(x => x.WithSubjectCourseId(request.SubjectCourseId));
 
-        AssignmentDto[] dto = assignments
-            .Select(x => x.ToDto())
-            .ToArray();
+        IAsyncEnumerable<Assignment> assignments = _context.Assignments
+            .QueryAsync(query, cancellationToken);
+
+        AssignmentDto[] dto = await assignments
+            .Select(x => x.ToDto(request.SubjectCourseId))
+            .ToArrayAsync(cancellationToken);
 
         return new Response(dto);
     }

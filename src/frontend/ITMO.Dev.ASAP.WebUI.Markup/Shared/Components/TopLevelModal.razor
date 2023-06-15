@@ -1,6 +1,6 @@
 @inherits Blazorise.Modal
 
-<CascadingValue Value="@this" IsFixed>
+<CascadingValue Value="@(this)" IsFixed>
     <CascadingValue Value="@State">
         <div @ref="@ElementRef"
              id="@ElementId"

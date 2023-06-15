@@ -10,8 +10,6 @@ public class FractionDeadlinePenalty : DeadlinePenalty
         Fraction = fraction;
     }
 
-    protected FractionDeadlinePenalty() { }
-
     public Fraction Fraction { get; set; }
 
     public override Points Apply(Points points)

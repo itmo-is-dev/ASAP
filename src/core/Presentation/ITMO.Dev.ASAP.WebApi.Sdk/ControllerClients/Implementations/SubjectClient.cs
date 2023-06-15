@@ -36,12 +36,6 @@ internal class SubjectClient : ISubjectClient
         return await _handler.SendAsync<IReadOnlyCollection<SubjectDto>>(message, cancellationToken);
     }
 
-    public async Task<IReadOnlyCollection<SubjectDto>> GetAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        using var message = new HttpRequestMessage(HttpMethod.Get, $"api/Subject/{id}");
-        return await _handler.SendAsync<IReadOnlyCollection<SubjectDto>>(message, cancellationToken);
-    }
-
     public async Task<SubjectDto> UpdateAsync(
         UpdateSubjectRequest request,
         CancellationToken cancellationToken = default)

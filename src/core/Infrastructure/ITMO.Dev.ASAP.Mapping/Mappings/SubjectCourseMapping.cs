@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourseAssociations;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
 using ITMO.Dev.ASAP.Github.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Google.Application.Dto.SubjectCourses;
 

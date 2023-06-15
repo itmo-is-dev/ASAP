@@ -1,39 +1,43 @@
+using ITMO.Dev.ASAP.DataAccess.Models;
+using ITMO.Dev.ASAP.DataAccess.Models.Users;
 using ITMO.Dev.ASAP.Seeding.Options;
-using Student = ITMO.Dev.ASAP.Domain.Users.Student;
-using StudentGroup = ITMO.Dev.ASAP.Domain.Study.StudentGroup;
-using User = ITMO.Dev.ASAP.Domain.Users.User;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators;
 
-public class StudentGenerator : EntityGeneratorBase<Student>
+public class StudentGenerator : EntityGeneratorBase<StudentModel>
 {
-    private readonly IEntityGenerator<StudentGroup> _studentGroupGenerator;
-    private readonly IEntityGenerator<User> _userGenerator;
+    private readonly IEntityGenerator<StudentGroupModel> _studentGroupGenerator;
+    private readonly IEntityGenerator<UserModel> _userGenerator;
 
     public StudentGenerator(
-        EntityGeneratorOptions<Student> options,
-        IEntityGenerator<StudentGroup> studentGroupGenerator,
-        IEntityGenerator<User> userGenerator)
+        EntityGeneratorOptions<StudentModel> options,
+        IEntityGenerator<StudentGroupModel> studentGroupGenerator,
+        IEntityGenerator<UserModel> userGenerator)
         : base(options)
     {
         _studentGroupGenerator = studentGroupGenerator;
         _userGenerator = userGenerator;
     }
 
-    protected override Student Generate(int index)
+    protected override StudentModel Generate(int index)
     {
         if (index >= _userGenerator.GeneratedEntities.Count)
             throw new IndexOutOfRangeException("Student count is greater than count of users.");
 
-        User user = _userGenerator.GeneratedEntities[index];
+        UserModel user = _userGenerator.GeneratedEntities[index];
 
-        StudentGroup[] groups = _studentGroupGenerator.GeneratedEntities
+        StudentGroupModel[] groups = _studentGroupGenerator.GeneratedEntities
             .Where(x => x.Students.Any(student => student.User.Equals(user)) is false)
             .ToArray();
 
         int groupNumber = index % groups.Length;
-        StudentGroup group = groups[groupNumber];
+        StudentGroupModel group = groups[groupNumber];
 
-        return new Student(user, group);
+        return new StudentModel(user.Id, group.Id)
+        {
+            Submissions = new List<SubmissionModel>(),
+            User = user,
+            StudentGroup = group,
+        };
     }
 }

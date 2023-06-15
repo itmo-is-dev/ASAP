@@ -1,6 +1,7 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.Common.Exceptions;
 using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Domain.Users;
 using MediatR;
@@ -10,12 +11,12 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Identity;
 
 internal class CreateUserAccountHandler : IRequestHandler<Command>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly ICurrentUser _currentUser;
     private readonly IAuthorizationService _authorizationService;
 
     public CreateUserAccountHandler(
-        IDatabaseContext context,
+        IPersistenceContext context,
         ICurrentUser currentUser,
         IAuthorizationService authorizationService)
     {
@@ -26,7 +27,11 @@ internal class CreateUserAccountHandler : IRequestHandler<Command>
 
     public async Task Handle(Command request, CancellationToken cancellationToken)
     {
-        if (_context.Users.Any(x => x.Id.Equals(request.UserId)) is false)
+        var query = UserQuery.Build(x => x.WithId(request.UserId));
+
+        bool userExists = await _context.Users.QueryAsync(query, cancellationToken).AnyAsync(cancellationToken);
+
+        if (userExists is false)
             throw EntityNotFoundException.For<User>(request.UserId);
 
         if (_currentUser.CanCreateUserWithRole(request.RoleName) is false)

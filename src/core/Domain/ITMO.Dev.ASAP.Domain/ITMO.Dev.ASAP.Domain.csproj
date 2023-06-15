@@ -2,6 +2,7 @@
 
     <ItemGroup>
         <PackageReference Include="RichEntity" />
+        <PackageReference Include="System.Linq.Async" />
     </ItemGroup>
 
     <ItemGroup>

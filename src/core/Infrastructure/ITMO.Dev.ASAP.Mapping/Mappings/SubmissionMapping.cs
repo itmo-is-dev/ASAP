@@ -1,28 +1,34 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
-using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
+using ITMO.Dev.ASAP.Domain.Submissions;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 
 public static class SubmissionMapping
 {
-    public static SubmissionDto ToDto(this Submission submission)
+    public static SubmissionDto ToDto(this Submission submission, Points points)
     {
         return new SubmissionDto(
             submission.Id,
             submission.Code,
             submission.SubmissionDate.AsDateTime(),
             submission.Student.UserId,
-            submission.GroupAssignment.AssignmentId,
+            submission.GroupAssignment.Id.AssignmentId,
             submission.Payload,
             submission.ExtraPoints.AsDto(),
-            submission.Points.AsDto(),
+            points.AsDto(),
             submission.GroupAssignment.Assignment.ShortName,
             submission.State.Kind.AsDto());
     }
 
-    public static QueueSubmissionDto ToQueueDto(this Submission submission, string? studentGithubUsername)
+    public static QueueSubmissionDto ToQueueDto(
+        this Submission submission,
+        string? studentGithubUsername,
+        Points points)
     {
-        return new QueueSubmissionDto(submission.Student.ToDto(studentGithubUsername), submission.ToDto());
+        return new QueueSubmissionDto(
+            submission.Student.ToDto(studentGithubUsername),
+            submission.ToDto(points));
     }
 }

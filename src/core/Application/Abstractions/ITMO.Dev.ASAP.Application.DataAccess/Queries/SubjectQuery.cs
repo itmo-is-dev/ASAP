@@ -4,6 +4,6 @@ namespace ITMO.Dev.ASAP.Application.DataAccess.Queries;
 
 [GenerateBuilder]
 public partial record SubjectQuery(
-    IReadOnlyCollection<Guid> Ids,
-    IReadOnlyCollection<string> Names,
-    IReadOnlyCollection<Guid> MentorIds);
+    Guid[] Ids,
+    string[] Names,
+    Guid[] MentorIds);

@@ -1,31 +1,30 @@
 using Bogus;
+using ITMO.Dev.ASAP.DataAccess.Models.UserAssociations;
+using ITMO.Dev.ASAP.DataAccess.Models.Users;
 using ITMO.Dev.ASAP.Seeding.Options;
-using IsuUserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.IsuUserAssociation;
-using User = ITMO.Dev.ASAP.Domain.Users.User;
-using UserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.UserAssociation;
 
 namespace ITMO.Dev.ASAP.Seeding.EntityGenerators;
 
-public class IsuUserAssociationGenerator : EntityGeneratorBase<IsuUserAssociation>
+public class IsuUserAssociationGenerator : EntityGeneratorBase<IsuUserAssociationModel>
 {
     private const int MinIsuNumber = 100000;
     private const int MaxIsuNumber = 1000000;
 
     private readonly Faker _faker;
 
-    private readonly IEntityGenerator<User> _userGenerator;
+    private readonly IEntityGenerator<UserModel> _userGenerator;
 
     public IsuUserAssociationGenerator(
-        EntityGeneratorOptions<IsuUserAssociation> options,
+        EntityGeneratorOptions<IsuUserAssociationModel> options,
         Faker faker,
-        IEntityGenerator<User> userGenerator)
+        IEntityGenerator<UserModel> userGenerator)
         : base(options)
     {
         _faker = faker;
         _userGenerator = userGenerator;
     }
 
-    protected override IsuUserAssociation Generate(int index)
+    protected override IsuUserAssociationModel Generate(int index)
     {
         if (index >= _userGenerator.GeneratedEntities.Count)
         {
@@ -33,17 +32,16 @@ public class IsuUserAssociationGenerator : EntityGeneratorBase<IsuUserAssociatio
             throw new ArgumentOutOfRangeException(nameof(index), message);
         }
 
-        User user = _userGenerator.GeneratedEntities[index];
+        UserModel user = _userGenerator.GeneratedEntities[index];
 
-        foreach (UserAssociation userAssociation in user.Associations)
+        foreach (UserAssociationModel userAssociation in user.Associations)
         {
-            if (userAssociation is IsuUserAssociation isuUserAssociation)
+            if (userAssociation is IsuUserAssociationModel isuUserAssociation)
                 return isuUserAssociation;
         }
 
         int id = _faker.Random.Int(MinIsuNumber, MaxIsuNumber);
-        var association = IsuUserAssociation.CreateAndAttach(_faker.Random.Guid(), user, id);
 
-        return association;
+        return new IsuUserAssociationModel(_faker.Random.Guid(), user.Id, id);
     }
 }

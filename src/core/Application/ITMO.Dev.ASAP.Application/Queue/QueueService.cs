@@ -1,30 +1,30 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Queue;
 using ITMO.Dev.ASAP.Application.DataAccess;
-using ITMO.Dev.ASAP.Application.DataAccess.Extensions;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
 using ITMO.Dev.ASAP.Application.Extensions;
+using ITMO.Dev.ASAP.Application.Specifications;
+using ITMO.Dev.ASAP.Domain.Groups;
 using ITMO.Dev.ASAP.Domain.Queue;
 using ITMO.Dev.ASAP.Domain.Queue.Building;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Study.Assignments;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
+using ITMO.Dev.ASAP.Domain.Submissions;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
-using Microsoft.EntityFrameworkCore;
-using Submission = ITMO.Dev.ASAP.Domain.Submissions.Submission;
 
 namespace ITMO.Dev.ASAP.Application.Queue;
 
+#pragma warning disable CA1506
 public class QueueService : IQueueService
 {
-    private readonly IDatabaseContext _context;
-    private readonly IQueryExecutor _queryExecutor;
+    private readonly IPersistenceContext _context;
     private readonly IGithubUserService _githubUserService;
 
     public QueueService(
-        IDatabaseContext context,
-        IQueryExecutor queryExecutor,
+        IPersistenceContext context,
         IGithubUserService githubUserService)
     {
         _context = context;
-        _queryExecutor = queryExecutor;
         _githubUserService = githubUserService;
     }
 
@@ -34,23 +34,40 @@ public class QueueService : IQueueService
         CancellationToken cancellationToken)
     {
         StudentGroup group = await _context.StudentGroups.GetByIdAsync(studentGroupId, cancellationToken);
-        SubmissionQueue queue = new DefaultQueueBuilder(group, subjectCourseId).Build();
 
-        IEnumerable<Submission> submissionsEnumerable = await queue.UpdateSubmissions(
-            _context.Submissions,
-            _queryExecutor,
-            cancellationToken);
+        SubmissionQueue queue = new DefaultQueueBuilder(studentGroupId, subjectCourseId).Build();
 
-        Submission[] submissions = submissionsEnumerable.ToArray();
+        var filterVisitor = new FilterCriteriaVisitor(new SubmissionQuery.Builder());
+        queue.AcceptFilterCriteriaVisitor(filterVisitor);
+
+        IAsyncEnumerable<Submission> submissionsEnumerable = _context.Submissions
+            .QueryAsync(filterVisitor.Builder.Build(), cancellationToken);
+
+        var evaluatorVisitor = new EvaluatorCriteriaVisitor(_context, subjectCourseId);
+        submissionsEnumerable = queue.OrderSubmissionsAsync(submissionsEnumerable, evaluatorVisitor, cancellationToken);
+
+        Submission[] submissions = await submissionsEnumerable.ToArrayAsync(cancellationToken);
+
+        IEnumerable<Guid> assignmentIds = submissions.Select(x => x.GroupAssignment.Assignment.Id).Distinct();
+
+        Assignment[] assignments = await _context.Assignments
+            .GetByIdsAsync(assignmentIds, cancellationToken)
+            .ToArrayAsync(cancellationToken);
+
+        SubjectCourse subjectCourse = await _context.SubjectCourses.GetByIdAsync(subjectCourseId, cancellationToken);
+
+        RatedSubmission[] ratedSubmissions = submissions
+            .Join(
+                assignments,
+                x => x.GroupAssignment.Assignment.Id,
+                x => x.Id,
+                (s, a) => (s, a))
+            .Select(x => x.s.CalculateEffectivePoints(x.a, subjectCourse.DeadlinePolicy))
+            .ToArray();
 
         IReadOnlyList<QueueSubmissionDto> submissionsDto = await _githubUserService
-            .MapToQueueSubmissionDto(submissions, cancellationToken);
+            .MapToQueueSubmissionDto(ratedSubmissions, cancellationToken);
 
-        string groupName = await _context.StudentGroups
-            .Where(x => x.Id.Equals(studentGroupId))
-            .Select(x => x.Name)
-            .FirstAsync(cancellationToken);
-
-        return new SubmissionsQueueDto(groupName, submissionsDto);
+        return new SubmissionsQueueDto(group.Name, submissionsDto);
     }
 }

@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.DataAccess;
-using ITMO.Dev.ASAP.Application.DataAccess.Extensions;
+using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Domain.Users;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Students.Commands.UpdateUserName;
@@ -8,9 +8,9 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Users;
 
 internal class UpdateUserNameHandler : IRequestHandler<Command>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
 
-    public UpdateUserNameHandler(IDatabaseContext context)
+    public UpdateUserNameHandler(IPersistenceContext context)
     {
         _context = context;
     }

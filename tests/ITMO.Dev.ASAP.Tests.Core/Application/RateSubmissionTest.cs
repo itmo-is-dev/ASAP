@@ -1,7 +1,6 @@
 using FluentAssertions;
 using ITMO.Dev.ASAP.Domain.Models;
 using ITMO.Dev.ASAP.Domain.Submissions;
-using ITMO.Dev.ASAP.Domain.Submissions.States;
 using ITMO.Dev.ASAP.Domain.ValueObject;
 using ITMO.Dev.ASAP.Tests.Core.Extensions;
 using ITMO.Dev.ASAP.Tests.Core.Fixtures;
@@ -22,7 +21,7 @@ public class RateSubmissionTest : TestBase, IAsyncDisposeLifetime
     [Fact]
     public async Task UpdateSubmission_Should_NoThrow()
     {
-        Submission first = await _database.Context.GetSubmissionAsync(new ActiveSubmissionState());
+        Submission first = await _database.PersistenceContext.GetSubmissionAsync(SubmissionStateKind.Active);
 
         first.Rate(new Fraction(0.5), Points.None);
         first.State.Kind.Should().Be(SubmissionStateKind.Completed);

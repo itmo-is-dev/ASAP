@@ -34,12 +34,6 @@ internal class SubjectCourseClient : ISubjectCourseClient
         return await _handler.SendAsync<GithubSubjectCourseDto>(message, cancellationToken);
     }
 
-    public async Task<IReadOnlyCollection<SubjectCourseDto>> GetAsync(CancellationToken cancellationToken = default)
-    {
-        using var message = new HttpRequestMessage(HttpMethod.Get, "api/SubjectCourse");
-        return await _handler.SendAsync<IReadOnlyCollection<SubjectCourseDto>>(message, cancellationToken);
-    }
-
     public async Task<SubjectCourseDto> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
         using var message = new HttpRequestMessage(HttpMethod.Get, $"api/SubjectCourse/{id}");

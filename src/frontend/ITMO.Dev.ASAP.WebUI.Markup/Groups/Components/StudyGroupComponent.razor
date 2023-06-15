@@ -41,7 +41,7 @@
             }
         </Div>
 
-        <StudyGroupStudentsComponent Students="_students" Parent="@this"/>
+        <StudyGroupStudentsComponent Students="_students" Parent="@(this)"/>
     </Div>
 
     @if (CurrentUser.HasModeratorAccess())

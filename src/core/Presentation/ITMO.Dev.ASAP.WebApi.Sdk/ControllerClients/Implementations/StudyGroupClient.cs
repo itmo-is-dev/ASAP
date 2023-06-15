@@ -62,20 +62,6 @@ internal class StudyGroupClient : IStudyGroupClient
         return await _handler.SendAsync<IReadOnlyCollection<StudentDto>>(message, cancellationToken);
     }
 
-    public async Task<IReadOnlyCollection<GroupAssignmentDto>> GetAssignmentsAsync(
-        Guid id,
-        CancellationToken cancellationToken = default)
-    {
-        using var message = new HttpRequestMessage(HttpMethod.Get, $"api/StudyGroup/{id}/assignments");
-        return await _handler.SendAsync<IReadOnlyCollection<GroupAssignmentDto>>(message, cancellationToken);
-    }
-
-    public async Task<StudyGroupDto?> FindAsync(string name, CancellationToken cancellationToken = default)
-    {
-        using var message = new HttpRequestMessage(HttpMethod.Get, $"api/StudyGroup/find?name={name}");
-        return await _handler.SendAsync<StudyGroupDto?>(message, cancellationToken);
-    }
-
     public async Task<StudyGroupDto> UpdateAsync(
         Guid id,
         UpdateStudyGroupRequest request,
