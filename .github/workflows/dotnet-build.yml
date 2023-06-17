@@ -64,6 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     concurrency: allure
+    if: always()
     
     steps:
       - name: Cache testing results
