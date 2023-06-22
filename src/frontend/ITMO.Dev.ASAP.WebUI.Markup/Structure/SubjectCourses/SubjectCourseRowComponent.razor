@@ -1,0 +1,80 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Models
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.SubjectCourses
+@using System.Text
+@using ITMO.Dev.ASAP.WebUI.Markup.Structure.SubjectCourses.Assignments
+@using ITMO.Dev.ASAP.WebUI.Markup.Structure.SubjectCourses.Groups
+@using ITMO.Dev.ASAP.WebUI.Markup.Structure.SubjectCourses.Queues
+@implements IDisposable
+@inject NavigationManager NavigationManager
+@inject IMessageProducer Producer
+
+<Button Clicked="OnSelectedClicked"
+        Padding="Padding.Is2"
+        Width="Width.Is100"
+        Border="Border.RoundedZero"
+        Color="@(_isSelected ? Color.Secondary : Color.Light)"
+        TextAlignment="TextAlignment.Start"
+        Style="word-break: break-all">
+
+    @_title
+</Button>
+
+@code {
+
+    private IDisposable? _subscription;
+
+    private bool _isSelected;
+    private string? _title;
+    private SubjectCourseSelection? _selection;
+
+    [Parameter]
+    public ISubjectCourseRow? ViewModel { get; set; }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (ViewModel is null)
+            return;
+
+        _subscription = new SubscriptionBuilder()
+            .Subscribe(ViewModel.Title.Subscribe(x => _title = x))
+            .Subscribe(ViewModel.IsSelected.Subscribe(x => _isSelected = x))
+            .Subscribe(Producer.Observe<SubjectCourseSelectionUpdatedEvent>()
+                .Subscribe(x => _selection = x.Selection))
+            .Build();
+    }
+
+    private Task OnSelectedClicked()
+    {
+        if (ViewModel is null)
+            return Task.CompletedTask;
+
+        var uriBuilder = new StringBuilder($"adminpanel/courses/{ViewModel.Id}");
+
+        if (_selection is not SubjectCourseSelection.None or null)
+        {
+            uriBuilder.Append("?selected=");
+
+            if (_selection is SubjectCourseSelection.Assignments)
+                uriBuilder.Append(AssignmentsTabComponent.Key);
+
+            if (_selection is SubjectCourseSelection.Groups)
+                uriBuilder.Append(GroupsTabComponent.Key);
+
+            if (_selection is SubjectCourseSelection.Queues)
+                uriBuilder.Append(SubmissionQueueTabComponent.Key);
+        }
+
+        NavigationManager.NavigateTo(uriBuilder.ToString());
+        
+        return Task.CompletedTask;
+    }
+
+}

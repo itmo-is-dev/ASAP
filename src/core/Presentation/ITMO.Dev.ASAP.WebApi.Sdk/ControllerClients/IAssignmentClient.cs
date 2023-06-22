@@ -9,6 +9,8 @@ public interface IAssignmentClient
         CreateAssignmentRequest request,
         CancellationToken cancellationToken = default);
 
+    Task<AssignmentDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
     Task<AssignmentDto> UpdateAssignmentPointsAsync(
         Guid id,
         double minPoints,

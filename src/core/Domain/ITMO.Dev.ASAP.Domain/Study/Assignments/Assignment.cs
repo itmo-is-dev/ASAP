@@ -12,18 +12,22 @@ public partial class Assignment : IEntity<Guid>
         string shortName,
         int order,
         Points minPoints,
-        Points maxPoints)
+        Points maxPoints,
+        Guid subjectCourseId)
         : this(id)
     {
         if (minPoints > maxPoints)
             throw new ArgumentException("minPoints must be less than or equal to maxPoints");
 
+        SubjectCourseId = subjectCourseId;
         Title = title;
         ShortName = shortName;
         Order = order;
         MinPoints = minPoints;
         MaxPoints = maxPoints;
     }
+
+    public Guid SubjectCourseId { get; }
 
     public string Title { get; set; }
 

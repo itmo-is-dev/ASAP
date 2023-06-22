@@ -123,7 +123,7 @@
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.3.2" />
     <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="6.10.0" />
-    <PackageVersion Include="System.Reactive" Version="5.0.0" />
+    <PackageVersion Include="System.Reactive" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="xunit" Version="2.4.1" />

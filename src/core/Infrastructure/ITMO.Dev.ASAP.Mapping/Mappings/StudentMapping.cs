@@ -12,6 +12,7 @@ public static class StudentMapping
 
         return new StudentDto(
             student.User.ToDto(),
+            student.Group?.Id,
             student.Group?.Name ?? string.Empty,
             isuAssociation?.UniversityId,
             githubUsername);

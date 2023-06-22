@@ -50,7 +50,7 @@ public class SubjectCourseService : ISubjectCourseService
         AssignmentDto[] assignments = studentAssignments
             .Select(x => x.Assignment)
             .Distinct()
-            .Select(x => x.ToDto(subjectCourseId))
+            .Select(x => x.ToDto())
             .ToArray();
 
         return new SubjectCoursePointsDto(assignments, studentPoints);

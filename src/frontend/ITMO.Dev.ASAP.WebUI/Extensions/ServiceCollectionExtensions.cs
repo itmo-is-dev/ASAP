@@ -2,6 +2,7 @@ using ITMO.Dev.ASAP.Application.Dto.Extensions;
 using ITMO.Dev.ASAP.WebApi.Sdk.Extensions;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Models;
 using ITMO.Dev.ASAP.WebUI.Application;
+using ITMO.Dev.ASAP.WebUI.Application.ViewModels.Extensions;
 using ITMO.Dev.ASAP.WebUI.Markup;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -16,6 +17,7 @@ public static class ServiceCollectionExtensions
 
         collection.AddWebUiApplication();
         collection.AddWebUiMarkup();
+        collection.AddViewModels();
 
         collection.AddAsapSdk(new Uri(environment.BaseAddress));
     }

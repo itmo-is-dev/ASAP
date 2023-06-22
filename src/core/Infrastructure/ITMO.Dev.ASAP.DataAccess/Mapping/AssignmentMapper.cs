@@ -14,7 +14,8 @@ public static class AssignmentMapper
             model.ShortName,
             model.Order,
             new Points(model.MinPoints),
-            new Points(model.MaxPoints));
+            new Points(model.MaxPoints),
+            model.SubjectCourseId);
     }
 
     public static AssignmentModel MapFrom(Assignment entity, Guid subjectCourseId)

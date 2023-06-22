@@ -1,0 +1,115 @@
+@using ITMO.Dev.ASAP.Application.Dto.Tables
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
+@using ITMO.Dev.ASAP.Application.Dto.Study
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses.Queues
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@inject ISubjectCourseQueue ViewModel
+@implements IDisposable
+
+<Modal
+    @ref="_modal"
+    @bind-Visible="_modalVisible"
+    Closed="OnClosed">
+
+    <ModalContent Size="ModalSize.Fullscreen">
+        <ModalHeader>
+            <ModalTitle>@(_queue?.GroupName)</ModalTitle>
+            <CloseButton/>
+        </ModalHeader>
+
+        @if (_queue is not null)
+        {
+            <ModalBody
+                Flex="Flex.Column"
+                Height="Height.Is100"
+                Overflow="Overflow.Hidden">
+
+                <Div Overflow="Overflow.Scroll">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableRowCell>Name</TableRowCell>
+                                <TableRowCell>Group</TableRowCell>
+                                <TableRowCell>Assignment</TableRowCell>
+                                <TableRowCell>Date</TableRowCell>
+                                <TableRowCell>State</TableRowCell>
+                                <TableRowCell>Github</TableRowCell>
+                            </TableRow>
+                        </TableHeader>
+
+                        <TableBody>
+                            @foreach (var submission in _queue.Value.Submissions)
+                            {
+                                <TableRow
+                                    Style="@($"background-color: {SelectRowColor(submission.Submission)}")">
+
+                                    <TableRowCell>@submission.Student.User.FullName()</TableRowCell>
+                                    <TableRowCell>@submission.Student.GroupName</TableRowCell>
+                                    <TableRowCell>@submission.Submission.AssignmentShortName</TableRowCell>
+
+                                    <TableRowCell>
+                                        @submission.Submission.SubmissionDate.ToString("dd.MM.yyyy hh:mm:ss")
+                                    </TableRowCell>
+
+                                    <TableRowCell>@submission.Submission.State</TableRowCell>
+
+                                    <TableRowCell>
+                                        <Blazorise.Link To="@submission.Submission.Payload">
+                                            @submission.Submission.Payload
+                                        </Blazorise.Link>
+                                    </TableRowCell>
+                                </TableRow>
+                            }
+                        </TableBody>
+                    </Table>
+                </Div>
+
+            </ModalBody>
+        }
+
+    </ModalContent>
+
+</Modal>
+
+@code {
+
+    private IDisposable? _subscription;
+
+    private Modal? _modal;
+    private bool _modalVisible;
+
+    private SubmissionsQueueDto? _queue;
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+
+    protected override void OnParametersSet()
+    {
+        Dispose();
+        
+        _subscription = new SubscriptionBuilder()
+            .Subscribe(ViewModel.Queue.Subscribe(queue =>
+            {
+                _queue = queue;
+                _modalVisible = true;
+                
+                StateHasChanged();
+            }))
+            .Build();
+    }
+
+    private string SelectRowColor(SubmissionDto submission)
+    {
+        return submission.State is SubmissionStateDto.Reviewed
+            ? "rgba(156, 235, 153, 1)"
+            : "transparent";
+    }
+
+    private async Task OnClosed()
+    {
+        await ViewModel.UnsubscribeAsync(default);
+    }
+
+}

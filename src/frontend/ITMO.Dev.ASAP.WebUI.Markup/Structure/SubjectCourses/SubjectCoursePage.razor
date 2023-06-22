@@ -1,0 +1,102 @@
+@page "/adminpanel/courses/{subjectCourseId:guid}"
+@using ITMO.Dev.ASAP.WebUI.Markup.Assignments.Components
+@using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourse.Components
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
+@using ITMO.Dev.ASAP.WebUI.Markup.Structure.SubjectCourses.Assignments
+@using ITMO.Dev.ASAP.WebUI.Markup.Structure.SubjectCourses.Groups
+@using ITMO.Dev.ASAP.WebUI.Markup.Structure.SubjectCourses.Queues
+@using ITMO.Dev.ASAP.WebUI.Markup.Structure.StudentGroups
+@using ITMO.Dev.ASAP.WebUI.Markup.Structure.Assignments
+@layout SubjectCourseListLayout
+@inject NavigationManager NavigationManager
+@inject ICurrentUser CurrentUser
+@inject ISubjectCourse ViewModel
+
+@if (_course is not null)
+{
+    <SubjectCourseBreadcrumb Course="_course"/>
+
+    <Div Flex="Flex.Column"
+         Height="Height.Is100"
+         Overflow="Overflow.Hidden">
+
+        <Div Flex="Flex.JustifyContent.Between"
+             Class="subject-course-header">
+
+            <AssociationsComponent
+                Associations="_course.Associations"
+                SubjectCourse="_course"/>
+
+            @if (CurrentUser.HasModeratorAccess())
+            {
+                <Div Flex="Flex.Column.AlignContent.Center"
+                     Padding="Padding.Is1.FromStart.Is1.FromEnd">
+
+                    <ForceSyncPoints
+                        SubjectCourseId="_course.Id"/>
+
+                    @{
+                        var organizationName = GithubOrganizationName;
+                    }
+
+                    <ForceSyncGitHubMentors
+                        OrganizationName="@organizationName"/>
+
+                    <ForceSyncGithubOrganization
+                        SubjectCourse="_course"/>
+                </Div>
+            }
+        </Div>
+
+        <Divider/>
+
+        <Tabs SelectedTab="@_selectedTab" Padding="Padding.Is2.FromStart">
+            <Items>
+                <Div Flex="Flex.Row"
+                     Style="overflow-x: scroll; overflow-y: hidden">
+
+                    <AssignmentsTabComponent
+                        OnSelectedTabChanged="OnTabSelected"
+                        OnClicked="@(() => _createAssignmentModal?.ShowAsync() ?? Task.CompletedTask)"/>
+
+                    @if (CurrentUser.HasModeratorAccess())
+                    {
+                        <GroupsTabComponent
+                            OnSelectedTabChanged="OnTabSelected"/>
+                    }
+
+                    <SubmissionQueueTabComponent
+                        OnSelectedTabChanged="OnTabSelected"/>
+
+                </Div>
+            </Items>
+
+            <Content>
+                <TabPanel Name="@AssignmentsTabComponent.Key">
+                    <SubjectCourseAssignmentListComponent/>
+                </TabPanel>
+
+                <TabPanel Name="@GroupsTabComponent.Key">
+                    <SubjectCourseGroupListComponent/>
+                </TabPanel>
+
+                <TabPanel Name="@SubmissionQueueTabComponent.Key">
+                    <SubjectCourseQueueListComponent/>
+                </TabPanel>
+            </Content>
+        </Tabs>
+    </Div>
+
+    <AssignmentComponent/>
+    <CreateAssignmentModal @ref="_createAssignmentModal"/>
+    <AddSubjectCourseGroupModal/>
+    <SubjectCourseQueueComponent/>
+    <StudentGroupComponent/>
+}
+
+@code
+{
+    private CreateAssignmentModal? _createAssignmentModal;
+}

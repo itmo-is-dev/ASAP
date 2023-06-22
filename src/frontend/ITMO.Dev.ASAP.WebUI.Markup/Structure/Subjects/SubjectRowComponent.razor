@@ -1,0 +1,55 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Subjects
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@implements IDisposable
+@inject NavigationManager NavigationManager
+
+@if (ViewModel is not null)
+{
+    <Button Clicked="OnSelectedClicked"
+            Padding="Padding.Is2"
+            Width="Width.Is100"
+            Border="Border.RoundedZero"
+            Color="@(_isSelected ? Color.Secondary : Color.Light)"
+            TextAlignment="TextAlignment.Start"
+            Class="text-overflow-dotted">
+
+        @_title
+    </Button>
+}
+
+@code {
+
+    private IDisposable? _subscription;
+
+    private bool _isSelected;
+    private string? _title;
+
+    [Parameter]
+    public ISubjectRowViewModel? ViewModel { get; set; }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (ViewModel is null)
+            return;
+
+        _subscription = new SubscriptionBuilder()
+            .Subscribe(ViewModel.Title.Subscribe(x => _title = x))
+            .Subscribe(ViewModel.IsSelected.Subscribe(x => _isSelected = x))
+            .Build();
+    }
+
+    private async Task OnSelectedClicked()
+    {
+        if (ViewModel is null)
+            return;
+
+        await ViewModel.SelectAsync();
+        NavigationManager.NavigateTo($"adminpanel/subjects/{ViewModel.Id}");
+    }
+
+}

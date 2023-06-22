@@ -5,10 +5,10 @@ namespace ITMO.Dev.ASAP.Mapping.Mappings;
 
 public static class AssignmentMapping
 {
-    public static AssignmentDto ToDto(this Assignment assignment, Guid subjectCourseId)
+    public static AssignmentDto ToDto(this Assignment assignment)
     {
         return new AssignmentDto(
-            subjectCourseId,
+            assignment.SubjectCourseId,
             assignment.Id,
             assignment.Title,
             assignment.ShortName,

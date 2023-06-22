@@ -1,13 +1,15 @@
 @page "/adminpanel/subjects/{subjectId:guid}"
 @using ITMO.Dev.ASAP.Application.Dto.Study
-@using ITMO.Dev.ASAP.Application.Dto.SubjectCourses
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Subjects
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
 @using ITMO.Dev.ASAP.WebUI.Abstractions.StudyNavigation
 @using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourse.Components
+@using ITMO.Dev.ASAP.WebUI.Markup.Structure.SubjectCourses
 @layout SubjectListLayout
-@inject ISubjectProvider SubjectProvider
 @inject ICurrentUser CurrentUser
+@inject ISubjectManager SubjectManager
 @implements IDisposable
 
 <Div Class="navigation-list__breadcrumb">
@@ -40,47 +42,33 @@
 @if (CurrentUser.HasModeratorAccess())
 {
     <CreateSubjectCourseModal @ref="_createSubjectCourseModal"
-                              SubjectId="SubjectId"
-                              OnSuccess="OnSubjectCourseCreated"/>
+                              SubjectId="SubjectId"/>
 }
 
-<SubjectCourseListComponent @ref="_subjectCourseList"/>
+<SubjectCourseListComponent/>
 
 @code {
 
     private SubjectDto? _value;
 
-    private IDisposable? _valueSubscription;
+    private IDisposable? _subscription;
     private CreateSubjectCourseModal? _createSubjectCourseModal;
-    private SubjectCourseListComponent? _subjectCourseList;
 
     [Parameter]
     public Guid SubjectId { get; set; }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        SubjectProvider.OnNext(SubjectId);
-        _valueSubscription = SubjectProvider.Value.Subscribe(OnSubjectUpdated);
-        _value = SubjectProvider.CurrentValue;
+        _subscription = new SubscriptionBuilder()
+            .Subscribe(SubjectManager.Subject.Subscribe(x => _value = x))
+            .Build();
+
+        await SubjectManager.SelectAsync(SubjectId);
     }
 
     public void Dispose()
     {
-        _valueSubscription?.Dispose();
+        _subscription?.Dispose();
     }
-
-    private void OnSubjectUpdated(SubjectDto value)
-    {
-        _value = value;
-    }
-
-    private Task OnSubjectCourseCreated(SubjectCourseDto course)
-    {
-        _subjectCourseList?.AddCourse(course);
-        StateHasChanged();
-
-        return Task.CompletedTask;
-    }
-
 
 }

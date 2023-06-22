@@ -29,6 +29,12 @@ internal class AssignmentClient : IAssignmentClient
         return await _handler.SendAsync<AssignmentDto>(message, cancellationToken);
     }
 
+    public async Task<AssignmentDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        using var message = new HttpRequestMessage(HttpMethod.Get, $"api/Assignments/{id}");
+        return await _handler.SendAsync<AssignmentDto>(message, cancellationToken);
+    }
+
     public async Task<AssignmentDto> UpdateAssignmentPointsAsync(
         Guid id,
         double minPoints,

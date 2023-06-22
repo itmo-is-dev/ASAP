@@ -34,14 +34,15 @@ internal class CreateAssignmentHandler : IRequestHandler<Command, Response>
             request.ShortName,
             request.Order,
             new Points(request.MinPoints),
-            new Points(request.MaxPoints));
+            new Points(request.MaxPoints),
+            subjectCourse.Id);
 
         (ISubjectCourseEvent evt, Assignment assignment) = subjectCourse.AddAssignment(assignmentBuilder);
 
         await _context.SubjectCourses.ApplyAsync(evt, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        AssignmentDto dto = assignment.ToDto(subjectCourse.Id);
+        AssignmentDto dto = assignment.ToDto();
 
         var notification = new AssignmentCreated.Notification(dto);
         await _publisher.PublishAsync(notification, cancellationToken);

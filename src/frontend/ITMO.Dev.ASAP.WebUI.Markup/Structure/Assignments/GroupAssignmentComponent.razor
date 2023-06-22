@@ -1,0 +1,72 @@
+@using ITMO.Dev.ASAP.Application.Dto.Study
+@using ITMO.Dev.ASAP.WebApi.Abstractions.Models.GroupAssignments
+@using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Assignments
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling
+@using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution
+@inject IGroupAssignmentClient Client
+@inject ISafeExecutor SafeExecutor
+@implements IDisposable
+
+<Card Margin="Margin.Is2">
+    <CardHeader>
+        <Heading Size="HeadingSize.Is2">
+            @_groupName
+        </Heading>
+    </CardHeader>
+
+    <CardBody Padding="Padding.Is2">
+        <Addons>
+            <Addon AddonType="AddonType.Start">
+                <AddonLabel>Deadline</AddonLabel>
+            </Addon>
+
+            <Addon AddonType="AddonType.Body">
+
+                <DatePicker TValue="DateTime"
+                            InputMode="DateInputMode.Date"
+                            DateChanged="UpdateDeadline"
+                            DisplayFormat="dd/MM/yyy"
+                            Date="@(_deadline ?? DateTime.UnixEpoch)"/>
+
+            </Addon>
+        </Addons>
+    </CardBody>
+</Card>
+
+@code {
+
+    private IDisposable? _subscription;
+
+    private string? _groupName;
+    private DateTime? _deadline;
+
+    [Parameter]
+    public IGroupAssignment? ViewModel { get; set; }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (ViewModel is null)
+            return;
+
+        _subscription = new SubscriptionBuilder()
+            .Subscribe(ViewModel.GroupName.Subscribe(x => _groupName = x))
+            .Subscribe(ViewModel.Deadline.Subscribe(x => _deadline = x))
+            .Build();
+    }
+
+    private async Task UpdateDeadline(DateTime date)
+    {
+        if (ViewModel is null)
+            return;
+
+        await ViewModel.UpdateDeadlineAsync(date, default);
+    }
+
+}

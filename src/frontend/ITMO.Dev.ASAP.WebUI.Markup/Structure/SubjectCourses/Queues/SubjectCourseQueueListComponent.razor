@@ -1,0 +1,37 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Models
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses.Queues
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@inject ISubjectCourseQueueList ViewModel
+
+@if (_rows is not null)
+{
+    <ListGroup Flush>
+        @foreach (var row in _rows)
+        {
+            <SubjectCourseQueueRowComponent ViewModel="row"/>
+        }
+    </ListGroup>
+}
+else
+{
+    <LoaderComponent/>
+}
+
+@code {
+
+    private IEnumerable<ISubjectCourseQueueRow>? _rows;
+
+    private IDisposable? _subscription;
+
+    protected override void OnParametersSet()
+    {
+        _subscription = new SubscriptionBuilder()
+            .Subscribe(ViewModel.Rows.Subscribe(x =>
+            {
+                _rows = x.Rows;
+                StateHasChanged();
+            }))
+            .Build();
+    }
+
+}

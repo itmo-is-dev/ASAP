@@ -1,0 +1,46 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@implements IDisposable
+@inject ISubjectCourseList ViewModel
+
+@if (_courses is not null)
+{
+    <ListGroup Flush>
+        @foreach (var course in _courses)
+        {
+            <ListGroupItem Padding="Padding.Is0">
+                <SubjectCourseRowComponent ViewModel="course"/>
+            </ListGroupItem>
+        }
+    </ListGroup>
+}
+else
+{
+    <LoaderComponent/>
+}
+
+@code {
+    private IEnumerable<ISubjectCourseRow>? _courses;
+    private IDisposable? _subscription;
+
+    [Parameter]
+    public EventCallback OnLoaded { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _subscription = new SubscriptionBuilder()
+            .Subscribe(ViewModel.SubjectCourses.Subscribe(courses =>
+            {
+                _courses = courses.SubjectCourses;
+                OnLoaded.InvokeAsync();
+                StateHasChanged();
+            }))
+            .Build();
+    }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+
+}

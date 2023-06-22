@@ -1,0 +1,108 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Assignments
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@inject IAssignment ViewModel
+@implements IDisposable
+
+<Modal @ref="_modal">
+    <ModalContent Size="ModalSize.Fullscreen">
+        <ModalHeader>
+            <ModalTitle>@_title</ModalTitle>
+            <CloseButton/>
+        </ModalHeader>
+        <ModalBody>
+            <Div Flex="Flex.Column"
+                 Margin="Margin.Is4.FromBottom"
+                 Style="gap: 10px">
+
+                <Addons>
+                    <Addon AddonType="AddonType.Start">
+                        <AddonLabel>Min Points</AddonLabel>
+                    </Addon>
+                    <Addon AddonType="AddonType.Body">
+                        <NumericField @ref="_minPointsField"
+                                      T="@double"
+                                      MinValue="0"
+                                      Margin="Margin.Is0"/>
+                    </Addon>
+                </Addons>
+
+                <Addons>
+                    <Addon AddonType="AddonType.Start">
+                        <AddonLabel>Max Points</AddonLabel>
+                    </Addon>
+                    <Addon AddonType="AddonType.Body">
+                        <NumericField @ref="_maxPointsField"
+                                      T="@double"
+                                      MinValue="0"
+                                      Margin="Margin.Is0"/>
+                    </Addon>
+                </Addons>
+
+                <Button Clicked="OnUpdateClicked"
+                        Style="width: fit-content">
+                    Update
+                </Button>
+            </Div>
+
+            @if (_groupAssignments is not null)
+            {
+                <Div>
+                    @foreach (var group in _groupAssignments)
+                    {
+                        <GroupAssignmentComponent ViewModel="group"/>
+                    }
+                </Div>
+            }
+        </ModalBody>
+    </ModalContent>
+</Modal>
+
+@code {
+
+    private IDisposable? _subscription;
+    private Modal? _modal;
+
+    private string? _title;
+    private NumericField<double>? _minPointsField;
+    private NumericField<double>? _maxPointsField;
+    private IEnumerable<IGroupAssignment>? _groupAssignments;
+
+    protected override void OnInitialized()
+    {
+        _subscription = new SubscriptionBuilder()
+            .Subscribe(ViewModel.Title.Subscribe(x => _title = x))
+            .Subscribe(ViewModel.MinPoints.Subscribe(x => _minPointsField?.ValueChanged(x)))
+            .Subscribe(ViewModel.MaxPoints.Subscribe(x => _maxPointsField?.ValueChanged(x)))
+            .Subscribe(ViewModel.Visible.Subscribe(OnVisibleChanged))
+            .Subscribe(ViewModel.GroupAssignments.Subscribe(x => _groupAssignments = x.GroupAssignments))
+            .Build();
+    }
+
+    private async Task OnUpdateClicked()
+    {
+        if (_minPointsField?.Value is null || _maxPointsField?.Value is null)
+        {
+            return;
+        }
+
+        await ViewModel.Update(_minPointsField.Value.Value, _maxPointsField.Value.Value, default);
+    }
+
+    private void OnVisibleChanged(bool visible)
+    {
+        if (visible)
+        {
+            _modal?.Show();
+        }
+        else
+        {
+            _modal?.Hide();
+        }
+    }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+
+}

@@ -1,0 +1,45 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses.Queues
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@implements IDisposable
+
+<ListGroupItem
+    type="button"
+    onclick="@Clicked"
+    Class="btn-light">
+
+    @_groupName
+
+</ListGroupItem>
+
+@code {
+
+    private IDisposable? _subscription;
+
+    private string? _groupName;
+
+    [Parameter]
+    public ISubjectCourseQueueRow? ViewModel { get; set; }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (ViewModel is null)
+            return;
+        
+        Dispose();
+
+        _subscription = new SubscriptionBuilder()
+            .Subscribe(ViewModel.GroupName.Subscribe(x => _groupName = x))
+            .Build();
+    }
+
+    private void Clicked()
+    {
+        ViewModel?.Select();
+    }
+
+}

@@ -63,14 +63,16 @@ public partial class SubjectCourse : IEntity<Guid>
 
     public (SubjectCourseGroup Group, ISubjectCourseEvent Event) AddGroup(StudentGroup group)
     {
-        if (_groups.Contains(group.Info))
+        StudentGroupInfo groupInfo = group.Info;
+
+        if (_groups.Contains(groupInfo))
             throw new DomainInvalidOperationException($"Group {group} is already assigned to this course");
 
-        var subjectCourseGroup = new SubjectCourseGroup(subjectCourseId: Id, studentGroupId: group.Id);
-        _groups.Add(group.Info);
+        var subjectCourseGroup = new SubjectCourseGroup(subjectCourseId: Id, groupInfo);
+        _groups.Add(groupInfo);
 
         IEnumerable<GroupAssignmentCreatedEvent> assignmentEvents = _assignments
-            .Select(x => x.AddGroup(group.Info, DateOnly.FromDateTime(DateTime.UnixEpoch)))
+            .Select(x => x.AddGroup(groupInfo, DateOnly.FromDateTime(DateTime.UnixEpoch)))
             .Select(x => new GroupAssignmentCreatedEvent(x));
 
         var evt = AggregateSubjectCourseEvent.Build(x => x
@@ -91,11 +93,13 @@ public partial class SubjectCourse : IEntity<Guid>
 
         foreach (StudentGroup studentGroup in groupsToAdd)
         {
-            var subjectCourseGroup = new SubjectCourseGroup(subjectCourseId: Id, studentGroupId: studentGroup.Id);
+            StudentGroupInfo groupInfo = studentGroup.Info;
+
+            var subjectCourseGroup = new SubjectCourseGroup(subjectCourseId: Id, groupInfo);
             subjectCourseGroups.Add(subjectCourseGroup);
 
             IEnumerable<GroupAssignmentCreatedEvent> assignmentEvents = _assignments
-                .Select(x => x.AddGroup(studentGroup.Info, DateOnly.FromDateTime(DateTime.UnixEpoch)))
+                .Select(x => x.AddGroup(groupInfo, DateOnly.FromDateTime(DateTime.UnixEpoch)))
                 .Select(x => new GroupAssignmentCreatedEvent(x));
 
             var evt = new SubjectCourseGroupCreatedEvent(subjectCourseGroup);
