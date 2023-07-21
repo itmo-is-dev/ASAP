@@ -25,22 +25,33 @@
             <Addon AddonType="AddonType.Body">
 
                 <DatePicker TValue="DateTime"
+                            Date="_deadlineBinding"
                             InputMode="DateInputMode.Date"
                             DateChanged="UpdateDeadline"
-                            DisplayFormat="dd/MM/yyy"
-                            Date="@(_deadline ?? DateTime.UnixEpoch)"/>
+                            DisplayFormat="dd/MM/yyy"/>
 
             </Addon>
         </Addons>
     </CardBody>
 </Card>
 
+<GenericConfirmationComponent
+    T="@DateTime"
+    @ref=@_updateDeadlineConfirmationComponent
+    ActionName=@ActionName
+    Action=@Execute
+    OnRejected="ResetBinding"/>
+
 @code {
 
     private IDisposable? _subscription;
+    private GenericConfirmationComponent<DateTime>? _updateDeadlineConfirmationComponent;
 
     private string? _groupName;
     private DateTime? _deadline;
+    private DateTime _deadlineBinding;
+
+    private Func<DateTime, string> ActionName => deadline => $"update {_groupName} deadline to {deadline}";
 
     [Parameter]
     public IGroupAssignment? ViewModel { get; set; }
@@ -57,16 +68,49 @@
 
         _subscription = new SubscriptionBuilder()
             .Subscribe(ViewModel.GroupName.Subscribe(x => _groupName = x))
-            .Subscribe(ViewModel.Deadline.Subscribe(x => _deadline = x))
+            .Subscribe(ViewModel.Deadline.Subscribe(x =>
+            {
+                _deadline = x;
+                _deadlineBinding = x;
+            }))
             .Build();
     }
 
-    private async Task UpdateDeadline(DateTime date)
+    protected override void OnInitialized()
+    {
+        _deadlineBinding = _deadline ?? DateTime.UnixEpoch;
+    }
+
+    private Task UpdateDeadline(DateTime deadline)
+    {
+        if (deadline == _deadline)
+        {
+            return Task.CompletedTask;
+        }
+
+        _deadlineBinding = deadline;
+        return _updateDeadlineConfirmationComponent?.Show(deadline) ?? Task.CompletedTask;
+    }
+
+    private async Task Execute(DateTime deadline, CancellationToken cancellationToken)
     {
         if (ViewModel is null)
             return;
 
-        await ViewModel.UpdateDeadlineAsync(date, default);
+        var updated = await ViewModel.UpdateDeadlineAsync(deadline, default);
+
+        if (updated)
+        {
+            _deadline = deadline;
+        }
+        else
+        {
+            ResetBinding();
+        }
     }
 
+    private void ResetBinding()
+    {
+        _deadlineBinding = _deadline ?? DateTime.UnixEpoch;
+    }
 }

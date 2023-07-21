@@ -52,10 +52,14 @@
 
         <Divider/>
 
-        <Tabs SelectedTab="@_selectedTab" Padding="Padding.Is2.FromStart">
+        <Tabs SelectedTab="@_selectedTab"
+              Padding="Padding.Is2.FromStart">
             <Items>
-                <Div Flex="Flex.Row"
-                     Style="overflow-x: scroll; overflow-y: hidden">
+                <Div
+                    Flex="Flex.Row"
+                    Style="overflow-x: scroll; overflow-y: hidden"
+                    Padding="Padding.Is0"
+                    Class="hide-scroll-bar">
 
                     <AssignmentsTabComponent
                         OnSelectedTabChanged="OnTabSelected"

@@ -1,6 +1,9 @@
 @page "/adminpanel/students"
 @layout PaddedLayout
 @using ITMO.Dev.ASAP.WebUI.Markup.Students.Components
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Navigation
+@inject IMessageConsumer Consumer
 
 @attribute [Authorize(Roles = "Admin, Moderator")]
 
@@ -14,5 +17,11 @@
 </Div>
 
 @code {
+
+    protected override void OnParametersSet()
+    {
+        var evt = new NavigatedToStudentsPageEvent();
+        Consumer.Send(evt);
+    }
 
 }

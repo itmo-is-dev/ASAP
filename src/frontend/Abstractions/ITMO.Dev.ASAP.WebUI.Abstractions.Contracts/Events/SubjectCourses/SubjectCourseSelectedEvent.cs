@@ -1,3 +1,3 @@
 namespace ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.SubjectCourses;
 
-public record SubjectCourseSelectedEvent(Guid SubjectCourseId);
+public record SubjectCourseSelectedEvent(Guid? SubjectCourseId);

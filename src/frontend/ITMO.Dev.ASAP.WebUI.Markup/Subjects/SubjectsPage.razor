@@ -1,9 +1,12 @@
 @page "/adminpanel/subjects"
 @using ITMO.Dev.ASAP.WebUI.Markup.Subjects.Components
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Navigation
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
 @using ITMO.Dev.ASAP.WebUI.Markup.Structure.Subjects
 @inject ICurrentUser CurrentUser
+@inject IMessageConsumer Consumer
 
 <Div Flex="Flex.Row.JustifyContent.Between.AlignItems.Center">
     <Heading Size="HeadingSize.Is2" Padding="Padding.Is3.FromStart.Is2">
@@ -30,5 +33,11 @@
 
 @code {
     private CreateSubjectModal? _createSubjectModal;
+
+    protected override void OnParametersSet()
+    {
+        var evt = new NavigatedToSubjectsPageEvent();
+        Consumer.Send(evt);
+    }
 
 }

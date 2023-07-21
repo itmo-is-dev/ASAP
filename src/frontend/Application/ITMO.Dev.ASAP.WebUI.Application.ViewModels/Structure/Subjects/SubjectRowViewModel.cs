@@ -1,4 +1,5 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
+using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.SubjectCourses;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Subjects;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Subjects;
@@ -27,9 +28,7 @@ public class SubjectRowViewModel : ISubjectRowViewModel
 
         IsSelected = producer.Observe<SubjectSelectedEvent>()
             .Select(x => x.SubjectId.Equals(subject.Id))
-            .Prepend(false)
-            .Replay(1)
-            .AutoConnect();
+            .Prepend(false);
     }
 
     public Guid Id { get; }
@@ -42,6 +41,9 @@ public class SubjectRowViewModel : ISubjectRowViewModel
     {
         var evt = new SubjectSelectedEvent(Id);
         _consumer.Send(evt);
+
+        var subjectCourseSelectedEvent = new SubjectCourseSelectedEvent(null);
+        _consumer.Send(subjectCourseSelectedEvent);
 
         return ValueTask.CompletedTask;
     }

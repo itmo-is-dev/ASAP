@@ -4,7 +4,6 @@ using ITMO.Dev.ASAP.WebApi.Abstractions.Models;
 using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Assignments;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.SubjectCourses;
-using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Subjects;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Models;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses;
@@ -73,9 +72,6 @@ public class SubjectCourseViewModel : ISubjectCourse, IDisposable
         {
             var loadedEvent = new CurrentSubjectCourseLoadedEvent(subjectCourse);
             _consumer.Send(loadedEvent);
-
-            var subjectSelectedEvent = new SubjectSelectedEvent(subjectCourse.SubjectId);
-            _consumer.Send(subjectSelectedEvent);
         });
     }
 

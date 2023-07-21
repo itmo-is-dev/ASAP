@@ -1,5 +1,7 @@
 @using ITMO.Dev.ASAP.Application.Dto.Users
 @using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Navigation
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging
 @using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
 @using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution
@@ -7,6 +9,7 @@
 @layout MainLayout
 @inject IUserClient UserClient
 @inject ISafeExecutor SafeExecutor
+@inject IMessageConsumer Consumer
 
 <CascadingValue Value="_user">
     <Layout Sider Height="Height.Is100">
@@ -60,6 +63,9 @@
 
     protected override async Task OnParametersSetAsync()
     {
+        var evt = new NavigatedToSettingsPageEvent();
+        Consumer.Send(evt);
+        
         await using ISafeExecutionBuilder<UserDto?> builder = SafeExecutor.Execute(() => UserClient.FindCurrentUserAsync(default));
 
         builder.Title = "Failed to load user";

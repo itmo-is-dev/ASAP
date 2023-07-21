@@ -53,6 +53,10 @@
                     }
                 </Div>
             }
+            else
+            {
+                <LoaderComponent/>
+            }
         </ModalBody>
     </ModalContent>
 </Modal>
@@ -74,7 +78,11 @@
             .Subscribe(ViewModel.MinPoints.Subscribe(x => _minPointsField?.ValueChanged(x)))
             .Subscribe(ViewModel.MaxPoints.Subscribe(x => _maxPointsField?.ValueChanged(x)))
             .Subscribe(ViewModel.Visible.Subscribe(OnVisibleChanged))
-            .Subscribe(ViewModel.GroupAssignments.Subscribe(x => _groupAssignments = x.GroupAssignments))
+            .Subscribe(ViewModel.GroupAssignments.Subscribe(x =>
+            {
+                _groupAssignments = x.GroupAssignments;
+                StateHasChanged();
+            }))
             .Build();
     }
 

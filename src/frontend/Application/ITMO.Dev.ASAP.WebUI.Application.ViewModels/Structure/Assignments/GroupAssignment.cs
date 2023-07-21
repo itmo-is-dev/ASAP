@@ -66,19 +66,29 @@ public class GroupAssignment : IGroupAssignment
 
     public IObservable<DateTime> Deadline { get; }
 
-    public async ValueTask UpdateDeadlineAsync(DateTime deadline, CancellationToken cancellationToken)
+    public async Task<bool> UpdateDeadlineAsync(DateTime deadline, CancellationToken cancellationToken)
     {
-        await using ISafeExecutionBuilder<GroupAssignmentDto> builder = _safeExecutor
-            .Execute(() =>
-            {
-                var request = new UpdateGroupAssignmentRequest(deadline);
+        var tcs = new TaskCompletionSource<bool>();
+        await ExecuteDeadlineUpdateAsync(tcs, deadline, cancellationToken);
 
-                return _groupAssignmentClient.UpdateGroupAssignmentAsync(
-                    AssignmentId,
-                    GroupId,
-                    request,
-                    cancellationToken);
-            });
+        return await tcs.Task;
+    }
+
+    private async Task ExecuteDeadlineUpdateAsync(
+        TaskCompletionSource<bool> tcs,
+        DateTime deadline,
+        CancellationToken cancellationToken)
+    {
+        await using ISafeExecutionBuilder<GroupAssignmentDto> builder = _safeExecutor.Execute(() =>
+        {
+            var request = new UpdateGroupAssignmentRequest(deadline);
+
+            return _groupAssignmentClient.UpdateGroupAssignmentAsync(
+                AssignmentId,
+                GroupId,
+                request,
+                cancellationToken);
+        });
 
         builder.Title = "Failed to update group assignment deadline";
 
@@ -87,5 +97,8 @@ public class GroupAssignment : IGroupAssignment
             var evt = new GroupAssignmentUpdatedEvent(ga);
             _consumer.Send(evt);
         });
+
+        builder.OnSuccess(() => tcs.SetResult(true));
+        builder.OnFail(() => tcs.SetResult(false));
     }
 }

@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Assignments;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.GroupAssignments;
+using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Navigation;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.StudentGroups;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Students;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.SubjectCourses;
@@ -39,6 +40,7 @@ public static class ServiceCollectionExtensions
 
         collection.AddAssignmentsMessageStreams();
         collection.AddGroupAssignmentsMessageStreams();
+        collection.AddNavigationMessageStream();
         collection.AddStudentGroupsMessageStreams();
         collection.AddStudentMessageStreams();
         collection.AddSubjectCoursesMessageStreams();
@@ -87,6 +89,16 @@ public static class ServiceCollectionExtensions
     private static void AddGroupAssignmentsMessageStreams(this IServiceCollection collection)
     {
         collection.AddMessageStream<GroupAssignmentUpdatedEvent>();
+    }
+
+    private static void AddNavigationMessageStream(this IServiceCollection collection)
+    {
+        collection.AddMessageStream<NavigatedToGlobalPageEvent>();
+        collection.AddMessageStream<NavigatedToGroupsPageEvent>();
+        collection.AddMessageStream<NavigatedToSettingsPageEvent>();
+        collection.AddMessageStream<NavigatedToStudentsPageEvent>();
+        collection.AddMessageStream<NavigatedToSubjectsPageEvent>();
+        collection.AddMessageStream<NavigatedToUsersPageEvent>();
     }
 
     private static void AddStudentGroupsMessageStreams(this IServiceCollection collection)

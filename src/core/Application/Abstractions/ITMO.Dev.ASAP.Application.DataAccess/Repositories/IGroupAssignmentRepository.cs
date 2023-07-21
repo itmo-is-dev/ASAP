@@ -6,4 +6,6 @@ namespace ITMO.Dev.ASAP.Application.DataAccess.Repositories;
 public interface IGroupAssignmentRepository
 {
     IAsyncEnumerable<GroupAssignment> QueryAsync(GroupAssignmentQuery query, CancellationToken cancellationToken);
+
+    void Update(GroupAssignment groupAssignment);
 }

@@ -39,7 +39,11 @@
 
         _subscription = new SubscriptionBuilder()
             .Subscribe(ViewModel.Title.Subscribe(x => _title = x))
-            .Subscribe(ViewModel.IsSelected.Subscribe(x => _isSelected = x))
+            .Subscribe(ViewModel.IsSelected.Subscribe(x =>
+            {
+                _isSelected = x;
+                StateHasChanged();
+            }))
             .Build();
     }
 

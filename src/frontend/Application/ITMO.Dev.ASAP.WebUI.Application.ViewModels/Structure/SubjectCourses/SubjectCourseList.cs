@@ -1,5 +1,6 @@
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients;
+using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Navigation;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.SubjectCourses;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Subjects;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging;
@@ -36,6 +37,12 @@ public class SubjectCourseList : ISubjectCourseList, IDisposable
         _subscription = new SubscriptionBuilder()
             .Subscribe(producer.Observe<SubjectCourseCreatedEvent>().Subscribe(OnSubjectCourseCreated))
             .Subscribe(producer.Observe<SubjectSelectedEvent>().Subscribe(OnSubjectSelected))
+            .Subscribe(producer.Observe<NavigatedToGlobalPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(producer.Observe<NavigatedToGroupsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(producer.Observe<NavigatedToSettingsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(producer.Observe<NavigatedToStudentsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(producer.Observe<NavigatedToSubjectsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(producer.Observe<NavigatedToUsersPageEvent>().Subscribe(_ => ClearSelection()))
             .Build();
     }
 
@@ -58,8 +65,18 @@ public class SubjectCourseList : ISubjectCourseList, IDisposable
 
     private async void OnSubjectSelected(SubjectSelectedEvent evt)
     {
+        if (evt.SubjectId is null)
+        {
+            _viewModels.Clear();
+
+            var coursesUpdatedEvent = new SubjectCourseListUpdatedEvent(_viewModels);
+            _consumer.Send(coursesUpdatedEvent);
+
+            return;
+        }
+
         await using ISafeExecutionBuilder<IReadOnlyCollection<SubjectCourseDto>> builder = _safeExecutor
-            .Execute(() => _subjectClient.GetCoursesAsync(evt.SubjectId));
+            .Execute(() => _subjectClient.GetCoursesAsync(evt.SubjectId.Value));
 
         builder.Title = "Failed to load subject courses";
 
@@ -84,5 +101,11 @@ public class SubjectCourseList : ISubjectCourseList, IDisposable
             var coursesUpdatedEvent = new SubjectCourseListUpdatedEvent(_viewModels);
             _consumer.Send(coursesUpdatedEvent);
         });
+    }
+
+    private void ClearSelection()
+    {
+        var evt = new SubjectCourseSelectedEvent(null);
+        _consumer.Send(evt);
     }
 }

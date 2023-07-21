@@ -1,5 +1,7 @@
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients;
+using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Navigation;
+using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.SubjectCourses;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Subjects;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Subjects;
@@ -34,6 +36,13 @@ public class SubjectList : ISubjectList, IDisposable
 
         _subscription = new SubscriptionBuilder()
             .Subscribe(producer.Observe<SubjectCreatedEvent>().Subscribe(OnSubjectCreated))
+            .Subscribe(producer.Observe<CurrentSubjectCourseLoadedEvent>().Subscribe(OnCurrentSubjectCourseLoaded))
+            .Subscribe(producer.Observe<NavigatedToGlobalPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(producer.Observe<NavigatedToGroupsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(producer.Observe<NavigatedToSettingsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(producer.Observe<NavigatedToStudentsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(producer.Observe<NavigatedToSubjectsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(producer.Observe<NavigatedToUsersPageEvent>().Subscribe(_ => ClearSelection()))
             .Build();
     }
 
@@ -78,5 +87,17 @@ public class SubjectList : ISubjectList, IDisposable
 
         var updatedEvt = new SubjectListUpdatedEvent(_subjectViewModels);
         _consumer.Send(updatedEvt);
+    }
+
+    private void OnCurrentSubjectCourseLoaded(CurrentSubjectCourseLoadedEvent arg)
+    {
+        var evt = new SubjectSelectedEvent(arg.SubjectCourse.SubjectId);
+        _consumer.Send(evt);
+    }
+
+    private void ClearSelection()
+    {
+        var evt = new SubjectSelectedEvent(null);
+        _consumer.Send(evt);
     }
 }

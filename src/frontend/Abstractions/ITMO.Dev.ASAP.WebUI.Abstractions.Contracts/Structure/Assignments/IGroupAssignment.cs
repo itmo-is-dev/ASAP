@@ -12,5 +12,5 @@ public interface IGroupAssignment
 
     IObservable<DateTime> Deadline { get; }
 
-    ValueTask UpdateDeadlineAsync(DateTime deadline, CancellationToken cancellationToken);
+    Task<bool> UpdateDeadlineAsync(DateTime deadline, CancellationToken cancellationToken);
 }

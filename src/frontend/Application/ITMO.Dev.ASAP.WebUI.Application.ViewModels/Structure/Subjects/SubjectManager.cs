@@ -71,8 +71,11 @@ public class SubjectManager : ISubjectManager, IDisposable
 
     private async void OnSubjectSelected(SubjectSelectedEvent evt)
     {
+        if (evt.SubjectId is null)
+            return;
+
         await using ISafeExecutionBuilder<SubjectDto> builder = _safeExecutor
-            .Execute(() => _subjectClient.GetByIdAsync(evt.SubjectId));
+            .Execute(() => _subjectClient.GetByIdAsync(evt.SubjectId.Value));
 
         builder.Title = "Failed to load current subject";
 

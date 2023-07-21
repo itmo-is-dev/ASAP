@@ -52,6 +52,8 @@ internal class UpdateGroupAssignmentDeadlineHandler : IRequestHandler<Command, R
         }
 
         groupAssignment.Deadline = request.NewDeadline;
+
+        _context.GroupAssignments.Update(groupAssignment);
         await _context.SaveChangesAsync(cancellationToken);
 
         GroupAssignmentDto dto = groupAssignment.ToDto();
