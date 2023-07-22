@@ -129,6 +129,8 @@ public class SubjectCourseQueue : ISubjectCourseQueue, IAsyncDisposable
         });
 
         builder.OnSuccess(() => _queueUpdateSubscription.Dispose());
+
         builder.OnSuccess(() => _latest = null);
+        builder.OnFail(() => _latest = null);
     }
 }
