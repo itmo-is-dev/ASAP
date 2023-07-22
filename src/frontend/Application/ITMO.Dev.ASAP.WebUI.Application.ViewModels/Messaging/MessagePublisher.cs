@@ -4,12 +4,12 @@ using Microsoft.Extensions.Logging;
 
 namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Messaging;
 
-public class MessageConsumer : IMessageConsumer
+public class MessagePublisher : IMessagePublisher
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<MessageConsumer> _logger;
+    private readonly ILogger<MessagePublisher> _logger;
 
-    public MessageConsumer(IServiceProvider serviceProvider, ILogger<MessageConsumer> logger)
+    public MessagePublisher(IServiceProvider serviceProvider, ILogger<MessagePublisher> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;

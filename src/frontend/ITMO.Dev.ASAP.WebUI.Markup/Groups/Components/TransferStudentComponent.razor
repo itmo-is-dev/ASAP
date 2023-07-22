@@ -10,7 +10,7 @@
 @using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution
 @inject IStudentClient StudentClient
 @inject ISafeExecutor SafeExecutor
-@inject IMessageConsumer Consumer
+@inject IMessagePublisher Publisher
 
 <Modal @ref="_modal">
     <ModalContent Centered Size="ModalSize.Large">
@@ -81,7 +81,7 @@
         builder.OnSuccess(s =>
         {
             var evt = new StudentTransferredEvent(s);
-            Consumer.Send(evt);
+            Publisher.Send(evt);
         });
     }
 

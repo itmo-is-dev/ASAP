@@ -8,32 +8,32 @@ namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.SubjectCourses.As
 
 public class SubjectCourseAssignmentRow : ISubjectCourseAssignmentRow
 {
-    private readonly IMessageConsumer _consumer;
+    private readonly IMessagePublisher _publisher;
 
     public SubjectCourseAssignmentRow(
         AssignmentDto assignment,
-        IMessageProducer producer,
-        IMessageConsumer consumer)
+        IMessageProvider provider,
+        IMessagePublisher publisher)
     {
-        _consumer = consumer;
+        _publisher = publisher;
 
         Id = assignment.Id;
 
-        Title = producer.Observe<AssignmentUpdatedEvent>()
+        Title = provider.Observe<AssignmentUpdatedEvent>()
             .Where(x => x.Assignment.Id.Equals(Id))
             .Select(x => x.Assignment.Title)
             .Prepend(assignment.Title)
             .Replay(1)
             .AutoConnect();
 
-        MinPoints = producer.Observe<AssignmentUpdatedEvent>()
+        MinPoints = provider.Observe<AssignmentUpdatedEvent>()
             .Where(x => x.Assignment.Id.Equals(Id))
             .Select(x => x.Assignment.MinPoints)
             .Prepend(assignment.MinPoints)
             .Replay(1)
             .AutoConnect();
 
-        MaxPoints = producer.Observe<AssignmentUpdatedEvent>()
+        MaxPoints = provider.Observe<AssignmentUpdatedEvent>()
             .Where(x => x.Assignment.Id.Equals(Id))
             .Select(x => x.Assignment.MaxPoints)
             .Prepend(assignment.MaxPoints)
@@ -52,6 +52,6 @@ public class SubjectCourseAssignmentRow : ISubjectCourseAssignmentRow
     public void Select()
     {
         var evt = new AssigmentSelectedEvent(Id);
-        _consumer.Send(evt);
+        _publisher.Send(evt);
     }
 }

@@ -13,25 +13,25 @@ namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.Assignments;
 
 public class GroupAssignment : IGroupAssignment
 {
-    private readonly IMessageConsumer _consumer;
+    private readonly IMessagePublisher _publisher;
     private readonly ISafeExecutor _safeExecutor;
     private readonly IGroupAssignmentClient _groupAssignmentClient;
 
     public GroupAssignment(
         GroupAssignmentDto groupAssignment,
-        IMessageProducer producer,
-        IMessageConsumer consumer,
+        IMessageProvider provider,
+        IMessagePublisher publisher,
         ISafeExecutor safeExecutor,
         IGroupAssignmentClient groupAssignmentClient)
     {
-        _consumer = consumer;
+        _publisher = publisher;
         _safeExecutor = safeExecutor;
         _groupAssignmentClient = groupAssignmentClient;
 
         GroupId = groupAssignment.GroupId;
         AssignmentId = groupAssignment.AssignmentId;
 
-        GroupName = producer.Observe<GroupAssignmentUpdatedEvent>()
+        GroupName = provider.Observe<GroupAssignmentUpdatedEvent>()
             .Where(x =>
                 x.GroupAssignment.GroupId.Equals(GroupId) && x.GroupAssignment.AssignmentId.Equals(AssignmentId))
             .Select(x => x.GroupAssignment.GroupName)
@@ -39,7 +39,7 @@ public class GroupAssignment : IGroupAssignment
             .Replay(1)
             .AutoConnect();
 
-        AssignmentTitle = producer.Observe<GroupAssignmentUpdatedEvent>()
+        AssignmentTitle = provider.Observe<GroupAssignmentUpdatedEvent>()
             .Where(x =>
                 x.GroupAssignment.GroupId.Equals(GroupId) && x.GroupAssignment.AssignmentId.Equals(AssignmentId))
             .Select(x => x.GroupAssignment.AssignmentTitle)
@@ -47,7 +47,7 @@ public class GroupAssignment : IGroupAssignment
             .Replay(1)
             .AutoConnect();
 
-        Deadline = producer.Observe<GroupAssignmentUpdatedEvent>()
+        Deadline = provider.Observe<GroupAssignmentUpdatedEvent>()
             .Where(x =>
                 x.GroupAssignment.GroupId.Equals(GroupId) && x.GroupAssignment.AssignmentId.Equals(AssignmentId))
             .Select(x => x.GroupAssignment.Deadline)
@@ -95,7 +95,7 @@ public class GroupAssignment : IGroupAssignment
         builder.OnSuccess(ga =>
         {
             var evt = new GroupAssignmentUpdatedEvent(ga);
-            _consumer.Send(evt);
+            _publisher.Send(evt);
         });
 
         builder.OnSuccess(() => tcs.SetResult(true));

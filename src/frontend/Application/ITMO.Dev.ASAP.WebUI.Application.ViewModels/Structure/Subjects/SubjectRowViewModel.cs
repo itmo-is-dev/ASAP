@@ -9,24 +9,24 @@ namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.Subjects;
 
 public class SubjectRowViewModel : ISubjectRowViewModel
 {
-    private readonly IMessageConsumer _consumer;
+    private readonly IMessagePublisher _publisher;
 
     public SubjectRowViewModel(
-        IMessageConsumer consumer,
-        IMessageProducer producer,
+        IMessagePublisher publisher,
+        IMessageProvider provider,
         SubjectDto subject)
     {
         Id = subject.Id;
-        _consumer = consumer;
+        _publisher = publisher;
 
-        Title = producer.Observe<SubjectUpdatedEvent>()
+        Title = provider.Observe<SubjectUpdatedEvent>()
             .Where(x => x.Subject.Id.Equals(subject.Id))
             .Select(x => x.Subject.Title)
             .Prepend(subject.Title)
             .Replay(1)
             .AutoConnect();
 
-        IsSelected = producer.Observe<SubjectSelectedEvent>()
+        IsSelected = provider.Observe<SubjectSelectedEvent>()
             .Select(x => x.SubjectId.Equals(subject.Id))
             .Prepend(false);
     }
@@ -40,10 +40,10 @@ public class SubjectRowViewModel : ISubjectRowViewModel
     public ValueTask SelectAsync()
     {
         var evt = new SubjectSelectedEvent(Id);
-        _consumer.Send(evt);
+        _publisher.Send(evt);
 
         var subjectCourseSelectedEvent = new SubjectCourseSelectedEvent(null);
-        _consumer.Send(subjectCourseSelectedEvent);
+        _publisher.Send(subjectCourseSelectedEvent);
 
         return ValueTask.CompletedTask;
     }

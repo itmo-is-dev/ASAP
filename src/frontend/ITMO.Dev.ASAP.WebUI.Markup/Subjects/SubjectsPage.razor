@@ -6,7 +6,7 @@
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
 @using ITMO.Dev.ASAP.WebUI.Markup.Structure.Subjects
 @inject ICurrentUser CurrentUser
-@inject IMessageConsumer Consumer
+@inject IMessagePublisher Publisher
 
 <Div Flex="Flex.Row.JustifyContent.Between.AlignItems.Center">
     <Heading Size="HeadingSize.Is2" Padding="Padding.Is3.FromStart.Is2">
@@ -37,7 +37,7 @@
     protected override void OnParametersSet()
     {
         var evt = new NavigatedToSubjectsPageEvent();
-        Consumer.Send(evt);
+        Publisher.Send(evt);
     }
 
 }

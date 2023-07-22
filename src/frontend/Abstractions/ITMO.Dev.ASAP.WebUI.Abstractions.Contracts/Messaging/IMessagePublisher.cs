@@ -1,6 +1,6 @@
 namespace ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging;
 
-public interface IMessageConsumer
+public interface IMessagePublisher
 {
     void Send<T>(T message);
 

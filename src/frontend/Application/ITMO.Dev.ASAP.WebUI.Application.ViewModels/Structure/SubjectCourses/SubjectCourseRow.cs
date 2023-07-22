@@ -10,19 +10,19 @@ public class SubjectCourseRow : ISubjectCourseRow
 {
     public SubjectCourseRow(
         SubjectCourseDto subjectCourse,
-        IMessageConsumer consumer,
-        IMessageProducer producer)
+        IMessagePublisher publisher,
+        IMessageProvider provider)
     {
         Id = subjectCourse.Id;
 
-        Title = producer.Observe<SubjectCourseUpdatedEvent>()
+        Title = provider.Observe<SubjectCourseUpdatedEvent>()
             .Where(x => x.SubjectCourse.Id.Equals(subjectCourse.Id))
             .Select(x => x.SubjectCourse.Title)
             .Prepend(subjectCourse.Title)
             .Replay(1)
             .AutoConnect();
 
-        IsSelected = producer.Observe<SubjectCourseSelectedEvent>()
+        IsSelected = provider.Observe<SubjectCourseSelectedEvent>()
             .Select(x => x.SubjectCourseId.Equals(subjectCourse.Id))
             .Prepend(false)
             .Replay(1)

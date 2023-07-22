@@ -16,7 +16,7 @@ namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.StudentGroups;
 
 public class StudentGroup : IStudentGroup, IDisposable
 {
-    private readonly IMessageConsumer _consumer;
+    private readonly IMessagePublisher _publisher;
     private readonly ISafeExecutor _safeExecutor;
     private readonly IStudyGroupClient _studyGroupClient;
 
@@ -24,30 +24,30 @@ public class StudentGroup : IStudentGroup, IDisposable
     private readonly List<StudentDto> _students;
 
     public StudentGroup(
-        IMessageConsumer consumer,
-        IMessageProducer producer,
+        IMessagePublisher publisher,
+        IMessageProvider provider,
         ISafeExecutor safeExecutor,
         IStudyGroupClient studyGroupClient)
     {
-        _consumer = consumer;
+        _publisher = publisher;
         _safeExecutor = safeExecutor;
         _studyGroupClient = studyGroupClient;
 
         _students = new List<StudentDto>();
 
         _subscription = new SubscriptionBuilder()
-            .Subscribe(producer.Observe<StudentGroupSelectedEvent>().Subscribe(OnStudentGroupSelected))
-            .Subscribe(producer.Observe<StudentTransferredEvent>().Subscribe(OnStudentTransferred))
+            .Subscribe(provider.Observe<StudentGroupSelectedEvent>().Subscribe(OnStudentGroupSelected))
+            .Subscribe(provider.Observe<StudentTransferredEvent>().Subscribe(OnStudentTransferred))
             .Build();
 
-        Name = producer.Observe<StudentGroupUpdatedEvent>()
+        Name = provider.Observe<StudentGroupUpdatedEvent>()
             .Where(x => x.Group.Id.Equals(Id))
             .Select(x => x.Group.Name);
 
-        Students = producer.Observe<StudentGroupStudentsUpdatedEvent>()
+        Students = provider.Observe<StudentGroupStudentsUpdatedEvent>()
             .Select(x => x.Students);
 
-        IsVisible = producer.Observe<StudentGroupSelectedEvent>().Select(_ => true);
+        IsVisible = provider.Observe<StudentGroupSelectedEvent>().Select(_ => true);
     }
 
     public Guid Id { get; private set; }
@@ -71,7 +71,7 @@ public class StudentGroup : IStudentGroup, IDisposable
         builder.OnSuccess(group =>
         {
             var evt = new StudentGroupUpdatedEvent(group);
-            _consumer.Send(evt);
+            _publisher.Send(evt);
         });
     }
 
@@ -99,7 +99,7 @@ public class StudentGroup : IStudentGroup, IDisposable
         }
 
         var updatedEvent = new StudentGroupStudentsUpdatedEvent(_students);
-        _consumer.Send(updatedEvent);
+        _publisher.Send(updatedEvent);
     }
 
     private async Task LoadStudentGroupAsync(Guid id)
@@ -112,7 +112,7 @@ public class StudentGroup : IStudentGroup, IDisposable
         builder.OnSuccess(group =>
         {
             var evt = new StudentGroupUpdatedEvent(group);
-            _consumer.Send(evt);
+            _publisher.Send(evt);
         });
     }
 
@@ -129,7 +129,7 @@ public class StudentGroup : IStudentGroup, IDisposable
             _students.AddRange(students);
 
             var evt = new StudentGroupStudentsUpdatedEvent(_students);
-            _consumer.Send(evt);
+            _publisher.Send(evt);
         });
     }
 }

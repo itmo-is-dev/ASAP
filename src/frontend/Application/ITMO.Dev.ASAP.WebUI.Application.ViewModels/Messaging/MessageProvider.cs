@@ -5,12 +5,12 @@ using System.Reactive.Linq;
 
 namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Messaging;
 
-public class MessageProducer : IMessageProducer
+public class MessageProvider : IMessageProvider
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<MessageProducer> _logger;
+    private readonly ILogger<MessageProvider> _logger;
 
-    public MessageProducer(IServiceProvider serviceProvider, ILogger<MessageProducer> logger)
+    public MessageProvider(IServiceProvider serviceProvider, ILogger<MessageProvider> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;

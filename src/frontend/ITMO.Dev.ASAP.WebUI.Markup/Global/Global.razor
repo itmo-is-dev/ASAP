@@ -5,7 +5,7 @@
 @layout PaddedLayout
 @attribute [Authorize(Roles = "Admin, Moderator")]
 
-@inject IMessageConsumer Consumer
+@inject IMessagePublisher Publisher
 
 <Div Display="Display.Flex" Flex="Flex.Column.AlignContent.Start">
 
@@ -19,7 +19,7 @@
     protected override void OnParametersSet()
     {
         var evt = new NavigatedToGlobalPageEvent();
-        Consumer.Send(evt);
+        Publisher.Send(evt);
     }
 
 }

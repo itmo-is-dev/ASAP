@@ -3,7 +3,7 @@
 @using ITMO.Dev.ASAP.WebUI.Markup.Students.Components
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Navigation
-@inject IMessageConsumer Consumer
+@inject IMessagePublisher Publisher
 
 @attribute [Authorize(Roles = "Admin, Moderator")]
 
@@ -21,7 +21,7 @@
     protected override void OnParametersSet()
     {
         var evt = new NavigatedToStudentsPageEvent();
-        Consumer.Send(evt);
+        Publisher.Send(evt);
     }
 
 }

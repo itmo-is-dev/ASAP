@@ -10,23 +10,23 @@ namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.SubjectCourses.Qu
 
 public class SubjectCourseQueueRow : ISubjectCourseQueueRow
 {
-    private readonly IMessageConsumer _consumer;
+    private readonly IMessagePublisher _publisher;
 
     public SubjectCourseQueueRow(
         SubjectCourseGroupDto subjectCourseGroup,
-        IMessageConsumer consumer,
-        IMessageProducer producer)
+        IMessagePublisher publisher,
+        IMessageProvider provider)
     {
-        _consumer = consumer;
+        _publisher = publisher;
 
         SubjectCourseId = subjectCourseGroup.SubjectCourseId;
         StudentGroupId = subjectCourseGroup.StudentGroupId;
 
-        IObservable<string> groupUpdated = producer.Observe<StudentGroupUpdatedEvent>()
+        IObservable<string> groupUpdated = provider.Observe<StudentGroupUpdatedEvent>()
             .Where(x => x.Group.Id.Equals(StudentGroupId))
             .Select(x => x.Group.Name);
 
-        IObservable<string> subjectCourseGroupUpdated = producer.Observe<SubjectCourseGroupUpdatedEvent>()
+        IObservable<string> subjectCourseGroupUpdated = provider.Observe<SubjectCourseGroupUpdatedEvent>()
             .Where(x => x.Group.SubjectCourseId.Equals(SubjectCourseId))
             .Where(x => x.Group.StudentGroupId.Equals(StudentGroupId))
             .Select(x => x.Group.StudentGroupName);
@@ -47,6 +47,6 @@ public class SubjectCourseQueueRow : ISubjectCourseQueueRow
     public void Select()
     {
         var evt = new SubjectCourseQueueSelectedEvent(SubjectCourseId, StudentGroupId);
-        _consumer.Send(evt);
+        _publisher.Send(evt);
     }
 }

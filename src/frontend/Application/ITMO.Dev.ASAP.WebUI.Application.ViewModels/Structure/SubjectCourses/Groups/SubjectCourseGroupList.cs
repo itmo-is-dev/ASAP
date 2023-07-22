@@ -17,8 +17,8 @@ namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.SubjectCourses.Gr
 
 public class SubjectCourseGroupList : ISubjectCourseGroupList, IDisposable
 {
-    private readonly IMessageProducer _producer;
-    private readonly IMessageConsumer _consumer;
+    private readonly IMessageProvider _provider;
+    private readonly IMessagePublisher _publisher;
     private readonly ILogger<SubjectCourseGroupList> _logger;
     private readonly ISafeExecutor _safeExecutor;
     private readonly ISubjectCourseClient _subjectCourseClient;
@@ -31,32 +31,32 @@ public class SubjectCourseGroupList : ISubjectCourseGroupList, IDisposable
     private bool _isSelected;
 
     public SubjectCourseGroupList(
-        IMessageProducer producer,
-        IMessageConsumer consumer,
+        IMessageProvider provider,
+        IMessagePublisher publisher,
         ILogger<SubjectCourseGroupList> logger,
         ISafeExecutor safeExecutor,
         ISubjectCourseClient subjectCourseClient,
         ISubjectCourseGroupClient subjectCourseGroupClient)
     {
-        _producer = producer;
-        _consumer = consumer;
+        _provider = provider;
+        _publisher = publisher;
         _logger = logger;
         _safeExecutor = safeExecutor;
         _subjectCourseClient = subjectCourseClient;
         _subjectCourseGroupClient = subjectCourseGroupClient;
 
         _subscription = new SubscriptionBuilder()
-            .Subscribe(producer.Observe<SubjectCourseSelectedEvent>().Subscribe(OnSubjectCourseSelected))
-            .Subscribe(producer.Observe<SubjectCourseSelectionUpdatedEvent>().Subscribe(OnSelectionChanged))
-            .Subscribe(producer.Observe<AddSubjectCourseGroupsVisibleEvent>()
+            .Subscribe(provider.Observe<SubjectCourseSelectedEvent>().Subscribe(OnSubjectCourseSelected))
+            .Subscribe(provider.Observe<SubjectCourseSelectionUpdatedEvent>().Subscribe(OnSelectionChanged))
+            .Subscribe(provider.Observe<AddSubjectCourseGroupsVisibleEvent>()
                 .Subscribe(OnAddSubjectCourseGroupsVisibleEvent))
             .Build();
 
         _rows = new List<ISubjectCourseGroupRow>();
 
-        SubjectCourseGroups = producer.Observe<SubjectCourseGroupListUpdatedEvent>();
+        SubjectCourseGroups = provider.Observe<SubjectCourseGroupListUpdatedEvent>();
 
-        AddSubjectCourseGroupsVisible = producer
+        AddSubjectCourseGroupsVisible = provider
             .Observe<AddSubjectCourseGroupsVisibleEvent>()
             .Select(x => x.IsVisible);
     }
@@ -68,7 +68,7 @@ public class SubjectCourseGroupList : ISubjectCourseGroupList, IDisposable
     public void ShowAddSubjectCourseGroups()
     {
         var evt = new AddSubjectCourseGroupsVisibleEvent(true);
-        _consumer.Send(evt);
+        _publisher.Send(evt);
     }
 
     public async ValueTask AddAsync(IReadOnlyCollection<Guid> studentGroupIds, CancellationToken cancellationToken)
@@ -90,12 +90,12 @@ public class SubjectCourseGroupList : ISubjectCourseGroupList, IDisposable
         builder.OnSuccess(subjectCourseGroups =>
         {
             IEnumerable<SubjectCourseGroupRow> rows = subjectCourseGroups
-                .Select(x => new SubjectCourseGroupRow(x, _producer, _consumer));
+                .Select(x => new SubjectCourseGroupRow(x, _provider, _publisher));
 
             _rows.AddRange(rows);
 
             var evt = new SubjectCourseGroupListUpdatedEvent(_rows);
-            _consumer.Send(evt);
+            _publisher.Send(evt);
         });
     }
 
@@ -156,18 +156,18 @@ public class SubjectCourseGroupList : ISubjectCourseGroupList, IDisposable
 
             IEnumerable<SubjectCourseGroupRow> assignmentsToAdd = assignments
                 .ExceptBy(existingIds, x => (x.SubjectCourseId, x.StudentGroupId))
-                .Select(x => new SubjectCourseGroupRow(x, _producer, _consumer));
+                .Select(x => new SubjectCourseGroupRow(x, _provider, _publisher));
 
             var assignmentIds = assignments
                 .Select(x => (x.SubjectCourseId, x.StudentGroupId))
                 .ToHashSet();
 
-            _consumer.SendRange(assignmentsToUpdate);
+            _publisher.SendRange(assignmentsToUpdate);
             _rows.AddRange(assignmentsToAdd);
             _rows.RemoveAll(x => assignmentIds.Contains((x.SubjectCourseId, x.StudentGroupId)) is false);
 
             var evt = new SubjectCourseGroupListUpdatedEvent(_rows);
-            _consumer.Send(evt);
+            _publisher.Send(evt);
         });
     }
 }

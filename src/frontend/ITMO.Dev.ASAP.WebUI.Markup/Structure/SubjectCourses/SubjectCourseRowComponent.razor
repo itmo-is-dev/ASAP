@@ -9,7 +9,7 @@
 @using ITMO.Dev.ASAP.WebUI.Markup.Structure.SubjectCourses.Queues
 @implements IDisposable
 @inject NavigationManager NavigationManager
-@inject IMessageProducer Producer
+@inject IMessageProvider Provider
 
 <Button Clicked="OnSelectedClicked"
         Padding="Padding.Is2"
@@ -46,7 +46,7 @@
         _subscription = new SubscriptionBuilder()
             .Subscribe(ViewModel.Title.Subscribe(x => _title = x))
             .Subscribe(ViewModel.IsSelected.Subscribe(x => _isSelected = x))
-            .Subscribe(Producer.Observe<SubjectCourseSelectionUpdatedEvent>()
+            .Subscribe(Provider.Observe<SubjectCourseSelectionUpdatedEvent>()
                 .Subscribe(x => _selection = x.Selection))
             .Build();
     }

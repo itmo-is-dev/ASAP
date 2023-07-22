@@ -17,28 +17,28 @@ public class SubjectManager : ISubjectManager, IDisposable
     private readonly IDisposable _subscription;
     private readonly ISubjectClient _subjectClient;
     private readonly ISafeExecutor _safeExecutor;
-    private readonly IMessageConsumer _consumer;
-    private readonly IMessageProducer _producer;
+    private readonly IMessagePublisher _publisher;
+    private readonly IMessageProvider _provider;
 
     public SubjectManager(
         ISubjectClient subjectClient,
         ISafeExecutor safeExecutor,
-        IMessageConsumer consumer,
-        IMessageProducer producer)
+        IMessagePublisher publisher,
+        IMessageProvider provider)
     {
         _subjectClient = subjectClient;
         _safeExecutor = safeExecutor;
-        _consumer = consumer;
-        _producer = producer;
+        _publisher = publisher;
+        _provider = provider;
 
         _subscription = new SubscriptionBuilder()
-            .Subscribe(producer.Observe<SubjectSelectedEvent>().Subscribe(OnSubjectSelected))
+            .Subscribe(provider.Observe<SubjectSelectedEvent>().Subscribe(OnSubjectSelected))
             .Build();
     }
 
-    public IObservable<SubjectCreatedEvent> SubjectCreated => _producer.Observe<SubjectCreatedEvent>();
+    public IObservable<SubjectCreatedEvent> SubjectCreated => _provider.Observe<SubjectCreatedEvent>();
 
-    public IObservable<SubjectDto> Subject => _producer
+    public IObservable<SubjectDto> Subject => _provider
         .Observe<CurrentSubjectLoadedEvent>()
         .Select(x => x.Subject);
 
@@ -53,13 +53,13 @@ public class SubjectManager : ISubjectManager, IDisposable
         });
 
         builder.Title = "Failed to create subject";
-        builder.OnSuccess(x => _consumer.Send(new SubjectCreatedEvent(x)));
+        builder.OnSuccess(x => _publisher.Send(new SubjectCreatedEvent(x)));
     }
 
     public ValueTask SelectAsync(Guid subjectId)
     {
         var evt = new SubjectSelectedEvent(subjectId);
-        _consumer.Send(evt);
+        _publisher.Send(evt);
 
         return ValueTask.CompletedTask;
     }
@@ -82,7 +82,7 @@ public class SubjectManager : ISubjectManager, IDisposable
         builder.OnSuccess(subject =>
         {
             var loadedEvent = new CurrentSubjectLoadedEvent(subject);
-            _consumer.Send(loadedEvent);
+            _publisher.Send(loadedEvent);
         });
     }
 }

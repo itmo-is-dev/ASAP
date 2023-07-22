@@ -17,8 +17,8 @@ namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.SubjectCourses.As
 public class SubjectCourseAssignmentList : ISubjectCourseAssignmentList, IDisposable
 {
     private readonly ISafeExecutor _safeExecutor;
-    private readonly IMessageProducer _producer;
-    private readonly IMessageConsumer _consumer;
+    private readonly IMessageProvider _provider;
+    private readonly IMessagePublisher _publisher;
     private readonly ILogger<SubjectCourseAssignmentList> _logger;
     private readonly ISubjectCourseClient _subjectCourseClient;
 
@@ -29,14 +29,14 @@ public class SubjectCourseAssignmentList : ISubjectCourseAssignmentList, IDispos
     private bool _isSelected;
 
     public SubjectCourseAssignmentList(
-        IMessageProducer producer,
-        IMessageConsumer consumer,
+        IMessageProvider provider,
+        IMessagePublisher publisher,
         ISafeExecutor safeExecutor,
         ILogger<SubjectCourseAssignmentList> logger,
         ISubjectCourseClient subjectCourseClient)
     {
-        _producer = producer;
-        _consumer = consumer;
+        _provider = provider;
+        _publisher = publisher;
         _safeExecutor = safeExecutor;
         _logger = logger;
         _subjectCourseClient = subjectCourseClient;
@@ -44,12 +44,12 @@ public class SubjectCourseAssignmentList : ISubjectCourseAssignmentList, IDispos
         _rows = new List<ISubjectCourseAssignmentRow>();
 
         _subscription = new SubscriptionBuilder()
-            .Subscribe(producer.Observe<SubjectCourseSelectedEvent>().Subscribe(OnSubjectCourseSelected))
-            .Subscribe(producer.Observe<SubjectCourseSelectionUpdatedEvent>().Subscribe(OnSelectionUpdated))
-            .Subscribe(producer.Observe<AssignmentCreatedEvent>().Subscribe(OnAssignmentCreated))
+            .Subscribe(provider.Observe<SubjectCourseSelectedEvent>().Subscribe(OnSubjectCourseSelected))
+            .Subscribe(provider.Observe<SubjectCourseSelectionUpdatedEvent>().Subscribe(OnSelectionUpdated))
+            .Subscribe(provider.Observe<AssignmentCreatedEvent>().Subscribe(OnAssignmentCreated))
             .Build();
 
-        Assignments = producer.Observe<SubjectCourseAssignmentListUpdatedEvent>();
+        Assignments = provider.Observe<SubjectCourseAssignmentListUpdatedEvent>();
     }
 
     public IObservable<SubjectCourseAssignmentListUpdatedEvent> Assignments { get; }
@@ -73,7 +73,7 @@ public class SubjectCourseAssignmentList : ISubjectCourseAssignmentList, IDispos
 
     private void OnAssignmentCreated(AssignmentCreatedEvent evt)
     {
-        var assignment = new SubjectCourseAssignmentRow(evt.Assignment, _producer, _consumer);
+        var assignment = new SubjectCourseAssignmentRow(evt.Assignment, _provider, _publisher);
         _rows.Add(assignment);
     }
 
@@ -105,16 +105,16 @@ public class SubjectCourseAssignmentList : ISubjectCourseAssignmentList, IDispos
 
             IEnumerable<SubjectCourseAssignmentRow> assignmentsToAdd = assignments
                 .ExceptBy(existingIds, x => x.Id)
-                .Select(x => new SubjectCourseAssignmentRow(x, _producer, _consumer));
+                .Select(x => new SubjectCourseAssignmentRow(x, _provider, _publisher));
 
             var assignmentIds = assignments.Select(x => x.Id).ToHashSet();
 
-            _consumer.SendRange(assignmentsToUpdate);
+            _publisher.SendRange(assignmentsToUpdate);
             _rows.AddRange(assignmentsToAdd);
             _rows.RemoveAll(x => assignmentIds.Contains(x.Id) is false);
 
             var evt = new SubjectCourseAssignmentListUpdatedEvent(_rows);
-            _consumer.Send(evt);
+            _publisher.Send(evt);
         });
     }
 }

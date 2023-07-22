@@ -16,38 +16,38 @@ public class SubjectCourseList : ISubjectCourseList, IDisposable
 {
     private readonly List<ISubjectCourseRow> _viewModels;
     private readonly ISubjectClient _subjectClient;
-    private readonly IMessageConsumer _consumer;
-    private readonly IMessageProducer _producer;
+    private readonly IMessagePublisher _publisher;
+    private readonly IMessageProvider _provider;
     private readonly ISafeExecutor _safeExecutor;
     private readonly IDisposable _subscription;
 
     public SubjectCourseList(
         ISubjectClient subjectClient,
-        IMessageConsumer consumer,
-        IMessageProducer producer,
+        IMessagePublisher publisher,
+        IMessageProvider provider,
         ISafeExecutor safeExecutor)
     {
-        _consumer = consumer;
-        _producer = producer;
+        _publisher = publisher;
+        _provider = provider;
         _safeExecutor = safeExecutor;
         _subjectClient = subjectClient;
 
         _viewModels = new List<ISubjectCourseRow>();
 
         _subscription = new SubscriptionBuilder()
-            .Subscribe(producer.Observe<SubjectCourseCreatedEvent>().Subscribe(OnSubjectCourseCreated))
-            .Subscribe(producer.Observe<SubjectSelectedEvent>().Subscribe(OnSubjectSelected))
-            .Subscribe(producer.Observe<NavigatedToGlobalPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(producer.Observe<NavigatedToGroupsPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(producer.Observe<NavigatedToSettingsPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(producer.Observe<NavigatedToStudentsPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(producer.Observe<NavigatedToSubjectsPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(producer.Observe<NavigatedToUsersPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(provider.Observe<SubjectCourseCreatedEvent>().Subscribe(OnSubjectCourseCreated))
+            .Subscribe(provider.Observe<SubjectSelectedEvent>().Subscribe(OnSubjectSelected))
+            .Subscribe(provider.Observe<NavigatedToGlobalPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(provider.Observe<NavigatedToGroupsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(provider.Observe<NavigatedToSettingsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(provider.Observe<NavigatedToStudentsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(provider.Observe<NavigatedToSubjectsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(provider.Observe<NavigatedToUsersPageEvent>().Subscribe(_ => ClearSelection()))
             .Build();
     }
 
     public IObservable<SubjectCourseListUpdatedEvent> SubjectCourses
-        => _producer.Observe<SubjectCourseListUpdatedEvent>();
+        => _provider.Observe<SubjectCourseListUpdatedEvent>();
 
     public void Dispose()
     {
@@ -56,11 +56,11 @@ public class SubjectCourseList : ISubjectCourseList, IDisposable
 
     private void OnSubjectCourseCreated(SubjectCourseCreatedEvent evt)
     {
-        var viewModel = new SubjectCourseRow(evt.SubjectCourse, _consumer, _producer);
+        var viewModel = new SubjectCourseRow(evt.SubjectCourse, _publisher, _provider);
         _viewModels.Add(viewModel);
 
         var updatedEvent = new SubjectCourseListUpdatedEvent(_viewModels);
-        _consumer.Send(updatedEvent);
+        _publisher.Send(updatedEvent);
     }
 
     private async void OnSubjectSelected(SubjectSelectedEvent evt)
@@ -70,7 +70,7 @@ public class SubjectCourseList : ISubjectCourseList, IDisposable
             _viewModels.Clear();
 
             var coursesUpdatedEvent = new SubjectCourseListUpdatedEvent(_viewModels);
-            _consumer.Send(coursesUpdatedEvent);
+            _publisher.Send(coursesUpdatedEvent);
 
             return;
         }
@@ -90,22 +90,22 @@ public class SubjectCourseList : ISubjectCourseList, IDisposable
 
             IEnumerable<SubjectCourseRow> coursesToAdd = courses
                 .ExceptBy(existingIds, x => x.Id)
-                .Select(x => new SubjectCourseRow(x, _consumer, _producer));
+                .Select(x => new SubjectCourseRow(x, _publisher, _provider));
 
             var courseIds = courses.Select(x => x.Id).ToHashSet();
 
-            _consumer.SendRange(coursesToUpdate);
+            _publisher.SendRange(coursesToUpdate);
             _viewModels.AddRange(coursesToAdd);
             _viewModels.RemoveAll(x => courseIds.Contains(x.Id) is false);
 
             var coursesUpdatedEvent = new SubjectCourseListUpdatedEvent(_viewModels);
-            _consumer.Send(coursesUpdatedEvent);
+            _publisher.Send(coursesUpdatedEvent);
         });
     }
 
     private void ClearSelection()
     {
         var evt = new SubjectCourseSelectedEvent(null);
-        _consumer.Send(evt);
+        _publisher.Send(evt);
     }
 }

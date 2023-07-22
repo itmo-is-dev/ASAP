@@ -35,8 +35,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddViewModels(this IServiceCollection collection)
     {
-        collection.AddSingleton<IMessageProducer, MessageProducer>();
-        collection.AddSingleton<IMessageConsumer, MessageConsumer>();
+        collection.AddSingleton<IMessageProvider, MessageProvider>();
+        collection.AddSingleton<IMessagePublisher, MessagePublisher>();
 
         collection.AddAssignmentsMessageStreams();
         collection.AddGroupAssignmentsMessageStreams();

@@ -11,7 +11,7 @@
 @attribute [Authorize(Roles = "Admin, Moderator")]
 
 @inject IUserClient UserClient
-@inject IMessageConsumer Consumer
+@inject IMessagePublisher Publisher
 
 <Div Flex="Flex.Column" Height="Height.Is100">
     <Heading Size="HeadingSize.Is2">
@@ -68,7 +68,7 @@
     protected override void OnParametersSet()
     {
         var evt = new NavigatedToUsersPageEvent();
-        Consumer.Send(evt);
+        Publisher.Send(evt);
     }
 
     protected override async Task OnInitializedAsync()

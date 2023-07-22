@@ -15,7 +15,7 @@ namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.SubjectCourses.Qu
 
 public class SubjectCourseQueue : ISubjectCourseQueue, IAsyncDisposable
 {
-    private readonly IMessageConsumer _consumer;
+    private readonly IMessagePublisher _publisher;
     private readonly ISafeExecutor _safeExecutor;
     private readonly ISubjectCourseClient _subjectCourseClient;
     private readonly IHubClientProvider<IQueueHubClient> _clientProvider;
@@ -25,13 +25,13 @@ public class SubjectCourseQueue : ISubjectCourseQueue, IAsyncDisposable
     private SubjectCourseQueueSelectedEvent? _latest;
 
     public SubjectCourseQueue(
-        IMessageConsumer consumer,
-        IMessageProducer producer,
+        IMessagePublisher publisher,
+        IMessageProvider provider,
         ISafeExecutor safeExecutor,
         ISubjectCourseClient subjectCourseClient,
         IHubClientProvider<IQueueHubClient> clientProvider)
     {
-        _consumer = consumer;
+        _publisher = publisher;
         _safeExecutor = safeExecutor;
         _subjectCourseClient = subjectCourseClient;
         _clientProvider = clientProvider;
@@ -39,10 +39,10 @@ public class SubjectCourseQueue : ISubjectCourseQueue, IAsyncDisposable
         _queueUpdateSubscription = Disposable.Empty;
 
         _subscription = new SubscriptionBuilder()
-            .Subscribe(producer.Observe<SubjectCourseQueueSelectedEvent>().Subscribe(OnQueueSelected))
+            .Subscribe(provider.Observe<SubjectCourseQueueSelectedEvent>().Subscribe(OnQueueSelected))
             .Build();
 
-        Queue = producer.Observe<SubjectCourseQueueLoadedEvent>().Select(x => x.Queue);
+        Queue = provider.Observe<SubjectCourseQueueLoadedEvent>().Select(x => x.Queue);
     }
 
     public IObservable<SubmissionsQueueDto> Queue { get; }
@@ -68,7 +68,7 @@ public class SubjectCourseQueue : ISubjectCourseQueue, IAsyncDisposable
     private void OnQueueLoaded(SubmissionsQueueDto queue)
     {
         var queueEvent = new SubjectCourseQueueLoadedEvent(queue);
-        _consumer.Send(queueEvent);
+        _publisher.Send(queueEvent);
     }
 
     private async Task LoadQueueAsync(SubjectCourseQueueSelectedEvent evt)

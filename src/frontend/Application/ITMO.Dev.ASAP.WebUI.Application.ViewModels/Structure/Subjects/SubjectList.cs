@@ -16,37 +16,37 @@ public class SubjectList : ISubjectList, IDisposable
 {
     private readonly List<ISubjectRowViewModel> _subjectViewModels;
     private readonly ISubjectClient _subjectClient;
-    private readonly IMessageConsumer _consumer;
-    private readonly IMessageProducer _producer;
+    private readonly IMessagePublisher _publisher;
+    private readonly IMessageProvider _provider;
     private readonly IDisposable _subscription;
     private readonly ISafeExecutor _safeExecutor;
 
     public SubjectList(
         ISubjectClient subjectClient,
-        IMessageConsumer consumer,
-        IMessageProducer producer,
+        IMessagePublisher publisher,
+        IMessageProvider provider,
         ISafeExecutor safeExecutor)
     {
         _subjectClient = subjectClient;
-        _consumer = consumer;
-        _producer = producer;
+        _publisher = publisher;
+        _provider = provider;
         _safeExecutor = safeExecutor;
 
         _subjectViewModels = new List<ISubjectRowViewModel>();
 
         _subscription = new SubscriptionBuilder()
-            .Subscribe(producer.Observe<SubjectCreatedEvent>().Subscribe(OnSubjectCreated))
-            .Subscribe(producer.Observe<CurrentSubjectCourseLoadedEvent>().Subscribe(OnCurrentSubjectCourseLoaded))
-            .Subscribe(producer.Observe<NavigatedToGlobalPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(producer.Observe<NavigatedToGroupsPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(producer.Observe<NavigatedToSettingsPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(producer.Observe<NavigatedToStudentsPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(producer.Observe<NavigatedToSubjectsPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(producer.Observe<NavigatedToUsersPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(provider.Observe<SubjectCreatedEvent>().Subscribe(OnSubjectCreated))
+            .Subscribe(provider.Observe<CurrentSubjectCourseLoadedEvent>().Subscribe(OnCurrentSubjectCourseLoaded))
+            .Subscribe(provider.Observe<NavigatedToGlobalPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(provider.Observe<NavigatedToGroupsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(provider.Observe<NavigatedToSettingsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(provider.Observe<NavigatedToStudentsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(provider.Observe<NavigatedToSubjectsPageEvent>().Subscribe(_ => ClearSelection()))
+            .Subscribe(provider.Observe<NavigatedToUsersPageEvent>().Subscribe(_ => ClearSelection()))
             .Build();
     }
 
-    public IObservable<SubjectListUpdatedEvent> Subjects => _producer.Observe<SubjectListUpdatedEvent>();
+    public IObservable<SubjectListUpdatedEvent> Subjects => _provider.Observe<SubjectListUpdatedEvent>();
 
     public async ValueTask LoadAsync(CancellationToken cancellationToken)
     {
@@ -65,13 +65,13 @@ public class SubjectList : ISubjectList, IDisposable
 
             IEnumerable<ISubjectRowViewModel> subjectsToAdd = subjects
                 .ExceptBy(ids, x => x.Id)
-                .Select(x => new SubjectRowViewModel(_consumer, _producer, x));
+                .Select(x => new SubjectRowViewModel(_publisher, _provider, x));
 
-            _consumer.SendRange(subjectsToUpdate);
+            _publisher.SendRange(subjectsToUpdate);
             _subjectViewModels.AddRange(subjectsToAdd);
 
             var evt = new SubjectListUpdatedEvent(_subjectViewModels);
-            _consumer.Send(evt);
+            _publisher.Send(evt);
         });
     }
 
@@ -82,22 +82,22 @@ public class SubjectList : ISubjectList, IDisposable
 
     private void OnSubjectCreated(SubjectCreatedEvent evt)
     {
-        var viewModel = new SubjectRowViewModel(_consumer, _producer, evt.Subject);
+        var viewModel = new SubjectRowViewModel(_publisher, _provider, evt.Subject);
         _subjectViewModels.Add(viewModel);
 
         var updatedEvt = new SubjectListUpdatedEvent(_subjectViewModels);
-        _consumer.Send(updatedEvt);
+        _publisher.Send(updatedEvt);
     }
 
     private void OnCurrentSubjectCourseLoaded(CurrentSubjectCourseLoadedEvent arg)
     {
         var evt = new SubjectSelectedEvent(arg.SubjectCourse.SubjectId);
-        _consumer.Send(evt);
+        _publisher.Send(evt);
     }
 
     private void ClearSelection()
     {
         var evt = new SubjectSelectedEvent(null);
-        _consumer.Send(evt);
+        _publisher.Send(evt);
     }
 }

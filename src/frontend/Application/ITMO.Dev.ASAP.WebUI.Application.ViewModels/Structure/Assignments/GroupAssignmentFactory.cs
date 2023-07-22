@@ -8,25 +8,25 @@ namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.Assignments;
 
 public class GroupAssignmentFactory
 {
-    private readonly IMessageProducer _producer;
-    private readonly IMessageConsumer _consumer;
+    private readonly IMessageProvider _provider;
+    private readonly IMessagePublisher _publisher;
     private readonly ISafeExecutor _safeExecutor;
     private readonly IGroupAssignmentClient _groupAssignmentClient;
 
     public GroupAssignmentFactory(
-        IMessageProducer producer,
-        IMessageConsumer consumer,
+        IMessageProvider provider,
+        IMessagePublisher publisher,
         ISafeExecutor safeExecutor,
         IGroupAssignmentClient groupAssignmentClient)
     {
-        _producer = producer;
-        _consumer = consumer;
+        _provider = provider;
+        _publisher = publisher;
         _safeExecutor = safeExecutor;
         _groupAssignmentClient = groupAssignmentClient;
     }
 
     public IGroupAssignment Create(GroupAssignmentDto groupAssignment)
     {
-        return new GroupAssignment(groupAssignment, _producer, _consumer, _safeExecutor, _groupAssignmentClient);
+        return new GroupAssignment(groupAssignment, _provider, _publisher, _safeExecutor, _groupAssignmentClient);
     }
 }

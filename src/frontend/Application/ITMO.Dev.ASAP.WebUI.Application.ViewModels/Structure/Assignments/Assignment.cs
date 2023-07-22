@@ -14,7 +14,7 @@ namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.Assignments;
 
 public class Assignment : IAssignment, IDisposable
 {
-    private readonly IMessageConsumer _consumer;
+    private readonly IMessagePublisher _publisher;
     private readonly ISafeExecutor _safeExecutor;
     private readonly IAssignmentClient _assignmentClient;
     private readonly GroupAssignmentFactory _groupAssignmentFactory;
@@ -24,41 +24,41 @@ public class Assignment : IAssignment, IDisposable
     private readonly List<IGroupAssignment> _groupAssignments;
 
     public Assignment(
-        IMessageProducer producer,
-        IMessageConsumer consumer,
+        IMessageProvider provider,
+        IMessagePublisher publisher,
         ISafeExecutor safeExecutor,
         IAssignmentClient assignmentClient,
         GroupAssignmentFactory groupAssignmentFactory)
     {
-        _consumer = consumer;
+        _publisher = publisher;
         _safeExecutor = safeExecutor;
         _assignmentClient = assignmentClient;
         _groupAssignmentFactory = groupAssignmentFactory;
 
         _subscription = new SubscriptionBuilder()
-            .Subscribe(producer.Observe<AssigmentSelectedEvent>().Subscribe(OnAssignmentSelected))
+            .Subscribe(provider.Observe<AssigmentSelectedEvent>().Subscribe(OnAssignmentSelected))
             .Build();
 
         _groupAssignments = new List<IGroupAssignment>();
 
-        Title = producer.Observe<AssignmentUpdatedEvent>()
+        Title = provider.Observe<AssignmentUpdatedEvent>()
             .Where(x => x.Assignment.Id.Equals(Id))
             .Select(x => x.Assignment.Title)
-            .Merge(producer.Observe<CurrentAssignmentLoadedEvent>().Select(x => x.Assignment.Title));
+            .Merge(provider.Observe<CurrentAssignmentLoadedEvent>().Select(x => x.Assignment.Title));
 
-        MinPoints = producer.Observe<AssignmentUpdatedEvent>()
+        MinPoints = provider.Observe<AssignmentUpdatedEvent>()
             .Where(x => x.Assignment.Id.Equals(Id))
             .Select(x => x.Assignment.MinPoints)
-            .Merge(producer.Observe<CurrentAssignmentLoadedEvent>().Select(x => x.Assignment.MinPoints));
+            .Merge(provider.Observe<CurrentAssignmentLoadedEvent>().Select(x => x.Assignment.MinPoints));
 
-        MaxPoints = producer.Observe<AssignmentUpdatedEvent>()
+        MaxPoints = provider.Observe<AssignmentUpdatedEvent>()
             .Where(x => x.Assignment.Id.Equals(Id))
             .Select(x => x.Assignment.MaxPoints)
-            .Merge(producer.Observe<CurrentAssignmentLoadedEvent>().Select(x => x.Assignment.MaxPoints));
+            .Merge(provider.Observe<CurrentAssignmentLoadedEvent>().Select(x => x.Assignment.MaxPoints));
 
-        Visible = producer.Observe<AssignmentVisibleChangedEvent>().Select(x => x.IsVisible);
+        Visible = provider.Observe<AssignmentVisibleChangedEvent>().Select(x => x.IsVisible);
 
-        GroupAssignments = producer.Observe<GroupAssignmentsListUpdatedEvent>();
+        GroupAssignments = provider.Observe<GroupAssignmentsListUpdatedEvent>();
     }
 
     public Guid Id { get; private set; }
@@ -83,7 +83,7 @@ public class Assignment : IAssignment, IDisposable
         builder.OnSuccess(assignment =>
         {
             var evt = new AssignmentUpdatedEvent(assignment);
-            _consumer.Send(evt);
+            _publisher.Send(evt);
         });
     }
 
@@ -109,13 +109,13 @@ public class Assignment : IAssignment, IDisposable
         builder.OnSuccess(assignment =>
         {
             var loadedEvent = new CurrentAssignmentLoadedEvent(assignment);
-            _consumer.Send(loadedEvent);
+            _publisher.Send(loadedEvent);
         });
 
         builder.OnSuccess(_ =>
         {
             var visibleEvent = new AssignmentVisibleChangedEvent(true);
-            _consumer.Send(visibleEvent);
+            _publisher.Send(visibleEvent);
         });
     }
 
@@ -138,7 +138,7 @@ public class Assignment : IAssignment, IDisposable
                     .IntersectBy(existingIds, x => x.GroupId)
                     .Select(x => new GroupAssignmentUpdatedEvent(x));
 
-                _consumer.SendRange(toUpdate);
+                _publisher.SendRange(toUpdate);
             }
 
             IEnumerable<IGroupAssignment> toAdd = groupAssignments
@@ -151,7 +151,7 @@ public class Assignment : IAssignment, IDisposable
             _groupAssignments.RemoveAll(x => groupIds.Contains(x.GroupId) is false);
 
             var evt = new GroupAssignmentsListUpdatedEvent(_groupAssignments);
-            _consumer.Send(evt);
+            _publisher.Send(evt);
         });
     }
 }

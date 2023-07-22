@@ -18,7 +18,7 @@ namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.SubjectCourses;
 
 public class SubjectCourseViewModel : ISubjectCourse, IDisposable
 {
-    private readonly IMessageConsumer _consumer;
+    private readonly IMessagePublisher _publisher;
     private readonly ISafeExecutor _safeExecutor;
     private readonly IAssignmentClient _assignmentClient;
     private readonly ISubjectCourseClient _subjectCourseClient;
@@ -28,24 +28,24 @@ public class SubjectCourseViewModel : ISubjectCourse, IDisposable
     private Guid? _subjectCourseId;
 
     public SubjectCourseViewModel(
-        IMessageConsumer consumer,
-        IMessageProducer producer,
+        IMessagePublisher publisher,
+        IMessageProvider provider,
         ISafeExecutor safeExecutor,
         IAssignmentClient assignmentClient,
         ILogger<SubjectCourseViewModel> logger,
         ISubjectCourseClient subjectCourseClient)
     {
-        _consumer = consumer;
+        _publisher = publisher;
         _safeExecutor = safeExecutor;
         _assignmentClient = assignmentClient;
         _logger = logger;
         _subjectCourseClient = subjectCourseClient;
 
-        SubjectCourse = producer
+        SubjectCourse = provider
             .Observe<CurrentSubjectCourseLoadedEvent>()
             .Select(x => x.SubjectCourse);
 
-        Selection = producer
+        Selection = provider
             .Observe<SubjectCourseSelectionUpdatedEvent>()
             .Select(x => x.Selection);
 
@@ -61,7 +61,7 @@ public class SubjectCourseViewModel : ISubjectCourse, IDisposable
     public async ValueTask SelectSubjectCourseAsync(Guid subjectCourseId)
     {
         var selectedEvent = new SubjectCourseSelectedEvent(subjectCourseId);
-        _consumer.Send(selectedEvent);
+        _publisher.Send(selectedEvent);
 
         await using ISafeExecutionBuilder<SubjectCourseDto> builder = _safeExecutor
             .Execute(() => _subjectCourseClient.GetAsync(subjectCourseId));
@@ -71,14 +71,14 @@ public class SubjectCourseViewModel : ISubjectCourse, IDisposable
         builder.OnSuccess(subjectCourse =>
         {
             var loadedEvent = new CurrentSubjectCourseLoadedEvent(subjectCourse);
-            _consumer.Send(loadedEvent);
+            _publisher.Send(loadedEvent);
         });
     }
 
     public void SelectTab(SubjectCourseSelection selection)
     {
         var evt = new SubjectCourseSelectionUpdatedEvent(selection);
-        _consumer.Send(evt);
+        _publisher.Send(evt);
     }
 
     public async ValueTask CreateAssignmentAsync(
@@ -113,7 +113,7 @@ public class SubjectCourseViewModel : ISubjectCourse, IDisposable
         builder.OnSuccess(assignment =>
         {
             var evt = new AssignmentCreatedEvent(assignment);
-            _consumer.Send(evt);
+            _publisher.Send(evt);
         });
     }
 

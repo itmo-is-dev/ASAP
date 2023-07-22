@@ -9,7 +9,7 @@
 @layout MainLayout
 @inject IUserClient UserClient
 @inject ISafeExecutor SafeExecutor
-@inject IMessageConsumer Consumer
+@inject IMessagePublisher Publisher
 
 <CascadingValue Value="_user">
     <Layout Sider Height="Height.Is100">
@@ -64,7 +64,7 @@
     protected override async Task OnParametersSetAsync()
     {
         var evt = new NavigatedToSettingsPageEvent();
-        Consumer.Send(evt);
+        Publisher.Send(evt);
         
         await using ISafeExecutionBuilder<UserDto?> builder = SafeExecutor.Execute(() => UserClient.FindCurrentUserAsync(default));
 

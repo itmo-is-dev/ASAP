@@ -16,8 +16,8 @@ namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.SubjectCourses.Qu
 
 public class SubjectCourseQueueList : ISubjectCourseQueueList, IDisposable
 {
-    private readonly IMessageConsumer _consumer;
-    private readonly IMessageProducer _producer;
+    private readonly IMessagePublisher _publisher;
+    private readonly IMessageProvider _provider;
     private readonly ILogger<SubjectCourseQueueList> _logger;
     private readonly ISafeExecutor _safeExecutor;
     private readonly ISubjectCourseClient _subjectCourseClient;
@@ -29,27 +29,27 @@ public class SubjectCourseQueueList : ISubjectCourseQueueList, IDisposable
     private bool _isSelected;
 
     public SubjectCourseQueueList(
-        IMessageConsumer consumer,
-        IMessageProducer producer,
+        IMessagePublisher publisher,
+        IMessageProvider provider,
         ILogger<SubjectCourseQueueList> logger,
         ISafeExecutor safeExecutor,
         ISubjectCourseClient subjectCourseClient)
     {
-        _consumer = consumer;
-        _producer = producer;
+        _publisher = publisher;
+        _provider = provider;
         _logger = logger;
         _safeExecutor = safeExecutor;
         _subjectCourseClient = subjectCourseClient;
 
         _subscription = new SubscriptionBuilder()
-            .Subscribe(producer.Observe<SubjectCourseSelectedEvent>().Subscribe(OnSubjectCourseSelected))
-            .Subscribe(producer.Observe<SubjectCourseSelectionUpdatedEvent>()
+            .Subscribe(provider.Observe<SubjectCourseSelectedEvent>().Subscribe(OnSubjectCourseSelected))
+            .Subscribe(provider.Observe<SubjectCourseSelectionUpdatedEvent>()
                 .Subscribe(OnSubjectCourseSelectionUpdated))
             .Build();
 
         _rows = new List<ISubjectCourseQueueRow>();
 
-        Rows = producer.Observe<SubjectCourseQueueListUpdatedEvent>();
+        Rows = provider.Observe<SubjectCourseQueueListUpdatedEvent>();
     }
 
     public IObservable<SubjectCourseQueueListUpdatedEvent> Rows { get; }
@@ -103,18 +103,18 @@ public class SubjectCourseQueueList : ISubjectCourseQueueList, IDisposable
 
             IEnumerable<SubjectCourseQueueRow> assignmentsToAdd = assignments
                 .ExceptBy(existingIds, x => (x.SubjectCourseId, x.StudentGroupId))
-                .Select(x => new SubjectCourseQueueRow(x, _consumer, _producer));
+                .Select(x => new SubjectCourseQueueRow(x, _publisher, _provider));
 
             var assignmentIds = assignments
                 .Select(x => (x.SubjectCourseId, x.StudentGroupId))
                 .ToHashSet();
 
-            _consumer.SendRange(assignmentsToUpdate);
+            _publisher.SendRange(assignmentsToUpdate);
             _rows.AddRange(assignmentsToAdd);
             _rows.RemoveAll(x => assignmentIds.Contains((x.SubjectCourseId, x.StudentGroupId)) is false);
 
             var evt = new SubjectCourseQueueListUpdatedEvent(_rows);
-            _consumer.Send(evt);
+            _publisher.Send(evt);
         });
     }
 }

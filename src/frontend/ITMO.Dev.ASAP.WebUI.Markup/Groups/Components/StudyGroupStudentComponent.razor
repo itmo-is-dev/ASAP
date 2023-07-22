@@ -4,7 +4,7 @@
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging
 @using ITMO.Dev.ASAP.WebUI.Markup.Groups.Components
 @inject IStudentClient StudentClient
-@inject IMessageConsumer Consumer
+@inject IMessagePublisher Publisher
 
 @if (Student is not null)
 {
@@ -61,7 +61,7 @@
         Student = Student with { GroupId = null, GroupName = string.Empty };
 
         var evt = new StudentTransferredEvent(Student);
-        Consumer.Send(evt);
+        Publisher.Send(evt);
     }
 
 }
