@@ -128,28 +128,18 @@ public static class ServiceCollectionExtensions
         collection.AddReplayMessageStream<SubjectCourseSelectionUpdatedEvent>();
         collection.AddMessageStream<SubjectCourseUpdatedEvent>();
 
-        AddAssignments();
-        AddGroups();
-        AddQueues();
+        // Adding assignments
+        collection.AddMessageStream<SubjectCourseAssignmentListUpdatedEvent>();
 
-        void AddAssignments()
-        {
-            collection.AddMessageStream<SubjectCourseAssignmentListUpdatedEvent>();
-        }
+        // Adding groups
+        collection.AddMessageStream<AddSubjectCourseGroupsVisibleEvent>();
+        collection.AddMessageStream<SubjectCourseGroupListUpdatedEvent>();
+        collection.AddMessageStream<SubjectCourseGroupUpdatedEvent>();
 
-        void AddGroups()
-        {
-            collection.AddMessageStream<AddSubjectCourseGroupsVisibleEvent>();
-            collection.AddMessageStream<SubjectCourseGroupListUpdatedEvent>();
-            collection.AddMessageStream<SubjectCourseGroupUpdatedEvent>();
-        }
-
-        void AddQueues()
-        {
-            collection.AddMessageStream<SubjectCourseQueueListUpdatedEvent>();
-            collection.AddReplayMessageStream<SubjectCourseQueueLoadedEvent>();
-            collection.AddReplayMessageStream<SubjectCourseQueueSelectedEvent>();
-        }
+        // Adding queues
+        collection.AddMessageStream<SubjectCourseQueueListUpdatedEvent>();
+        collection.AddReplayMessageStream<SubjectCourseQueueLoadedEvent>();
+        collection.AddReplayMessageStream<SubjectCourseQueueSelectedEvent>();
     }
 
     private static void AddSubjectCourseViewModels(this IServiceCollection collection)
