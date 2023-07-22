@@ -1,4 +1,5 @@
 using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Domain.Groups;
 using ITMO.Dev.ASAP.Mapping.Mappings;
@@ -19,7 +20,7 @@ internal class GetStudentGroupByIdHandler : IRequestHandler<Query, Response>
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
         StudentGroup group = await _context.StudentGroups.GetByIdAsync(request.Id, cancellationToken);
-        Dto.Study.StudyGroupDto dto = group.ToDto();
+        StudyGroupDto dto = group.ToDto();
 
         return new Response(dto);
     }
