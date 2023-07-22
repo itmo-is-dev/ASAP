@@ -22,11 +22,17 @@ public partial class SubjectCoursePage : IDisposable
     [Parameter]
     public Guid SubjectCourseId { get; set; }
 
-    private string? GithubOrganizationName => _course?.Associations
-        .OfType<GithubSubjectCourseAssociationDto>()
-        .FirstOrDefault()
-        ?
-        .GithubOrganizationName;
+    private string? GithubOrganizationName
+    {
+        get
+        {
+            GithubSubjectCourseAssociationDto? association = _course?.Associations
+                .OfType<GithubSubjectCourseAssociationDto>()
+                .FirstOrDefault();
+
+            return association?.GithubOrganizationName;
+        }
+    }
 
     public void Dispose()
     {
