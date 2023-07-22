@@ -19,21 +19,24 @@ public class SubjectCourseAssignmentRow : ISubjectCourseAssignmentRow
 
         Id = assignment.Id;
 
-        Title = provider.Observe<AssignmentUpdatedEvent>()
+        Title = provider
+            .Observe<AssignmentUpdatedEvent>()
             .Where(x => x.Assignment.Id.Equals(Id))
             .Select(x => x.Assignment.Title)
             .Prepend(assignment.Title)
             .Replay(1)
             .AutoConnect();
 
-        MinPoints = provider.Observe<AssignmentUpdatedEvent>()
+        MinPoints = provider
+            .Observe<AssignmentUpdatedEvent>()
             .Where(x => x.Assignment.Id.Equals(Id))
             .Select(x => x.Assignment.MinPoints)
             .Prepend(assignment.MinPoints)
             .Replay(1)
             .AutoConnect();
 
-        MaxPoints = provider.Observe<AssignmentUpdatedEvent>()
+        MaxPoints = provider
+            .Observe<AssignmentUpdatedEvent>()
             .Where(x => x.Assignment.Id.Equals(Id))
             .Select(x => x.Assignment.MaxPoints)
             .Prepend(assignment.MaxPoints)

@@ -27,7 +27,7 @@ else
         _subscription = new SubscriptionBuilder()
             .Subscribe(ViewModel.SubjectCourseGroups.Subscribe(x =>
             {
-                _subjectCourseGroups = x.SubjectCourseGroups;
+                _subjectCourseGroups = x;
                 StateHasChanged();
             }))
             .Build();

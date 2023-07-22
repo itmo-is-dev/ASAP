@@ -31,7 +31,7 @@ else
         _subscription = new SubscriptionBuilder()
             .Subscribe(ViewModel.SubjectCourses.Subscribe(courses =>
             {
-                _courses = courses.SubjectCourses;
+                _courses = courses;
                 OnLoaded.InvokeAsync();
                 StateHasChanged();
             }))

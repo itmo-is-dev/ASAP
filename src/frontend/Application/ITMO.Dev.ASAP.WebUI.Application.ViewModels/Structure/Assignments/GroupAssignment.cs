@@ -31,7 +31,8 @@ public class GroupAssignment : IGroupAssignment
         GroupId = groupAssignment.GroupId;
         AssignmentId = groupAssignment.AssignmentId;
 
-        GroupName = provider.Observe<GroupAssignmentUpdatedEvent>()
+        GroupName = provider
+            .Observe<GroupAssignmentUpdatedEvent>()
             .Where(x =>
                 x.GroupAssignment.GroupId.Equals(GroupId) && x.GroupAssignment.AssignmentId.Equals(AssignmentId))
             .Select(x => x.GroupAssignment.GroupName)
@@ -39,7 +40,8 @@ public class GroupAssignment : IGroupAssignment
             .Replay(1)
             .AutoConnect();
 
-        AssignmentTitle = provider.Observe<GroupAssignmentUpdatedEvent>()
+        AssignmentTitle = provider
+            .Observe<GroupAssignmentUpdatedEvent>()
             .Where(x =>
                 x.GroupAssignment.GroupId.Equals(GroupId) && x.GroupAssignment.AssignmentId.Equals(AssignmentId))
             .Select(x => x.GroupAssignment.AssignmentTitle)
@@ -47,7 +49,8 @@ public class GroupAssignment : IGroupAssignment
             .Replay(1)
             .AutoConnect();
 
-        Deadline = provider.Observe<GroupAssignmentUpdatedEvent>()
+        Deadline = provider
+            .Observe<GroupAssignmentUpdatedEvent>()
             .Where(x =>
                 x.GroupAssignment.GroupId.Equals(GroupId) && x.GroupAssignment.AssignmentId.Equals(AssignmentId))
             .Select(x => x.GroupAssignment.Deadline)

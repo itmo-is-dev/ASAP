@@ -11,6 +11,7 @@ using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions;
 using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution;
 using Microsoft.Extensions.Logging;
+using System.Reactive.Linq;
 
 namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.SubjectCourses.Queues;
 
@@ -43,16 +44,19 @@ public class SubjectCourseQueueList : ISubjectCourseQueueList, IDisposable
 
         _subscription = new SubscriptionBuilder()
             .Subscribe(provider.Observe<SubjectCourseSelectedEvent>().Subscribe(OnSubjectCourseSelected))
-            .Subscribe(provider.Observe<SubjectCourseSelectionUpdatedEvent>()
+            .Subscribe(provider
+                .Observe<SubjectCourseSelectionUpdatedEvent>()
                 .Subscribe(OnSubjectCourseSelectionUpdated))
             .Build();
 
         _rows = new List<ISubjectCourseQueueRow>();
 
-        Rows = provider.Observe<SubjectCourseQueueListUpdatedEvent>();
+        Rows = provider
+            .Observe<SubjectCourseQueueListUpdatedEvent>()
+            .Select(x => x.Rows);
     }
 
-    public IObservable<SubjectCourseQueueListUpdatedEvent> Rows { get; }
+    public IObservable<IEnumerable<ISubjectCourseQueueRow>> Rows { get; }
 
     public void Dispose()
     {

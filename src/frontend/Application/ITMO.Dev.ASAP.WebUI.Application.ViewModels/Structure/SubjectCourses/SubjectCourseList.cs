@@ -9,6 +9,7 @@ using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools;
 using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions;
 using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution;
+using System.Reactive.Linq;
 
 namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.SubjectCourses;
 
@@ -44,10 +45,13 @@ public class SubjectCourseList : ISubjectCourseList, IDisposable
             .Subscribe(provider.Observe<NavigatedToSubjectsPageEvent>().Subscribe(_ => ClearSelection()))
             .Subscribe(provider.Observe<NavigatedToUsersPageEvent>().Subscribe(_ => ClearSelection()))
             .Build();
+
+        SubjectCourses = _provider
+            .Observe<SubjectCourseListUpdatedEvent>()
+            .Select(x => x.SubjectCourses);
     }
 
-    public IObservable<SubjectCourseListUpdatedEvent> SubjectCourses
-        => _provider.Observe<SubjectCourseListUpdatedEvent>();
+    public IObservable<IEnumerable<ISubjectCourseRow>> SubjectCourses { get; }
 
     public void Dispose()
     {

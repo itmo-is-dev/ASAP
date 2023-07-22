@@ -80,7 +80,7 @@
             .Subscribe(ViewModel.Visible.Subscribe(OnVisibleChanged))
             .Subscribe(ViewModel.GroupAssignments.Subscribe(x =>
             {
-                _groupAssignments = x.GroupAssignments;
+                _groupAssignments = x;
                 StateHasChanged();
             }))
             .Build();

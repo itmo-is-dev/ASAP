@@ -28,7 +28,7 @@ else
         _subscription = new SubscriptionBuilder()
             .Subscribe(ViewModel.Rows.Subscribe(x =>
             {
-                _rows = x.Rows;
+                _rows = x;
                 StateHasChanged();
             }))
             .Build();

@@ -19,14 +19,16 @@ public class SubjectRowViewModel : ISubjectRowViewModel
         Id = subject.Id;
         _publisher = publisher;
 
-        Title = provider.Observe<SubjectUpdatedEvent>()
+        Title = provider
+            .Observe<SubjectUpdatedEvent>()
             .Where(x => x.Subject.Id.Equals(subject.Id))
             .Select(x => x.Subject.Title)
             .Prepend(subject.Title)
             .Replay(1)
             .AutoConnect();
 
-        IsSelected = provider.Observe<SubjectSelectedEvent>()
+        IsSelected = provider
+            .Observe<SubjectSelectedEvent>()
             .Select(x => x.SubjectId.Equals(subject.Id))
             .Prepend(false);
     }

@@ -22,11 +22,13 @@ public class SubjectCourseQueueRow : ISubjectCourseQueueRow
         SubjectCourseId = subjectCourseGroup.SubjectCourseId;
         StudentGroupId = subjectCourseGroup.StudentGroupId;
 
-        IObservable<string> groupUpdated = provider.Observe<StudentGroupUpdatedEvent>()
+        IObservable<string> groupUpdated = provider
+            .Observe<StudentGroupUpdatedEvent>()
             .Where(x => x.Group.Id.Equals(StudentGroupId))
             .Select(x => x.Group.Name);
 
-        IObservable<string> subjectCourseGroupUpdated = provider.Observe<SubjectCourseGroupUpdatedEvent>()
+        IObservable<string> subjectCourseGroupUpdated = provider
+            .Observe<SubjectCourseGroupUpdatedEvent>()
             .Where(x => x.Group.SubjectCourseId.Equals(SubjectCourseId))
             .Where(x => x.Group.StudentGroupId.Equals(StudentGroupId))
             .Select(x => x.Group.StudentGroupName);

@@ -27,7 +27,7 @@ else
         _subscription = new SubscriptionBuilder()
             .Subscribe(ViewModel.Assignments.Subscribe(x =>
             {
-                _assignments = x.Assignments;
+                _assignments = x;
                 StateHasChanged();
             }))
             .Build();

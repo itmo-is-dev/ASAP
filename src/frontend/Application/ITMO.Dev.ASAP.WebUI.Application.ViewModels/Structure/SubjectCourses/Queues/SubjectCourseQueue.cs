@@ -42,7 +42,9 @@ public class SubjectCourseQueue : ISubjectCourseQueue, IAsyncDisposable
             .Subscribe(provider.Observe<SubjectCourseQueueSelectedEvent>().Subscribe(OnQueueSelected))
             .Build();
 
-        Queue = provider.Observe<SubjectCourseQueueLoadedEvent>().Select(x => x.Queue);
+        Queue = provider
+            .Observe<SubjectCourseQueueLoadedEvent>()
+            .Select(x => x.Queue);
     }
 
     public IObservable<SubmissionsQueueDto> Queue { get; }

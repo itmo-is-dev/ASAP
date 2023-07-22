@@ -41,24 +41,37 @@ public class Assignment : IAssignment, IDisposable
 
         _groupAssignments = new List<IGroupAssignment>();
 
-        Title = provider.Observe<AssignmentUpdatedEvent>()
+        Title = provider
+            .Observe<AssignmentUpdatedEvent>()
             .Where(x => x.Assignment.Id.Equals(Id))
             .Select(x => x.Assignment.Title)
-            .Merge(provider.Observe<CurrentAssignmentLoadedEvent>().Select(x => x.Assignment.Title));
+            .Merge(provider
+                .Observe<CurrentAssignmentLoadedEvent>()
+                .Select(x => x.Assignment.Title));
 
-        MinPoints = provider.Observe<AssignmentUpdatedEvent>()
+        MinPoints = provider
+            .Observe<AssignmentUpdatedEvent>()
             .Where(x => x.Assignment.Id.Equals(Id))
             .Select(x => x.Assignment.MinPoints)
-            .Merge(provider.Observe<CurrentAssignmentLoadedEvent>().Select(x => x.Assignment.MinPoints));
+            .Merge(provider
+                .Observe<CurrentAssignmentLoadedEvent>()
+                .Select(x => x.Assignment.MinPoints));
 
-        MaxPoints = provider.Observe<AssignmentUpdatedEvent>()
+        MaxPoints = provider
+            .Observe<AssignmentUpdatedEvent>()
             .Where(x => x.Assignment.Id.Equals(Id))
             .Select(x => x.Assignment.MaxPoints)
-            .Merge(provider.Observe<CurrentAssignmentLoadedEvent>().Select(x => x.Assignment.MaxPoints));
+            .Merge(provider
+                .Observe<CurrentAssignmentLoadedEvent>()
+                .Select(x => x.Assignment.MaxPoints));
 
-        Visible = provider.Observe<AssignmentVisibleChangedEvent>().Select(x => x.IsVisible);
+        Visible = provider
+            .Observe<AssignmentVisibleChangedEvent>()
+            .Select(x => x.IsVisible);
 
-        GroupAssignments = provider.Observe<GroupAssignmentsListUpdatedEvent>();
+        GroupAssignments = provider
+            .Observe<GroupAssignmentsListUpdatedEvent>()
+            .Select(x => x.GroupAssignments);
     }
 
     public Guid Id { get; private set; }
@@ -71,7 +84,7 @@ public class Assignment : IAssignment, IDisposable
 
     public IObservable<bool> Visible { get; }
 
-    public IObservable<GroupAssignmentsListUpdatedEvent> GroupAssignments { get; }
+    public IObservable<IEnumerable<IGroupAssignment>> GroupAssignments { get; }
 
     public async ValueTask Update(double minPoints, double maxPoints, CancellationToken cancellationToken)
     {

@@ -1,5 +1,3 @@
-using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Assignments;
-
 namespace ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Assignments;
 
 public interface IAssignment
@@ -14,7 +12,7 @@ public interface IAssignment
 
     IObservable<bool> Visible { get; }
 
-    IObservable<GroupAssignmentsListUpdatedEvent> GroupAssignments { get; }
+    IObservable<IEnumerable<IGroupAssignment>> GroupAssignments { get; }
 
     ValueTask Update(double minPoints, double maxPoints, CancellationToken cancellationToken);
 }

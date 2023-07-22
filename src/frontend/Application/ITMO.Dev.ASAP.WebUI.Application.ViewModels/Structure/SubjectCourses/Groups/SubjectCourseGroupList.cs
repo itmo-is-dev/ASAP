@@ -54,14 +54,16 @@ public class SubjectCourseGroupList : ISubjectCourseGroupList, IDisposable
 
         _rows = new List<ISubjectCourseGroupRow>();
 
-        SubjectCourseGroups = provider.Observe<SubjectCourseGroupListUpdatedEvent>();
+        SubjectCourseGroups = provider
+            .Observe<SubjectCourseGroupListUpdatedEvent>()
+            .Select(x => x.SubjectCourseGroups);
 
         AddSubjectCourseGroupsVisible = provider
             .Observe<AddSubjectCourseGroupsVisibleEvent>()
             .Select(x => x.IsVisible);
     }
 
-    public IObservable<SubjectCourseGroupListUpdatedEvent> SubjectCourseGroups { get; }
+    public IObservable<IEnumerable<ISubjectCourseGroupRow>> SubjectCourseGroups { get; }
 
     public IObservable<bool> AddSubjectCourseGroupsVisible { get; }
 

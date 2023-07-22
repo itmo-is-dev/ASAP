@@ -40,14 +40,18 @@ public class StudentGroup : IStudentGroup, IDisposable
             .Subscribe(provider.Observe<StudentTransferredEvent>().Subscribe(OnStudentTransferred))
             .Build();
 
-        Name = provider.Observe<StudentGroupUpdatedEvent>()
+        Name = provider
+            .Observe<StudentGroupUpdatedEvent>()
             .Where(x => x.Group.Id.Equals(Id))
             .Select(x => x.Group.Name);
 
-        Students = provider.Observe<StudentGroupStudentsUpdatedEvent>()
+        Students = provider
+            .Observe<StudentGroupStudentsUpdatedEvent>()
             .Select(x => x.Students);
 
-        IsVisible = provider.Observe<StudentGroupSelectedEvent>().Select(_ => true);
+        IsVisible = provider
+            .Observe<StudentGroupSelectedEvent>()
+            .Select(_ => true);
     }
 
     public Guid Id { get; private set; }

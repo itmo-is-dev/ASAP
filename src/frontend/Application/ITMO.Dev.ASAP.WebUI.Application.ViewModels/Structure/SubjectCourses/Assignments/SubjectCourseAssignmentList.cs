@@ -11,6 +11,7 @@ using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions;
 using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution;
 using Microsoft.Extensions.Logging;
+using System.Reactive.Linq;
 
 namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.SubjectCourses.Assignments;
 
@@ -49,10 +50,12 @@ public class SubjectCourseAssignmentList : ISubjectCourseAssignmentList, IDispos
             .Subscribe(provider.Observe<AssignmentCreatedEvent>().Subscribe(OnAssignmentCreated))
             .Build();
 
-        Assignments = provider.Observe<SubjectCourseAssignmentListUpdatedEvent>();
+        Assignments = provider
+            .Observe<SubjectCourseAssignmentListUpdatedEvent>()
+            .Select(x => x.Assignments);
     }
 
-    public IObservable<SubjectCourseAssignmentListUpdatedEvent> Assignments { get; }
+    public IObservable<IEnumerable<ISubjectCourseAssignmentRow>> Assignments { get; }
 
     public void Dispose()
     {

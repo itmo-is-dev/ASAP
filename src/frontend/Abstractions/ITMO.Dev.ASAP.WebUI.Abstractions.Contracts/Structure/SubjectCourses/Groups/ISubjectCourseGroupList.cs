@@ -1,10 +1,8 @@
-using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.SubjectCourses.Groups;
-
 namespace ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses.Groups;
 
 public interface ISubjectCourseGroupList
 {
-    IObservable<SubjectCourseGroupListUpdatedEvent> SubjectCourseGroups { get; }
+    IObservable<IEnumerable<ISubjectCourseGroupRow>> SubjectCourseGroups { get; }
 
     IObservable<bool> AddSubjectCourseGroupsVisible { get; }
 
