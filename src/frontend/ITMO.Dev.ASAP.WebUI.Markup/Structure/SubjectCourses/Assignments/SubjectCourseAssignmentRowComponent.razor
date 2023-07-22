@@ -33,22 +33,21 @@
     {
         if (ViewModel is null)
             return;
-        
+
         Dispose();
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.Title.Subscribe(x => _title = x))
-            .Subscribe(ViewModel.MinPoints.Subscribe(x =>
+        _subscription = Disposable.From(
+            ViewModel.Title.Subscribe(x => _title = x),
+            ViewModel.MinPoints.Subscribe(x =>
             {
                 _minPoints = x;
                 StateHasChanged();
-            }))
-            .Subscribe(ViewModel.MaxPoints.Subscribe(x =>
+            }),
+            ViewModel.MaxPoints.Subscribe(x =>
             {
                 _maxPoints = x;
                 StateHasChanged();
-            }))
-            .Build();
+            }));
     }
 
     public void Dispose()

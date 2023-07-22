@@ -73,17 +73,16 @@
 
     protected override void OnInitialized()
     {
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.Title.Subscribe(x => _title = x))
-            .Subscribe(ViewModel.MinPoints.Subscribe(x => _minPointsField?.ValueChanged(x)))
-            .Subscribe(ViewModel.MaxPoints.Subscribe(x => _maxPointsField?.ValueChanged(x)))
-            .Subscribe(ViewModel.Visible.Subscribe(OnVisibleChanged))
-            .Subscribe(ViewModel.GroupAssignments.Subscribe(x =>
+        _subscription = Disposable.From(
+            ViewModel.Title.Subscribe(x => _title = x),
+            ViewModel.MinPoints.Subscribe(x => _minPointsField?.ValueChanged(x)),
+            ViewModel.MaxPoints.Subscribe(x => _maxPointsField?.ValueChanged(x)),
+            ViewModel.Visible.Subscribe(OnVisibleChanged),
+            ViewModel.GroupAssignments.Subscribe(x =>
             {
                 _groupAssignments = x;
                 StateHasChanged();
-            }))
-            .Build();
+            }));
     }
 
     private async Task OnUpdateClicked()

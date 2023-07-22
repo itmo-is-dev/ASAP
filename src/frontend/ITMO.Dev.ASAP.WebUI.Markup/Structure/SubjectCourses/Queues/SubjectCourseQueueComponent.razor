@@ -88,16 +88,14 @@
     protected override void OnParametersSet()
     {
         Dispose();
-        
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.Queue.Subscribe(queue =>
-            {
-                _queue = queue;
-                _modalVisible = true;
-                
-                StateHasChanged();
-            }))
-            .Build();
+
+        _subscription = ViewModel.Queue.Subscribe(queue =>
+        {
+            _queue = queue;
+            _modalVisible = true;
+
+            StateHasChanged();
+        });
     }
 
     private string SelectRowColor(SubmissionDto submission)

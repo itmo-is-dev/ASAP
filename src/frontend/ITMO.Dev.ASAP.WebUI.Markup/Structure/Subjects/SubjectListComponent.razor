@@ -28,14 +28,12 @@ else
 
     protected override Task OnInitializedAsync()
     {
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.Subjects.Subscribe(x =>
-            {
-                _subjects = x.Subjects;
-                OnLoaded.InvokeAsync();
-                StateHasChanged();
-            }))
-            .Build();
+        _subscription = ViewModel.Subjects.Subscribe(x =>
+        {
+            _subjects = x.Subjects;
+            OnLoaded.InvokeAsync();
+            StateHasChanged();
+        });
 
         return ViewModel.LoadAsync(default).AsTask();
     }

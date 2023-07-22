@@ -24,13 +24,11 @@ else
 
     protected override void OnParametersSet()
     {
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.SubjectCourseGroups.Subscribe(x =>
-            {
-                _subjectCourseGroups = x;
-                StateHasChanged();
-            }))
-            .Build();
+        _subscription = ViewModel.SubjectCourseGroups.Subscribe(x =>
+        {
+            _subjectCourseGroups = x;
+            StateHasChanged();
+        });
     }
 
     public void Dispose()

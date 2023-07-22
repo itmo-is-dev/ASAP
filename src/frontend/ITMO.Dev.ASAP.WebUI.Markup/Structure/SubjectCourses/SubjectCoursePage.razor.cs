@@ -41,14 +41,13 @@ public partial class SubjectCoursePage : IDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.SubjectCourse.Subscribe(x =>
+        _subscription = Disposable.From(
+            ViewModel.SubjectCourse.Subscribe(x =>
             {
                 _course = x;
                 StateHasChanged();
-            }))
-            .Subscribe(ViewModel.Selection.Subscribe(OnSelectionUpdated))
-            .Build();
+            }),
+            ViewModel.Selection.Subscribe(OnSelectionUpdated));
 
         await ViewModel.SelectSubjectCourseAsync(SubjectCourseId);
     }

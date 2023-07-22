@@ -121,15 +121,14 @@
     {
         Dispose();
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.Name.Subscribe(x => _name = x))
-            .Subscribe(ViewModel.Students.Subscribe(OnStudentsUpdated))
-            .Subscribe(ViewModel.IsVisible.Subscribe(x =>
+        _subscription = Disposable.From(
+            ViewModel.Name.Subscribe(x => _name = x),
+            ViewModel.Students.Subscribe(OnStudentsUpdated),
+            ViewModel.IsVisible.Subscribe(x =>
             {
                 _modalVisible = x;
                 StateHasChanged();
-            }))
-            .Build();
+            }));
     }
 
     private Task ShowAddStudent()

@@ -8,7 +8,7 @@
     <ListGroup Flush>
         @foreach (var assignment in _assignments)
         {
-            <SubjectCourseAssignmentRowComponent ViewModel="assignment"/>   
+            <SubjectCourseAssignmentRowComponent ViewModel="assignment"/>
         }
     </ListGroup>
 }
@@ -24,13 +24,11 @@ else
 
     protected override void OnParametersSet()
     {
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.Assignments.Subscribe(x =>
-            {
-                _assignments = x;
-                StateHasChanged();
-            }))
-            .Build();
+        _subscription = ViewModel.Assignments.Subscribe(x =>
+        {
+            _assignments = x;
+            StateHasChanged();
+        });
     }
 
     public void Dispose()

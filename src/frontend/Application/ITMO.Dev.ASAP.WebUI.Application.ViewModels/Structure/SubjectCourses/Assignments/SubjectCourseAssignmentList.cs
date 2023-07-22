@@ -44,11 +44,10 @@ public class SubjectCourseAssignmentList : ISubjectCourseAssignmentList, IDispos
 
         _rows = new List<ISubjectCourseAssignmentRow>();
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(provider.Observe<SubjectCourseSelectedEvent>().Subscribe(OnSubjectCourseSelected))
-            .Subscribe(provider.Observe<SubjectCourseSelectionUpdatedEvent>().Subscribe(OnSelectionUpdated))
-            .Subscribe(provider.Observe<AssignmentCreatedEvent>().Subscribe(OnAssignmentCreated))
-            .Build();
+        _subscription = Disposable.From(
+            provider.Observe<SubjectCourseSelectedEvent>().Subscribe(OnSubjectCourseSelected),
+            provider.Observe<SubjectCourseSelectionUpdatedEvent>().Subscribe(OnSelectionUpdated),
+            provider.Observe<AssignmentCreatedEvent>().Subscribe(OnAssignmentCreated));
 
         Assignments = provider
             .Observe<SubjectCourseAssignmentListUpdatedEvent>()

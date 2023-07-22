@@ -35,10 +35,9 @@ public class StudentGroup : IStudentGroup, IDisposable
 
         _students = new List<StudentDto>();
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(provider.Observe<StudentGroupSelectedEvent>().Subscribe(OnStudentGroupSelected))
-            .Subscribe(provider.Observe<StudentTransferredEvent>().Subscribe(OnStudentTransferred))
-            .Build();
+        _subscription = Disposable.From(
+            provider.Observe<StudentGroupSelectedEvent>().Subscribe(OnStudentGroupSelected),
+            provider.Observe<StudentTransferredEvent>().Subscribe(OnStudentTransferred));
 
         Name = provider
             .Observe<StudentGroupUpdatedEvent>()

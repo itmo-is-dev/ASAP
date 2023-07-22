@@ -8,7 +8,6 @@ using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools;
 using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions;
 using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 namespace ITMO.Dev.ASAP.WebUI.Application.ViewModels.Structure.SubjectCourses.Queues;
@@ -38,9 +37,7 @@ public class SubjectCourseQueue : ISubjectCourseQueue, IAsyncDisposable
 
         _queueUpdateSubscription = Disposable.Empty;
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(provider.Observe<SubjectCourseQueueSelectedEvent>().Subscribe(OnQueueSelected))
-            .Build();
+        _subscription = provider.Observe<SubjectCourseQueueSelectedEvent>().Subscribe(OnQueueSelected);
 
         Queue = provider
             .Observe<SubjectCourseQueueLoadedEvent>()

@@ -35,16 +35,15 @@ public class SubjectCourseList : ISubjectCourseList, IDisposable
 
         _viewModels = new List<ISubjectCourseRow>();
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(provider.Observe<SubjectCourseCreatedEvent>().Subscribe(OnSubjectCourseCreated))
-            .Subscribe(provider.Observe<SubjectSelectedEvent>().Subscribe(OnSubjectSelected))
-            .Subscribe(provider.Observe<NavigatedToGlobalPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(provider.Observe<NavigatedToGroupsPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(provider.Observe<NavigatedToSettingsPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(provider.Observe<NavigatedToStudentsPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(provider.Observe<NavigatedToSubjectsPageEvent>().Subscribe(_ => ClearSelection()))
-            .Subscribe(provider.Observe<NavigatedToUsersPageEvent>().Subscribe(_ => ClearSelection()))
-            .Build();
+        _subscription = Disposable.From(
+            provider.Observe<SubjectCourseCreatedEvent>().Subscribe(OnSubjectCourseCreated),
+            provider.Observe<SubjectSelectedEvent>().Subscribe(OnSubjectSelected),
+            provider.Observe<NavigatedToGlobalPageEvent>().Subscribe(_ => ClearSelection()),
+            provider.Observe<NavigatedToGroupsPageEvent>().Subscribe(_ => ClearSelection()),
+            provider.Observe<NavigatedToSettingsPageEvent>().Subscribe(_ => ClearSelection()),
+            provider.Observe<NavigatedToStudentsPageEvent>().Subscribe(_ => ClearSelection()),
+            provider.Observe<NavigatedToSubjectsPageEvent>().Subscribe(_ => ClearSelection()),
+            provider.Observe<NavigatedToUsersPageEvent>().Subscribe(_ => ClearSelection()));
 
         SubjectCourses = _provider
             .Observe<SubjectCourseListUpdatedEvent>()

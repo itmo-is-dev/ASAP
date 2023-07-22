@@ -43,12 +43,10 @@
         if (ViewModel is null)
             return;
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.Title.Subscribe(x => _title = x))
-            .Subscribe(ViewModel.IsSelected.Subscribe(x => _isSelected = x))
-            .Subscribe(Provider.Observe<SubjectCourseSelectionUpdatedEvent>()
-                .Subscribe(x => _selection = x.Selection))
-            .Build();
+        _subscription = Disposable.From(
+            ViewModel.Title.Subscribe(x => _title = x),
+            ViewModel.IsSelected.Subscribe(x => _isSelected = x),
+            Provider.Observe<SubjectCourseSelectionUpdatedEvent>().Subscribe(x => _selection = x.Selection));
     }
 
     private Task OnSelectedClicked()
@@ -73,7 +71,7 @@
         }
 
         NavigationManager.NavigateTo(uriBuilder.ToString());
-        
+
         return Task.CompletedTask;
     }
 

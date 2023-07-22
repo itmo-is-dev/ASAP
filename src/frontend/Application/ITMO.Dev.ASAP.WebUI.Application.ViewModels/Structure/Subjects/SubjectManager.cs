@@ -4,7 +4,6 @@ using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Subjects;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Subjects;
-using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools;
 using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions;
 using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution;
@@ -31,9 +30,7 @@ public class SubjectManager : ISubjectManager, IDisposable
         _publisher = publisher;
         _provider = provider;
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(provider.Observe<SubjectSelectedEvent>().Subscribe(OnSubjectSelected))
-            .Build();
+        _subscription = provider.Observe<SubjectSelectedEvent>().Subscribe(OnSubjectSelected);
     }
 
     public IObservable<SubjectCreatedEvent> SubjectCreated => _provider.Observe<SubjectCreatedEvent>();

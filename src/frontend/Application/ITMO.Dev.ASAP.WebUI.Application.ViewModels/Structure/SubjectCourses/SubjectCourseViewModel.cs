@@ -7,7 +7,6 @@ using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.SubjectCourses;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Models;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses;
-using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools;
 using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions;
 using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution;
@@ -49,9 +48,7 @@ public class SubjectCourseViewModel : ISubjectCourse, IDisposable
             .Observe<SubjectCourseSelectionUpdatedEvent>()
             .Select(x => x.Selection);
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(SubjectCourse.Subscribe(x => _subjectCourseId = x.Id))
-            .Build();
+        _subscription = SubjectCourse.Subscribe(x => _subjectCourseId = x.Id);
     }
 
     public IObservable<SubjectCourseDto> SubjectCourse { get; }

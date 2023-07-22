@@ -66,14 +66,13 @@
         if (ViewModel is null)
             return;
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.GroupName.Subscribe(x => _groupName = x))
-            .Subscribe(ViewModel.Deadline.Subscribe(x =>
+        _subscription = Disposable.From(
+            ViewModel.GroupName.Subscribe(x => _groupName = x),
+            ViewModel.Deadline.Subscribe(x =>
             {
                 _deadline = x;
                 _deadlineBinding = x;
-            }))
-            .Build();
+            }));
     }
 
     protected override void OnInitialized()
@@ -113,4 +112,5 @@
     {
         _deadlineBinding = _deadline ?? DateTime.UnixEpoch;
     }
+
 }

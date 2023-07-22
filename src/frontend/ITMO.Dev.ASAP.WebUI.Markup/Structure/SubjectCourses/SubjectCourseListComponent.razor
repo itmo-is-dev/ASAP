@@ -28,14 +28,12 @@ else
 
     protected override void OnInitialized()
     {
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.SubjectCourses.Subscribe(courses =>
-            {
-                _courses = courses;
-                OnLoaded.InvokeAsync();
-                StateHasChanged();
-            }))
-            .Build();
+        _subscription = ViewModel.SubjectCourses.Subscribe(courses =>
+        {
+            _courses = courses;
+            OnLoaded.InvokeAsync();
+            StateHasChanged();
+        });
     }
 
     public void Dispose()

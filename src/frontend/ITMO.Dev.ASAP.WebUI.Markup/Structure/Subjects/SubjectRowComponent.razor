@@ -37,14 +37,13 @@
         if (ViewModel is null)
             return;
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.Title.Subscribe(x => _title = x))
-            .Subscribe(ViewModel.IsSelected.Subscribe(x =>
+        _subscription = Disposable.From(
+            ViewModel.Title.Subscribe(x => _title = x),
+            ViewModel.IsSelected.Subscribe(x =>
             {
                 _isSelected = x;
                 StateHasChanged();
-            }))
-            .Build();
+            }));
     }
 
     private async Task OnSelectedClicked()

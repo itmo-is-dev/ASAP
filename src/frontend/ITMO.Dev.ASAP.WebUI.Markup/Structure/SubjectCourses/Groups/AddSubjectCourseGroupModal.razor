@@ -79,14 +79,13 @@
 
     protected override void OnParametersSet()
     {
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.SubjectCourseGroups.Subscribe(x =>
+        _subscription = Disposable.From(
+            ViewModel.SubjectCourseGroups.Subscribe(x =>
             {
                 _existingGroups = x;
                 StateHasChanged();
-            }))
-            .Subscribe(ViewModel.AddSubjectCourseGroupsVisible.Subscribe(OnVisibleChanged))
-            .Build();
+            }),
+            ViewModel.AddSubjectCourseGroupsVisible.Subscribe(OnVisibleChanged));
     }
 
     private async Task AddAsync(CancellationToken cancellationToken)

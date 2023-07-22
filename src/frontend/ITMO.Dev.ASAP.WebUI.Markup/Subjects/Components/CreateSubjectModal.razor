@@ -58,9 +58,7 @@
 
     protected override void OnParametersSet()
     {
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.SubjectCreated.Subscribe(_ => _modal?.Hide()))
-            .Build();
+        _subscription = ViewModel.SubjectCreated.Subscribe(_ => _modal?.Hide());
     }
 
     private async Task CreateSubject()

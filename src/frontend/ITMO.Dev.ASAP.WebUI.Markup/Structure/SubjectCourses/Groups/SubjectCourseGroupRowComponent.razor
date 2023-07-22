@@ -21,12 +21,10 @@
     {
         if (ViewModel is null)
             return;
-        
+
         Dispose();
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.Title.Subscribe(x => _name = x))
-            .Build();
+        _subscription = ViewModel.Title.Subscribe(x => _name = x);
     }
 
     public void Dispose()

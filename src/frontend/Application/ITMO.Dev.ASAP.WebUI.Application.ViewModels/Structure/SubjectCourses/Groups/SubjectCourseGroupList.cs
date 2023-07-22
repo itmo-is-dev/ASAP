@@ -45,12 +45,10 @@ public class SubjectCourseGroupList : ISubjectCourseGroupList, IDisposable
         _subjectCourseClient = subjectCourseClient;
         _subjectCourseGroupClient = subjectCourseGroupClient;
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(provider.Observe<SubjectCourseSelectedEvent>().Subscribe(OnSubjectCourseSelected))
-            .Subscribe(provider.Observe<SubjectCourseSelectionUpdatedEvent>().Subscribe(OnSelectionChanged))
-            .Subscribe(provider.Observe<AddSubjectCourseGroupsVisibleEvent>()
-                .Subscribe(OnAddSubjectCourseGroupsVisibleEvent))
-            .Build();
+        _subscription = Disposable.From(
+            provider.Observe<SubjectCourseSelectedEvent>().Subscribe(OnSubjectCourseSelected),
+            provider.Observe<SubjectCourseSelectionUpdatedEvent>().Subscribe(OnSelectionChanged),
+            provider.Observe<AddSubjectCourseGroupsVisibleEvent>().Subscribe(OnAddSubjectCourseGroupsVisibleEvent));
 
         _rows = new List<ISubjectCourseGroupRow>();
 
@@ -81,7 +79,8 @@ public class SubjectCourseGroupList : ISubjectCourseGroupList, IDisposable
             return;
         }
 
-        await using ISafeExecutionBuilder<IReadOnlyCollection<SubjectCourseGroupDto>> builder = _safeExecutor.Execute(() =>
+        await using ISafeExecutionBuilder<IReadOnlyCollection<SubjectCourseGroupDto>> builder = _safeExecutor.Execute(()
+            =>
         {
             var request = new BulkCreateSubjectCourseGroupsRequest(_subjectCourseId.Value, studentGroupIds);
             return _subjectCourseGroupClient.BulkCreateAsync(request, cancellationToken);

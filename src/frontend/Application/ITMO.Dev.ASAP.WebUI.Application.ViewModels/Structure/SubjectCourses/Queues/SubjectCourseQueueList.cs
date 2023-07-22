@@ -42,12 +42,13 @@ public class SubjectCourseQueueList : ISubjectCourseQueueList, IDisposable
         _safeExecutor = safeExecutor;
         _subjectCourseClient = subjectCourseClient;
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(provider.Observe<SubjectCourseSelectedEvent>().Subscribe(OnSubjectCourseSelected))
-            .Subscribe(provider
+        _subscription = Disposable.From(
+            provider
+                .Observe<SubjectCourseSelectedEvent>()
+                .Subscribe(OnSubjectCourseSelected),
+            provider
                 .Observe<SubjectCourseSelectionUpdatedEvent>()
-                .Subscribe(OnSubjectCourseSelectionUpdated))
-            .Build();
+                .Subscribe(OnSubjectCourseSelectionUpdated));
 
         _rows = new List<ISubjectCourseQueueRow>();
 

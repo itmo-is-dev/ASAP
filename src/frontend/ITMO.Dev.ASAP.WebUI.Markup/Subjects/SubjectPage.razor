@@ -2,9 +2,7 @@
 @using ITMO.Dev.ASAP.Application.Dto.Study
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Subjects
-@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
-@using ITMO.Dev.ASAP.WebUI.Abstractions.StudyNavigation
 @using ITMO.Dev.ASAP.WebUI.Markup.SubjectCourse.Components
 @using ITMO.Dev.ASAP.WebUI.Markup.Structure.SubjectCourses
 @layout SubjectListLayout
@@ -59,9 +57,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(SubjectManager.Subject.Subscribe(x => _value = x))
-            .Build();
+        _subscription = SubjectManager.Subject.Subscribe(x => _value = x);
 
         await SubjectManager.SelectAsync(SubjectId);
     }

@@ -29,12 +29,10 @@
     {
         if (ViewModel is null)
             return;
-        
+
         Dispose();
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(ViewModel.GroupName.Subscribe(x => _groupName = x))
-            .Build();
+        _subscription = ViewModel.GroupName.Subscribe(x => _groupName = x);
     }
 
     private void Clicked()

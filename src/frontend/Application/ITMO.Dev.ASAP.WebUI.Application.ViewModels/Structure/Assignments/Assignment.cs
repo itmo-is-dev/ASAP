@@ -4,7 +4,6 @@ using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Assignments;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.GroupAssignments;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Assignments;
-using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools;
 using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling;
 using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions;
 using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution;
@@ -35,9 +34,7 @@ public class Assignment : IAssignment, IDisposable
         _assignmentClient = assignmentClient;
         _groupAssignmentFactory = groupAssignmentFactory;
 
-        _subscription = new SubscriptionBuilder()
-            .Subscribe(provider.Observe<AssigmentSelectedEvent>().Subscribe(OnAssignmentSelected))
-            .Build();
+        _subscription = provider.Observe<AssigmentSelectedEvent>().Subscribe(OnAssignmentSelected);
 
         _groupAssignments = new List<IGroupAssignment>();
 
