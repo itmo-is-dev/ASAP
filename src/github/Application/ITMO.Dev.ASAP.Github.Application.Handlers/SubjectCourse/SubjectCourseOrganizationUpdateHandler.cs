@@ -38,10 +38,11 @@ internal class SubjectCourseOrganizationUpdateHandler :
 
     public async Task Handle(UpdateSubjectCourseOrganizations.Command request, CancellationToken cancellationToken)
     {
-        IAsyncEnumerable<GithubSubjectCourse> subjectCourses = _context.SubjectCourses
-            .QueryAsync(GithubSubjectCourseQuery.Build(_ => _), cancellationToken);
+        GithubSubjectCourse[] subjectCourses = await _context.SubjectCourses
+            .QueryAsync(GithubSubjectCourseQuery.Build(_ => _), cancellationToken)
+            .ToArrayAsync(cancellationToken);
 
-        await foreach (GithubSubjectCourse subjectCourse in subjectCourses.WithCancellation(cancellationToken))
+        foreach (GithubSubjectCourse subjectCourse in subjectCourses)
         {
             await UpdateOrganizationSafeAsync(subjectCourse, cancellationToken);
         }

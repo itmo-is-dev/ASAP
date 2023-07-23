@@ -1,20 +1,18 @@
-using ITMO.Dev.ASAP.Domain.Study;
 using RichEntity.Annotations;
 
 namespace ITMO.Dev.ASAP.Domain.Users;
 
 public partial class Mentor : IEntity
 {
-    public Mentor(User user, SubjectCourse course)
-        : this(userId: user.Id, courseId: course.Id)
+    public Mentor(Guid userId, Guid subjectCourseId)
     {
-        User = user;
-        Course = course;
+        UserId = userId;
+        SubjectCourseId = subjectCourseId;
     }
 
     [KeyProperty]
-    public virtual User User { get; protected init; }
+    public Guid UserId { get; protected init; }
 
     [KeyProperty]
-    public virtual SubjectCourse Course { get; protected init; }
+    public Guid SubjectCourseId { get; protected init; }
 }

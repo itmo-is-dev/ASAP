@@ -1,8 +1,8 @@
 using ITMO.Dev.ASAP.Application.Contracts.Study.StudyGroups.Notifications;
 using ITMO.Dev.ASAP.Application.DataAccess;
-using ITMO.Dev.ASAP.Application.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Application.Dto.Study;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Application.Specifications;
+using ITMO.Dev.ASAP.Domain.Groups;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.StudyGroups.Commands.UpdateStudyGroup;
@@ -11,10 +11,10 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Study.StudyGroups;
 
 internal class UpdateStudyGroupHandler : IRequestHandler<Command, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly IPublisher _publisher;
 
-    public UpdateStudyGroupHandler(IDatabaseContext context, IPublisher publisher)
+    public UpdateStudyGroupHandler(IPersistenceContext context, IPublisher publisher)
     {
         _context = context;
         _publisher = publisher;

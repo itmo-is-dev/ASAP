@@ -6,23 +6,22 @@ using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
 using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Application.Extensions;
+using ITMO.Dev.ASAP.Domain.Students;
 using ITMO.Dev.ASAP.Domain.Study;
 using ITMO.Dev.ASAP.Github.Application.Dto.Users;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using ITMO.Dev.ASAP.Mapping.Mappings;
-using Microsoft.EntityFrameworkCore;
-using Student = ITMO.Dev.ASAP.Domain.Users.Student;
 
 namespace ITMO.Dev.ASAP.Application.SubjectCourses;
 
 public class SubjectCourseService : ISubjectCourseService
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly IUserFullNameFormatter _userFullNameFormatter;
     private readonly IGithubUserService _githubUserService;
 
     public SubjectCourseService(
-        IDatabaseContext context,
+        IPersistenceContext context,
         IUserFullNameFormatter userFullNameFormatter,
         IGithubUserService githubUserService)
     {
@@ -35,37 +34,29 @@ public class SubjectCourseService : ISubjectCourseService
         Guid subjectCourseId,
         CancellationToken cancellationToken)
     {
-        List<Assignment> assignments = await _context.Assignments
-            .Include(x => x.GroupAssignments)
-            .ThenInclude(x => x.Group)
-            .ThenInclude(x => x.Students)
-            .ThenInclude(x => x.User)
-            .ThenInclude(x => x.Associations)
-            .Include(x => x.GroupAssignments)
-            .ThenInclude(x => x.Submissions)
-            .AsSplitQuery()
-            .Where(x => x.SubjectCourse.Id.Equals(subjectCourseId))
-            .OrderBy(x => x.Order)
-            .ToListAsync(cancellationToken);
+        StudentAssignment[] studentAssignments = await _context.StudentAssignments
+            .GetBySubjectCourseIdAsync(subjectCourseId, cancellationToken)
+            .OrderBy(x => x.Assignment.Order)
+            .ToArrayAsync(cancellationToken);
 
-        IEnumerable<StudentAssignment> studentAssignmentPoints = assignments
-            .SelectMany(
-                assignment => assignment.GroupAssignments.SelectMany(x => x.Group.Students),
-                (assignment, student) => new StudentAssignment(student, assignment));
-
-        List<StudentPointsDto> studentPoints = await studentAssignmentPoints
+        StudentPointsDto[] studentPoints = await studentAssignments
             .GroupBy(x => x.Student)
             .ToAsyncEnumerable()
-            .SelectAwait(async x => await MapToStudentPoints(x, cancellationToken))
+            .SelectAwait(x => MapToStudentPoints(x, cancellationToken))
             .OrderBy(x => x.Student.GroupName)
             .ThenBy(x => _userFullNameFormatter.GetFullName(x.Student.User))
-            .ToListAsync(cancellationToken);
+            .ToArrayAsync(cancellationToken);
 
-        AssignmentDto[] assignmentsDto = assignments.Select(x => x.ToDto()).ToArray();
-        return new SubjectCoursePointsDto(assignmentsDto, studentPoints);
+        AssignmentDto[] assignments = studentAssignments
+            .Select(x => x.Assignment)
+            .Distinct()
+            .Select(x => x.ToDto())
+            .ToArray();
+
+        return new SubjectCoursePointsDto(assignments, studentPoints);
     }
 
-    private async Task<StudentPointsDto> MapToStudentPoints(
+    private async ValueTask<StudentPointsDto> MapToStudentPoints(
         IGrouping<Student, StudentAssignment> grouping,
         CancellationToken cancellationToken)
     {
@@ -73,7 +64,7 @@ public class SubjectCourseService : ISubjectCourseService
         StudentDto studentDto = grouping.Key.ToDto(githubUser?.Username);
 
         AssignmentPointsDto[] pointsDto = grouping
-            .Select(x => x.Points)
+            .Select(x => x.CalculatePoints())
             .WhereNotNull()
             .Select(x => new AssignmentPointsDto(x.Assignment.Id, x.SubmissionDate, x.IsBanned, x.Points.Value))
             .ToArray();

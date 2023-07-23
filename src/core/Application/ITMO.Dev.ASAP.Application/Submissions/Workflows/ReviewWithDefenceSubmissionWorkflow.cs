@@ -10,7 +10,7 @@ public class ReviewWithDefenceSubmissionWorkflow : SubmissionWorkflowBase
 {
     public ReviewWithDefenceSubmissionWorkflow(
         IPermissionValidator permissionValidator,
-        IDatabaseContext context,
+        IPersistenceContext context,
         IPublisher publisher) : base(permissionValidator, context, publisher) { }
 
     public override async Task<SubmissionActionMessageDto> SubmissionApprovedAsync(

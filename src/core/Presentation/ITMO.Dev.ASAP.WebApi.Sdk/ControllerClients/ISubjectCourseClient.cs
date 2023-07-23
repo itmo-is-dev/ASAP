@@ -14,8 +14,6 @@ public interface ISubjectCourseClient
         CreateGithubSubjectCourseRequest request,
         CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyCollection<SubjectCourseDto>> GetAsync(CancellationToken cancellationToken = default);
-
     Task<SubjectCourseDto> GetAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<SubjectCourseDto> UpdateAsync(

@@ -2,13 +2,17 @@
 
 @typeparam T
 
-<TopLevelModal @ref="_modal">
+<TopLevelModal @ref="_modal" VisibleChanged="OnVisibleChanged">
     <ModalContent Size="Size" Centered>
         <ModalHeader>
             <ModalTitle>
                 Confirm @(_value is null ? string.Empty : ActionName?.Invoke(_value) ?? string.Empty)
             </ModalTitle>
-            <CloseButton Display="@(Executing ? Display.None : Display.InlineBlock)"/>
+
+            <CloseButton
+                Display="@(Executing ? Display.None : Display.InlineBlock)"
+                Clicked="OnRejected"/>
+
         </ModalHeader>
 
 
@@ -44,6 +48,9 @@
     public Func<T, CancellationToken, Task>? Action { get; set; }
 
     [Parameter]
+    public EventCallback OnRejected { get; set; }
+
+    [Parameter]
     public ModalSize Size { get; set; }
 
     public bool Executing { get; private set; }
@@ -63,9 +70,10 @@
         await _modal.Show();
     }
 
-    private Task Dismiss()
+    private async Task Dismiss()
     {
-        return _modal?.Hide() ?? Task.CompletedTask;
+        await (_modal?.Hide() ?? Task.CompletedTask);
+        await OnRejected.InvokeAsync();
     }
 
     private async Task Execute()
@@ -93,13 +101,27 @@
         Cancelled = false;
     }
 
-    private void Cancel()
+    private async Task Cancel()
     {
         if (Cancelled)
             return;
 
         Cancelled = true;
         _cts.Cancel();
+
+        await OnRejected.InvokeAsync();
+    }
+
+    private Task OnClosing(ModalClosingEventArgs arg)
+    {
+        return OnRejected.InvokeAsync();
+    }
+
+    private Task OnVisibleChanged(bool visible)
+    {
+        return visible is false && Executing is false
+            ? OnRejected.InvokeAsync()
+            : Task.CompletedTask;
     }
 
 }

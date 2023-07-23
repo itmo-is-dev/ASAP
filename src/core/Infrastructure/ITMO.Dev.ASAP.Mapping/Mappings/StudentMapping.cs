@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Application.Dto.Users;
-using IsuUserAssociation = ITMO.Dev.ASAP.Domain.UserAssociations.IsuUserAssociation;
-using Student = ITMO.Dev.ASAP.Domain.Users.Student;
+using ITMO.Dev.ASAP.Domain.Students;
+using ITMO.Dev.ASAP.Domain.UserAssociations;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 
@@ -12,6 +12,7 @@ public static class StudentMapping
 
         return new StudentDto(
             student.User.ToDto(),
+            student.Group?.Id,
             student.Group?.Name ?? string.Empty,
             isuAssociation?.UniversityId,
             githubUsername);

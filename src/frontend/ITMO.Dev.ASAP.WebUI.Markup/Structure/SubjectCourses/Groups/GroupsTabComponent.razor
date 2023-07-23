@@ -1,0 +1,27 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses.Groups
+@inject ISubjectCourseGroupList ViewModel
+
+<DropdownTabTitleComponent OnClick="OnSelectedTabChanged" Name="@Key">
+    <ButtonContent>
+        Groups
+    </ButtonContent>
+    <DropdownContent>
+        <DropdownItem>
+            <CreateButton Clicked="ViewModel.ShowAddSubjectCourseGroups"
+                          Background="Background.Transparent"
+                          TextColor="TextColor.Body"
+                          FitContent="false">
+                Add
+            </CreateButton>
+        </DropdownItem>
+    </DropdownContent>
+</DropdownTabTitleComponent>
+
+@code {
+
+        public const string Key = "groups";
+
+    [Parameter]
+    public EventCallback<string> OnSelectedTabChanged { get; set; }
+
+}

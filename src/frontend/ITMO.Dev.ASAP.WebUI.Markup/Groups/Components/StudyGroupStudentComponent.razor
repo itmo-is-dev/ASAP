@@ -1,7 +1,10 @@
 @using ITMO.Dev.ASAP.Application.Dto.Users
 @using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Students
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging
 @using ITMO.Dev.ASAP.WebUI.Markup.Groups.Components
 @inject IStudentClient StudentClient
+@inject IMessagePublisher Publisher
 
 @if (Student is not null)
 {
@@ -32,6 +35,11 @@
     [Parameter]
     public StudyGroupComponent? GroupComponent { get; set; }
 
+    protected override void OnParametersSet()
+    {
+        StateHasChanged();
+    }
+
     private string FullName => Student is null
         ? string.Empty
         : $"{Student.User.LastName} {Student.User.FirstName} {Student.User.MiddleName}";
@@ -49,6 +57,11 @@
         await StudentClient.DismissFromGroupAsync(Student.User.Id, cancellationToken);
 
         await (GroupComponent?.ReloadStudents() ?? Task.CompletedTask);
+
+        Student = Student with { GroupId = null, GroupName = string.Empty };
+
+        var evt = new StudentTransferredEvent(Student);
+        Publisher.Send(evt);
     }
 
 }

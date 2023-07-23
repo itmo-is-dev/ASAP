@@ -1,7 +1,11 @@
 @page "/adminpanel/groups"
 @layout PaddedLayout
 @using ITMO.Dev.ASAP.WebUI.Markup.Groups.Components
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Navigation
 @attribute [Authorize(Roles = "Admin, Moderator")]
+
+@inject IMessagePublisher Publisher
 
 <Div Flex="Flex.Column" Height="Height.Is100">
 
@@ -13,5 +17,11 @@
 </Div>
 
 @code {
+
+    protected override void OnParametersSet()
+    {
+        var evt = new NavigatedToGroupsPageEvent();
+        Publisher.Send(evt);
+    }
 
 }

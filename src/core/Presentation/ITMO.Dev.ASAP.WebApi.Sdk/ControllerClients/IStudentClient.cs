@@ -8,8 +8,6 @@ public interface IStudentClient
 {
     Task<StudentDto> CreateAsync(CreateStudentRequest request, CancellationToken cancellationToken = default);
 
-    Task<StudentDto> GetAsync(Guid id, CancellationToken cancellationToken = default);
-
     Task DismissFromGroupAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<StudentDto> TransferStudentAsync(

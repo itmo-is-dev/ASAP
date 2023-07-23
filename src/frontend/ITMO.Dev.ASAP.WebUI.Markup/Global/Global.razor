@@ -1,7 +1,11 @@
 @page "/adminpanel/global"
 @using ITMO.Dev.ASAP.WebUI.Markup.Global.Components
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Navigation
 @layout PaddedLayout
 @attribute [Authorize(Roles = "Admin, Moderator")]
+
+@inject IMessagePublisher Publisher
 
 <Div Display="Display.Flex" Flex="Flex.Column.AlignContent.Start">
 
@@ -12,5 +16,10 @@
 </Div>
 
 @code {
+    protected override void OnParametersSet()
+    {
+        var evt = new NavigatedToGlobalPageEvent();
+        Publisher.Send(evt);
+    }
 
 }

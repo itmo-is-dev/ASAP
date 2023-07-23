@@ -2,12 +2,14 @@
 @using ITMO.Dev.ASAP.Application.Dto.SubjectCourses
 @using ITMO.Dev.ASAP.WebApi.Abstractions.Models.SubjectCourses
 @using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
 @using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
 @using Microsoft.AspNetCore.Components
 
 @inject ISafeExecutor SafeExecutor
 @inject ISubjectCourseClient SubjectCourseClient
+@inject ICurrentUser CurrentUser
 
 @if (Association is not null)
 {
@@ -55,14 +57,13 @@
 
     private string UpdateActionName => $"update subject course mentors team name to '{_mentorTeamName}'";
 
+    public bool HasManagingAccess => CurrentUser.HasModeratorAccess();
+
     [Parameter]
     public SubjectCourseDto? SubjectCourse { get; set; }
 
     [Parameter]
     public GithubSubjectCourseAssociationDto? Association { get; set; }
-
-    [Parameter]
-    public bool HasManagingAccess { get; set; }
 
     protected override void OnParametersSet()
     {

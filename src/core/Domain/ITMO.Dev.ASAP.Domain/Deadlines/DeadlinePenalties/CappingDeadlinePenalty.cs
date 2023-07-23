@@ -4,13 +4,11 @@ namespace ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
 
 public class CappingDeadlinePenalty : DeadlinePenalty
 {
-    public CappingDeadlinePenalty(TimeSpan spanBeforeActivation, double cap)
+    public CappingDeadlinePenalty(TimeSpan spanBeforeActivation, Points cap)
         : base(spanBeforeActivation)
     {
-        Cap = new Points(cap);
+        Cap = cap;
     }
-
-    protected CappingDeadlinePenalty() { }
 
     public Points Cap { get; set; }
 

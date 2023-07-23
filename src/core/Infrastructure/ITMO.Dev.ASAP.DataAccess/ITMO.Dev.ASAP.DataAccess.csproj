@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <NoWarn>$(NoWarn);IDE0161</NoWarn>
-        <LangVersion>11</LangVersion>
+        <NoWarn>$(NoWarn);IDE0161;CA2227</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,6 +13,7 @@
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
         <PackageReference Include="System.Linq.Async" />
+        <PackageReference Include="RichEntity" />
     </ItemGroup>
 
 </Project>

@@ -1,9 +1,10 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePenalties;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Deadlines.DeadlinePolicies;
+using ITMO.Dev.ASAP.Domain.Students;
+using ITMO.Dev.ASAP.Domain.Study.Assignments;
+using ITMO.Dev.ASAP.Domain.Study.GroupAssignments;
 using ITMO.Dev.ASAP.Domain.Submissions.States;
 using ITMO.Dev.ASAP.Domain.Tools;
-using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Domain.ValueObject;
 using RichEntity.Annotations;
 
@@ -15,48 +16,54 @@ public partial class Submission : IEntity<Guid>
         Guid id,
         int code,
         Student student,
-        GroupAssignment groupAssignment,
         SpbDateTime submissionDate,
-        string payload)
+        string payload,
+        GroupAssignment groupAssignment,
+        ISubmissionState state)
         : this(id)
     {
         Code = code;
         SubmissionDate = submissionDate;
         Student = student;
-        GroupAssignment = groupAssignment;
         Payload = payload;
+
+        GroupAssignment = groupAssignment;
 
         Rating = default;
         ExtraPoints = default;
 
-        State = new ActiveSubmissionState();
+        State = state;
     }
 
-    public int Code { get; protected init; }
+    public Submission(
+        Guid id,
+        int code,
+        Student student,
+        SpbDateTime submissionDate,
+        string payload,
+        GroupAssignment groupAssignment)
+        : this(
+            id,
+            code,
+            student,
+            submissionDate,
+            payload,
+            groupAssignment,
+            new ActiveSubmissionState()) { }
 
-    public string Payload { get; set; }
+    public int Code { get; }
+
+    public string Payload { get; }
 
     public Fraction? Rating { get; private set; }
 
-    public Points? ExtraPoints { get; set; }
+    public Points? ExtraPoints { get; private set; }
 
     public SpbDateTime SubmissionDate { get; private set; }
 
-    public virtual Student Student { get; protected init; }
+    public Student Student { get; }
 
-    public virtual GroupAssignment GroupAssignment { get; protected init; }
-
-    public Points? Points => Rating is null ? default : GroupAssignment.Assignment.MaxPoints * Rating;
-
-    /// <summary>
-    ///     Gets points with deadline policy applied.
-    /// </summary>
-    public Points? EffectivePoints => GetEffectivePoints();
-
-    /// <summary>
-    ///     Gets points subtracted by deadline policy.
-    /// </summary>
-    public Points? PointPenalty => GetPointPenalty();
+    public GroupAssignment GroupAssignment { get; }
 
     public bool IsRated => Rating is not null;
 
@@ -109,6 +116,22 @@ public partial class Submission : IEntity<Guid>
             ExtraPoints = extraPoints;
     }
 
+    public RatedSubmission CalculateEffectivePoints(Assignment assignment, DeadlinePolicy policy)
+    {
+        Points points = assignment.MaxPoints * (Rating ?? Fraction.None);
+
+        Points? penalty = policy.GetPointPenalty(points, GroupAssignment.Deadline, SubmissionDateOnly);
+
+        if (penalty is not null)
+        {
+            points -= penalty.Value;
+        }
+
+        points += ExtraPoints ?? Points.None;
+
+        return new RatedSubmission(this, points);
+    }
+
     public void UpdateDate(SpbDateTime newDate)
     {
         State = State.MoveToDateUpdated(newDate);
@@ -143,56 +166,5 @@ public partial class Submission : IEntity<Guid>
     public void MarkAsReviewed()
     {
         State = State.MoveToReviewed();
-    }
-
-    private Points? GetEffectivePoints()
-    {
-        if (Points is null)
-            return null;
-
-        Points points = Points.Value;
-        DeadlinePenalty? deadlinePolicy = GetEffectiveDeadlinePolicy();
-
-        if (deadlinePolicy is not null)
-            points = deadlinePolicy.Apply(points);
-
-        if (ExtraPoints is not null)
-            points += ExtraPoints.Value;
-
-        return points;
-    }
-
-    private Points? GetPointPenalty()
-    {
-        if (Points is null)
-            return null;
-
-        Points? deadlineAppliedPoints = GetEffectivePoints();
-
-        if (deadlineAppliedPoints is null)
-            return null;
-
-        Points? penaltyPoints = Points - deadlineAppliedPoints;
-
-        return penaltyPoints;
-    }
-
-    private DeadlinePenalty? GetEffectiveDeadlinePolicy()
-    {
-        DateOnly deadline = GroupAssignment.Deadline;
-
-        if (SubmissionDateOnly <= deadline)
-            return null;
-
-        var submissionDeadlineOffset = TimeSpan.FromDays(SubmissionDateOnly.DayNumber - deadline.DayNumber);
-
-        DeadlinePenalty? activeDeadlinePolicy = GroupAssignment
-            .Assignment
-            .SubjectCourse
-            .DeadlinePolicies
-            .Where(dp => dp.SpanBeforeActivation < submissionDeadlineOffset)
-            .MaxBy(dp => dp.SpanBeforeActivation);
-
-        return activeDeadlinePolicy;
     }
 }

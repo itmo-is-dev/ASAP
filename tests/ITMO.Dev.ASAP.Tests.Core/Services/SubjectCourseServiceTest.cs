@@ -1,10 +1,9 @@
 using FluentAssertions;
 using ITMO.Dev.ASAP.Application.Abstractions.Formatters;
-using ITMO.Dev.ASAP.Application.Abstractions.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Dto.Tables;
 using ITMO.Dev.ASAP.Application.SubjectCourses;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.DataAccess.Models;
 using ITMO.Dev.ASAP.Github.Application.Dto.Users;
 using ITMO.Dev.ASAP.Github.Presentation.Contracts.Services;
 using ITMO.Dev.ASAP.Tests.Core.Fixtures;
@@ -15,51 +14,47 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Services;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class SubjectCourseServiceTest : TestBase, IAsyncDisposeLifetime
+public class SubjectCourseServiceTest : CoreDatabaseTestBase
 {
-    private readonly ISubjectCourseService _service;
-    private readonly CoreDatabaseFixture _database;
-
-    public SubjectCourseServiceTest(CoreDatabaseFixture database)
-    {
-        _database = database;
-
-        var githubUserService = new Mock<IGithubUserService>();
-
-        githubUserService
-            .Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid id, CancellationToken _) => new GithubUserDto(id, id.ToString()));
-
-        _service = new SubjectCourseService(_database.Context, new UserFullNameFormatter(), githubUserService.Object);
-    }
+    public SubjectCourseServiceTest(CoreDatabaseFixture database) : base(database) { }
 
     [Fact]
     public async Task CalculatePointsAsync_Should_ReturnPoints()
     {
-        SubjectCourse course = await _database.Context.SubjectCourses
+        // Arrange
+        SubjectCourseModel course = await Context.SubjectCourses
             .Where(x => x.Assignments
                 .SelectMany(xx => xx.GroupAssignments)
                 .SelectMany(xx => xx.Submissions)
                 .Any())
             .FirstAsync();
 
-        SubjectCoursePointsDto points = await _service.CalculatePointsAsync(course.Id, default);
+        SubjectCourseService service = CreateService();
 
+        // Act
+        SubjectCoursePointsDto points = await service.CalculatePointsAsync(course.Id, default);
+
+        // Assert
         points.StudentsPoints.Should().NotBeEmpty();
     }
 
     [Fact]
     public async Task CalculatePointsAsync_Should_ReturnUniqueAssignmentIds()
     {
-        SubjectCourse course = await _database.Context.SubjectCourses
+        // Arrange
+        SubjectCourseModel course = await Context.SubjectCourses
             .Where(x => x.Assignments
                 .SelectMany(xx => xx.GroupAssignments)
                 .SelectMany(xx => xx.Submissions)
                 .Any())
             .FirstAsync();
 
-        SubjectCoursePointsDto points = await _service.CalculatePointsAsync(course.Id, default);
+        SubjectCourseService service = CreateService();
 
+        // Act
+        SubjectCoursePointsDto points = await service.CalculatePointsAsync(course.Id, default);
+
+        // Assert
         IReadOnlyList<StudentPointsDto> studentPoints = points.StudentsPoints;
 
         int uniqueStudentPoints = studentPoints
@@ -69,8 +64,17 @@ public class SubjectCourseServiceTest : TestBase, IAsyncDisposeLifetime
         Assert.Equal(uniqueStudentPoints, studentPoints.Count);
     }
 
-    public Task DisposeAsync()
+    public SubjectCourseService CreateService()
     {
-        return _database.ResetAsync();
+        var githubUserService = new Mock<IGithubUserService>();
+
+        githubUserService
+            .Setup(x => x.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Guid id, CancellationToken _) => new GithubUserDto(id, id.ToString()));
+
+        return new SubjectCourseService(
+            PersistenceContext,
+            new UserFullNameFormatter(),
+            githubUserService.Object);
     }
 }

@@ -16,6 +16,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\core\Presentation\ITMO.Dev.ASAP.WebApi.Sdk\ITMO.Dev.ASAP.WebApi.Sdk.csproj" />
+        <ProjectReference Include="..\Application\ITMO.Dev.ASAP.WebUI.Application.ViewModels\ITMO.Dev.ASAP.WebUI.Application.ViewModels.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.WebUI.Abstractions\ITMO.Dev.ASAP.WebUI.Abstractions.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.WebUI.Application\ITMO.Dev.ASAP.WebUI.Application.csproj" />
         <ProjectReference Include="..\ITMO.Dev.ASAP.WebUI.Markup\ITMO.Dev.ASAP.WebUI.Markup.csproj" />

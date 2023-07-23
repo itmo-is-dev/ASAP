@@ -91,9 +91,6 @@
         "GetStudents": [
           "admin"
         ],
-        "GetAssignments": [
-          "admin"
-        ],
         "FindByName": [
           "admin"
         ],

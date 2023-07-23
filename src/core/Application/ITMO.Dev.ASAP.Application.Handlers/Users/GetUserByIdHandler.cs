@@ -1,6 +1,6 @@
 using ITMO.Dev.ASAP.Application.DataAccess;
-using ITMO.Dev.ASAP.Application.DataAccess.Extensions;
 using ITMO.Dev.ASAP.Application.Dto.Users;
+using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Domain.Users;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
@@ -10,9 +10,9 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Users;
 
 internal class GetUserByIdHandler : IRequestHandler<Query, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
 
-    public GetUserByIdHandler(IDatabaseContext context)
+    public GetUserByIdHandler(IPersistenceContext context)
     {
         _context = context;
     }

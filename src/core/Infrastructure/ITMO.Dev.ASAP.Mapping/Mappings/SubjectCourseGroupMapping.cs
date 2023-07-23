@@ -1,5 +1,5 @@
 using ITMO.Dev.ASAP.Application.Dto.SubjectCourses;
-using SubjectCourseGroup = ITMO.Dev.ASAP.Domain.Study.SubjectCourseGroup;
+using ITMO.Dev.ASAP.Domain.Study;
 
 namespace ITMO.Dev.ASAP.Mapping.Mappings;
 
@@ -7,6 +7,9 @@ public static class SubjectCourseGroupMapping
 {
     public static SubjectCourseGroupDto ToDto(this SubjectCourseGroup subjectCourseGroup)
     {
-        return new SubjectCourseGroupDto(subjectCourseGroup.SubjectCourseId, subjectCourseGroup.StudentGroupId);
+        return new SubjectCourseGroupDto(
+            subjectCourseGroup.SubjectCourseId,
+            subjectCourseGroup.StudentGroupId,
+            subjectCourseGroup.StudentGroup.Name);
     }
 }

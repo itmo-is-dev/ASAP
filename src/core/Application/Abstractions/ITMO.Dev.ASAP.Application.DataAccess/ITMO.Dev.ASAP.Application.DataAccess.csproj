@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" />
         <PackageReference Include="SourceKit.Generators.Builder" />
     </ItemGroup>
 

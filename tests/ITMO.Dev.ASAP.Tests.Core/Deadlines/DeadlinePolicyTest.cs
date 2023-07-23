@@ -11,10 +11,10 @@ public class DeadlinePolicyTest : TestBase
     [Fact]
     public void AddEqualPenaltiesShouldThrow()
     {
-        FractionDeadlinePenalty fractionPenalty = new(TimeSpan.FromDays(7), Fraction.FromDenormalizedValue(20));
-        AbsoluteDeadlinePenalty absolutePenalty = new(TimeSpan.FromDays(7), new Points(1));
+        var fractionPenalty = new FractionDeadlinePenalty(TimeSpan.FromDays(7), Fraction.FromDenormalizedValue(20));
+        var absolutePenalty = new AbsoluteDeadlinePenalty(TimeSpan.FromDays(7), new Points(1));
 
-        DeadlinePolicy policy = new(Guid.NewGuid());
+        var policy = new DeadlinePolicy(new HashSet<DeadlinePenalty>());
         policy.AddDeadlinePenalty(fractionPenalty);
 
         Assert.Throws<DomainInvalidOperationException>(() => policy.AddDeadlinePenalty(absolutePenalty));
@@ -24,15 +24,17 @@ public class DeadlinePolicyTest : TestBase
     public void PointPenaltyTest()
     {
         var fraction = Fraction.FromDenormalizedValue(20);
-        FractionDeadlinePenalty fractionPenalty = new(TimeSpan.FromDays(7), fraction);
         var absolutePoints = new Points(1);
-        AbsoluteDeadlinePenalty absolutePenalty = new(TimeSpan.FromDays(14), absolutePoints);
 
-        DeadlinePolicy policy = new(Guid.NewGuid());
+        var fractionPenalty = new FractionDeadlinePenalty(TimeSpan.FromDays(7), fraction);
+        var absolutePenalty = new AbsoluteDeadlinePenalty(TimeSpan.FromDays(14), absolutePoints);
+
+        var policy = new DeadlinePolicy(new HashSet<DeadlinePenalty>());
         policy.AddDeadlinePenalty(fractionPenalty);
         policy.AddDeadlinePenalty(absolutePenalty);
 
-        Points maxPoints = new(10);
+        var maxPoints = new Points(10);
+
         Points? penaltyPoints1 = policy.GetPointPenalty(
             maxPoints,
             new DateOnly(2000, 10, 10),

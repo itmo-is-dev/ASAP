@@ -1,7 +1,7 @@
 using ITMO.Dev.ASAP.Application.Contracts.Study.StudyGroups.Notifications;
 using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Application.Dto.Study;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Groups;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.StudyGroups.Commands.CreateStudyGroup;
@@ -10,10 +10,10 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Study.StudyGroups;
 
 internal class CreateStudyGroupHandler : IRequestHandler<Command, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly IPublisher _publisher;
 
-    public CreateStudyGroupHandler(IDatabaseContext context, IPublisher publisher)
+    public CreateStudyGroupHandler(IPersistenceContext context, IPublisher publisher)
     {
         _context = context;
         _publisher = publisher;
@@ -21,7 +21,7 @@ internal class CreateStudyGroupHandler : IRequestHandler<Command, Response>
 
     public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
     {
-        var studentGroup = new StudentGroup(Guid.NewGuid(), request.Name);
+        var studentGroup = new StudentGroup(Guid.NewGuid(), request.Name, new HashSet<Guid>());
 
         _context.StudentGroups.Add(studentGroup);
         await _context.SaveChangesAsync(cancellationToken);

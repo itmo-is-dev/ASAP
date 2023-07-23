@@ -10,14 +10,9 @@ using Xunit;
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Identity;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class CreateUserAccountTest : CoreTestBase, IAsyncDisposeLifetime
+public class CreateUserAccountTest : CoreDatabaseTestBase, IAsyncDisposeLifetime
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public CreateUserAccountTest(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public CreateUserAccountTest(CoreDatabaseFixture database) : base(database) { }
 
     [Theory]
     [InlineData(AsapIdentityRoleNames.MentorRoleName)]
@@ -28,14 +23,18 @@ public class CreateUserAccountTest : CoreTestBase, IAsyncDisposeLifetime
         string username = string.Empty;
         string password = string.Empty;
 
-        Guid userId = await _database.Context.Users
+        Guid userId = await Context.Users
             .Select(x => x.Id)
             .FirstAsync();
 
         var admin = new AdminUser(Guid.Empty);
 
         var command = new CreateUserAccount.Command(userId, username, password, roleName);
-        var handler = new CreateUserAccountHandler(_database.Context, admin, AuthorizationServiceMock.Object);
+
+        var handler = new CreateUserAccountHandler(
+            PersistenceContext,
+            admin,
+            AuthorizationServiceMock.Object);
 
         await handler.Handle(command, default);
     }
@@ -49,14 +48,18 @@ public class CreateUserAccountTest : CoreTestBase, IAsyncDisposeLifetime
         string username = string.Empty;
         string password = string.Empty;
 
-        Guid userId = await _database.Context.Users
+        Guid userId = await Context.Users
             .Select(x => x.Id)
             .FirstAsync();
 
         var admin = new MentorUser(Guid.Empty);
 
         var command = new CreateUserAccount.Command(userId, username, password, roleName);
-        var handler = new CreateUserAccountHandler(_database.Context, admin, AuthorizationServiceMock.Object);
+
+        var handler = new CreateUserAccountHandler(
+            PersistenceContext,
+            admin,
+            AuthorizationServiceMock.Object);
 
         await Assert.ThrowsAsync<AccessDeniedException>(() =>
             handler.Handle(command, default));
@@ -71,14 +74,18 @@ public class CreateUserAccountTest : CoreTestBase, IAsyncDisposeLifetime
         string username = string.Empty;
         string password = string.Empty;
 
-        Guid userId = await _database.Context.Users
+        Guid userId = await Context.Users
             .Select(x => x.Id)
             .FirstAsync();
 
         var admin = new ModeratorUser(Guid.Empty);
 
         var command = new CreateUserAccount.Command(userId, username, password, roleName);
-        var handler = new CreateUserAccountHandler(_database.Context, admin, AuthorizationServiceMock.Object);
+
+        var handler = new CreateUserAccountHandler(
+            PersistenceContext,
+            admin,
+            AuthorizationServiceMock.Object);
 
         if (throwExpected)
         {
@@ -89,10 +96,5 @@ public class CreateUserAccountTest : CoreTestBase, IAsyncDisposeLifetime
         {
             await handler.Handle(command, default);
         }
-    }
-
-    public Task DisposeAsync()
-    {
-        return _database.ResetAsync();
     }
 }

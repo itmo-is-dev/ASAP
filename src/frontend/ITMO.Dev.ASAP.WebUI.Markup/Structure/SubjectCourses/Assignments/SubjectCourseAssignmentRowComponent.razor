@@ -1,0 +1,63 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses.Assignments
+@using System.Globalization
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@implements IDisposable
+
+<ListGroupItem type="button"
+               onclick="@OnClicked"
+               Class="btn-light">
+
+    <Heading Size="HeadingSize.Is4">
+        @_title
+    </Heading>
+
+    Min Points: @_minPoints.ToString(CultureInfo.InvariantCulture)
+
+    <br/>
+
+    Max Points: @_maxPoints.ToString(CultureInfo.InvariantCulture)
+</ListGroupItem>
+
+@code {
+
+    private IDisposable? _subscription;
+
+    private string? _title;
+    private double _minPoints;
+    private double _maxPoints;
+
+    [Parameter]
+    public ISubjectCourseAssignmentRow? ViewModel { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (ViewModel is null)
+            return;
+
+        Dispose();
+
+        _subscription = Disposable.From(
+            ViewModel.Title.Subscribe(x => _title = x),
+            ViewModel.MinPoints.Subscribe(x =>
+            {
+                _minPoints = x;
+                StateHasChanged();
+            }),
+            ViewModel.MaxPoints.Subscribe(x =>
+            {
+                _maxPoints = x;
+                StateHasChanged();
+            }));
+    }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+
+    private void OnClicked()
+    {
+        ViewModel?.Select();
+    }
+
+}

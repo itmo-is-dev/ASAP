@@ -1,26 +1,23 @@
-using ITMO.Dev.ASAP.Domain.Queue.Evaluators;
-using ITMO.Dev.ASAP.Domain.Queue.Filters;
-
 namespace ITMO.Dev.ASAP.Domain.Queue.Building;
 
 public class QueueBuilder : IQueueFilterBuilder
 {
-    private readonly List<ISubmissionEvaluator> _evaluators;
-    private readonly List<IQueueFilter> _filters;
+    private readonly List<IEvaluationCriteria> _evaluators;
+    private readonly List<IFilterCriteria> _filters;
 
     public QueueBuilder()
     {
-        _filters = new List<IQueueFilter>();
-        _evaluators = new List<ISubmissionEvaluator>();
+        _filters = new List<IFilterCriteria>();
+        _evaluators = new List<IEvaluationCriteria>();
     }
 
-    public IQueueFilterBuilder AddFilter(IQueueFilter filter)
+    public IQueueFilterBuilder AddFilter(IFilterCriteria filter)
     {
         _filters.Add(filter);
         return this;
     }
 
-    public IQueueEvaluatorBuilder AddEvaluator(ISubmissionEvaluator evaluator)
+    public IQueueEvaluatorBuilder AddEvaluator(IEvaluationCriteria evaluator)
     {
         _evaluators.Add(evaluator);
         return this;
@@ -28,8 +25,9 @@ public class QueueBuilder : IQueueFilterBuilder
 
     public SubmissionQueue Build()
     {
-        IQueueFilter[] filters = _filters.ToArray();
-        ISubmissionEvaluator[] evaluators = _evaluators.ToArray();
+        IFilterCriteria[] filters = _filters.ToArray();
+        IEvaluationCriteria[] evaluators = _evaluators.ToArray();
+
         return new SubmissionQueue(filters, evaluators);
     }
 }

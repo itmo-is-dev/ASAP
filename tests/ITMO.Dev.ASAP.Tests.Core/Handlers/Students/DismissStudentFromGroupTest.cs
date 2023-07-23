@@ -1,37 +1,60 @@
+using FluentAssertions;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Commands;
 using ITMO.Dev.ASAP.Application.Handlers.Students;
+using ITMO.Dev.ASAP.DataAccess.Models.Users;
 using ITMO.Dev.ASAP.Tests.Core.Fixtures;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ITMO.Dev.ASAP.Tests.Core.Handlers.Students;
 
 [Collection(nameof(CoreDatabaseCollectionFixture))]
-public class DismissStudentFromGroupTest : TestBase, IAsyncDisposeLifetime
+public class DismissStudentFromGroupTest : CoreDatabaseTestBase, IAsyncDisposeLifetime
 {
-    private readonly CoreDatabaseFixture _database;
-
-    public DismissStudentFromGroupTest(CoreDatabaseFixture database)
-    {
-        _database = database;
-    }
+    public DismissStudentFromGroupTest(CoreDatabaseFixture database, ITestOutputHelper output)
+        : base(database, output) { }
 
     [Fact]
     public async Task Handle_Should_NotThrow()
     {
-        Guid studentId = await _database.Context.Students
-            .Where(x => x.Group != null)
+        // Arrange
+        Guid studentId = await Context.Students
+            .Where(x => x.StudentGroup != null)
             .Select(x => x.UserId)
             .FirstAsync();
 
         var command = new DismissStudentFromGroup.Command(studentId);
-        var handler = new DismissStudentFromGroupHandler(_database.Context);
+        var handler = new DismissStudentFromGroupHandler(PersistenceContext);
 
-        await handler.Handle(command, default);
+        // Act
+        Func<Task> action = () => handler.Handle(command, default);
+
+        // Assert
+        await action.Should().NotThrowAsync();
     }
 
-    public Task DisposeAsync()
+    [Fact]
+    public async Task HandleAsync_ShouldSetStudentIdNull()
     {
-        return _database.ResetAsync();
+        // Arrange
+        Guid studentId = await Context.Students
+            .Where(x => x.StudentGroup != null)
+            .Select(x => x.UserId)
+            .FirstAsync();
+
+        var command = new DismissStudentFromGroup.Command(studentId);
+        var handler = new DismissStudentFromGroupHandler(PersistenceContext);
+
+        // Act
+        await handler.Handle(command, default);
+
+        // Assert
+        Context.ChangeTracker.Clear();
+
+        StudentModel student = await Context.Students
+            .SingleAsync(x => x.UserId.Equals(studentId));
+
+        student.StudentGroupId.Should().BeNull();
     }
 }

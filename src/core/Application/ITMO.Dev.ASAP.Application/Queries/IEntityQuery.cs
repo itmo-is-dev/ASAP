@@ -2,7 +2,7 @@ using ITMO.Dev.ASAP.Application.Dto.Querying;
 
 namespace ITMO.Dev.ASAP.Application.Queries;
 
-public interface IEntityQuery<TEntity, TParameter>
+public interface IEntityQuery<TBuilder, TParameter>
 {
-    IQueryable<TEntity> Apply(IQueryable<TEntity> query, QueryConfiguration<TParameter> configuration);
+    TBuilder Apply(TBuilder queryBuilder, QueryConfiguration<TParameter> configuration);
 }

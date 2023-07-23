@@ -1,5 +1,4 @@
 using ITMO.Dev.ASAP.Application.Contracts.Students.Commands;
-using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Users.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
@@ -37,14 +36,6 @@ public class StudentController : ControllerBase
             groupId);
 
         CreateStudent.Response response = await _mediator.Send(command);
-        return Ok(response.Student);
-    }
-
-    [HttpGet("{id:guid}")]
-    [AuthorizeFeature(Scope, nameof(GetById))]
-    public async Task<ActionResult<StudentDto>> GetById(Guid id)
-    {
-        GetStudentById.Response response = await _mediator.Send(new GetStudentById.Query(id));
         return Ok(response.Student);
     }
 

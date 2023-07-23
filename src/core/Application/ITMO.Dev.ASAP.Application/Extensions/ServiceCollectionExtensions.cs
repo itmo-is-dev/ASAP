@@ -6,6 +6,7 @@ using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
 using ITMO.Dev.ASAP.Application.Abstractions.Queue;
 using ITMO.Dev.ASAP.Application.Abstractions.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Abstractions.Submissions;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
 using ITMO.Dev.ASAP.Application.Dto.Users;
 using ITMO.Dev.ASAP.Application.Queries;
@@ -14,13 +15,9 @@ using ITMO.Dev.ASAP.Application.Queries.Requests;
 using ITMO.Dev.ASAP.Application.Queue;
 using ITMO.Dev.ASAP.Application.SubjectCourses;
 using ITMO.Dev.ASAP.Application.Submissions.Workflows;
-using ITMO.Dev.ASAP.Application.Tools;
 using ITMO.Dev.ASAP.Application.Users;
 using ITMO.Dev.ASAP.Application.Validators;
 using ITMO.Dev.ASAP.Application.Workers;
-using ITMO.Dev.ASAP.Domain.Queue;
-using ITMO.Dev.ASAP.Domain.Study;
-using ITMO.Dev.ASAP.Domain.Users;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ITMO.Dev.ASAP.Application.Extensions;
@@ -29,7 +26,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplicationConfiguration(this IServiceCollection collection)
     {
-        collection.AddSingleton<IQueryExecutor, QueryExecutor>();
         collection.AddScoped<IPermissionValidator, PermissionValidator>();
         collection.AddScoped<ISubjectCourseService, SubjectCourseService>();
         collection.AddScoped<ISubmissionWorkflowService, SubmissionWorkflowService>();
@@ -68,22 +64,22 @@ public static class ServiceCollectionExtensions
 
     private static void AddQueryChains(this IServiceCollection collection)
     {
-        collection.AddEntityQuery<Student, StudentQueryParameter>();
-        collection.AddEntityQuery<StudentGroup, GroupQueryParameter>();
-        collection.AddEntityQuery<User, UserQueryParameter>();
+        collection.AddEntityQuery<StudentQuery.Builder, StudentQueryParameter>();
+        collection.AddEntityQuery<StudentGroupQuery.Builder, GroupQueryParameter>();
+        collection.AddEntityQuery<UserQuery.Builder, UserQueryParameter>();
 
         collection
             .AddFluentChaining(x => x.ChainLifetime = ServiceLifetime.Singleton)
-            .AddQueryChain<Student, StudentQueryParameter>()
-            .AddQueryChain<StudentGroup, GroupQueryParameter>()
-            .AddQueryChain<User, UserQueryParameter>();
+            .AddQueryChain<StudentQuery.Builder, StudentQueryParameter>()
+            .AddQueryChain<StudentGroupQuery.Builder, GroupQueryParameter>()
+            .AddQueryChain<UserQuery.Builder, UserQueryParameter>();
     }
 
     private static IChainConfigurator AddQueryChain<TValue, TParameter>(this IChainConfigurator configurator)
     {
-        return configurator.AddChain<EntityQueryRequest<TValue, TParameter>, IQueryable<TValue>>(x => x
+        return configurator.AddChain<EntityQueryRequest<TValue, TParameter>, TValue>(x => x
             .ThenFromAssemblies(typeof(IAssemblyMarker))
-            .FinishWith((r, _) => r.Query));
+            .FinishWith((r, _) => r.QueryBuilder));
     }
 
     private static void AddEntityQuery<TValue, TParameter>(this IServiceCollection collection)

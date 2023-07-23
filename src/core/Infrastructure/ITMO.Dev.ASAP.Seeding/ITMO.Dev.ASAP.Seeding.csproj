@@ -2,6 +2,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Application\Abstractions\ITMO.Dev.ASAP.Application.DataAccess\ITMO.Dev.ASAP.Application.DataAccess.csproj" />
+        <ProjectReference Include="..\ITMO.Dev.ASAP.DataAccess\ITMO.Dev.ASAP.DataAccess.csproj" />
     </ItemGroup>
 
     <ItemGroup>

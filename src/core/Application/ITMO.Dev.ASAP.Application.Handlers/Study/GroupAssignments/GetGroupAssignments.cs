@@ -1,32 +1,33 @@
 using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Study;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Study.GroupAssignments;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Queries.GetGroupAssignments;
 
 namespace ITMO.Dev.ASAP.Application.Handlers.Study.GroupAssignments;
 
 internal class GetGroupAssignments : IRequestHandler<Query, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
 
-    public GetGroupAssignments(IDatabaseContext context)
+    public GetGroupAssignments(IPersistenceContext context)
     {
         _context = context;
     }
 
     public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
     {
-        List<GroupAssignment> assignments = await _context
-            .GroupAssignments
-            .Where(x => x.AssignmentId.Equals(request.AssignmentId))
-            .ToListAsync(cancellationToken);
+        var query = GroupAssignmentQuery.Build(x => x.WithAssignmentId(request.AssignmentId));
 
-        GroupAssignmentDto[] dto = assignments
+        IAsyncEnumerable<GroupAssignment> assignments = _context.GroupAssignments
+            .QueryAsync(query, cancellationToken);
+
+        GroupAssignmentDto[] dto = await assignments
             .Select(x => x.ToDto())
-            .ToArray();
+            .OrderBy(x => x.GroupName)
+            .ToArrayAsync(cancellationToken);
 
         return new Response(dto);
     }

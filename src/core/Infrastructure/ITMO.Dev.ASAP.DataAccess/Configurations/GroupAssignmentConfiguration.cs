@@ -1,15 +1,19 @@
+using ITMO.Dev.ASAP.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using GroupAssignment = ITMO.Dev.ASAP.Domain.Study.GroupAssignment;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations;
 
-public class GroupAssignmentConfiguration : IEntityTypeConfiguration<GroupAssignment>
+public class GroupAssignmentConfiguration : IEntityTypeConfiguration<GroupAssignmentModel>
 {
-    public void Configure(EntityTypeBuilder<GroupAssignment> builder)
+    public void Configure(EntityTypeBuilder<GroupAssignmentModel> builder)
     {
-        builder.HasKey(x => new { x.GroupId, x.AssignmentId });
+        builder.HasKey(x => new { x.StudentGroupId, x.AssignmentId });
 
-        builder.Navigation(x => x.Submissions).HasField("_submissions");
+        builder
+            .HasMany(x => x.Submissions)
+            .WithOne(x => x.GroupAssignment)
+            .HasForeignKey(x => new { x.StudentGroupId, x.AssignmentId })
+            .HasPrincipalKey(x => new { x.StudentGroupId, x.AssignmentId });
     }
 }

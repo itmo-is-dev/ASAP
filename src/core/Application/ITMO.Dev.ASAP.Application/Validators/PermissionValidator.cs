@@ -1,26 +1,26 @@
 using ITMO.Dev.ASAP.Application.Abstractions.Permissions;
 using ITMO.Dev.ASAP.Application.DataAccess;
+using ITMO.Dev.ASAP.Application.Specifications;
 using ITMO.Dev.ASAP.Common.Exceptions;
-using Microsoft.EntityFrameworkCore;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
 
 namespace ITMO.Dev.ASAP.Application.Validators;
 
 public class PermissionValidator : IPermissionValidator
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
 
-    public PermissionValidator(IDatabaseContext context)
+    public PermissionValidator(IPersistenceContext context)
     {
         _context = context;
     }
 
-    public Task<bool> IsSubmissionMentorAsync(Guid userId, Guid submissionId, CancellationToken cancellationToken)
+    public async Task<bool> IsSubmissionMentorAsync(Guid userId, Guid submissionId, CancellationToken cancellationToken)
     {
-        return _context.Submissions
-            .Where(x => x.Id.Equals(submissionId))
-            .Select(x => x.GroupAssignment.Assignment.SubjectCourse)
-            .SelectMany(x => x.Mentors)
-            .AnyAsync(x => x.UserId.Equals(userId), cancellationToken);
+        SubjectCourse subjectCourse = await _context.SubjectCourses
+            .GetBySubmissionIdAsync(submissionId, cancellationToken);
+
+        return subjectCourse.Mentors.Any(x => x.UserId.Equals(userId));
     }
 
     public async Task EnsureSubmissionMentorAsync(

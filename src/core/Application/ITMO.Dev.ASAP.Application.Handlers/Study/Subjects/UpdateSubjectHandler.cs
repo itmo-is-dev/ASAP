@@ -9,9 +9,9 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Study.Subjects;
 
 internal class UpdateSubjectHandler : IRequestHandler<Command, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
 
-    public UpdateSubjectHandler(IDatabaseContext context)
+    public UpdateSubjectHandler(IPersistenceContext context)
     {
         _context = context;
     }

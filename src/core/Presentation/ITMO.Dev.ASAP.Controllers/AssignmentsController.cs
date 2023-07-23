@@ -40,6 +40,16 @@ public class AssignmentsController : ControllerBase
         return Ok(result.Assignment);
     }
 
+    [HttpGet("{id:guid}")]
+    [AuthorizeFeature(Scope, nameof(GetById))]
+    public async Task<ActionResult<AssignmentDto>> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetAssignmentById.Query(id);
+        GetAssignmentById.Response response = await _mediator.Send(query, cancellationToken);
+
+        return Ok(response.Assignment);
+    }
+
     [HttpPatch("{id:guid}")]
     [AuthorizeFeature(Scope, nameof(UpdatePoints))]
     public async Task<ActionResult<AssignmentDto>> UpdatePoints(Guid id, double minPoints, double maxPoints)
@@ -47,17 +57,6 @@ public class AssignmentsController : ControllerBase
         var command = new UpdateAssignmentPoints.Command(id, minPoints, maxPoints);
 
         UpdateAssignmentPoints.Response response = await _mediator.Send(command);
-
-        return Ok(response.Assignment);
-    }
-
-    [HttpGet("{id:guid}")]
-    [AuthorizeFeature(Scope, nameof(GetById))]
-    public async Task<ActionResult<AssignmentDto>> GetById(Guid id)
-    {
-        var query = new GetAssignmentById.Query(id);
-
-        GetAssignmentById.Response response = await _mediator.Send(query);
 
         return Ok(response.Assignment);
     }

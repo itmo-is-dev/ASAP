@@ -1,71 +1,73 @@
 using ITMO.Dev.ASAP.Common.Exceptions;
 using ITMO.Dev.ASAP.Domain.Models;
-using ITMO.Dev.ASAP.Domain.Queue.Evaluators;
-using ITMO.Dev.ASAP.Domain.Queue.Filters;
+using ITMO.Dev.ASAP.Domain.Queue.Models;
 using ITMO.Dev.ASAP.Domain.Submissions;
-using RichEntity.Annotations;
 
 namespace ITMO.Dev.ASAP.Domain.Queue;
 
-public partial class SubmissionQueue : IEntity<Guid>
+public class SubmissionQueue
 {
-    private readonly IReadOnlyList<ISubmissionEvaluator> _evaluators;
-    private readonly IReadOnlyCollection<IQueueFilter> _filters;
+    private readonly IReadOnlyCollection<IFilterCriteria> _filters;
+    private readonly IReadOnlyList<IEvaluationCriteria> _evaluators;
 
     public SubmissionQueue(
-        IReadOnlyCollection<IQueueFilter> filters,
-        IReadOnlyList<ISubmissionEvaluator> evaluators)
-        : this(Guid.NewGuid())
+        IReadOnlyCollection<IFilterCriteria> filters,
+        IReadOnlyList<IEvaluationCriteria> evaluators)
     {
-        ArgumentNullException.ThrowIfNull(filters);
-        ArgumentNullException.ThrowIfNull(evaluators);
-
         _filters = filters;
         _evaluators = evaluators;
     }
 
-    public async Task<IEnumerable<Submission>> UpdateSubmissions(
-        IQueryable<Submission> query,
-        IQueryExecutor queryExecutor,
+    public void AcceptFilterCriteriaVisitor(IFilterCriteriaVisitor visitor)
+    {
+        foreach (IFilterCriteria criteria in _filters)
+        {
+            criteria.Accept(visitor);
+        }
+    }
+
+    public IAsyncEnumerable<Submission> OrderSubmissionsAsync(
+        IAsyncEnumerable<Submission> submissions,
+        IEvaluationCriteriaVisitor visitor,
         CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(query);
-        ArgumentNullException.ThrowIfNull(queryExecutor);
+        var iterator = new ForwardIterator<IEvaluationCriteria>(_evaluators, 0);
 
-        query = _filters.Aggregate(query, (current, filter) => filter.Filter(current));
-        IReadOnlyCollection<Submission> submissions = await queryExecutor.ExecuteAsync(query, cancellationToken);
-
-        return SortedBy(submissions, _evaluators);
+        return OrderSubmissionsAsync(submissions, visitor, iterator, cancellationToken);
     }
 
-    private static IEnumerable<Submission> SortedBy(
-        IEnumerable<Submission> submissions,
-        IReadOnlyList<ISubmissionEvaluator> evaluators)
+    private IAsyncEnumerable<Submission> OrderSubmissionsAsync(
+        IAsyncEnumerable<Submission> submissions,
+        IEvaluationCriteriaVisitor visitor,
+        ForwardIterator<IEvaluationCriteria> iterator,
+        CancellationToken cancellationToken)
     {
-        var stepperEvaluators = new ForwardIterator<ISubmissionEvaluator>(evaluators, 0);
-        return SortedBy(submissions, stepperEvaluators);
-    }
+        IEvaluationCriteria evaluator = iterator.Current;
 
-    private static IEnumerable<Submission> SortedBy(
-        IEnumerable<Submission> submissions,
-        ForwardIterator<ISubmissionEvaluator> evaluators)
-    {
-        ISubmissionEvaluator evaluator = evaluators.Current;
+        IAsyncEnumerable<IAsyncGrouping<double, EvaluatedSubmission>> grouped = evaluator
+            .AcceptAsync(submissions, visitor, cancellationToken)
+            .GroupBy(s => s.Value);
 
-        IEnumerable<IGrouping<double, Submission>> groupings = submissions
-            .GroupBy(x => evaluator.Evaluate(x));
-
-        IOrderedEnumerable<IGrouping<double, Submission>> orderedGroupings = evaluator.SortingOrder switch
+        IOrderedAsyncEnumerable<IAsyncGrouping<double, EvaluatedSubmission>> ordered = evaluator.Order switch
         {
-            SortingOrder.Ascending => groupings.OrderBy(x => x.Key),
-            SortingOrder.Descending => groupings.OrderByDescending(x => x.Key),
-            _ => throw new UnsupportedOperationException(nameof(evaluator.SortingOrder)),
+            SortingOrder.Ascending => grouped.OrderBy(x => x.Key),
+            SortingOrder.Descending => grouped.OrderByDescending(x => x.Key),
+            _ => throw new UnsupportedOperationException(nameof(evaluator.Order)),
         };
 
-        if (evaluators.IsAtEnd)
-            return orderedGroupings.SelectMany(x => x);
+        if (iterator.IsAtEnd)
+        {
+            return ordered
+                .SelectMany(x => x)
+                .Select(x => x.Submission);
+        }
 
-        ForwardIterator<ISubmissionEvaluator> next = evaluators.Next();
-        return orderedGroupings.SelectMany(x => SortedBy(x, next));
+        ForwardIterator<IEvaluationCriteria> next = iterator.Next();
+
+        return ordered.SelectMany(g =>
+        {
+            IAsyncEnumerable<Submission> s = g.Select(x => x.Submission);
+            return OrderSubmissionsAsync(s, visitor, next, cancellationToken);
+        });
     }
 }

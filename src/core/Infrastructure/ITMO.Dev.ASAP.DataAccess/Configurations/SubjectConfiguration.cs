@@ -1,5 +1,4 @@
 using ITMO.Dev.ASAP.DataAccess.Models;
-using ITMO.Dev.ASAP.Domain.Study;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,11 +9,9 @@ public class SubjectConfiguration : IEntityTypeConfiguration<SubjectModel>
     public void Configure(EntityTypeBuilder<SubjectModel> builder)
     {
         builder
-            .HasMany<SubjectCourse>()
-            .WithOne()
-            .HasPrincipalKey(x => x.Id)
-            .HasForeignKey(x => x.SubjectId);
-
-        builder.ToTable("Subjects");
+            .HasMany(x => x.SubjectCourses)
+            .WithOne(x => x.Subject)
+            .HasForeignKey(x => x.SubjectId)
+            .HasPrincipalKey(x => x.Id);
     }
 }

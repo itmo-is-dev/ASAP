@@ -3,8 +3,10 @@ using ITMO.Dev.ASAP.Application.Contracts.Study.Submissions.Notifications;
 using ITMO.Dev.ASAP.Application.DataAccess;
 using ITMO.Dev.ASAP.Application.Dto.Study;
 using ITMO.Dev.ASAP.Application.Specifications;
-using ITMO.Dev.ASAP.Common.Exceptions;
+using ITMO.Dev.ASAP.Domain.Study.Assignments;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
 using ITMO.Dev.ASAP.Domain.Submissions;
+using ITMO.Dev.ASAP.Domain.ValueObject;
 using ITMO.Dev.ASAP.Mapping.Mappings;
 using MediatR;
 using static ITMO.Dev.ASAP.Application.Contracts.Study.Submissions.Commands.BanSubmission;
@@ -13,13 +15,13 @@ namespace ITMO.Dev.ASAP.Application.Handlers.Study.Submissions;
 
 internal class BanSubmissionHandler : IRequestHandler<Command, Response>
 {
-    private readonly IDatabaseContext _context;
+    private readonly IPersistenceContext _context;
     private readonly IPermissionValidator _permissionValidator;
     private readonly IPublisher _publisher;
 
     public BanSubmissionHandler(
         IPermissionValidator permissionValidator,
-        IDatabaseContext context,
+        IPersistenceContext context,
         IPublisher publisher)
     {
         _permissionValidator = permissionValidator;
@@ -32,9 +34,6 @@ internal class BanSubmissionHandler : IRequestHandler<Command, Response>
         Submission submission = await _context.Submissions
             .GetSubmissionForCodeOrLatestAsync(request.UserId, request.AssignmentId, request.Code, cancellationToken);
 
-        if (submission is null)
-            throw new EntityNotFoundException("Could not find submission");
-
         await _permissionValidator.EnsureSubmissionMentorAsync(
             request.IssuerId,
             submission.Id,
@@ -45,10 +44,18 @@ internal class BanSubmissionHandler : IRequestHandler<Command, Response>
         _context.Submissions.Update(submission);
         await _context.SaveChangesAsync(cancellationToken);
 
-        SubmissionDto dto = submission.ToDto();
+        Assignment assignment = await _context.Assignments
+            .GetByIdAsync(submission.GroupAssignment.Assignment.Id, cancellationToken);
+
+        SubjectCourse subjectCourse = await _context.SubjectCourses
+            .GetByAssignmentId(assignment.Id, cancellationToken);
+
+        Points points = submission.CalculateEffectivePoints(assignment, subjectCourse.DeadlinePolicy).Points;
+
+        SubmissionDto dto = submission.ToDto(points);
 
         var notification = new SubmissionUpdated.Notification(dto);
-        await _publisher.PublishAsync(notification, cancellationToken);
+        await _publisher.PublishAsync(notification, default);
 
         return new Response(dto);
     }

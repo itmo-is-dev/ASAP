@@ -1,7 +1,7 @@
 ﻿using ITMO.Dev.ASAP.Application.Abstractions.Identity;
 using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Common.Exceptions;
-using ITMO.Dev.ASAP.Domain.Study;
+using ITMO.Dev.ASAP.Domain.Study.SubjectCourses;
 using System.Security.Claims;
 
 namespace ITMO.Dev.ASAP.Application.Users;

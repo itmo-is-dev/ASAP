@@ -1,13 +1,17 @@
+using ITMO.Dev.ASAP.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using StudentGroup = ITMO.Dev.ASAP.Domain.Study.StudentGroup;
 
 namespace ITMO.Dev.ASAP.DataAccess.Configurations;
 
-public class StudentGroupConfiguration : IEntityTypeConfiguration<StudentGroup>
+public class StudentGroupConfiguration : IEntityTypeConfiguration<StudentGroupModel>
 {
-    public void Configure(EntityTypeBuilder<StudentGroup> builder)
+    public void Configure(EntityTypeBuilder<StudentGroupModel> builder)
     {
-        builder.Navigation(x => x.Students).HasField("_students");
+        builder
+            .HasMany(x => x.Students)
+            .WithOne(x => x.StudentGroup)
+            .HasForeignKey(x => x.StudentGroupId)
+            .HasPrincipalKey(x => x.Id);
     }
 }

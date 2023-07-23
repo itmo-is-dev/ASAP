@@ -1,5 +1,4 @@
 using ITMO.Dev.ASAP.Application.Contracts.Students.Queries;
-using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.StudyGroups.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Study.StudyGroups.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Querying;
@@ -35,22 +34,12 @@ public class StudyGroupController : ControllerBase
         return Ok(response.Group);
     }
 
-    [HttpGet]
-    [AuthorizeFeature(Scope, nameof(GetAll))]
-    public async Task<ActionResult<IReadOnlyCollection<StudyGroupDto>>> GetAll()
-    {
-        var query = new GetStudyGroups.Query();
-        GetStudyGroups.Response response = await _mediator.Send(query);
-
-        return Ok(response.Groups);
-    }
-
     [HttpGet("{id:guid}")]
     [AuthorizeFeature(Scope, nameof(GetById))]
-    public async Task<ActionResult<StudyGroupDto>> GetById(Guid id)
+    public async Task<ActionResult<StudyGroupDto>> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var query = new GetStudyGroupById.Query(id);
-        GetStudyGroupById.Response response = await _mediator.Send(query);
+        var query = new GetStudentGroupById.Query(id);
+        GetStudentGroupById.Response response = await _mediator.Send(query, cancellationToken);
 
         return Ok(response.Group);
     }
@@ -84,26 +73,6 @@ public class StudyGroupController : ControllerBase
         GetStudentsByGroupId.Response response = await _mediator.Send(query);
 
         return Ok(response.Students);
-    }
-
-    [HttpGet("{groupId:guid}/assignments")]
-    [AuthorizeFeature(Scope, nameof(GetAssignments))]
-    public async Task<ActionResult<GroupAssignmentDto>> GetAssignments(Guid groupId)
-    {
-        var query = new GetGroupAssignmentsByStudyGroupId.Query(groupId);
-        GetGroupAssignmentsByStudyGroupId.Response response = await _mediator.Send(query);
-
-        return Ok(response.GroupAssignments);
-    }
-
-    [HttpGet("find")]
-    [AuthorizeFeature(Scope, nameof(FindByName))]
-    public async Task<ActionResult<StudyGroupDto?>> FindByName(string name)
-    {
-        var query = new FindStudyGroupByName.Query(name);
-        FindStudyGroupByName.Response response = await _mediator.Send(query);
-
-        return Ok(response.Group);
     }
 
     [HttpPost("query")]

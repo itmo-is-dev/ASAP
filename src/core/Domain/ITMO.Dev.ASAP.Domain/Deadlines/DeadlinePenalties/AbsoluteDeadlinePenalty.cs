@@ -10,8 +10,6 @@ public class AbsoluteDeadlinePenalty : DeadlinePenalty
         AbsoluteValue = absoluteValue;
     }
 
-    protected AbsoluteDeadlinePenalty() { }
-
     public Points AbsoluteValue { get; set; }
 
     public override Points Apply(Points points)
