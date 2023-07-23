@@ -34,6 +34,16 @@ public class StudyGroupController : ControllerBase
         return Ok(response.Group);
     }
 
+    [HttpGet("{id:guid}")]
+    [AuthorizeFeature(Scope, nameof(GetById))]
+    public async Task<ActionResult<StudyGroupDto>> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetStudentGroupById.Query(id);
+        GetStudentGroupById.Response response = await _mediator.Send(query, cancellationToken);
+
+        return Ok(response.Group);
+    }
+
     [HttpGet("bulk")]
     [AuthorizeFeature(Scope, nameof(BulkGetByIds))]
     public async Task<ActionResult<IReadOnlyCollection<StudyGroupDto>>> BulkGetByIds(

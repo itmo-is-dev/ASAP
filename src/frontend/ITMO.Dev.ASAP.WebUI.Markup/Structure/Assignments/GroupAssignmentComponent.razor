@@ -1,0 +1,116 @@
+@using ITMO.Dev.ASAP.Application.Dto.Study
+@using ITMO.Dev.ASAP.WebApi.Abstractions.Models.GroupAssignments
+@using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Assignments
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling
+@using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution
+@inject IGroupAssignmentClient Client
+@inject ISafeExecutor SafeExecutor
+@implements IDisposable
+
+<Card Margin="Margin.Is2">
+    <CardHeader>
+        <Heading Size="HeadingSize.Is2">
+            @_groupName
+        </Heading>
+    </CardHeader>
+
+    <CardBody Padding="Padding.Is2">
+        <Addons>
+            <Addon AddonType="AddonType.Start">
+                <AddonLabel>Deadline</AddonLabel>
+            </Addon>
+
+            <Addon AddonType="AddonType.Body">
+
+                <DatePicker TValue="DateTime"
+                            Date="_deadlineBinding"
+                            InputMode="DateInputMode.Date"
+                            DateChanged="UpdateDeadline"
+                            DisplayFormat="dd/MM/yyy"/>
+
+            </Addon>
+        </Addons>
+    </CardBody>
+</Card>
+
+<GenericConfirmationComponent
+    T="@DateTime"
+    @ref=@_updateDeadlineConfirmationComponent
+    ActionName=@ActionName
+    Action=@Execute
+    OnRejected="ResetBinding"/>
+
+@code {
+
+    private IDisposable? _subscription;
+    private GenericConfirmationComponent<DateTime>? _updateDeadlineConfirmationComponent;
+
+    private string? _groupName;
+    private DateTime? _deadline;
+    private DateTime _deadlineBinding;
+
+    private Func<DateTime, string> ActionName => deadline => $"update {_groupName} deadline to {deadline}";
+
+    [Parameter]
+    public IGroupAssignment? ViewModel { get; set; }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (ViewModel is null)
+            return;
+
+        _subscription = Disposable.From(
+            ViewModel.GroupName.Subscribe(x => _groupName = x),
+            ViewModel.Deadline.Subscribe(x =>
+            {
+                _deadline = x;
+                _deadlineBinding = x;
+            }));
+    }
+
+    protected override void OnInitialized()
+    {
+        _deadlineBinding = _deadline ?? DateTime.UnixEpoch;
+    }
+
+    private Task UpdateDeadline(DateTime deadline)
+    {
+        if (deadline == _deadline)
+        {
+            return Task.CompletedTask;
+        }
+
+        _deadlineBinding = deadline;
+        return _updateDeadlineConfirmationComponent?.Show(deadline) ?? Task.CompletedTask;
+    }
+
+    private async Task Execute(DateTime deadline, CancellationToken cancellationToken)
+    {
+        if (ViewModel is null)
+            return;
+
+        var updated = await ViewModel.UpdateDeadlineAsync(deadline, default);
+
+        if (updated)
+        {
+            _deadline = deadline;
+        }
+        else
+        {
+            ResetBinding();
+        }
+    }
+
+    private void ResetBinding()
+    {
+        _deadlineBinding = _deadline ?? DateTime.UnixEpoch;
+    }
+
+}

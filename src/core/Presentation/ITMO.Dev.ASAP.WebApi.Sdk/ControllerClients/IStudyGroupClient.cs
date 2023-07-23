@@ -13,6 +13,8 @@ public interface IStudyGroupClient
         IEnumerable<Guid> ids,
         CancellationToken cancellationToken = default);
 
+    Task<StudyGroupDto> GetAsync(Guid id, CancellationToken cancellationToken = default);
+
     Task<IReadOnlyCollection<StudentDto>> GetStudentsAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<StudyGroupDto> UpdateAsync(

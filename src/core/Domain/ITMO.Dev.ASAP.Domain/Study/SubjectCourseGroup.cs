@@ -1,18 +1,19 @@
+using ITMO.Dev.ASAP.Domain.Groups;
 using RichEntity.Annotations;
 
 namespace ITMO.Dev.ASAP.Domain.Study;
 
 public partial class SubjectCourseGroup : IEntity
 {
-    public SubjectCourseGroup(Guid subjectCourseId, Guid studentGroupId)
+    public SubjectCourseGroup(Guid subjectCourseId, StudentGroupInfo studentGroup)
+        : this(subjectCourseId: subjectCourseId, studentGroupId: studentGroup.Id)
     {
-        SubjectCourseId = subjectCourseId;
-        StudentGroupId = studentGroupId;
+        StudentGroup = studentGroup;
     }
 
     [KeyProperty]
     public Guid SubjectCourseId { get; }
 
     [KeyProperty]
-    public Guid StudentGroupId { get; }
+    public StudentGroupInfo StudentGroup { get; }
 }

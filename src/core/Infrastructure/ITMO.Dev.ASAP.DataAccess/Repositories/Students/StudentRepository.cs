@@ -81,7 +81,8 @@ public class StudentRepository : RepositoryBase<Student, StudentModel>, IStudent
 
         queryable = queryable
             .Include(x => x.User)
-            .ThenInclude(x => x.Associations);
+            .ThenInclude(x => x.Associations)
+            .Include(x => x.StudentGroup);
 
         return queryable.AsAsyncEnumerable().Select(StudentMapper.MapTo);
     }

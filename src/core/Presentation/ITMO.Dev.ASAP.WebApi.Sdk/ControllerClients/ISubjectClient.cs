@@ -10,6 +10,8 @@ public interface ISubjectClient
 
     Task<IReadOnlyCollection<SubjectDto>> GetAsync(CancellationToken cancellationToken = default);
 
+    Task<SubjectDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
     Task<SubjectDto> UpdateAsync(UpdateSubjectRequest request, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyCollection<SubjectCourseDto>> GetCoursesAsync(

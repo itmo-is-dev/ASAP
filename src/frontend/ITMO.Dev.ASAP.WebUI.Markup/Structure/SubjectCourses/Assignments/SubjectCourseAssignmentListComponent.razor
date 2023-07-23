@@ -1,0 +1,39 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses.Assignments
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@inject ISubjectCourseAssignmentList ViewModel
+@implements IDisposable
+
+@if (_assignments is not null)
+{
+    <ListGroup Flush>
+        @foreach (var assignment in _assignments)
+        {
+            <SubjectCourseAssignmentRowComponent ViewModel="assignment"/>
+        }
+    </ListGroup>
+}
+else
+{
+    <LoaderComponent/>
+}
+
+@code {
+
+    private IDisposable? _subscription;
+    private IEnumerable<ISubjectCourseAssignmentRow>? _assignments;
+
+    protected override void OnParametersSet()
+    {
+        _subscription = ViewModel.Assignments.Subscribe(x =>
+        {
+            _assignments = x;
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+
+}

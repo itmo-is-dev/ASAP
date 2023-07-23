@@ -1,0 +1,131 @@
+@using ITMO.Dev.ASAP.Application.Dto.Querying
+@using ITMO.Dev.ASAP.Application.Dto.Study
+@using ITMO.Dev.ASAP.Application.Dto.SubjectCourses
+@using ITMO.Dev.ASAP.WebApi.Abstractions.Models.SubjectCourseGroups
+@using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.SubjectCourses.Groups
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses.Groups
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Models
+@using ITMO.Dev.ASAP.WebUI.Markup.Query
+
+@inject IStudyGroupClient StudyGroupClient
+@inject ISubjectCourseGroupList ViewModel
+
+<Modal @ref="_modal">
+    <ModalContent Size="ModalSize.Large">
+        <ModalHeader>
+            <ModalTitle>Add groups</ModalTitle>
+            <CloseButton/>
+        </ModalHeader>
+        <ModalBody>
+            <Div Flex="Flex.Row" Padding="Padding.Is3.FromBottom" Width="Width.Is100">
+                <CreateButton Clicked="@(() => _component?.Show() ?? Task.CompletedTask)"
+                              Disabled="ButtonEnabled is false"
+                              FitContent="false">
+                    Add
+                </CreateButton>
+            </Div>
+
+            <QueryComponent TParameter="@GroupQueryParameter"
+                            TValue="@StudyGroupDto"
+                            QueryExecutor="QueryAsync"
+                            OnValuesUpdates="OnQueryExecuted"/>
+
+            @if (_groups is not null)
+            {
+                IEnumerable<SelectableStudyGroup> groups = _groups
+                    .OrderByDescending(x => x.IsSelected)
+                    .ThenBy(x => x.Group.Name);
+
+                <Div Padding="Padding.Is4.FromTop">
+                    @foreach (var group in groups)
+                    {
+                        <Card Padding="Padding.Is2" Margin="Margin.Is2.FromBottom">
+                            <Check TValue="bool" @bind-Checked="@group.IsSelected">
+                                @group.Group.Name
+                            </Check>
+                        </Card>
+                    }
+                </Div>
+            }
+        </ModalBody>
+    </ModalContent>
+</Modal>
+
+
+<ConfirmationComponent @ref="_component"
+                       Action="AddAsync"
+                       ActionName="add selected groups to course"/>
+
+@code {
+
+    private IDisposable? _subscription;
+
+    private Modal? _modal;
+    private ConfirmationComponent? _component;
+
+    private IReadOnlyCollection<SelectableStudyGroup>? _groups;
+    private IEnumerable<ISubjectCourseGroupRow>? _existingGroups;
+
+    private bool ButtonEnabled => _groups?.Any(x => x.IsSelected) ?? false;
+
+    public Task ShowAsync()
+        => _modal?.Show() ?? Task.CompletedTask;
+
+    private Task<IReadOnlyCollection<StudyGroupDto>> QueryAsync(QueryConfiguration<GroupQueryParameter> configuration)
+        => StudyGroupClient.QueryAsync(configuration);
+
+    protected override void OnParametersSet()
+    {
+        _subscription = Disposable.From(
+            ViewModel.SubjectCourseGroups.Subscribe(x =>
+            {
+                _existingGroups = x;
+                StateHasChanged();
+            }),
+            ViewModel.AddSubjectCourseGroupsVisible.Subscribe(OnVisibleChanged));
+    }
+
+    private async Task AddAsync(CancellationToken cancellationToken)
+    {
+        if (_groups is null)
+            return;
+
+        Guid[] groupIds = _groups
+            .Where(x => x.IsSelected)
+            .Select(x => x.Group.Id)
+            .ToArray();
+
+        await ViewModel.AddAsync(groupIds, default);
+    }
+
+    public void OnQueryExecuted(IReadOnlyCollection<StudyGroupDto> groups)
+    {
+        IEnumerable<StudyGroupDto> groupsEnumerable = groups;
+
+        if (_existingGroups is not null)
+        {
+            IEnumerable<Guid> groupIds = _existingGroups.Select(course => course.StudentGroupId);
+
+            groupsEnumerable = groupsEnumerable
+                .ExceptBy(groupIds, x => x.Id);
+        }
+
+        _groups = groupsEnumerable.Select(x => new SelectableStudyGroup(x, false)).ToArray();
+    }
+
+    private void OnVisibleChanged(bool isVisible)
+    {
+        if (isVisible)
+        {
+            _modal?.Show();
+        }
+        else
+        {
+            _modal?.Hide();
+        }
+    }
+
+}

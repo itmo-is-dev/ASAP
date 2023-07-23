@@ -1,4 +1,5 @@
 using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Commands;
+using ITMO.Dev.ASAP.Application.Contracts.Study.Assignments.Queries;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Commands;
 using ITMO.Dev.ASAP.Application.Contracts.Study.GroupAssignments.Queries;
 using ITMO.Dev.ASAP.Application.Dto.Study;
@@ -37,6 +38,16 @@ public class AssignmentsController : ControllerBase
 
         CreateAssignment.Response result = await _mediator.Send(command);
         return Ok(result.Assignment);
+    }
+
+    [HttpGet("{id:guid}")]
+    [AuthorizeFeature(Scope, nameof(GetById))]
+    public async Task<ActionResult<AssignmentDto>> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetAssignmentById.Query(id);
+        GetAssignmentById.Response response = await _mediator.Send(query, cancellationToken);
+
+        return Ok(response.Assignment);
     }
 
     [HttpPatch("{id:guid}")]

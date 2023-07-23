@@ -3,11 +3,15 @@
 @using ITMO.Dev.ASAP.WebUI.Markup.Users.Components
 @using ITMO.Dev.ASAP.Application.Dto.Querying
 @using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Navigation
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
 @using ITMO.Dev.ASAP.WebUI.Markup.Query
-@inject IUserClient UserClient
 @layout PaddedLayout
 @attribute [Authorize(Roles = "Admin, Moderator")]
+
+@inject IUserClient UserClient
+@inject IMessagePublisher Publisher
 
 <Div Flex="Flex.Column" Height="Height.Is100">
     <Heading Size="HeadingSize.Is2">
@@ -60,6 +64,12 @@
     private int _pageCount;
     private CreateUserAccoutModal? _createUserAccountModal;
     private QueryComponent<UserQueryParameter, UserIdentityInfoDto>? _usersQueryComponent;
+
+    protected override void OnParametersSet()
+    {
+        var evt = new NavigatedToUsersPageEvent();
+        Publisher.Send(evt);
+    }
 
     protected override async Task OnInitializedAsync()
     {

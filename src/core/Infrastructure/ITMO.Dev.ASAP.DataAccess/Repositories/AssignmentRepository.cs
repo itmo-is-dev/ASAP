@@ -1,3 +1,4 @@
+using ITMO.Dev.ASAP.Application.DataAccess.Models;
 using ITMO.Dev.ASAP.Application.DataAccess.Queries;
 using ITMO.Dev.ASAP.Application.DataAccess.Repositories;
 using ITMO.Dev.ASAP.DataAccess.Contexts;
@@ -32,6 +33,16 @@ public class AssignmentRepository : RepositoryBase<Assignment, AssignmentModel>,
         if (query.SubjectCourseIds.Count is not 0)
         {
             queryable = queryable.Where(x => query.SubjectCourseIds.Contains(x.SubjectCourseId));
+        }
+
+        if (query.OrderByOrder is not null)
+        {
+            queryable = query.OrderByOrder.Value switch
+            {
+                OrderDirection.Ascending => queryable.OrderBy(x => x.Order),
+                OrderDirection.Descending => queryable.OrderByDescending(x => x.Order),
+                _ => queryable,
+            };
         }
 
         return queryable.AsAsyncEnumerable().Select(AssignmentMapper.MapTo);

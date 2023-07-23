@@ -7,6 +7,9 @@ public static class SubjectCourseGroupMapping
 {
     public static SubjectCourseGroupDto ToDto(this SubjectCourseGroup subjectCourseGroup)
     {
-        return new SubjectCourseGroupDto(subjectCourseGroup.SubjectCourseId, subjectCourseGroup.StudentGroupId);
+        return new SubjectCourseGroupDto(
+            subjectCourseGroup.SubjectCourseId,
+            subjectCourseGroup.StudentGroupId,
+            subjectCourseGroup.StudentGroup.Name);
     }
 }

@@ -26,6 +26,7 @@ internal class GetGroupAssignments : IRequestHandler<Query, Response>
 
         GroupAssignmentDto[] dto = await assignments
             .Select(x => x.ToDto())
+            .OrderBy(x => x.GroupName)
             .ToArrayAsync(cancellationToken);
 
         return new Response(dto);

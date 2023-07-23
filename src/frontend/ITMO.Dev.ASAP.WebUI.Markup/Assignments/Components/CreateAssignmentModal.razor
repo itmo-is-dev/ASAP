@@ -1,10 +1,12 @@
 @using ITMO.Dev.ASAP.Application.Dto.Study
 @using ITMO.Dev.ASAP.WebApi.Abstractions.Models
 @using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.SubjectCourses
 @using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling
 @using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution
 @inject IAssignmentClient AssignmentClient
 @inject ISafeExecutor SafeExecutor
+@inject ISubjectCourse ViewModel
 
 <Modal @ref="_modal">
     <ModalContent>
@@ -68,44 +70,27 @@
         _minPoints?.Value is not null &&
         _maxPoints?.Value is not null;
 
-    [Parameter]
-    public Guid? SubjectCourseId { get; set; }
-
-    [Parameter]
-    public EventCallback<AssignmentDto> OnSuccess { get; set; }
-
     public Task ShowAsync()
         => _modal?.Show() ?? Task.CompletedTask;
 
     private async Task CreateAsync()
     {
-        if (SubjectCourseId is null ||
-            string.IsNullOrEmpty(_title?.Value) ||
+        if (string.IsNullOrEmpty(_title?.Value) ||
             string.IsNullOrEmpty(_shortName?.Value) ||
             _order?.Value is null ||
             _minPoints?.Value is null ||
             _maxPoints?.Value is null)
             return;
 
-        await using ISafeExecutionBuilder<AssignmentDto> builder = SafeExecutor.Execute(async () =>
-        {
-            var request = new CreateAssignmentRequest(
-                SubjectCourseId.Value,
-                _title.Value,
-                _shortName.Value,
-                _order.Value.Value,
-                _minPoints.Value.Value,
-                _maxPoints.Value.Value);
+        await ViewModel.CreateAssignmentAsync(
+            _title.Value,
+            _shortName.Value,
+            _order.Value.Value,
+            _minPoints.Value.Value,
+            _maxPoints.Value.Value,
+            default);
 
-            var assignment = await AssignmentClient.CreateAssignmentAsync(request);
-
-            await (_modal?.Hide() ?? Task.CompletedTask);
-
-            return assignment;
-        });
-
-        builder.Title = "Failed to create assignment";
-        builder.OnSuccessAsync(OnSuccess.InvokeAsync);
+        await (_modal?.Hide() ?? Task.CompletedTask);
     }
 
 }

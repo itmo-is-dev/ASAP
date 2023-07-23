@@ -35,7 +35,7 @@ internal class UpdateAssignmentPointsHandler : IRequestHandler<Command, Response
         _context.Assignments.Update(assignment);
         await _context.SaveChangesAsync(cancellationToken);
 
-        AssignmentDto dto = assignment.ToDto(subjectCourse.Id);
+        AssignmentDto dto = assignment.ToDto();
 
         var notification = new AssignmentPointsUpdated.Notification(dto);
         await _publisher.PublishAsync(notification, cancellationToken);

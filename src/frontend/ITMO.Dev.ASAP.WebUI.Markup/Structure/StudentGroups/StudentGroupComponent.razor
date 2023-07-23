@@ -1,0 +1,169 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.StudentGroups
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
+@using ITMO.Dev.ASAP.WebUI.Markup.Groups.Components
+@using ITMO.Dev.ASAP.Application.Dto.Users
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@inject IStudentGroup ViewModel
+@inject ICurrentUser CurrentUser
+@implements IDisposable
+
+<Modal @ref="_modal" @bind-Visible="@_modalVisible">
+    <ModalContent Size="ModalSize.Fullscreen">
+        <ModalHeader>
+            <CloseButton/>
+        </ModalHeader>
+
+        @if (_modalVisible)
+        {
+            <ModalBody>
+                <Div>
+                    <Div Flex="Flex.Column" Margin="Margin.Is3.FromBottom">
+                        <Fields>
+                            <Field>
+                                <FieldLabel>Name</FieldLabel>
+                                <TextEdit @bind-Text="_name" Disabled="@(CurrentUser.HasModeratorAccess() is false)"/>
+                            </Field>
+                        </Fields>
+
+                        @if (CurrentUser.HasModeratorAccess())
+                        {
+                            <Div Flex="Flex.Row.JustifyContent.Between">
+                                <CreateButton Background="Background.Success"
+                                              Clicked="ShowAddStudent"
+                                              FitContent="false"
+                                              Margin="Margin.Is2.FromEnd">
+                                    Add student
+                                </CreateButton>
+
+                                <CreateButton Background="Background.Primary"
+                                              Clicked="UpdateClicked"
+                                              FitContent="false"
+                                              Margin="Margin.Is2.FromStart"
+                                              Type="ButtonType.Submit"
+                                              PreventDefaultOnSubmit>
+                                    Update
+                                </CreateButton>
+                            </Div>
+                        }
+                    </Div>
+
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHeaderCell>
+                                    <Div Flex="Flex.Row.AlignItems.Center.JustifyContent.Start">
+                                        <Text Margin="Margin.Is3.FromEnd">
+                                            Isu
+                                        </Text>
+
+                                        <TextEdit @bind-Text="@_isuNumberSearch" Placeholder="Search..."/>
+                                    </Div>
+                                </TableHeaderCell>
+
+                                <TableHeaderCell>
+                                    <Div Flex="Flex.Row.AlignItems.Center.JustifyContent.Start">
+                                        <Text Margin="Margin.Is3.FromEnd">
+                                            Name
+                                        </Text>
+
+                                        <TextEdit @bind-Text="@_nameSearch" Placeholder="Search..."/>
+                                    </Div>
+                                </TableHeaderCell>
+                                <TableHeaderCell/>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+
+                            @foreach (var student in _students)
+                            {
+                                <StudyGroupStudentComponent Student="student"/>
+                            }
+                        </TableBody>
+                    </Table>
+                </Div>
+
+                @if (CurrentUser.HasModeratorAccess())
+                {
+                    <ConfirmationComponent @ref="_updatedConfirmationComponent"
+                                           Action="SendAsync"
+                                           ActionName="@($"change group name to {_name ?? string.Empty}")"/>
+
+                    <TransferStudentComponent @ref="_transferStudentComponent"
+                                              GroupId="ViewModel.Id"/>
+                }
+            </ModalBody>
+        }
+
+    </ModalContent>
+</Modal>
+
+@code {
+
+    private IDisposable? _subscription;
+    private Modal? _modal;
+    private bool _modalVisible;
+
+    private TransferStudentComponent? _transferStudentComponent;
+    private ConfirmationComponent? _updatedConfirmationComponent;
+
+    private string? _name;
+    private IEnumerable<StudentDto> _students = Enumerable.Empty<StudentDto>();
+    private string _isuNumberSearch = string.Empty;
+    private string _nameSearch = string.Empty;
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+
+    protected override void OnParametersSet()
+    {
+        Dispose();
+
+        _subscription = Disposable.From(
+            ViewModel.Name.Subscribe(x => _name = x),
+            ViewModel.Students.Subscribe(OnStudentsUpdated),
+            ViewModel.IsVisible.Subscribe(x =>
+            {
+                _modalVisible = x;
+                StateHasChanged();
+            }));
+    }
+
+    private Task ShowAddStudent()
+        => _transferStudentComponent?.ShowAsync() ?? Task.CompletedTask;
+
+    private Task UpdateClicked()
+        => _updatedConfirmationComponent?.Show() ?? Task.CompletedTask;
+
+    private async Task SendAsync(CancellationToken cancellationToken)
+    {
+        if (_name is null)
+            return;
+
+        await ViewModel.UpdateNameAsync(_name, cancellationToken);
+    }
+
+    private void OnStudentsUpdated(IEnumerable<StudentDto> students)
+    {
+        students = students.OrderBy(x => x.User.LastName.FirstOrDefault());
+
+        if (string.IsNullOrEmpty(_isuNumberSearch) is false)
+        {
+            students = students.Where(x => x.UniversityId?.ToString().StartsWith(_isuNumberSearch) ?? false);
+        }
+
+        if (string.IsNullOrEmpty(_nameSearch) is false)
+        {
+            students = students.Where(x =>
+                x.User.FirstName.Contains(_nameSearch) ||
+                x.User.LastName.Contains(_nameSearch) ||
+                x.User.MiddleName.Contains(_nameSearch));
+        }
+
+        _students = students;
+        StateHasChanged();
+    }
+
+}

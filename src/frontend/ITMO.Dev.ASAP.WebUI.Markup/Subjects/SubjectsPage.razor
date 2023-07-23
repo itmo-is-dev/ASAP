@@ -1,9 +1,12 @@
 @page "/adminpanel/subjects"
 @using ITMO.Dev.ASAP.WebUI.Markup.Subjects.Components
-@using ITMO.Dev.ASAP.Application.Dto.Study
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Authorization
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Events.Navigation
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Messaging
 @using ITMO.Dev.ASAP.WebUI.Abstractions.Extensions
+@using ITMO.Dev.ASAP.WebUI.Markup.Structure.Subjects
 @inject ICurrentUser CurrentUser
+@inject IMessagePublisher Publisher
 
 <Div Flex="Flex.Row.JustifyContent.Between.AlignItems.Center">
     <Heading Size="HeadingSize.Is2" Padding="Padding.Is3.FromStart.Is2">
@@ -19,25 +22,22 @@
 
 </Div>
 
-<SubjectListComponent @ref="_subjectList"/>
+<SubjectListComponent/>
 
 
 @if (CurrentUser.HasModeratorAccess())
 {
-    <CreateSubjectModal @ref="_createSubjectModal" OnSuccess="OnSubjectCreated"/>
+    <CreateSubjectModal @ref="_createSubjectModal"/>
 }
 
 
 @code {
     private CreateSubjectModal? _createSubjectModal;
-    private SubjectListComponent? _subjectList;
 
-    private Task OnSubjectCreated(SubjectDto subject)
+    protected override void OnParametersSet()
     {
-        _subjectList?.AddSubject(subject);
-        StateHasChanged();
-
-        return Task.CompletedTask;
+        var evt = new NavigatedToSubjectsPageEvent();
+        Publisher.Send(evt);
     }
 
 }

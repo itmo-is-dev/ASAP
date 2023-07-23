@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <NoWarn>$(NoWarn);CA1716;</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\core\Presentation\ITMO.Dev.ASAP.WebApi.Sdk\ITMO.Dev.ASAP.WebApi.Sdk.csproj" />
+      <ProjectReference Include="..\..\Abstractions\ITMO.Dev.ASAP.WebUI.Abstractions.Contracts\ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.csproj" />
+      <ProjectReference Include="..\..\ITMO.Dev.ASAP.WebUI.Abstractions\ITMO.Dev.ASAP.WebUI.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Reactive" />
+    </ItemGroup>
+
+</Project>

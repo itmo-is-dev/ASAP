@@ -1,0 +1,46 @@
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Subjects
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
+@implements IDisposable
+@inject ISubjectList ViewModel
+
+@if (_subjects is not null)
+{
+    <ListGroup Flush>
+        @foreach (var subject in _subjects)
+        {
+            <ListGroupItem Padding="Padding.Is0">
+                <SubjectRowComponent ViewModel="subject"/>
+            </ListGroupItem>
+        }
+    </ListGroup>
+}
+else
+{
+    <LoaderComponent/>
+}
+
+@code {
+    private IEnumerable<ISubjectRowViewModel>? _subjects;
+    private IDisposable? _subscription;
+
+    [Parameter]
+    public EventCallback OnLoaded { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        _subscription = ViewModel.Subjects.Subscribe(x =>
+        {
+            _subjects = x.Subjects;
+            OnLoaded.InvokeAsync();
+            StateHasChanged();
+        });
+
+        return ViewModel.LoadAsync(default).AsTask();
+    }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+    }
+
+}

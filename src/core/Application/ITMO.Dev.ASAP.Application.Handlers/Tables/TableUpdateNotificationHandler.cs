@@ -83,8 +83,7 @@ internal class TableUpdateNotificationHandler :
 
     public Task Handle(SubjectCourseGroupCreated.Notification notification, CancellationToken cancellationToken)
     {
-        (Guid subjectCourseId, Guid groupId) = notification.Group;
-        _queueUpdateService.Update(subjectCourseId, groupId);
+        _queueUpdateService.Update(notification.Group.SubjectCourseId, notification.Group.StudentGroupId);
 
         return Task.CompletedTask;
     }

@@ -22,7 +22,8 @@ internal class GetSubjectCourseGroupsBySubjectCourseIdHandler : IRequestHandler<
             .GetByIdAsync(request.SubjectCourseId, cancellationToken);
 
         SubjectCourseGroupDto[] subjectCourseGroups = subjectCourse.Groups
-            .Select(group => new SubjectCourseGroupDto(subjectCourse.Id, group.Id))
+            .Select(group => new SubjectCourseGroupDto(subjectCourse.Id, group.Id, group.Name))
+            .OrderBy(x => x.StudentGroupName)
             .ToArray();
 
         return new Response(subjectCourseGroups);

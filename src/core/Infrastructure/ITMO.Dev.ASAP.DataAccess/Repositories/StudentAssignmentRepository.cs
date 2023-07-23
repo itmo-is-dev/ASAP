@@ -34,19 +34,37 @@ public class StudentAssignmentRepository : IStudentAssignmentRepository
             .QueryAsync(SubjectCourseQuery.Build(x => x.WithId(subjectCourseId)), cancellationToken)
             .SingleAsync(cancellationToken);
 
-        List<AssignmentModel> assignmentModels = await _context.Assignments
+        IQueryable<AssignmentModel> assignmentQuery = _context.Assignments;
+
+        assignmentQuery = assignmentQuery
             .Include(x => x.GroupAssignments)
             .ThenInclude(x => x.StudentGroup)
             .ThenInclude(x => x.Students)
             .ThenInclude(x => x.User)
-            .ThenInclude(x => x.Associations)
+            .ThenInclude(x => x.Associations);
+
+        assignmentQuery = assignmentQuery
             .Include(x => x.GroupAssignments)
             .ThenInclude(x => x.Submissions)
             .ThenInclude(x => x.Student)
+            .ThenInclude(x => x.User)
+            .ThenInclude(x => x.Associations);
+
+        assignmentQuery = assignmentQuery
             .Include(x => x.GroupAssignments)
-            .ThenInclude(x => x.StudentGroup)
+            .ThenInclude(x => x.Submissions)
+            .ThenInclude(x => x.GroupAssignment)
+            .ThenInclude(x => x.Assignment);
+
+        assignmentQuery = assignmentQuery
             .Include(x => x.GroupAssignments)
-            .ThenInclude(x => x.Assignment)
+            .ThenInclude(x => x.StudentGroup);
+
+        assignmentQuery = assignmentQuery
+            .Include(x => x.GroupAssignments)
+            .ThenInclude(x => x.Assignment);
+
+        List<AssignmentModel> assignmentModels = await assignmentQuery
             .AsSplitQuery()
             .AsNoTrackingWithIdentityResolution()
             .Where(x => x.SubjectCourse.Id.Equals(subjectCourseId))

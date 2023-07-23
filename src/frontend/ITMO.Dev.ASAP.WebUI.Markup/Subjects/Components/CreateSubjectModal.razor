@@ -1,10 +1,12 @@
 @using ITMO.Dev.ASAP.Application.Dto.Study
 @using ITMO.Dev.ASAP.WebApi.Abstractions.Models.Subjects
 @using ITMO.Dev.ASAP.WebApi.Sdk.ControllerClients
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Structure.Subjects
+@using ITMO.Dev.ASAP.WebUI.Abstractions.Contracts.Tools
 @using ITMO.Dev.ASAP.WebUI.Abstractions.ExceptionHandling
 @using ITMO.Dev.ASAP.WebUI.Abstractions.SafeExecution
-@inject ISubjectClient SubjectClient
-@inject ISafeExecutor SafeExecutor
+@implements IDisposable
+@inject ISubjectManager ViewModel
 
 <Modal @ref="_modal" VisibleChanged="OnVisibleChanged">
     @if (_contentVisible)
@@ -37,6 +39,8 @@
 
 @code {
 
+    private IDisposable? _subscription;
+
     private bool _contentVisible;
 
     private Modal? _modal;
@@ -52,28 +56,27 @@
         await (_modal?.Show() ?? Task.CompletedTask);
     }
 
+    protected override void OnParametersSet()
+    {
+        _subscription = ViewModel.SubjectCreated.Subscribe(_ => _modal?.Hide());
+    }
+
     private async Task CreateSubject()
     {
         if (string.IsNullOrEmpty(_subjectNameField?.Value))
             return;
 
-        await using ISafeExecutionBuilder<SubjectDto> builder = SafeExecutor.Execute(async () =>
-        {
-            var request = new CreateSubjectRequest(_subjectNameField.Value);
-            var subject = await SubjectClient.CreateAsync(request);
-
-            await (_modal?.Hide() ?? Task.CompletedTask);
-
-            return subject;
-        });
-
-        builder.Title = "Failed to create subject";
-        builder.OnSuccessAsync(OnSuccess.InvokeAsync);
+        await ViewModel.CreateAsync(_subjectNameField.Value, default);
     }
 
     private void OnVisibleChanged(bool visible)
     {
         _contentVisible = visible;
+    }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
     }
 
 }
